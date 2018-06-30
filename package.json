@@ -30,7 +30,7 @@
 		"lint": "lerna run lint",
 		"test": "lerna run test",
 		"update:shared": "ncu -ua && npm update && npm install",
-		"update:packages": "lerna exec ncu -ua && lerna exec npm update && lerna exec npm install",
+		"update:packages": "lerna exec -- ncu -ua && lerna exec -- npm update && lerna exec -- npm install",
 		"prebootstrap": "npm run codegen && npm run update:packages && npm run lint && npm run test",
 		"bootstrap": "NODE_ENV=production lerna bootstrap",
 		"publish": "npm run bootstrap && lerna publish --cd-version patch --conventional-commits --yes",
