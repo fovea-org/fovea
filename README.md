@@ -5,7 +5,7 @@
 
 # Fovea
 
-Fovea is a tool for generating **tiny**, *incredibly* powerful Web Components.
+Fovea is a tool for generating **tiny**, _incredibly_ powerful Web Components.
 
 ## Description
 

@@ -41,7 +41,7 @@ async function extendPackageJsonFiles (): Promise<void> {
  * @returns {Promise<void>}
  */
 async function extendPackageJson (packageJson: IPackage): Promise<void> {
-	const merged = deepExtend({}, sharedPackage, packageJson.content);
+	const merged = deepExtend({}, packageJson.content, sharedPackage);
 
 	console.log(`Updating package.json: '${chalk.magenta(packageJson.path)}'`);
 

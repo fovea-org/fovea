@@ -13,11 +13,12 @@ export default {
 	typings: `./dist/${FORMAT_MODULE}/index.d.ts`,
 	es2015: `./dist/${FORMAT_MODULE}/index.js`,
 	files: [
-		"dist/**/*.*"
+		"dist/**/*.*",
+		"bin/**/*.*"
 	],
 	repository: packageJSON.repository,
 	bugs: packageJSON.bugs,
 	contributors: packageJSON.contributors,
 	engines: packageJSON.engines,
-	license: packageJSON.engines,
+	license: packageJSON.license,
 };

@@ -1,6 +1,7 @@
 {
 	"name": "fovea",
 	"private": true,
+	"description": "Fovea is a tool for generating tiny, incredibly powerful Web Components.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/fovea-org/fovea.git"
@@ -32,7 +33,7 @@
 		"update:packages": "lerna exec ncu -ua && lerna exec npm update && lerna exec npm install",
 		"prebootstrap": "npm run codegen && npm run update:packages && npm run lint && npm run test",
 		"bootstrap": "NODE_ENV=production lerna bootstrap",
-		"publish": "npm run bootstrap && lerna publish --cd-version patch --conventional-commits --skip-git --skip-npm",
+		"publish": "npm run bootstrap && lerna publish --cd-version patch --conventional-commits --yes",
 		"lerna": "lerna"
 	},
 	"devDependencies": {

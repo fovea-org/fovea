@@ -6,7 +6,8 @@
 	"typings": "./dist/esm/index.d.ts",
 	"es2015": "./dist/esm/index.js",
 	"files": [
-		"dist/**/*.*"
+		"dist/**/*.*",
+		"bin/**/*.*"
 	],
 	"repository": {
 		"type": "git",
@@ -28,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/core",
-	"version": "0.0.0",
+	"version": "0.1.1",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -39,7 +40,6 @@
 	"dependencies": {
 		"@fovea/common": "^0.0.104"
 	},
-	"devDependencies": {},
 	"publishConfig": {
 		"access": "public"
 	}
