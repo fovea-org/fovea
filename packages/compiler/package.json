@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/compiler",
-	"version": "1.0.97",
+	"version": "1.0.98",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -41,11 +41,11 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.97",
-		"@fovea/core": "^1.0.97",
-		"@fovea/dom": "^1.0.97",
-		"@fovea/lib": "^1.0.97",
-		"@fovea/style": "^1.0.97",
+		"@fovea/common": "^1.0.98",
+		"@fovea/core": "^1.0.98",
+		"@fovea/dom": "^1.0.98",
+		"@fovea/lib": "^1.0.98",
+		"@fovea/style": "^1.0.98",
 		"@types/node": "^10.5.1",
 		"@wessberg/codeanalyzer": "^1.0.135",
 		"@wessberg/di": "^1.0.30",

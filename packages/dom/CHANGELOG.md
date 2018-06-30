@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.98"></a>
+## [1.0.98](https://github.com/fovea-org/fovea/compare/v1.0.97...v1.0.98) (2018-06-30)
+
+
+
+
+**Note:** Version bump only for package @fovea/dom
+
 <a name="1.0.97"></a>
 ## [1.0.97](https://github.com/fovea-org/fovea/compare/v1.0.96...v1.0.97) (2018-06-30)
 
