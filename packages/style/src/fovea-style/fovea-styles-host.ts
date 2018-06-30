@@ -3,7 +3,6 @@ import {IFoveaStylesOptions} from "./i-fovea-styles-options";
 import {IFoveaStylesResult} from "./i-fovea-styles-result";
 import {IPostCSS} from "../postcss/i-postcss";
 import {postCSSFoveaPlugin} from "../postcss/postcss-fovea-plugin/postcss-fovea-plugin";
-import {PostCSSFoveaCSSParserFunction, PostCSSFoveaSCSSParserFunction} from "@fovea/postcss-fovea-parser";
 import {IFoveaStylesTakeVariablesResult} from "./i-fovea-styles-take-variables-result";
 import {IFoveaStylesTakeVariablesOptions} from "./i-fovea-styles-take-variables-options";
 import {postCSSTakeVariablesPlugin} from "../postcss/postcss-take-variables-plugin/postcss-take-variables-plugin";
@@ -14,14 +13,13 @@ import {IFoveaStylesTakeImportPathsOptions} from "./i-fovea-styles-take-import-p
 import {IFoveaStylesTakeImportPathsResult} from "./i-fovea-styles-take-import-paths-result";
 import {IFoveaStylesBaseOptions} from "./i-fovea-styles-base-options";
 import {sassImportResolve} from "../postcss/sass-import-resolve/sass-import-resolve";
+import {postCSSFoveaCSSSyntax, postCSSFoveaSCSSSyntax} from "@fovea/postcss-fovea-parser";
 
 /**
  * FoveaStylesHost generates style instructions based on the given style contents.
  */
 export class FoveaStylesHost implements IFoveaStylesHost {
-	constructor (private readonly postCSS: IPostCSS,
-							 private readonly postCSSFoveaCSSParserFunction: PostCSSFoveaCSSParserFunction,
-							 private readonly postCSSFoveaSCSSParserFunction: PostCSSFoveaSCSSParserFunction) {
+	constructor (private readonly postCSS: IPostCSS) {
 	}
 
 	/**
@@ -136,11 +134,11 @@ export class FoveaStylesHost implements IFoveaStylesHost {
 			template,
 			file,
 			isScss,
-			parser: isScss
+			syntax: isScss
 				// Use the SCSS parser for .scss files
-				? this.postCSSFoveaSCSSParserFunction
+				? postCSSFoveaSCSSSyntax
 				// Use the CSS parser for .css files
-				: this.postCSSFoveaCSSParserFunction
+				: postCSSFoveaCSSSyntax
 		};
 	}
 

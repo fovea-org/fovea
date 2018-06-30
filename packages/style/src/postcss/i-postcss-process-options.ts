@@ -1,5 +1,4 @@
-import {AcceptedPlugin} from "postcss";
-import {PostCSSFoveaParserFunction} from "@fovea/postcss-fovea-parser";
+import {AcceptedPlugin, Syntax} from "postcss";
 
 export declare type PluginConfigurationHook = (pluginName: string) => {}|null|undefined;
 
@@ -10,6 +9,6 @@ export interface IPostCSSProcessOptions {
 	plugins?: AcceptedPlugin[];
 	prePlugins?: AcceptedPlugin[];
 	production: boolean;
-	parser: PostCSSFoveaParserFunction;
+	syntax: Syntax;
 	pluginConfigurationHook?: PluginConfigurationHook;
 }

@@ -8,8 +8,8 @@ const foveaStyles = new FoveaStyles();
 
 test("generate () => returns the compiled source code for a module", async t => {
 	const testStyles = true;
-	const testVariables = true;
-	const testImportPaths = true;
+	const testVariables = false;
+	const testImportPaths = false;
 
 	if (testStyles) {
 		const stylesResult = await foveaStyles.generate({

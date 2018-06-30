@@ -1,4 +1,4 @@
-import postcss, {AtRule, Comment, Declaration, Node, Root, Rule, Transformer} from "postcss";
+import postcss, {AtRule, Comment, decl, Declaration, Node, Root, Rule, Transformer} from "postcss";
 import {containsExpression, Json, splitByExpressions, takeInnerExpression} from "@fovea/common";
 import {IPostCSSFoveaScssPreparePluginOptions} from "./i-postcss-fovea-scss-prepare-plugin-options";
 import {IPostCSSFoveaScssPreparePluginContext} from "./i-postcss-fovea-scss-prepare-plugin-context";
@@ -43,7 +43,6 @@ function initializer (options?: Partial<IPostCSSFoveaScssPreparePluginOptions>):
 
 		css.nodes.forEach(node => visit(node, normalizedOptions));
 		normalizedOptions.deferredWork.forEach(work => work());
-		// console.log(css.toString());
 	};
 }
 
@@ -126,7 +125,10 @@ function visitDeclaration (node: Declaration, {deferredWork}: IPostCSSFoveaScssP
 			.map(part => containsExpression(part) ? `${scssDeclarationValueExpressionPrefix}#{"${takeInnerExpression(node.value)}"}${scssDeclarationValueExpressionSuffix}` : part)
 			.join("");
 
-		deferredWork.add(() => node.replaceWith(<Json>`${node.prop}: ${converted}`));
+		deferredWork.add(() => node.replaceWith(decl({
+			prop: node.prop,
+			value: converted
+		})));
 	}
 }
 

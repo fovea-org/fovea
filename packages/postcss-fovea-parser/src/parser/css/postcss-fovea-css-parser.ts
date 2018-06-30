@@ -1,28 +1,28 @@
-import * as ScssParser from "postcss-scss/lib/scss-parser";
-import {IPostCSSFoveaParser} from "../i-postcss-fovea-parser";
-import {scssTokenize} from "../../tokenizer/scss-tokenizer/scss-tokenizer";
-import {ISCSSTokenizerResult} from "../../tokenizer/scss-tokenizer/i-scss-tokenizer-result";
-import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END} from "@fovea/common";
+import Parser from "postcss/lib/parser";
 import {CSSExpressionToken, CSSToken} from "../../tokenizer/css-tokenizer/css-token";
+import {ICSSTokenizerResult} from "../../tokenizer/css-tokenizer/i-css-tokenizer-result";
+import {cssTokenize} from "../../tokenizer/css-tokenizer/css-tokenizer";
 import {Expression} from "../../expression/expression";
+import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END} from "@fovea/common";
+import {IPostCSSFoveaParser} from "../i-postcss-fovea-parser";
 
 /**
- * A PostCSS parser for Fovea for SCSS.
+ * A PostCSS parser for Fovea.
  * It extends PostCSS with the possibility of parsing expressions
  */
-export class PostCSSFoveaSCSSParser extends ScssParser implements IPostCSSFoveaParser {
+export class PostCSSFoveaCSSParser extends Parser implements IPostCSSFoveaParser {
 
 	/**
 	 * The Tokenizer to use
-	 * @type {ISCSSTokenizerResult}
+	 * @type {ICSSTokenizerResult}
 	 */
-	private tokenizer: ISCSSTokenizerResult;
+	private tokenizer: ICSSTokenizerResult;
 
 	/**
 	 * Creates the Fovea tokenizer
 	 */
 	public createTokenizer (): void {
-		this.tokenizer = scssTokenize(this.input);
+		this.tokenizer = cssTokenize(this.input);
 	}
 
 	/**
@@ -89,6 +89,7 @@ export class PostCSSFoveaSCSSParser extends ScssParser implements IPostCSSFoveaP
 		} else {
 			const match = text.match(/^(\s*)([^]*[^\s])(\s*)$/);
 			if (match != null) {
+				node.text = match[2];
 				node.text = `$\{${match[2]}}`;
 				node.raws.left = match[1];
 				node.raws.right = match[3];

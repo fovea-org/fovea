@@ -1,5 +1,5 @@
-import postcss, {AtRule, Comment, Declaration, Node, Root, Rule, Transformer} from "postcss";
-import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END, Json} from "@fovea/common";
+import postcss, {AtRule, Comment, Declaration, Node, Root, Rule, Transformer, decl, comment} from "postcss";
+import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END} from "@fovea/common";
 import {IPostCSSFoveaScssCleanupPluginOptions} from "./i-postcss-fovea-scss-cleanup-plugin-options";
 import {IPostCSSFoveaScssCleanupPluginContext} from "./i-postcss-fovea-scss-cleanup-plugin-context";
 import {SCSS_EXPRESSION_PREFIX, SCSS_EXPRESSION_SUFFIX, SCSS_REMOVE_ME_DECLARATION, scssDeclarationValueExpressionPrefix, scssDeclarationValueExpressionSuffix} from "../postcss-fovea-scss-prepare-plugin/postcss-fovea-scss-prepare-plugin";
@@ -91,7 +91,10 @@ function visitDeclaration (node: Declaration, {deferredWork}: IPostCSSFoveaScssC
 
 	// If the declaration contains an expression, transform it into something that node-sass can work with
 	if (declarationContainsPreparedExpression) {
-		deferredWork.add(() => node.replaceWith(<Json>`${node.prop}: ${revertExpression(node.value)}`));
+		deferredWork.add(() => node.replaceWith(decl({
+			prop: node.prop,
+			value: revertExpression(node.value)
+		})));
 	}
 }
 
@@ -107,7 +110,9 @@ function visitComment (node: Comment, {deferredWork}: IPostCSSFoveaScssCleanupPl
 
 	// If the declaration contains an expression, transform it into something that node-sass can work with
 	if (commentContainsPreparedExpression) {
-		deferredWork.add(() => node.replaceWith(<Json>revertExpression(node.text)));
+		deferredWork.add(() => node.replaceWith(comment({
+			text: revertExpression(node.text)
+		})));
 	}
 }
 

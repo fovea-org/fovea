@@ -29,11 +29,13 @@
 		"codegen": "ts-node --project build/tsconfig.json build/extend-package-json-files.ts",
 		"lint": "lerna run lint",
 		"test": "lerna run test",
+		"prepare": "NODE_ENV=production lerna run prepare",
 		"update:shared": "ncu -ua && npm update && npm install",
 		"update:packages": "lerna exec -- ncu -ua --reject '/fovea/' && lerna exec -- npm update && lerna exec -- npm install",
-		"prebootstrap": "npm run codegen && npm run update:packages && npm run lint && npm run test",
+		"prebootstrap": "npm run codegen && npm run update:packages",
 		"bootstrap": "NODE_ENV=production lerna bootstrap",
-		"publish": "npm run bootstrap && lerna publish --cd-version patch --conventional-commits --yes",
+		"validate": "npm run lint && npm run test",
+		"publish": "npm run bootstrap && npm run validate && lerna publish --cd-version patch --conventional-commits --yes",
 		"lerna": "lerna"
 	},
 	"devDependencies": {

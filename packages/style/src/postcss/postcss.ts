@@ -62,7 +62,7 @@ export class PostCSS implements IPostCSS {
 		this.preparePostCSSProcessor(options);
 
 		// tslint:disable
-		return await this.postCSSProcessor.process(options.template, {from: options.file, to: options.file, parser: options.parser});
+		return await this.postCSSProcessor.process(options.template, {from: options.file, to: options.file, syntax: options.syntax});
 	}
 
 	/**

@@ -1,35 +1,18 @@
-@import "./color";
-
-$aVariable: red;
+$foo: none;
 
 @mixin border-radius($radius) {
-	user-select: none;
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
 	border-radius: $radius;
+	background: ${green};
 }
 
 :host {
+	// Did stuff
+	user-select: $foo;
+	font-size: 600px / 960px * 100%;
 	@include border-radius(10px);
-	/* Did stuff */
-	color: $aVariable;
-	--red: red;
-
-	& span {
-		color: red;
-		display: ${this.helloWorld > 0 ? true : false} red;
-		background: #{${"green"}};
-	}
+	background: #{${"green"}};
 }
 
-@media all {
-	:host > * {
-		color: green;
-	}
-}
-
-span ${hmm} > lol {
-	font-size: 2 + 2;
-}
-
-@mixin ${baz} {}
-
-${this.foobar}
+${this.lolz}

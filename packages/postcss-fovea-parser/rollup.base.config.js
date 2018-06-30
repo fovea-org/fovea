@@ -13,6 +13,7 @@ export default {
 		"postcss/lib/parser",
 		"postcss/lib/container",
 		"postcss/lib/declaration",
-		"postcss-scss/lib/scss-parser"
+		"postcss-scss/lib/scss-parser",
+		"@fovea/common"
 	]
 };
