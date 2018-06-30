@@ -1,6 +1,6 @@
 import {promises} from "fs";
 import lernaConfig from "../lerna.json";
-import glob from "glob";
+import G from "glob";
 import {join, extname} from "path";
 import {IPackage} from "./i-package";
 import deepExtend from "deep-extend";
@@ -14,7 +14,7 @@ const {readFile, writeFile} = promises;
  */
 async function extendPackageJsonFiles (): Promise<void> {
 	const [packagesGlob] = lernaConfig.packages;
-	const packageDirectories = (await new Promise<string[]>(resolve => glob(packagesGlob, (_err, matches) => resolve(matches))))
+	const packageDirectories = (await new Promise<string[]>(resolve => G(packagesGlob, (_err, matches) => resolve(matches))))
 		// Take only directories
 		.filter(file => extname(file) === "");
 
