@@ -14,7 +14,7 @@ export default {
 	es2015: `./dist/${FORMAT_MODULE}/index.js`,
 	files: [
 		"dist/**/*.*",
-		"bin/**/*.*"
+		"bin/*"
 	],
 	repository: packageJSON.repository,
 	bugs: packageJSON.bugs,
