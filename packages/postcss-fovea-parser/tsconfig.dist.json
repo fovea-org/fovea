@@ -1,0 +1,29 @@
+{
+	"extends": "../../shared/tsconfig.dist.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"postcss/lib/node": [
+				"./typings/index.d.ts"
+			],
+			"postcss/lib/input": [
+				"./typings/index.d.ts"
+			],
+			"postcss/lib/stringifier": [
+				"./typings/index.d.ts"
+			],
+			"postcss/lib/parser": [
+				"./typings/index.d.ts"
+			],
+			"postcss/lib/container": [
+				"./typings/index.d.ts"
+			],
+			"postcss/lib/declaration": [
+				"./typings/index.d.ts"
+			],
+			"postcss-scss/lib/scss-parser": [
+				"./typings/index.d.ts"
+			]
+		}
+	}
+}

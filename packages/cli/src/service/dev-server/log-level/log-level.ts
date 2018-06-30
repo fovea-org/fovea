@@ -1,0 +1,1 @@
+export declare type LogLevel = 1|2;

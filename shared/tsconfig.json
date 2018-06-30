@@ -1,0 +1,46 @@
+{
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"alwaysStrict": true,
+		"emitDecoratorMetadata": false,
+		"importHelpers": true,
+		"newLine": "LF",
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": true,
+		"moduleResolution": "node",
+		"module": "esnext",
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"target": "es2017",
+		"lib": [
+			"ES5",
+			"ES2015",
+			"ES6",
+			"ES7",
+			"ES2016",
+			"ES2017",
+			"ESNext",
+			"DOM",
+			"DOM.iterable",
+			"WebWorker",
+			"ScriptHost"
+		],
+		"baseUrl": "..",
+		"outDir": "compiled",
+		"paths": {
+			"tslib": ["node_modules/tslib/tslib.d.ts"]
+		},
+		"plugins": [
+			{
+				"name": "tslint-language-service",
+				"ignoreDefinitionFiles": true,
+				"supressWhileTypeErrorsPresent": true
+			}
+		]
+	}
+}

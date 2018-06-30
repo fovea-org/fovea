@@ -1,0 +1,46 @@
+{
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.js",
+	"browser": "./dist/esm/index.js",
+	"types": "./dist/esm/index.d.ts",
+	"typings": "./dist/esm/index.d.ts",
+	"es2015": "./dist/esm/index.js",
+	"files": [
+		"dist/**/*.*"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fovea-org/fovea.git"
+	},
+	"bugs": {
+		"url": "https://github.com/fovea-org/fovea/issues"
+	},
+	"contributors": [
+		{
+			"name": "Frederik Wessberg",
+			"email": "frederikwessberg@hotmail.com",
+			"url": "https://github.com/wessberg"
+		}
+	],
+	"engines": {
+		"node": ">=10.1.0"
+	},
+	"license": "MIT",
+	"keywords": [],
+	"name": "@fovea/common",
+	"version": "0.0.0",
+	"description": "Let's compile the web!",
+	"scripts": {
+		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+		"prerollup": "rm -r -f dist",
+		"rollup": "rollup -c rollup.config.js",
+		"prepare": "npm run rollup"
+	},
+	"dependencies": {
+		"@wessberg/stringutil": "^1.0.17"
+	},
+	"devDependencies": {},
+	"publishConfig": {
+		"access": "public"
+	}
+}

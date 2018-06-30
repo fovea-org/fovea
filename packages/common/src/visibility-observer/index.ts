@@ -1,0 +1,1 @@
+export {IVisibilityObserverBaseOptions} from "./i-visibility-observer-base-options";

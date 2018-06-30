@@ -1,0 +1,1 @@
+export declare type IUseItem = ["styles"|"template", string];

@@ -1,0 +1,16 @@
+:host {
+	/* Did stuff */
+	color: red;
+	--red: red;
+	user-select:none;
+	display: var(--foo)px;
+	${this.exp};
+}
+
+@media all {
+	:host > * {
+		color: green;
+	}
+}
+
+${this.extra}

@@ -1,0 +1,1 @@
+export declare type EmptyResult = void|null|undefined;

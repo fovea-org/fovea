@@ -1,0 +1,1 @@
+export declare type TerminalColor = "green"|"cyan"|"magenta"|"yellow";

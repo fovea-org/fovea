@@ -1,0 +1,1 @@
+export declare type TransformHook = (file: string, content: string) => string|null|undefined|void;

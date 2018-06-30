@@ -1,0 +1,1 @@
+export declare type DOMChildCallback = (nodes: Node[]) => void|Promise<void>;

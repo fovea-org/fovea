@@ -1,0 +1,1 @@
+export {IEmitBaseOptions} from "./i-emit-base-options";

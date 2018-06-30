@@ -1,0 +1,2 @@
+// These attributes will be set as attributes rather than as properties.
+export const CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES = new Set<string>(["class", "id", "data-fovea-id", "tabindex", "role", "draggable", "style", "contenteditable", "is", "has"]);

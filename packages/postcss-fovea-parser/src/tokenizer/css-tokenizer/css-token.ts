@@ -1,0 +1,11 @@
+export type CSSTokenKind = "[" | "]" | "(" | ")" | "{" | "}" | ";" | ":" | "space" | "brackets" | "string" | "at-word" | "word" | "comment" | "expression";
+export type CSSStringToken = ["string", string, number, number, number, number];
+export type CSSWordToken = ["word", string, number, number, number, number];
+export type CSSSpaceToken = ["space", string];
+export type CSSAtWordToken = ["at-word", string, number, number, number, number];
+export type CSSCommentToken = ["comment", string, number, number, number, number];
+export type CSSInlineCommentToken = ["comment", string, number, number, number, number, "inline"];
+export type CSSExpressionToken = ["expression", string, number, number, number, number];
+export type CSSBracketsToken = ["brackets", string, number, number, number, number];
+export type CSSSyntaxToken = [ "[" | "]" | "{" | "}" | ":" | ";" | "(" | ")", string, number, number];
+export type CSSToken = CSSStringToken|CSSWordToken|CSSSpaceToken|CSSBracketsToken|CSSAtWordToken|CSSCommentToken|CSSSyntaxToken|CSSExpressionToken|CSSInlineCommentToken;

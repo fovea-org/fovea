@@ -1,0 +1,9 @@
+{
+	"extends": "../shared/tsconfig.json",
+	"compilerOptions": {
+		"module": "commonjs",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"esModuleInterop": true
+	}
+}

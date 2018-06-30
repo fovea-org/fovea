@@ -1,0 +1,1 @@
+export {IUseItem} from "./i-use-item";

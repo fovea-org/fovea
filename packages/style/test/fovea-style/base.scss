@@ -1,0 +1,15 @@
+@import "./color";
+$aVariable: red;
+$padding: 2px;
+
+:host {
+	--zomgggg: $padding + 10;
+}
+
+:root {
+	--foo: red;
+}
+
+@mixin lolz () {
+	--lolz: green;
+}

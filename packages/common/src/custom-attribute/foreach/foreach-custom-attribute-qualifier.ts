@@ -1,0 +1,2 @@
+// The 'foreach' custom attribute stamps the element and its children for every item in the collection that the value of the custom attributes evaluates to.
+export const FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER = "foreach";

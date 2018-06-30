@@ -1,0 +1,1 @@
+export {IMutationObserverBaseOptions} from "./i-mutation-observer-base-options";

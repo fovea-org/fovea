@@ -1,0 +1,1 @@
+export {CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES} from "./custom-element/required-attributes";

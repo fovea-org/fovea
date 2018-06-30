@@ -1,0 +1,17 @@
+$foo: none;
+
+@mixin border-radius($radius) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	border-radius: $radius;
+}
+
+:host {
+	// Did stuff
+	user-select: $foo;
+	font-size: 600px / 960px * 100%;
+	@include border-radius(10px);
+	background: #{${"green"}};
+}
+
+${this.lolz}

@@ -1,0 +1,5 @@
+<div $lol *customAttribute="a: bar and stuff; b: 'hehe'; c: ${something}; d: true; e: ${foo} ${bar} and ${baz}; f: 'john, allan, and patrice'; g: 21; h: {userId: ${userId}}">
+	<div *foreach="model: ${items}; as: foo1">
+		<div *foreach="model: ${foo1}; as: foo2">${foo1.map(p => "part:" + p).join("") + ":" + foo2}</div>
+	</div>
+</div>

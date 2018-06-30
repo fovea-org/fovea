@@ -1,0 +1,6 @@
+{
+	"extends": "../../shared/tsconfig.dist.json",
+	"compilerOptions": {
+		"noUnusedParameters": false
+	}
+}

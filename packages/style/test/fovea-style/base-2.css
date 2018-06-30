@@ -1,0 +1,6 @@
+@import "color-2.css";
+
+:host {
+	color: var(--color);
+	--lolz: green;
+}

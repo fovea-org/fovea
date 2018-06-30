@@ -1,0 +1,7 @@
+:host(:${foo}) {
+	/* Did stuff */
+	user-select: ${this.color};
+	${this.foobar};
+}
+
+${this.lolz}

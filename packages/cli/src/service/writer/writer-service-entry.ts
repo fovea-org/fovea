@@ -1,0 +1,1 @@
+export declare type WriterServiceEntry<T> = [string, T];

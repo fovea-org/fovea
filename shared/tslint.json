@@ -1,0 +1,140 @@
+{
+	"rules": {
+		"semicolon": [
+			true,
+			"always"
+		],
+		"space-before-function-paren": [
+			true,
+			"always"
+		],
+		"quotemark": [
+			true,
+			"double",
+			"avoid-escape"
+		],
+		"prefer-method-signature": true,
+		"one-variable-per-declaration": [
+			true
+		],
+		"object-literal-key-quotes": [
+			true,
+			"as-needed"
+		],
+		"no-unnecessary-qualifier": true,
+		"no-unnecessary-initializer": true,
+		"no-unsafe-any": false,
+		"no-trailing-whitespace": true,
+		"no-consecutive-blank-lines": [
+			true,
+			2
+		],
+		"new-parens": true,
+		"match-default-export-name": true,
+		"jsdoc-format": true,
+		"interface-name": [
+			true,
+			"always-prefix"
+		],
+		"class-name": true,
+		"arrow-return-shorthand": true,
+		"array-type": [
+			true,
+			"array"
+		],
+		"trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+		"prefer-const": [
+			true,
+			{
+				"destructuring": "all"
+			}
+		],
+		"no-require-imports": true,
+		"no-default-export": false,
+		"max-classes-per-file": [
+			true,
+			1
+		],
+		"linebreak-style": [
+			true,
+			"LF"
+		],
+		"eofline": false,
+		"use-isnan": true,
+		"no-var-keyword": true,
+		"no-use-before-declare": false,
+		"no-sparse-arrays": true,
+		"no-shadowed-variable": true,
+		"no-misused-new": true,
+		"no-eval": true,
+		"no-duplicate-super": true,
+		"no-duplicate-variable": [true, "check-parameters"],
+		"strict-boolean-expressions": true,
+		"prefer-object-spread": true,
+		"encoding": true,
+		"no-construct": true,
+		"no-conditional-assignment": false,
+		"no-var-requires": true,
+		"await-promise": true,
+		"number-literal-format": true,
+		"deprecation": true,
+		"no-unnecessary-type-assertion": true,
+		"interface-over-type-literal": true,
+		"completed-docs": true,
+		"use-default-type-parameter": true,
+		"binary-expression-operand-order": true,
+		"no-magic-numbers": [
+			true,
+			-1,
+			-0.5,
+			-0.1,
+			0.5,
+			0.1,
+			0.01,
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			-2,
+			-3,
+			-10,
+			100,
+			200,
+			300,
+			400,
+			500,
+			600,
+			700,
+			800,
+			900,
+			1000,
+			2000,
+			3000,
+			4000,
+			5000,
+			6000,
+			7000,
+			8000,
+			9000,
+			10000
+		],
+		"no-any": true,
+		"member-access": true,
+		"promise-function-async": true,
+		"no-string-literal": true,
+		"triple-equals": [true, "allow-null-check"],
+		"type-literal-delimiter": true,
+		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+		"no-duplicate-imports": true,
+		"prefer-readonly": true,
+		"ban-comma-operator": true,
+		"curly": [true, "ignore-same-line"]
+	}
+}
