@@ -123,8 +123,8 @@ export class TemplateGenerator extends Generator implements ITemplateGenerator {
 								<p>Happy coding!</p>
 								<p>Here's a few links you may need while building your application:</p>
 								<ul>
-									<li><a href="https://github.com/fovea-org/fovea/packages/cli">CLI documentation</a></li>
-									<li><a href="https://github.com/fovea-org/fovea/packages/router">Router documentation</a></li>
+									<li><a href="https://github.com/fovea-org/fovea/blob/master/packages/cli/README.md">CLI documentation</a></li>
+									<li><a href="https://github.com/fovea-org/fovea/blob/master/packages/router/README.md">Router documentation</a></li>
 									<li><a href="https://github.com/fovea-org/fovea/issues">Issues</a></li>
 									<li><a href="https://stackoverflow.com/search?q=fovea">Stack Overflow</a></li>
 								</ul>
