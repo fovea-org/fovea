@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.97"></a>
+## [1.0.97](https://github.com/fovea-org/fovea/compare/v1.0.96...v1.0.97) (2018-06-30)
+
+
+### Bug Fixes
+
+* Missing Fovea plugin for package [@fovea](https://github.com/fovea)/router. Unnecessary dependency injection plugins for packages that doesn't rely on it has been removed ([7ae3e9d](https://github.com/fovea-org/fovea/commit/7ae3e9d))
+
+
+
+
 <a name="1.0.96"></a>
 ## [1.0.96](https://github.com/fovea-org/fovea/compare/v1.0.95...v1.0.96) (2018-06-30)
 
