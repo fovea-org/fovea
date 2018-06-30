@@ -33,7 +33,7 @@
 	},
 	"preferGlobal": true,
 	"name": "@fovea/cli",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
