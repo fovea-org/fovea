@@ -5,8 +5,8 @@ export default {
 	...baseConfig,
 	external: [
 		...baseConfig.external,
-		...Object.keys(packageJSON.dependencies),
-		...Object.keys(packageJSON.devDependencies),
+		...(packageJSON.dependencies == null ? [] : Object.keys(packageJSON.dependencies)),
+		...(packageJSON.devDependencies == null ? [] : Object.keys(packageJSON.devDependencies)),
 		"postcss/lib/stringifier",
 		"postcss/lib/node",
 		"postcss/lib/input",

@@ -17,8 +17,8 @@ export default {
 		})
 	],
 	external: [
-		...Object.keys(mainPackageJSON.dependencies),
-		...Object.keys(mainPackageJSON.devDependencies),
+		...(mainPackageJSON.dependencies == null ? [] : Object.keys(mainPackageJSON.dependencies)),
+		...(mainPackageJSON.devDependencies == null ? [] : Object.keys(mainPackageJSON.devDependencies)),
 		...builtinModules
 	]
 };
