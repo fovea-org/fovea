@@ -44,5 +44,8 @@
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"@fovea/rollup-plugin-fovea": "^1.0.96"
 	}
 }

@@ -32,7 +32,7 @@ export const tsconfigNormalizeFunction: NormalizeFunction<ITsconfig> = async ({c
  */
 function getDefaultTsconfigJsonData (config: IBuildConfig) {
 	return {
-		exclude: [
+		include: [
 			`${config.distFolderName}/**/*.*`
 		],
 		compilerOptions: {
