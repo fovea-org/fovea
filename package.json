@@ -21,7 +21,7 @@
 	},
 	"license": "MIT",
 	"scripts": {
-		"generate:readme": "scaffold readme --blacklist \\`fovea\\`",
+		"generate:readme": "scaffold readme --blacklist \\`fovea\\`,description,usage",
 		"generate:license": "scaffold license",
 		"generate:contributing": "scaffold contributing",
 		"generate:coc": "scaffold coc",
