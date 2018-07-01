@@ -32,8 +32,9 @@ Here's a very simple example of a Fovea component:
 @styleSrc(["./my-component.scss"])
 class MyComponent extends HTMLElement {
 }
-``` 
+```
 
+The decorators are just there to help Fovea understand what you want to achieve. They are gone in the compiled output!
 Fovea enables you to write your styles in `.css` (or `.scss`) and your template in `.html`, - but it doesn't force you to!
 If you're a fan of [React], [lit-html] or [stencil], you can also declare both directly from the component with `template` and/or `styles` accessors, methods or property declarations.
 Because Fovea is compiled, it doesn't matter how you provide your template and styles. Fovea will figure it out:
@@ -73,10 +74,12 @@ class MyComponent extends HTMLElement {
 ```
 
 This example is a bit more involved, but showcase some of the strongest parts of Fovea:
-- You can declare `@prop`s which are the properties you'd like to use within your templates and styles. Here, the `@rop` `clickAmount` of type `number` is declared (yes, the data type is actually used for coercion!)
-- You can use complex Expressions inside your templates. We call them *Live Expressions*, because they react immediately to changes to the `prop`s that are used within them. You can use *all* Javascript language features within those.
-- You can automatically sync your `props` with host attributes. Fovea takes care of mapping the names between them. In this example, the `prop` `clickAmount` will be set on the host element as the attribute `click-amount` and update each time the value changes.
+- You can declare `@prop`s which are the properties you'd like to use within your templates and styles. Here, the `prop` `clickAmount` of type `number` is declared (yes, the data type is actually used for coercion!)
+- You can use complex Expressions inside your templates for everything that goes into the `${...}` parts. We call them *Live Expressions*, because they react immediately to changes to the `prop`s that are used within them. You can use *all* Javascript language features within those.
+- You can automatically sync your `props` with host attributes. Fovea takes care of mapping the names between them. In this example, the `prop` `clickAmount` will be set on the host element as the attribute `click-amount` and update each time the value changes. It also works the other way around - when the attributes change, the `prop` is updated - and coerced into the data type that it is declared with.
 - You can react to changes to your props with the `@onChange` decorator.
+
+Best of all, you don't pay any cost for the features that you don't use. For example, if you never use the `@onChange` decorator, Fovea won't ship the related logic.
 
 Naturally, Fovea components can do **so** much more, so instead we'll refer you to the [full examples section].
 
@@ -98,4 +101,22 @@ MIT © [Frederik Wessberg](https://github.com/wessberg)
 
 ## FAQ
 
-<!-- TODO -->
+#### Another UI library? Are you serious?
+
+Yes, we're quite serious. Remember, you get Web Components out! Fovea is build on standards - we're not trying to build a new ecosystem around yet another framework. Everything
+that Fovea enables you to produce is compatible with every other framework out there, including the one you might be using right now.
+
+Fovea wants to place itself as something in-between [Stencil] and [Polymer]. Stencil is a compiler as well, but it is closer to `React` in technology (JSX, Virtual DOM) and philosophy (Functional, Reactive) than Fovea is.
+Polymer is built on the same core principles, but it doesn't need a compilation step and comes with the benefits (no tooling required) and constraints (greater runtime cost) that result from it.
+
+#### Is there a way to use Fovea without the compile-step?
+
+**No**. The reason why Fovea is so fast and so small is because it knows everything there is to know about your code before any browser ever gets involved. That enables Fovea to cool things such as convert your templates into assembly-like instructions, as well as use the data types of your props for things like coercion.
+Fovea is, and always will be, a compile-time tool.
+
+#### Do you have to place '*this.*' in front of all `prop`s used in a template?
+
+**No**. You can use them if you want to. Imagine you have the `prop`s `name` of type `string` and `colors` of type `string[]`. Then this is completely fine:
+```html
+<h1>Hi! My name is ${name}. My favorite colors are: ${colors.join(",")}</h1>
+```
