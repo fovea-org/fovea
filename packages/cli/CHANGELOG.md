@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.100"></a>
+## [1.0.100](https://github.com/fovea-org/fovea/compare/v1.0.99...v1.0.100) (2018-07-02)
+
+
+### Bug Fixes
+
+* The MAIN_ICON should be a base64-encoded PNG rather than SVG ([3abd88a](https://github.com/fovea-org/fovea/commit/3abd88a))
+
+
+
+
 <a name="1.0.99"></a>
 ## [1.0.99](https://github.com/fovea-org/fovea/compare/v1.0.98...v1.0.99) (2018-06-30)
 

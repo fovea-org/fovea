@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/dom",
-	"version": "1.0.99",
+	"version": "1.0.100",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -41,7 +41,7 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.99",
+		"@fovea/common": "^1.0.100",
 		"@types/node": "^10.5.1",
 		"@types/parsimmon": "^1.10.0",
 		"@wessberg/codeanalyzer": "^1.0.135",
