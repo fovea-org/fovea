@@ -32,6 +32,7 @@
 		"prepare": "NODE_ENV=production lerna run prepare",
 		"update:shared": "ncu -ua && npm update && npm install",
 		"update:packages": "lerna exec -- ncu -ua --reject '/fovea/' && lerna exec -- npm update && lerna exec -- npm install",
+		"audit": "lerna exec -- nsp check",
 		"prebootstrap": "npm run codegen && npm run update:packages",
 		"bootstrap": "NODE_ENV=production lerna bootstrap",
 		"validate": "npm run lint && npm run test",
@@ -49,6 +50,7 @@
 		"glob": "^7.1.2",
 		"lerna": "^2.11.0",
 		"npm-check-updates": "^2.14.2",
+		"nsp": "^3.2.1",
 		"rollup": "^0.62.0",
 		"ts-node": "^7.0.0",
 		"tslib": "^1.9.3",
@@ -61,7 +63,7 @@
 	},
 	"scaffold": {
 		"patreonUserId": "11315442",
-		"logo": "",
+		"logo": "./documentation/asset/fovea_icon.png",
 		"contributorMeta": {
 			"Frederik Wessberg": {
 				"imageUrl": "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",

@@ -1,3 +1,4 @@
+<img alt="Logo for fovea" src="./documentation/asset/fovea_icon.png" height="200"></img><br>
 <a href="https://www.npmjs.com/package/@fovea/core"><img alt="NPM Version" src="https://badge.fury.io/js/%40fovea%2Fcore.svg" height="20"></img></a>
 <a href="https://github.com/fovea-org/fovea/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/fovea-org%2Ffovea.svg" height="20"></img></a>
 <a href="https://opensource.org/licenses/MIT"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-yellow.svg" height="20"></img></a>
@@ -6,12 +7,9 @@
 ## Introduction
 
 Fovea is a compiler for generating tiny and powerful Web Components, to use in building Web applications.
-The days of huge monolithic Javascript bundles that takes forever to load are over. Our users deserve better.
-
 By shifting computations to compile-time, rather than run-time, Fovea enables you to do way more with way less overhead.
 
 And, because components compiled with Fovea are just Web Components, they work in any framework you may choose - or with no framework at all.
-They're built on standards, so you won't run into weird interoperability issues.
 
 Fovea also makes it super easy to build powerful Progressive Web Apps with the [`@fovea/cli`](https://github.com/fovea-org/fovea/tree/v1.0.96/packages/cli).
 
@@ -36,7 +34,7 @@ class MyComponent extends HTMLElement {
 
 The decorators are just there to help Fovea understand what you want to achieve. They are gone in the compiled output!
 Fovea enables you to write your styles in `.css` (or `.scss`) and your template in `.html`, - but it doesn't force you to!
-If you're a fan of [React], [lit-html] or [stencil], you can also declare both directly from the component with `template` and/or `styles` accessors, methods or property declarations.
+If you're a fan of [React], [lit-html] or [Stencil], you can also declare both directly from the component with `template` and/or `styles` accessors, methods or property declarations.
 Because Fovea is compiled, it doesn't matter how you provide your template and styles. Fovea will figure it out:
 
 ```typescript
@@ -120,3 +118,8 @@ Fovea is, and always will be, a compile-time tool.
 ```html
 <h1>Hi! My name is ${name}. My favorite colors are: ${colors.join(",")}</h1>
 ```
+
+[React]: https://reactjs.org/
+[Stencil]: https://stenciljs.com/
+[Polymer]: https://www.polymer-project.org/
+[lit-html]: https://polymer.github.io/lit-html/

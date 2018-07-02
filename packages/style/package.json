@@ -52,9 +52,11 @@
 		"node-sass": "^4.9.0",
 		"postcss": "^6.0.23",
 		"postcss-import": "^11.1.0",
-		"postcss-preset-env": "^5.2.1"
+		"postcss-preset-env": "^5.2.1",
+		"request": "^2.87.0"
 	},
 	"publishConfig": {
 		"access": "public"
-	}
+	},
+	"devDependencies": {}
 }
