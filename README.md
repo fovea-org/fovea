@@ -112,13 +112,6 @@ Polymer is built on the same core principles, but it doesn't need a compilation 
 **No**. The reason why Fovea is so fast and so small is because it knows everything there is to know about your code before any browser ever gets involved. That enables Fovea to cool things such as convert your templates into assembly-like instructions, as well as use the data types of your props for things like coercion.
 Fovea is, and always will be, a compile-time tool.
 
-#### Do you have to place '*this.*' in front of all `prop`s used in a template?
-
-**No**. You can use them if you want to. Imagine you have the `prop`s `name` of type `string` and `colors` of type `string[]`. Then this is completely fine:
-```html
-<h1>Hi! My name is ${name}. My favorite colors are: ${colors.join(",")}</h1>
-```
-
 [React]: https://reactjs.org/
 [Stencil]: https://stenciljs.com/
 [Polymer]: https://www.polymer-project.org/
