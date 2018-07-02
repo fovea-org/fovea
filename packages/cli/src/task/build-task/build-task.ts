@@ -357,17 +357,24 @@ export class BuildTask implements IBuildTask {
 					// Optimize assets and generate app icons
 					let assets: IAssetOptimizerServiceOptimizeDirectoryResult;
 
-					// If the cache is not good enough here, run the asset optimizer and update the cache
-					if (await this.cacheService.cacheNeedsUpdate(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions)) {
-						assets = await this.assetOptimizer.optimizeDirectory(optimizeOptions);
-						await this.cacheService.set(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions, assets);
+					try {
+						// If the cache is not good enough here, run the asset optimizer and update the cache
+						if (await this.cacheService.cacheNeedsUpdate(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions)) {
+							assets = await this.assetOptimizer.optimizeDirectory(optimizeOptions);
+							await this.cacheService.set(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions, assets);
+						}
+
+						// Otherwise, take the already optimized buffers from the cache
+						else {
+							assets = (await this.cacheService.get(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions))!;
+						}
+						subscriber.onEnd(assets);
 					}
 
-					// Otherwise, take the already optimized buffers from the cache
-					else {
-						assets = (await this.cacheService.get(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions))!;
+					// If any exception happens while optimizing assets, invoke the onError hook
+					catch (ex) {
+						subscriber.onError({data: ex, fatal: true});
 					}
-					subscriber.onEnd(assets);
 				}
 			}
 		);
