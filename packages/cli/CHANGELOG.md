@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.105"></a>
+## [1.0.105](https://github.com/fovea-org/fovea/compare/v1.0.104...v1.0.105) (2018-07-11)
+
+
+### Bug Fixes
+
+* Added class-list to polyfills array ([a1c0d6d](https://github.com/fovea-org/fovea/commit/a1c0d6d))
+
+
+
+
 <a name="1.0.104"></a>
 ## [1.0.104](https://github.com/fovea-org/fovea/compare/v1.0.103...v1.0.104) (2018-07-11)
 

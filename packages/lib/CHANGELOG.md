@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.105"></a>
+## [1.0.105](https://github.com/fovea-org/fovea/compare/v1.0.104...v1.0.105) (2018-07-11)
+
+
+### Bug Fixes
+
+* Fixed a bog with toggling classes ([79c43f2](https://github.com/fovea-org/fovea/commit/79c43f2))
+
+
+
+
 <a name="1.0.104"></a>
 ## [1.0.104](https://github.com/fovea-org/fovea/compare/v1.0.103...v1.0.104) (2018-07-11)
 
