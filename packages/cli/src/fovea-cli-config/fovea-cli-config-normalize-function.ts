@@ -15,7 +15,7 @@ import deepExtend from "deep-extend";
 export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig> = async ({config, options}) => {
 	const configMinusOutputs: IFoveaCliConfigMinusOutput = {
 		packageManager: "npm",
-		polyfills: ["es", "custom-event", "web-components", "mutation-observer", "intersection-observer", "proxy"],
+		polyfills: ["es", "custom-event", "web-components", "mutation-observer", "intersection-observer", "proxy", "class-list"],
 		entry: `${config.srcFolderName}/${config.entryName}.${config.defaultScriptExtension}`,
 		style: {
 			directory: `${config.srcFolderName}/${config.stylesFolderName}`,
