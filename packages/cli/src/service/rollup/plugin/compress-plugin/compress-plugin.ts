@@ -33,23 +33,6 @@ export function compressRollupPlugin ({compressor}: ICompressPluginOptions): Plu
 					mapBuffer == null ? Promise.resolve() : compressor.compressAndWrite(mapBuffer, join(destinationDirectory, `${chunkName}${MAP_EXTENSION}`))
 				]);
 			}));
-		},
-
-		/**
-		 * Called when a chunk has been generated
-		 * @param {IGenerateOptions} outputOptions
-		 * @param {SourceDescription} source
-		 * @returns {Promise<void>}
-		 */
-		async ongenerate (outputOptions: IGenerateOptions, {code, map}: SourceDescription): Promise<void> {
-			const destinationDirectory = outputOptions.dir != null ? outputOptions.dir : outputOptions.file != null ? dirname(outputOptions.file) : outputOptions.dest != null ? dirname(outputOptions.dest) : undefined;
-			// Do nothing if no destination directory could be decided
-			if (destinationDirectory == null) return;
-
-			await Promise.all([
-				compressor.compressAndWrite(Buffer.from(code), join(destinationDirectory, outputOptions.id)),
-				map != null ? compressor.compressAndWrite(Buffer.from(code), join(destinationDirectory, `${outputOptions.id}${MAP_EXTENSION}`)) : Promise.resolve()
-			]);
 		}
 
 	};
