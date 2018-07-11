@@ -1,53 +1,53 @@
 {
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "browser": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
-  "typings": "./dist/esm/index.d.ts",
-  "es2015": "./dist/esm/index.js",
-  "files": [
-    "dist/**/*.*",
-    "bin/*"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fovea-org/fovea.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fovea-org/fovea/issues"
-  },
-  "contributors": [
-    {
-      "name": "Frederik Wessberg",
-      "email": "frederikwessberg@hotmail.com",
-      "url": "https://github.com/wessberg"
-    }
-  ],
-  "engines": {
-    "node": ">=10.1.0"
-  },
-  "license": "MIT",
-  "keywords": [],
-  "name": "@fovea/router",
-  "version": "1.0.102",
-  "description": "Let's compile the web!",
-  "scripts": {
-    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
-    "prerollup": "rm -r -f dist",
-    "rollup": "rollup -c rollup.config.js",
-    "prepare": "npm run rollup"
-  },
-  "dependencies": {
-    "@fovea/core": "^1.0.102",
-    "@wessberg/marshaller": "^3.0.9",
-    "path-parser": "^4.2.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "rollup": "^0.62.0",
-    "@fovea/rollup-plugin-fovea": "^1.0.102",
-    "@wessberg/rollup-plugin-ts": "0.0.30"
-  }
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.js",
+	"browser": "./dist/esm/index.js",
+	"types": "./dist/esm/index.d.ts",
+	"typings": "./dist/esm/index.d.ts",
+	"es2015": "./dist/esm/index.js",
+	"files": [
+		"dist/**/*.*",
+		"bin/*"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fovea-org/fovea.git"
+	},
+	"bugs": {
+		"url": "https://github.com/fovea-org/fovea/issues"
+	},
+	"contributors": [
+		{
+			"name": "Frederik Wessberg",
+			"email": "frederikwessberg@hotmail.com",
+			"url": "https://github.com/wessberg"
+		}
+	],
+	"engines": {
+		"node": ">=10.1.0"
+	},
+	"license": "MIT",
+	"keywords": [],
+	"name": "@fovea/router",
+	"version": "1.0.102",
+	"description": "Let's compile the web!",
+	"scripts": {
+		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+		"prerollup": "rm -r -f dist",
+		"rollup": "rollup -c rollup.config.js",
+		"prepare": "npm run rollup"
+	},
+	"dependencies": {
+		"@fovea/core": "^1.0.102",
+		"@wessberg/marshaller": "^3.0.9",
+		"path-parser": "^4.2.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"rollup": "^0.62.0",
+		"@fovea/rollup-plugin-fovea": "^1.0.102",
+		"@wessberg/rollup-plugin-ts": "0.0.30"
+	}
 }

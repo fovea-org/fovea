@@ -97,7 +97,7 @@
     "svgo": "^1.0.5",
     "temp-dir": "^1.0.0",
     "to-ico": "^1.1.5",
-    "ws": "^5.2.1"
+    "ws": "^5.2.2"
   },
   "publishConfig": {
     "access": "public"

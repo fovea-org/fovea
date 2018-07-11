@@ -2,7 +2,7 @@ import postcss, {AtRule, Comment, comment, decl, Declaration, Node, Root, Rule, 
 import {IPostCSSFoveaScssCleanupPluginOptions} from "./i-postcss-fovea-scss-cleanup-plugin-options";
 import {IPostCSSFoveaScssCleanupPluginContext} from "./i-postcss-fovea-scss-cleanup-plugin-context";
 import {SCSS_EXPRESSION_PREFIX, SCSS_EXPRESSION_SUFFIX, SCSS_REMOVE_ME_DECLARATION, scssDeclarationValueExpressionPrefix, scssDeclarationValueExpressionSuffix} from "../postcss-fovea-scss-prepare-plugin/postcss-fovea-scss-prepare-plugin";
-import {EXPRESSION_QUALIFIER_END, EXPRESSION_QUALIFIER_START} from "../../../../common/src/expression/expression-qualifier/expression-qualifier";
+import {EXPRESSION_QUALIFIER_END, EXPRESSION_QUALIFIER_START} from "@fovea/common";
 
 /**
  * The name of the PostCSS plugin
