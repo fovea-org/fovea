@@ -1,5 +1,5 @@
 import {ICompressPluginOptions} from "./i-compress-plugin-options";
-import {OutputBundle, Plugin, SourceDescription} from "rollup";
+import {OutputBundle, Plugin} from "rollup";
 import {IGenerateOptions} from "./i-generate-options";
 import {dirname, join} from "path";
 import {Buffer} from "buffer";
