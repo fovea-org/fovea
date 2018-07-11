@@ -135,7 +135,7 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 				const type = propertyName === "style"
 					// If the property is a style attribute, the value will always be a string
 					? constructType("string")
-					: propertyName === "class"
+					: propertyName === "class" && append
 						// If the property is a class attribute, the value will always be boolean (to toggle the class on/off)
 						? constructType("boolean")
 						// Otherwise, attempt to take the type of whatever prop the attribute maps to (if any)
