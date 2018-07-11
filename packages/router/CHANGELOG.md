@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.103"></a>
+## [1.0.103](https://github.com/fovea-org/fovea/compare/v1.0.102...v1.0.103) (2018-07-11)
+
+
+### Bug Fixes
+
+* Fixed an issue where multiple decorators could not annotate the same methods ([c707cd3](https://github.com/fovea-org/fovea/commit/c707cd3))
+* Fixed an issue with a wrong import ([1137b5b](https://github.com/fovea-org/fovea/commit/1137b5b))
+
+
+
+
 <a name="1.0.102"></a>
 ## [1.0.102](https://github.com/fovea-org/fovea/compare/v1.0.101...v1.0.102) (2018-07-02)
 

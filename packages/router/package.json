@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/router",
-	"version": "1.0.102",
+	"version": "1.0.103",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -38,7 +38,7 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/core": "^1.0.102",
+		"@fovea/core": "^1.0.103",
 		"@wessberg/marshaller": "^3.0.9",
 		"path-parser": "^4.2.0"
 	},
@@ -46,8 +46,8 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"rollup": "^0.62.0",
-		"@fovea/rollup-plugin-fovea": "^1.0.102",
-		"@wessberg/rollup-plugin-ts": "0.0.30"
+		"@fovea/rollup-plugin-fovea": "^1.0.103",
+		"@wessberg/rollup-plugin-ts": "0.0.30",
+		"rollup": "^0.62.0"
 	}
 }

@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/style",
-	"version": "1.0.102",
+	"version": "1.0.103",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -41,8 +41,8 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.102",
-		"@fovea/postcss-fovea-parser": "^1.0.102",
+		"@fovea/common": "^1.0.103",
+		"@fovea/postcss-fovea-parser": "^1.0.103",
 		"@types/deep-extend": "^0.4.31",
 		"@types/node": "^10.5.2",
 		"@types/node-sass": "^3.10.32",
@@ -56,10 +56,10 @@
 		"request": "^2.87.0"
 	},
 	"devDependencies": {
-		"rollup": "^0.62.0",
 		"@wessberg/rollup-plugin-di": "^1.0.84",
 		"@wessberg/rollup-plugin-ts": "0.0.30",
-		"ava": "^0.25.0"
+		"ava": "^0.25.0",
+		"rollup": "^0.62.0"
 	},
 	"publishConfig": {
 		"access": "public"
