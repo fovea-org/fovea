@@ -20,6 +20,7 @@ export function bindHostListeners (host: IFoveaHost|ICustomAttribute): void {
 		.filterValues(constructor, ({condition}) => condition == null ? true : condition)
 		.map(({passive, method, once, eventName, on}) => listen({
 				on: on != null ? <EventTarget> parseTarget(host, on) : getHostElementForHost(host),
+				rawOn: on,
 				host,
 				passive,
 				once,

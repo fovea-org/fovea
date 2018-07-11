@@ -255,7 +255,7 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	protected onListenerHandlerShouldUpdate (listener: ITemplateListener, newHandler: (e: Event, name: string) => EvaluateExpressionChainResult): IListenResult {
 		// Check if it includes at least one expression
 		const containsExpression = listener.handler.some(part => isExpression(part));
-		return listen({on: this.lastNode, host: this.host, once: false, handler: containsExpression ? newHandler : (<Json>newHandler)(), name: listener.name});
+		return listen({on: this.lastNode, rawOn: this.lastNode, host: this.host, once: false, handler: containsExpression ? newHandler : (<Json>newHandler)(), name: listener.name});
 	} /*# END IF hasTemplateListeners */
 
 	/*# IF hasTemplateCustomAttributes */
