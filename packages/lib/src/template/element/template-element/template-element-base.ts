@@ -89,9 +89,9 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	/**
 	 * Adds an attribute to the Template
 	 * @param {string} key
-	 * @param {ExpressionChain} value
+	 * @param {ExpressionChain|IExpressionChainDict} value
 	 */
-	public addAttribute (key: string, value?: ExpressionChain): void {
+	public addAttribute (key: string, value?: ExpressionChain|IExpressionChainDict): void {
 		this.attributes.push({key, value});
 	}
 
@@ -172,7 +172,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	private copyProperty ({key, value}: ITemplateProperty): ITemplateProperty {
 		return {
 			key,
-			value: value == null ? undefined : [...value]
+			value: value == null ? undefined: Array.isArray(value) ? [...value] : Object.assign({}, ...Object.entries(value).map(([propertyName, chain]) => ({[propertyName]: chain == null ? undefined : [...chain]})))
 		};
 	} /*# END IF hasTemplateAttributes */
 

@@ -29,7 +29,7 @@ test("generate () => returns the compiled source code for a module", async t => 
 	t.true(true);
 });
 
-test.only("generate () => Will generate key-value pairs for expressions provided to custom attributes", async t => {
+test("generate () => Will generate key-value pairs for expressions provided to custom attributes", async t => {
 	const {instructions} = foveaDOM.generate({
 		// language=HTML
 		template: readFileSync(join(process.cwd(), "test/fovea-dom/template.html")).toString()

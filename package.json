@@ -40,7 +40,6 @@
 		"lerna": "lerna"
 	},
 	"devDependencies": {
-		"@textlint/markdown-to-ast": "^6.0.8",
 		"@wessberg/rollup-plugin-di": "^1.0.84",
 		"@wessberg/rollup-plugin-ts": "0.0.30",
 		"@wessberg/scaffold": "0.0.6",

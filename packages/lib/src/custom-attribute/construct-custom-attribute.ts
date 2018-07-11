@@ -1,6 +1,7 @@
 import {customAttributes} from "./custom-attributes";
 import {ICustomAttribute, Json} from "@fovea/common";
 import {onConnected, onDisconnected} from "../dom-mutation/dom-mutation-observer/dom-mutation-observer";
+import {IDOMConnectionObserverResult} from "../dom-mutation/dom-mutation-observer/i-dom-connection-observer-result";
 
 /*# IF hasTemplateCustomAttributes */
 
@@ -25,24 +26,29 @@ export function constructCustomAttribute (hostElement: Element, name: string): {
 	customAttribute.___hostElement = hostElement;
 
 	// Subscribe to the event that the host element is attached to the DOM and invoke the 'connectedCallback' if it provided
-	const connectionObserver = onConnected(hostElement, () => {
+	let connectionObserver: IDOMConnectionObserverResult|null = onConnected(hostElement, () => {
 		if (customAttribute.connectedCallback != null) {
 			customAttribute.connectedCallback();
 		}
 	});
 
 	// Subscribe to the event that the host element is detached from the DOM and invoke the 'disconnectedCallback' if it provided
-	const disconnectionObserver = onDisconnected(hostElement, () => {
+	let disconnectionObserver: IDOMConnectionObserverResult|null = onDisconnected(hostElement, () => {
 		if (customAttribute.disconnectedCallback != null) {
 			customAttribute.disconnectedCallback();
 		}
 	});
 	return {
 		customAttribute, dispose: () => {
-			connectionObserver.unobserve();
-			disconnectionObserver.unobserve();
-			(<Json>connectionObserver) = null;
-			(<Json>disconnectionObserver) = null;
+			if (connectionObserver != null) {
+				connectionObserver.unobserve();
+				connectionObserver = null;
+			}
+
+			if (disconnectionObserver != null) {
+				disconnectionObserver.unobserve();
+				disconnectionObserver = null;
+			}
 		}
 	};
 } /*# END IF hasTemplateCustomAttributes */

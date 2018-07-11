@@ -7,6 +7,5 @@ export {RouterOutlet} from "./router/router-outlet/router-outlet";
 export {IRouterOutlet} from "./router/router-outlet/i-router-outlet";
 export {RouterPushOptions} from "./router/router-push-options";
 export {Router} from "./router/router";
-export {IRouter} from "./router/i-router";
 export {RouteInput} from "./route/route";
 export {RouteGuard} from "./route/route-guard";

@@ -7,7 +7,7 @@ import {FoveaDOMAstNode} from "../../fovea-dom-ast/i-fovea-dom-ast";
 
 export interface IDOMHandler {
 	handle (options: IDOMHandlerOptions): IDOMHandlerResult;
-	create (node: FoveaDOMAstNode): IDOMHandlerCreateResult;
+	create (node: FoveaDOMAstNode): IDOMHandlerCreateResult|undefined;
 	append (node: FoveaDOMAstNode|NodeUuid, toNode: FoveaDOMAstNode|NodeUuid|undefined): IDOMHandlerAppendResult;
 	resetUuid (): void;
 }

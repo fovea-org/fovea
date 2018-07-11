@@ -80,7 +80,7 @@ export class TemplateGenerator extends Generator implements ITemplateGenerator {
 								extension: this.config.defaultScriptExtension,
 								content: this.formatter.format(`
 								import {styleSrc, templateSrc, dependsOn} from "@fovea/core";
-								import {Router, IRouter, RouterOutlet} from "@fovea/router";
+								import {Router, RouterOutlet} from "@fovea/router";
 								import {routes} from "./${this.rootComponentSelector}-routes";
 
 								/**
@@ -90,10 +90,9 @@ export class TemplateGenerator extends Generator implements ITemplateGenerator {
 								@styleSrc(["../../style/${this.config.sharedStylesName}.${this.config.defaultCssExtension}", "./${this.rootComponentSelector}.${this.config.defaultCssExtension}"])
 								@dependsOn(RouterOutlet)
 								export class ${this.rootComponentClassName} extends HTMLElement {
-									private router: IRouter;
 
 									connectedCallback () {
-										this.router = new Router({ root: this, routes });
+										Router.initialize({ root: this, routes });
 									}
 								}
 								`, {...this.config.formatOptions, parser: "typescript"})

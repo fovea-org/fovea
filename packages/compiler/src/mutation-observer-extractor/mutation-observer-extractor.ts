@@ -61,33 +61,33 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 			const decoratorName = added ? this.onChildrenAddedDecoratorNameRegex : this.onChildrenRemovedDecoratorNameRegex;
 
 			// Take the decorator
-			const decorator = this.codeAnalyzer.decoratorService.getDecoratorWithExpression(decoratorName, method);
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(decoratorName, method);
 
-			// If, for some reason, the decorator couldn't be matched or it if isn't a CallExpression, return
-			if (decorator == null) return false;
+			const decoratorResults = decorators.map(decorator => {
+				// The contents will either be empty if @[onChildrenAdded|onChildrenRemoved]() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
+				if (!isCallExpression(decorator.expression)) {
 
-			// The contents will either be empty if @[onChildrenAdded|onChildrenRemoved]() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
-			if (!isCallExpression(decorator.expression)) {
+					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(method), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
+					return false;
+				}
 
-				this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(method), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-				return false;
-			}
+				// The first - optional - argument will be a configuration for the mutation observer
+				const argumentContents = decorator.expression.arguments.length < 1 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
-			// The first - optional - argument will be a configuration for the mutation observer
-			const argumentContents = decorator.expression.arguments.length < 1 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
+				// If we're on a dry run, return true before mutating the SourceFile
+				if (compilerOptions.dryRun) return true;
 
-			// If we're on a dry run, return true before mutating the SourceFile
-			if (compilerOptions.dryRun) return true;
+				// Create the CallExpression
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("registerMutationObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`,
+					insertPlacement
+				);
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerMutationObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`,
-				insertPlacement
-			);
-
-			// Remove the @onChildrenAdded or @onChildrenRemoved decorator from it
-			context.container.remove(decorator.pos, decorator.end);
-			return true;
+				// Remove the @onChildrenAdded or @onChildrenRemoved decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+				return true;
+			});
+			return decoratorResults.some(result => result);
 		});
 		// Set 'hasMutationObservers' to true if there were any results and any of them were 'true'
 		this.stats.setHasMutationObservers(context.container.file, results.some(result => result));

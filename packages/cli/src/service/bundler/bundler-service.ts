@@ -24,7 +24,7 @@ export class BundlerService implements IBundlerService {
 	 */
 	public generate (options: IBundlerServiceOptions): IObserver {
 		let rollupObserver: IObserver|null = null;
-		const {outputPaths, bundleName, hash, paths, globals, format, banner, watch, observer, resource, config, ...optionsRest} = options;
+		const {outputPaths, bundleName, sourcemap, hash, paths, globals, format, banner, watch, observer, resource, config, ...optionsRest} = options;
 		const dir = outputPaths.directory.absolute;
 
 		(async () => {
@@ -37,7 +37,7 @@ export class BundlerService implements IBundlerService {
 					dir,
 					format,
 					banner,
-					sourcemap: this.config.useSourcemaps,
+					sourcemap,
 					entryFileNames: `[name].${hash}.${bundleName}.${this.config.defaultDestinationScriptExtension}`,
 					chunkFileNames: `chunk-[hash].${hash}.${bundleName}.${this.config.defaultDestinationScriptExtension}`,
 					globals

@@ -11,7 +11,7 @@ By shifting computations to compile-time, rather than run-time, Fovea enables yo
 
 And, because components compiled with Fovea are just Web Components, they work in any framework you may choose - or with no framework at all.
 
-Fovea also makes it super easy to build powerful Progressive Web Apps with the [`@fovea/cli`](https://github.com/fovea-org/fovea/tree/v1.0.96/packages/cli).
+Fovea also makes it super easy to build powerful Progressive Web Apps with the [`@fovea/cli`](https://github.com/fovea-org/fovea/blob/master/packages/cli/README.md).
 
 There's so much we want to say, but let's take it bit by bit:
 

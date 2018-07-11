@@ -19,8 +19,7 @@ export class DOMUtil implements IDOMUtil {
 			appendInstructions: [],
 			addListenerInstructions: [],
 			addPropertyInstructions: [],
-			addRefInstructions: [],
-			rootIdentifiers: []
+			addRefInstructions: []
 		};
 	}
 
@@ -68,7 +67,7 @@ export class DOMUtil implements IDOMUtil {
 			addListenerInstructions: [...a.addListenerInstructions, ...(b.addListenerInstructions == null ? [] : b.addListenerInstructions)],
 			addPropertyInstructions: [...a.addPropertyInstructions, ...(b.addPropertyInstructions == null ? [] : b.addPropertyInstructions)],
 			addRefInstructions: [...a.addRefInstructions, ...(b.addRefInstructions == null ? [] : b.addRefInstructions)],
-			rootIdentifiers: [...a.rootIdentifiers, ...(b.rootIdentifiers == null ? [] : b.rootIdentifiers)]
+			rootIdentifiers: a.rootIdentifiers == null && b.rootIdentifiers == null ? undefined : [...(a.rootIdentifiers == null ? [] : a.rootIdentifiers), ...(b.rootIdentifiers == null ? [] : b.rootIdentifiers)]
 		};
 	}
 

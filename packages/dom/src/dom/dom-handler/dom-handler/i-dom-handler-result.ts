@@ -5,5 +5,5 @@ import {NodeUuid} from "../../node-uuid/node-uuid";
 export interface IDOMHandlerResult {
 	createInstructions: IDOMHandlerCreateResult[];
 	appendInstructions: IDOMHandlerAppendResult[];
-	rootIdentifiers: NodeUuid[];
+	rootIdentifiers?: NodeUuid[];
 }

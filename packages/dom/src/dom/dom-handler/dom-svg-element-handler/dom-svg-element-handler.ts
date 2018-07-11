@@ -11,9 +11,9 @@ export class DOMSVGElementHandler extends DOMElementHandler implements IDOMSVGEl
 	/**
 	 * Generates an instruction to create a new SVGElement of the given name
 	 * @param {IFoveaDOMAstSvgElement} element
-	 * @returns {IDOMHandlerCreateResult}
+	 * @returns {IDOMHandlerCreateResult?}
 	 */
-	public create (element: IFoveaDOMAstSvgElement): IDOMHandlerCreateResult {
+	public create (element: IFoveaDOMAstSvgElement): IDOMHandlerCreateResult|undefined {
 		return this.createBase(element, {
 			createConditionalElementName: "createConditionalElementNS",
 			createElementName: "createElementNS",

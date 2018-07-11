@@ -6,7 +6,6 @@ import {IState, IStateInput} from "../state/i-state";
 import {Path} from "path-parser";
 import {IRouteMatch} from "../route/i-route-match";
 import {ensureLeadingButNoTrailingSlash} from "../util/path-util";
-import {IRouter} from "./i-router";
 import {IRouterOutlet, RouterViewNavigationAction} from "./router-outlet/i-router-outlet";
 import {IRouterOptions} from "./i-router-options";
 import {IRouterTarget} from "../route/i-router-target";
@@ -17,93 +16,87 @@ import {IDeepResolveResolveAliasValueMapper} from "./i-deep-resolve-result";
 import {RouteGuard} from "../route/route-guard";
 
 /**
- * This is a router
+ * This is the Router that handles all navigation
  */
-export class Router implements IRouter {
+export class Router {
 	/**
-	 * The last constructed Router instance
-	 * @param {Router|null}
+	 * Holds true if Router.initialize() has been invoked
+	 * @type {boolean}
 	 */
-	public static lastInstance: Router|null = null;
+	public static initialized: boolean = false;
 
 	/**
 	 * The user-provided routes
 	 * @type {IStandardRouteInput[]}
 	 */
-	private readonly routes: Route[] = [];
+	private static readonly routes: Route[] = [];
 
 	/**
 	 * A reference to the session history to use
 	 * @type {SessionHistory}
 	 */
-	private readonly sessionHistory: ISessionHistory = new SessionHistory({});
+	private static readonly sessionHistory: ISessionHistory = new SessionHistory({});
 
 	/**
 	 * A subscriber for navigation to the initial state
 	 * @type {IStateObserver}
 	 */
-	private readonly initialStateSubscriber: IStateObserver = this.sessionHistory.onInitialState(this.onInitialState.bind(this));
+	private static readonly initialStateSubscriber: IStateObserver = Router.sessionHistory.onInitialState(Router.onInitialState.bind(Router));
 
 	/**
 	 * A subscriber for navigation to a past state
 	 * @type {IStateObserver}
 	 */
-	private readonly pastStateSubscriber: IStateObserver = this.sessionHistory.onPastState(this.onPastState.bind(this));
+	private static readonly pastStateSubscriber: IStateObserver = Router.sessionHistory.onPastState(Router.onPastState.bind(Router));
 
 	/**
 	 * A subscriber for navigation to a future state
 	 * @type {IStateObserver}
 	 */
-	private readonly futureStateSubscriber: IStateObserver = this.sessionHistory.onFutureState(this.onFutureState.bind(this));
+	private static readonly futureStateSubscriber: IStateObserver = Router.sessionHistory.onFutureState(Router.onFutureState.bind(Router));
 
 	/**
 	 * A map between IRoutes and IRouteInstances
 	 * @type {Map<string, IRouterTarget>}
 	 */
-	private readonly pathToInstantiatedRouteMap: Map<string, IInstantiatedRoute> = new Map();
+	private static readonly pathToInstantiatedRouteMap: Map<string, IInstantiatedRoute> = new Map();
 
 	/**
 	 * The Set of paths that is currently instantiated
 	 * @type {Set<string>}
 	 */
-	private readonly instantiatedPaths: Set<string> = new Set();
+	private static readonly instantiatedPaths: Set<string> = new Set();
 
 	/**
 	 * The root HTMLElement in which to look for a RouterOutlet
 	 * @type {HTMLElement}
 	 */
-	private readonly root: HTMLElement;
+	private static root: HTMLElement;
 
 	/**
 	 * The guards that will be checked for every state change, no matter the route
 	 * @type {RouteGuard[]?}
 	 */
-	private readonly globalGuards: RouteGuard[]|undefined;
+	private static globalGuards: RouteGuard[]|undefined;
 
 	/**
 	 * The paths that are currently being matched for routes
 	 * @type {Set<string>|null>}
 	 */
-	private currentPaths: Set<string>|null = null;
+	private static currentPaths: Set<string>|null = null;
 
 	/**
 	 * A cache for the paths that fits names
 	 * @type {Map<string, string>}
 	 */
-	private readonly nameToPathMap: Map<string, string> = new Map();
+	private static readonly nameToPathMap: Map<string, string> = new Map();
 
-	constructor (options: IRouterOptions) {
-		this.root = options.root;
-		this.globalGuards = options.guards;
-		this.addRoutes(options.routes);
-		this.initialize();
-		Router.lastInstance = this;
-	}
+	private constructor () {}
 
 	/**
-	 * Gets the length of the session history
+	 * Gets the size of the session history
 	 */
-	public get length (): number {
+	public static get size (): number {
 		return this.sessionHistory.length;
 	}
 
@@ -111,14 +104,14 @@ export class Router implements IRouter {
 	 * Adds all of the given routes
 	 * @param {RouteInput[]} routes
 	 */
-	public addRoutes (routes: RouteInput[]): void {
+	public static addRoutes (routes: RouteInput[]): void {
 		this.routes.push(...this.convertRouteInputsToRoutes(routes));
 	}
 
 	/**
 	 * Invoked when the Router is disposed
 	 */
-	public dispose (): void {
+	public static dispose (): void {
 		this.initialStateSubscriber.unobserve();
 		this.pastStateSubscriber.unobserve();
 		this.futureStateSubscriber.unobserve();
@@ -128,7 +121,7 @@ export class Router implements IRouter {
 	/**
 	 * Pops the current state
 	 */
-	public pop (): void {
+	public static pop (): void {
 		this.sessionHistory.pop();
 	}
 
@@ -137,7 +130,7 @@ export class Router implements IRouter {
 	 * @param {RouterPushOptions} options
 	 * @returns {Promise<void>}
 	 */
-	public async push (options: RouterPushOptions): Promise<boolean> {
+	public static async push (options: RouterPushOptions): Promise<boolean> {
 		const {route, stateInput} = this.parsePushOptions(options);
 
 		// Check if any route blocks this change and return false if that is the case
@@ -156,7 +149,7 @@ export class Router implements IRouter {
 	 * @param {RouterPushOptions} options
 	 * @returns {Promise<void>}
 	 */
-	public async replace (options: RouterPushOptions): Promise<boolean> {
+	public static async replace (options: RouterPushOptions): Promise<boolean> {
 		const {route, stateInput} = this.parsePushOptions(options);
 
 		// Check if any route blocks this change and return false if that is the case
@@ -174,7 +167,7 @@ export class Router implements IRouter {
 	 * Takes the given amount of steps forward or backward in the history stack
 	 * @param {number} n
 	 */
-	public go (n: number): void {
+	public static go (n: number): void {
 		this.sessionHistory.go(n);
 	}
 
@@ -184,7 +177,7 @@ export class Router implements IRouter {
 	 * @param {IStateInput} stateInput
 	 * @returns {Promise<boolean|RouterPushOptions>}
 	 */
-	private async checkGuards (route: Route, stateInput: IStateInput): Promise<boolean|RouterPushOptions> {
+	private static async checkGuards (route: Route, stateInput: IStateInput): Promise<boolean|RouterPushOptions> {
 		const parentChain = this.getParentToChildArrayFromRoute(route);
 
 		// Walk through each route from the parent and down
@@ -216,8 +209,14 @@ export class Router implements IRouter {
 
 	/**
 	 * Initializes the router by adding the initial state
+	 * @param {IRouterOptions} options
 	 */
-	private async initialize (): Promise<void> {
+	public static async initialize (options: IRouterOptions): Promise<void> {
+		this.initialized = true;
+		this.root = options.root;
+		this.globalGuards = options.guards;
+		this.addRoutes(options.routes);
+
 		const url = new URL(location.toString());
 		const baseOptions = {
 			path: url.pathname,
@@ -242,7 +241,7 @@ export class Router implements IRouter {
 	 * @param {string} path
 	 * @param {IParams} params
 	 */
-	private getPathWithParams (path: string, params: IParams): string {
+	private static getPathWithParams (path: string, params: IParams): string {
 		Object.entries(params).forEach(([paramName, paramValue]) => {
 			path = path.replace(new RegExp(`:${paramName}`, "g"), String(paramValue));
 		});
@@ -254,7 +253,7 @@ export class Router implements IRouter {
 	 * @param {RouterPushOptions} options
 	 * @returns {object}
 	 */
-	private parsePushOptions (options: RouterPushOptions): { stateInput: IStateInput; route: IStandardRoute|IAliasRoute } {
+	private static parsePushOptions (options: RouterPushOptions): { stateInput: IStateInput; route: IStandardRoute|IAliasRoute } {
 
 		const matchingRoute = "path" in options ? this.deepResolveRoute("path", options.path) : this.deepResolveRoute("name", options.name, options.params);
 		if (matchingRoute == null) throw new ReferenceError(`No route had a ${"path" in options ? "path" : "name"} that matched the given one: '${"path" in options ? options.path : options.name}'`);
@@ -296,7 +295,7 @@ export class Router implements IRouter {
 	 * @param {string} accumulatedPath,
 	 * @param {IStandardRoute} [parent]
 	 */
-	private convertRouteInputsToRoutes (routeInputs: RouteInput[], accumulatedPath: string = "", parent?: IStandardRoute): Route[] {
+	private static convertRouteInputsToRoutes (routeInputs: RouteInput[], accumulatedPath: string = "", parent?: IStandardRoute): Route[] {
 		return routeInputs.map(routeInput => {
 
 			const newPath = `${ensureLeadingButNoTrailingSlash(accumulatedPath)}${ensureLeadingButNoTrailingSlash(routeInput.path)}`;
@@ -328,7 +327,7 @@ export class Router implements IRouter {
 	 * @param {IState} state
 	 * @returns {IRouteMatch|null}
 	 */
-	private findMatchingRouteForState (state: IState): IRouteMatch|null {
+	private static findMatchingRouteForState (state: IState): IRouteMatch|null {
 		for (const route of this.routes) {
 			const matchedRoute = this.getTestMatchPathOnRoute(route, state, state.path);
 			if (matchedRoute != null) {
@@ -343,7 +342,7 @@ export class Router implements IRouter {
 	 * @param {Route} route
 	 * @returns {boolean}
 	 */
-	private isRedirectRoute (route: Route): route is IRedirectRoute {
+	private static isRedirectRoute (route: Route): route is IRedirectRoute {
 		return "redirect" in route;
 	}
 
@@ -352,7 +351,7 @@ export class Router implements IRouter {
 	 * @param {Route} route
 	 * @returns {boolean}
 	 */
-	private isAliasRoute (route: Route): route is IAliasRoute {
+	private static isAliasRoute (route: Route): route is IAliasRoute {
 		return "alias" in route;
 	}
 
@@ -364,7 +363,7 @@ export class Router implements IRouter {
 	 * @param {boolean} [resolveAlias]
 	 * @returns {IStandardRoute|IAliasRoute|null}
 	 */
-	private deepResolveRoute<T extends keyof IDeepResolveResolveAliasValueMapper> (property: "name"|"path", propertyValue: string, params: IParams = {}, resolveAlias: T = <T>"false"): IDeepResolveResolveAliasValueMapper[T]|null {
+	private static deepResolveRoute<T extends keyof IDeepResolveResolveAliasValueMapper> (property: "name"|"path", propertyValue: string, params: IParams = {}, resolveAlias: T = <T>"false"): IDeepResolveResolveAliasValueMapper[T]|null {
 
 		const paramDicts: IParams[] = [params];
 
@@ -428,7 +427,7 @@ export class Router implements IRouter {
 	 * @param {string} path
 	 * @returns {IRouteMatch|null}
 	 */
-	private getTestMatchPathOnRoute (route: Route, state: IState, path: string): IRouteMatch|null {
+	private static getTestMatchPathOnRoute (route: Route, state: IState, path: string): IRouteMatch|null {
 
 		const testRoute = (routeToTest: Route): IRouteMatch|null => {
 			// Test if the combined raw path is matched on the path
@@ -488,7 +487,7 @@ export class Router implements IRouter {
 	 * Called when navigation happens to the initial state
 	 * @param state
 	 */
-	private async onInitialState (state: IState): Promise<void> {
+	private static async onInitialState (state: IState): Promise<void> {
 		await this.updateRouterView(state, "replace");
 
 	}
@@ -497,7 +496,7 @@ export class Router implements IRouter {
 	 * Called when navigation happens to a past state
 	 * @param state
 	 */
-	private async onPastState (state: IState): Promise<void> {
+	private static async onPastState (state: IState): Promise<void> {
 		await this.updateRouterView(state, "back");
 	}
 
@@ -505,7 +504,7 @@ export class Router implements IRouter {
 	 * Called when navigation happens to a future state
 	 * @param state
 	 */
-	private async onFutureState (state: IState): Promise<void> {
+	private static async onFutureState (state: IState): Promise<void> {
 		await this.updateRouterView(state, "forward");
 	}
 
@@ -513,7 +512,7 @@ export class Router implements IRouter {
 	 * Gets the IRouterOutlet for the given element
 	 * @param {IRouterOutlet} element
 	 */
-	private getRouterOutletForElement (element: HTMLElement): IRouterOutlet {
+	private static getRouterOutletForElement (element: HTMLElement): IRouterOutlet {
 		const queryRoot = element.shadowRoot != null ? element.shadowRoot : element;
 		const routerOutlet = <IRouterOutlet> queryRoot.querySelector("router-outlet");
 		if (routerOutlet == null) throw new ReferenceError(`${this.constructor.name} could not find a <router-outlet> element within the root of the element: '${element.nodeName.toLowerCase()}'`);
@@ -525,7 +524,7 @@ export class Router implements IRouter {
 	 * @param {Route} route
 	 * @param {string} instantiatedRouteIdentifier
 	 */
-	private getRouterOutletForRoute (route: Route, instantiatedRouteIdentifier: string): IRouterOutlet {
+	private static getRouterOutletForRoute (route: Route, instantiatedRouteIdentifier: string): IRouterOutlet {
 		// Get the IRouterOutlet that matches this route
 		let rootElement: HTMLElement|null = null;
 		// This route has no parent. It is a root route!
@@ -545,7 +544,7 @@ export class Router implements IRouter {
 	 * Returns true if the given RouteComponent is sync (e.g. not lazily evaluated)
 	 * @param {RouteComponent} ctor
 	 */
-	private routeComponentIsSync (ctor: RouteComponent): ctor is RouteInstanceConstructor {
+	private static routeComponentIsSync (ctor: RouteComponent): ctor is RouteInstanceConstructor {
 		if (typeof ctor === "object") return false;
 		return HTMLElement.prototype.isPrototypeOf(ctor.prototype);
 	}
@@ -554,7 +553,7 @@ export class Router implements IRouter {
 	 * Gets a new instance of a RouteComponent
 	 * @param {RouteComponent} ctor
 	 */
-	private async getNewRouteInstanceFromRouteComponent (ctor: RouteComponent): Promise<IRouterTarget> {
+	private static async getNewRouteInstanceFromRouteComponent (ctor: RouteComponent): Promise<IRouterTarget> {
 
 		if (this.routeComponentIsSync(ctor)) {
 			return new ctor();
@@ -574,7 +573,7 @@ export class Router implements IRouter {
 	 * @param {T} route
 	 * @returns {T[]}
 	 */
-	private getParentToChildArrayFromRoute<T extends Route> (route: T): T[] {
+	private static getParentToChildArrayFromRoute<T extends Route> (route: T): T[] {
 		const parentChain: T[] = [];
 
 		// Walk up the parent tree and instantiate all components from the matched route
@@ -591,7 +590,7 @@ export class Router implements IRouter {
 	 * @param state
 	 * @param navigationAction
 	 */
-	private async updateRouterView (state: IState, navigationAction: RouterViewNavigationAction): Promise<void> {
+	private static async updateRouterView (state: IState, navigationAction: RouterViewNavigationAction): Promise<void> {
 		const matchingRoute = this.findMatchingRouteForState(state);
 		if (matchingRoute == null) return;
 
@@ -660,7 +659,7 @@ export class Router implements IRouter {
 	/**
 	 * Clears all routes
 	 */
-	private clearRoutes (): void {
+	private static clearRoutes (): void {
 
 		for (const path of this.instantiatedPaths) {
 			this.instantiatedPaths.delete(path);

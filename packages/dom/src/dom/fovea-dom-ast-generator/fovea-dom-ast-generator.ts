@@ -327,11 +327,14 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 		// Loop through each part and divide it into the kind it is relevant to
 		rawAttributes.forEach(entry => {
 			const [key, value] = entry;
+
 			// We're having to do with a custom attribute
 			if (key.startsWith(CUSTOM_ATTRIBUTE_QUALIFIER)) {
 				// Take the key from immediately after the qualifier for the custom attribute
 				context.hasTemplateCustomAttributes = true;
-				customAttributes.push(this.mapRawEntryToFoveaDOMAttribute([key.slice(CUSTOM_ATTRIBUTE_QUALIFIER.length), value], context, true));
+				customAttributes.push(
+					this.mapRawEntryToFoveaDOMAttribute([key.slice(CUSTOM_ATTRIBUTE_QUALIFIER.length), value], context, true)
+				);
 			}
 
 			// We're having to do with a listener
@@ -350,7 +353,9 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 			// Otherwise, treat it as an attribute
 			else {
 				context.hasTemplateAttributes = true;
-				attributes.push(this.mapRawEntryToFoveaDOMAttribute(entry, context, false));
+				attributes.push(
+					this.mapRawEntryToFoveaDOMAttribute(entry, context, false)
+				);
 			}
 		});
 		return {
@@ -405,7 +410,15 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 	 * @returns {IFoveaDOMAstAttribute}
 	 */
 	private mapRawEntryToFoveaDOMAttribute (entry: [string, string], context: IContext, keyValueSeparated: boolean): IFoveaDOMAstAttribute {
-		const [name, value] = entry;
+		let [name, value] = entry;
+		// If the key ends with a +, it means that the value should be appended to whatever value is given already
+		const isAppend = name.endsWith("+");
+
+		if (isAppend) {
+			// Remove the ending "+" from the name
+			name = name.slice(0, -1);
+		}
+
 		let returnValue: RawExpressionChainBindable|IRawExpressionChainBindableDict|null = null;
 
 		// Return IExpressions or raw parts, depending on whether or not the splitted parts are expressions
@@ -415,7 +428,7 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 				: part
 			);
 
-		if (keyValueSeparated) {
+		if (keyValueSeparated || isAppend) {
 			// Parse the string for key-value pairs
 			const keyValueSeparatedValue = this.keyValueParser.parse(value);
 

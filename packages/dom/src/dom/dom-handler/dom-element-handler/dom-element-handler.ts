@@ -119,7 +119,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 */
 	public handle ({node}: IDOMElementHandlerOptions): IDOMElementHandlerResult {
 		// Generate a 'create' instruction.
-		const createInstructions = [this.create(node)];
+		const createInstruction = this.create(node);
 
 		// Generate an 'append' instruction if the node has a parent.
 		const appendInstructions = node.parentNode == null ? [] : [this.append(node, node.parentNode)];
@@ -137,13 +137,13 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		const addListenerInstructions = this.handleListeners(node);
 
 		// If the node has no parent, this is one of the root nodes of the template
-		const rootIdentifiers = node.parentNode == null ? createInstructions.map(instruction => instruction.identifier) : [];
+		const rootIdentifiers = createInstruction == null ? undefined : node.parentNode == null ? [createInstruction.identifier] : [];
 
 		return {
 			appendInstructions,
 			addListenerInstructions,
 			addCustomAttributeInstructions,
-			createInstructions,
+			createInstructions: createInstruction == null ? [] : [createInstruction],
 			rootIdentifiers,
 			addPropertyInstructions: handleAttributeInstructions,
 			addRefInstructions: addRefInstructions == null ? [] : [addRefInstructions]
@@ -220,12 +220,10 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	/**
 	 * Creates a new TemplateElement
 	 * @param {FoveaDOMAstElement} element
-	 * @param {LibHelperName} createConditionalElementName
-	 * @param {LibHelperName} createElementName
-	 * @param {LibHelperName} createMultiElementName
-	 * @returns {IDOMHandlerCreateResult}
+	 * @param {IDOMElementHandlerCreateBaseOptions} options
+	 * @returns {IDOMHandlerCreateResult?}
 	 */
-	protected createBase (element: FoveaDOMAstElement, {createConditionalElementName, createElementName, createMultiElementName}: IDOMElementHandlerCreateBaseOptions): IDOMHandlerCreateResult {
+	protected createBase (element: FoveaDOMAstElement, {createConditionalElementName, createElementName, createMultiElementName}: IDOMElementHandlerCreateBaseOptions): IDOMHandlerCreateResult|undefined {
 		const ifCustomAttribute = element.customAttributes.find(customAttribute => customAttribute.name === IF_CUSTOM_ATTRIBUTE_QUALIFIER);
 		const forEachCustomAttribute = element.customAttributes.find(customAttribute => customAttribute.name === FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER);
 

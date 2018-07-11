@@ -58,7 +58,7 @@ class AppComponent extends HTMLElement {
 	 * Instantiate the Router after the component has been attached to the DOM.
 	 */
 	connectedCallback () {
-		new Router({
+		Router.initialize({
 			// root can be any element that has a router-outlet element in its' local DOM.
 			root: this,
 			routes: [
@@ -339,7 +339,7 @@ an authentication check.
 Global guards are provided directly in the configuration provided to new `Router` instances:
 
 ```typescript
-new Router({
+Router.initialize({
 	// ...
 	guards: [
 		
@@ -359,7 +359,7 @@ Route Guards are guards that are related to specific routes. These will only be 
 For example:
 
 ```typescript
-new Router({
+Router.initialize({
 	// ...
 	routes: [
 		{

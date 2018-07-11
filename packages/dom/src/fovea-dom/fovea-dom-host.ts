@@ -1,9 +1,9 @@
-import {IFoveaDOMOptions} from "./i-fovea-dom-options";
 import {IFoveaDOMResult} from "./i-fovea-dom-result";
 import {IDOMTemplator} from "../dom/dom-templator/dom-templator/i-dom-templator";
 import {IDOMGenerator} from "../dom/dom-generator/dom-generator/i-dom-generator";
 import {IFoveaDOMHost} from "./i-fovea-dom-host";
 import {IContext} from "../util/context-util/i-context";
+import {IFoveaDOMOptions} from "./i-fovea-dom-options";
 
 /**
  * FoveaDOMHost generates DOM instructions based on the given template contents..
@@ -15,12 +15,12 @@ export class FoveaDOMHost implements IFoveaDOMHost {
 
 	/**
 	 * Generates DOM instructions based on the given code.
-	 * @param {string} code
-	 * @param {Set<string>} [skipTags=new Set()]
-	 * @param {boolean} [dryRun=false]
+	 * @param {IFoveaDOMOptions} options
 	 * @returns {Promise<IFoveaDOMResult>}
 	 */
-	public generate ({template, skipTags = new Set(), dryRun = false}: IFoveaDOMOptions): IFoveaDOMResult {
+	public generate (options: IFoveaDOMOptions): IFoveaDOMResult {
+		const {dryRun = false} = options;
+
 		// Define a new context
 		const context: IContext = {
 			dryRun,
@@ -34,6 +34,9 @@ export class FoveaDOMHost implements IFoveaDOMHost {
 			hasTemplateRefs: false,
 			hasTemplateCustomAttributes: false
 		};
+
+		// If a template is given, parse it and generate instructions
+		const {template, skipTags = new Set()} = options;
 		const {ast} = this.domTemplator.template({template, context});
 		return {
 			...this.domGenerator.generate({ast, context, skipTags}),

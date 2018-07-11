@@ -33,14 +33,26 @@ export class RouterLink implements IRouterLink {
 	 */
 	@prop public title: string;
 
-	constructor (private readonly hostElement: HTMLAnchorElement) {
+	constructor (private readonly hostElement: HTMLElement) {
 	}
 
 	/**
 	 * Gets a proper URL from the href of the anchor tag
 	 */
 	private get url (): URL {
-		return new URL(this.href);
+		const href = this.href;
+		// If the href only needs a protocol, add it to the href
+		if (href.startsWith(location.host)) {
+			return new URL(`${location.protocol}://${href}`);
+		}
+
+		else if (!href.startsWith("/")) {
+			return new URL(`${location.origin}/${href}`);
+		}
+
+		else {
+			return new URL(`${location.origin}${href}`);
+		}
 	}
 
 	/**
@@ -48,15 +60,27 @@ export class RouterLink implements IRouterLink {
 	 * @type {string}
 	 */
 	private get href (): string {
-		return this.hostElement.href;
-	}
+		let candidate: string|null = null;
 
-	/**
-	 * Gets the raw value of the 'href' attribute
-	 * @type {string}
-	 */
-	private get rawHref (): string {
-		return this.hostElement.getAttribute("href")!;
+		if (candidate == null) {
+			candidate = this.hostElement.getAttribute("href");
+		}
+
+		if (candidate == null) {
+			candidate = this.hostElement.getAttribute("data-href");
+		}
+
+		if (candidate == null && "href" in this.hostElement) {
+			candidate = (<HTMLAnchorElement> this.hostElement).href;
+		}
+
+		if (candidate == null) {
+			throw new ReferenceError(`An element with selector: ${this.hostElement.nodeName.toLowerCase()} is annotated with a *routerLink Custom Attribute, but it didn't provide a href!`);
+		}
+
+		else {
+			return candidate;
+		}
 	}
 
 	/**
@@ -70,18 +94,19 @@ export class RouterLink implements IRouterLink {
 		e.stopPropagation();
 
 		// Make sure that there is a Router
-		if (Router.lastInstance == null) {
-			throw new ReferenceError(`The element: '${this.hostElement.nodeName.toLowerCase()}', was annotated with a 'routerLink' Custom Attribute, but no Router was initialized!`);
+		if (!Router.initialized) {
+			throw new ReferenceError(`The element: '${this.hostElement.nodeName.toLowerCase()}', was annotated with a 'routerLink' Custom Attribute, but the Router wasn't initialized!`);
 		}
 
 		// Detect whether to replace or push the route depending on the truth value of the "replace" @prop
 		const routerMethod = this.replace ? "replace" : "push";
+		const href = this.href;
 
 		// Treat hrefs starting with a '/' as path links
-		if (this.rawHref.startsWith("/")) {
+		if (href.startsWith("/")) {
 			// Navigate to the path identified by the anchor tag
 			const {pathname, search} = this.url;
-			await Router.lastInstance[routerMethod]({
+			await Router[routerMethod]({
 				path: pathname,
 				query: search,
 				title: this.title
@@ -90,8 +115,8 @@ export class RouterLink implements IRouterLink {
 
 		// Otherwise, treat it as a name
 		else {
-			await Router.lastInstance[routerMethod]({
-				name: this.rawHref,
+			await Router[routerMethod]({
+				name: href,
 				params: this.params,
 				query: this.query,
 				title: this.title

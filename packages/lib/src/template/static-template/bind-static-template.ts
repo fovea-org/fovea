@@ -21,6 +21,8 @@ export function bindStaticTemplate (host: IFoveaHost|ICustomAttribute, root: Sha
 		if (nodes != null) {
 			nodes.forEach(templateNodes => {
 				UPGRADED_HOSTS.add(host, ...templateNodes.map(node => {
+
+					// Now, construct it!
 					const constructedNode = node.construct({host, owner: root, root, previousSibling});
 					previousSibling = constructedNode;
 					return constructedNode;

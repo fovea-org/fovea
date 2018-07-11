@@ -53,25 +53,24 @@ export class DependencyImporter implements IDependencyImporter {
 		const dependsOnIdentifiers: Set<string> = new Set();
 
 		// Take the '@dependsOn' decorator that the class may be annotated with
-		const dependsOnDecorator = this.codeAnalyzer.decoratorService.getDecoratorWithExpression(this.decoratorNameRegex, mark.classDeclaration);
-		if (dependsOnDecorator != null) {
-
+		const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, mark.classDeclaration);
+		decorators.forEach(decorator => {
 			// Assert that it is in fact invoked
-			if (!isCallExpression(dependsOnDecorator.expression)) {
-				this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_DEPENDS_ON_DECORATOR_USAGE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(dependsOnDecorator)});
+			if (!isCallExpression(decorator.expression)) {
+				this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_DEPENDS_ON_DECORATOR_USAGE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 				return;
 			}
 
 			// Take all the arguments provided to the '@dependsOn' decorator. These will be the components that the component explicitly depends on.
-			for (const identifier of dependsOnDecorator.expression.arguments.map(argument => this.codeAnalyzer.printer.print(argument))) {
+			for (const identifier of decorator.expression.arguments.map(argument => this.codeAnalyzer.printer.print(argument))) {
 				dependsOnIdentifiers.add(identifier);
 			}
 
 			if (!compilerOptions.dryRun) {
 				// Remove the @dependsOn decorator from it
-				context.container.remove(dependsOnDecorator.pos, dependsOnDecorator.end);
+				context.container.remove(decorator.pos, decorator.end);
 			}
-		}
+		});
 
 		// Take all of the dependencies and add them to the Set of identifiers that the component depends on
 		dependencies

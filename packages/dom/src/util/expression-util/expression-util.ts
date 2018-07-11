@@ -39,7 +39,8 @@ export class ExpressionUtil implements IExpressionUtil {
 		if (inner.length < 1) return inner;
 
 		// If the expression is wrapped in braces, treat it as a Literal expression wrapped in parentheses
-		if (inner.startsWith("{") && inner.endsWith("}")) {
+		const trimmedInner = inner.trim();
+		if (trimmedInner.startsWith("{") && trimmedInner.endsWith("}")) {
 			inner = `(${inner})`;
 		}
 

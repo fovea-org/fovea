@@ -9,7 +9,6 @@ export interface IBuildConfig {
 	staging: boolean;
 	testing: boolean;
 	debug: boolean;
-	useSourcemaps: boolean;
 	verbose: boolean;
 	srcFolderName: string;
 	defaultCssExtension: "scss"|"css";

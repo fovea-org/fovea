@@ -15,4 +15,8 @@ $foo: none;
 	background: #{${"green"}};
 }
 
+foo {
+	background: linear-gradient(${flow.color}, ${lighten(flow.color)});
+}
+
 ${this.lolz}

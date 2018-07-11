@@ -1,3 +1,4 @@
+export {IHostAttributeValues} from "./decorator/host-attributes";
 export {IEmitBaseOptions, IVisibilityObserverBaseOptions, IHostListenerBaseOptions, IMutationObserverBaseOptions} from "@fovea/common";
 export {onChange} from "./decorator/on-change";
 export {selector} from "./decorator/selector";
@@ -13,3 +14,4 @@ export {onChildrenAdded} from "./decorator/on-children-added";
 export {onChildrenRemoved} from "./decorator/on-children-removed";
 export {customAttribute} from "./decorator/custom-attribute";
 export {dependsOn} from "./decorator/depends-on";
+export {hostAttributes} from "./decorator/host-attributes";

@@ -84,7 +84,8 @@ export class DOMGenerator implements IDOMGenerator {
 	 * @param {NodeUuid[]} rootNodes
 	 * @returns {string}
 	 */
-	private generateReturnInstruction (rootNodes: NodeUuid[]): string {
+	private generateReturnInstruction (rootNodes?: NodeUuid[]): string {
+		if (rootNodes == null) return "";
 		return `\nreturn [${rootNodes.join(", ")}];`;
 	}
 

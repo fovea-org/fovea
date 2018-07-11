@@ -59,9 +59,9 @@ export abstract class DOMHandler implements IDOMHandler {
 	/**
 	 * Creates an instruction for a new Node, HTMLElement or SVGElement
 	 * @param {FoveaDOMAstNode} node
-	 * @returns {IDOMHandlerCreateResult}
+	 * @returns {IDOMHandlerCreateResult?}
 	 */
-	public abstract create (node: FoveaDOMAstNode): IDOMHandlerCreateResult;
+	public abstract create (node: FoveaDOMAstNode): IDOMHandlerCreateResult|undefined;
 
 	/**
 	 * Handles a Node.
@@ -163,9 +163,19 @@ export abstract class DOMHandler implements IDOMHandler {
 	 */
 	protected generateNodeUuid (node: FoveaDOMAstNode): string {
 		const nodeUuid = `_${DOMHandler.uuid++}`;
+		this.setNodeUuid(node, nodeUuid);
+		return nodeUuid;
+	}
+
+	/**
+	 * Sets the given NodeUuid
+	 * @param {FoveaDOMAstNode} node
+	 * @param {NodeUuid} nodeUuid
+	 * @returns {string}
+	 */
+	protected setNodeUuid (node: FoveaDOMAstNode, nodeUuid: NodeUuid): void {
 		DOMHandler.nodeToUuidMapper.set(node, nodeUuid);
 		DOMHandler.uuidToNodeMapper.set(nodeUuid, node);
-		return nodeUuid;
 	}
 
 	/**

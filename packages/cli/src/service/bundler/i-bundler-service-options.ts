@@ -13,5 +13,6 @@ export interface IBundlerServiceOptions extends IRollupServiceConsumer {
 	format: ModuleFormat;
 	banner?: string;
 	watch?: boolean;
+	sourcemap: boolean;
 	observer: ISubscriber<IBundlerServiceBundlingEndedData>;
 }

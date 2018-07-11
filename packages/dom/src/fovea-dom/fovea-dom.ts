@@ -1,8 +1,8 @@
 import {IFoveaDOM} from "./i-fovea-dom";
 import {DIContainer} from "@wessberg/di";
 import {IFoveaDOMResult} from "./i-fovea-dom-result";
-import {IFoveaDOMOptions} from "./i-fovea-dom-options";
 import {IFoveaDOMHost} from "./i-fovea-dom-host";
+import {IFoveaDOMOptions} from "./i-fovea-dom-options";
 
 /**
  * A FoveaDOM class meant for public consumption. This shadows the actual FoveaDOMHost class to ensure

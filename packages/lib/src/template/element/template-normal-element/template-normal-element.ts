@@ -11,12 +11,7 @@ export class TemplateNormalElement extends TemplateElementBase implements ITempl
 
 	/**
 	 * Constructs a new element
-	 * @param {ITemplateConstructOptions} base
-	 * @param {ITemplateVariables} templateVariables
-	 * @param {IFoveaHost} host
-	 * @param {Node} owner
-	 * @param {ShadowRoot} root
-	 * @param {ITemplateBase|null} previousSibling
+	 * @param {ITemplateConstructOptions} options
 	 * @returns {ITemplateNormalElementResult}
 	 */
 	public construct ({base, templateVariables, host, owner, root, previousSibling}: ITemplateConstructOptions): ITemplateNormalElementResult {

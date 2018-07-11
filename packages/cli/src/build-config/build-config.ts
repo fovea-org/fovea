@@ -15,9 +15,6 @@ export const buildConfig: IBuildConfig = {
 	get production () {
 		return buildEnvironment.NODE_ENV != null && buildEnvironment.NODE_ENV.toLowerCase() === "production";
 	},
-	get useSourcemaps () {
-		return this.development;
-	},
 	testing: Boolean(buildEnvironment.TESTING),
 	debug: Boolean(buildEnvironment.DEBUG),
 	verbose: Boolean(buildEnvironment.VERBOSE),

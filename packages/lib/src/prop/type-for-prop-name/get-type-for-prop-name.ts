@@ -23,9 +23,18 @@ export function getTypeForPropName (hostCtor: ICustomAttributeConstructor|IFovea
 
 /**
  * Returns true if the given type represents a boolean
- * @param {boolean} type
+ * @param {IType} type
  * @returns {boolean}
  */
 export function isBooleanType (type: IType): boolean {
 	return type.nonNullableTypes.includes("boolean") || type.nonNullableTypes.includes("true") || type.nonNullableTypes.includes("false");
+}
+
+/**
+ * Returns true if the given type represents an 'any' type
+ * @param {IType} type
+ * @returns {boolean}
+ */
+export function isAnyType (type: IType): boolean {
+	return type.nonNullableTypes.includes("any");
 }

@@ -1,8 +1,8 @@
-import postcss, {AtRule, Comment, Declaration, Node, Root, Rule, Transformer, decl, comment} from "postcss";
-import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END} from "@fovea/common";
+import postcss, {AtRule, Comment, comment, decl, Declaration, Node, Root, Rule, Transformer} from "postcss";
 import {IPostCSSFoveaScssCleanupPluginOptions} from "./i-postcss-fovea-scss-cleanup-plugin-options";
 import {IPostCSSFoveaScssCleanupPluginContext} from "./i-postcss-fovea-scss-cleanup-plugin-context";
 import {SCSS_EXPRESSION_PREFIX, SCSS_EXPRESSION_SUFFIX, SCSS_REMOVE_ME_DECLARATION, scssDeclarationValueExpressionPrefix, scssDeclarationValueExpressionSuffix} from "../postcss-fovea-scss-prepare-plugin/postcss-fovea-scss-prepare-plugin";
+import {EXPRESSION_QUALIFIER_END, EXPRESSION_QUALIFIER_START} from "../../../../common/src/expression/expression-qualifier/expression-qualifier";
 
 /**
  * The name of the PostCSS plugin
@@ -171,23 +171,25 @@ function nodeContainsPreparedExpression (node: Node): boolean {
  * @returns {string}
  */
 function revertExpression (str: string): string {
-	return str
-		.replace(new RegExp(SCSS_REMOVE_ME_DECLARATION, "g"), "")
-		.replace(new RegExp(`${escapeRegexInitString(scssDeclarationValueExpressionPrefix)}(.*)${escapeRegexInitString(scssDeclarationValueExpressionSuffix)}`, "g"), (_, p1) => {
-			return `${EXPRESSION_QUALIFIER_DOLLAR_SIGN_START}${EXPRESSION_QUALIFIER_BRACKET_START}${p1}${EXPRESSION_QUALIFIER_END}`;
-		})
-		.replace(new RegExp(`(\\/\\*)*${SCSS_EXPRESSION_PREFIX}(.*)${SCSS_EXPRESSION_SUFFIX}(\\*\\/)*`, "g"), (_, _1, p2) => {
-			return `${EXPRESSION_QUALIFIER_DOLLAR_SIGN_START}${EXPRESSION_QUALIFIER_BRACKET_START}${p2}${EXPRESSION_QUALIFIER_END}`;
-		});
-}
 
-/**
- * Double-escapes characters provided to the RegExp constructor
- * @param {string} str
- * @returns {string}
- */
-function escapeRegexInitString (str: string): string {
-	return str
-		.replace(/\(/g, "\\(")
-		.replace(/\)/g, "\\)");
+	while (str.includes(SCSS_REMOVE_ME_DECLARATION)) {
+		str = str.replace(SCSS_REMOVE_ME_DECLARATION, "");
+	}
+
+	while (str.includes(scssDeclarationValueExpressionPrefix)) {
+		str = str.replace(scssDeclarationValueExpressionPrefix, EXPRESSION_QUALIFIER_START);
+	}
+	while (str.includes(scssDeclarationValueExpressionSuffix)) {
+		str = str.replace(scssDeclarationValueExpressionSuffix, EXPRESSION_QUALIFIER_END);
+	}
+
+	while (str.includes(SCSS_EXPRESSION_PREFIX)) {
+		str = str.replace(SCSS_EXPRESSION_PREFIX, EXPRESSION_QUALIFIER_START);
+	}
+
+	while (str.includes(SCSS_EXPRESSION_SUFFIX)) {
+		str = str.replace(SCSS_EXPRESSION_SUFFIX, EXPRESSION_QUALIFIER_END);
+	}
+
+	return str;
 }

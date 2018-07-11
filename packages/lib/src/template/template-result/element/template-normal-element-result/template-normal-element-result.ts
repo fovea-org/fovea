@@ -1,6 +1,6 @@
 import {ITemplateProperty} from "../../../template-property/i-template-property";
 import {ITemplateListener} from "../../../template-listener/i-template-listener";
-import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHostConstructor, isExpression, Json, Optional} from "@fovea/common";
+import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHostConstructor, isExpression, Json, Optional, ExpressionChain} from "@fovea/common";
 import {ITemplateNormalElementResultOptions} from "./i-template-normal-element-result-options";
 import {TemplateResultBase} from "../../template-result-base/template-result-base";
 import {observeExpressionChain} from "../../../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
@@ -19,7 +19,7 @@ import {constructCustomAttribute} from "../../../../custom-attribute/construct-c
 import {ITemplateResult} from "../../template-result/i-template-result";
 import {TemplateResult} from "../../template-result/template-result";
 import {IExpressionChainDict} from "../../../../observe/expression-chain/i-expression-chain-dict";
-import {getTypeForPropName, isBooleanType} from "../../../../prop/type-for-prop-name/get-type-for-prop-name";
+import {getTypeForPropName, isAnyType, isBooleanType} from "../../../../prop/type-for-prop-name/get-type-for-prop-name";
 import {getPropNameForAttributeName} from "../../../../prop/prop-name-to-attribute-name/get-prop-name-for-attribute-name/get-prop-name-for-attribute-name";
 import {constructType} from "../../../../prop/construct-type/construct-type";
 
@@ -129,30 +129,60 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 		/*# IF hasTemplateAttributes */
 
 		// Observe all attributes
-		this.attributeObservers = attributes.map(attribute => {
-			const type = getTypeForPropName(<IFoveaHostConstructor>this.lastNode.constructor, getPropNameForAttributeName(attribute.key));
-			return observeExpressionChain<string>({
-				coerceTo: type,
-				host,
-				// If no value is given, provide the empty string as value
-				expressions: attribute.value != null ? attribute.value : [""],
-				templateVariables,
-				onChange: newValue => this.onAttributeShouldUpdate(attribute, newValue, isBooleanType(type))
-			});
-		});
+		this.attributeObservers = [].concat.apply([], attributes.map(attribute => {
 
-		// Set all properties
-		this.propertyObservers = properties.map(property => {
-			const type = getTypeForPropName(<IFoveaHostConstructor>this.lastNode.constructor, property.key);
-			return observeExpressionChain({
-				coerceTo: type,
-				host,
-				// If no value is given, provide the empty string as value
-				expressions: property.value != null ? property.value : [""],
-				templateVariables,
-				onChange: newValue => this.onPropertyShouldUpdate(property, newValue)
-			});
-		}); /*# END IF hasTemplateAttributes */
+			const observe = (propertyName: string, expressionChain: ExpressionChain|undefined, append: boolean) => {
+				const type = propertyName === "style"
+					// If the property is a style attribute, the value will always be a string
+					? constructType("string")
+					: propertyName === "class"
+						// If the property is a class attribute, the value will always be boolean (to toggle the class on/off)
+						? constructType("boolean")
+						// Otherwise, attempt to take the type of whatever prop the attribute maps to (if any)
+						: getTypeForPropName(<IFoveaHostConstructor>this.lastNode.constructor, getPropNameForAttributeName(propertyName));
+
+				return observeExpressionChain<string|boolean>({
+					coerceTo: type,
+					host,
+					// If no value is given, provide the empty string as value
+					expressions: expressionChain != null ? expressionChain : [""],
+					templateVariables,
+					onChange: newValue => this.onAttributeShouldUpdate(attribute, newValue, isAnyType(type) && typeof newValue === "boolean" ? true : isBooleanType(type), !append ? undefined : propertyName)
+				});
+			};
+
+			if (attribute.value == null || Array.isArray(attribute.value)) {
+				return [observe(attribute.key, attribute.value, false)];
+			}
+
+			else {
+				return Object.entries(attribute.value).map(([propertyName, chain]) => observe(propertyName, chain, true));
+			}
+		}));
+
+		// Observe all properties
+		this.propertyObservers = [].concat.apply([], properties.map(property => {
+
+			const observe = (propertyName: string, expressionChain: ExpressionChain|undefined) => {
+				const type = getTypeForPropName(<IFoveaHostConstructor>this.lastNode.constructor, propertyName);
+				return observeExpressionChain<string>({
+					coerceTo: type,
+					host,
+					// If no value is given, provide the empty string as value
+					expressions: expressionChain != null ? expressionChain : [""],
+					templateVariables,
+					onChange: newValue => this.onPropertyShouldUpdate(property, newValue)
+				});
+			};
+
+			if (property.value == null || Array.isArray(property.value)) {
+				return [observe(property.key, property.value)];
+			}
+
+			else {
+				return Object.entries(property.value).map(([propertyName, chain]) => observe(propertyName, chain));
+			}
+		})); /*# END IF hasTemplateAttributes */
 
 		/*# IF hasTemplateListeners */
 
@@ -254,10 +284,11 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 * Invoked when an attribute should change
 	 * @param {ITemplateProperty} attribute
 	 * @param {Optional<string|boolean>} newValue
+	 * @param {string?} setForValueProperty
 	 * @param {boolean} isBoolean
 	 */
-	protected onAttributeShouldUpdate (attribute: ITemplateProperty, newValue: Optional<string|boolean>, isBoolean: boolean): void {
-		setAttribute(this.host, this.lastNode, attribute.key, newValue, isBoolean);
+	protected onAttributeShouldUpdate (attribute: ITemplateProperty, newValue: Optional<string|boolean>, isBoolean: boolean, setForValueProperty: string|undefined): void {
+		setAttribute(this.host, this.lastNode, attribute.key, newValue, isBoolean, setForValueProperty);
 	}
 
 	/**

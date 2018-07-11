@@ -122,7 +122,7 @@ function visitDeclaration (node: Declaration, {deferredWork}: IPostCSSFoveaScssP
 		// Convert all of the expressions within the selector
 		const splitted = splitByExpressions(node.value);
 		const converted = splitted
-			.map(part => containsExpression(part) ? `${scssDeclarationValueExpressionPrefix}#{"${takeInnerExpression(node.value)}"}${scssDeclarationValueExpressionSuffix}` : part)
+			.map(part => containsExpression(part) ? `${scssDeclarationValueExpressionPrefix}#{"${takeInnerExpression(part)}"}${scssDeclarationValueExpressionSuffix}` : part)
 			.join("");
 
 		deferredWork.add(() => node.replaceWith(decl({

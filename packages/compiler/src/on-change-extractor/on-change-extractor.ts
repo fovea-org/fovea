@@ -46,37 +46,37 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 		// For each method, generate a call to '__registerChangeObserver' and remove the '@onChange' decorator
 		const results = allMethods.map(onChangeMethod => {
 			// Take the decorator
-			const decorator = this.codeAnalyzer.decoratorService.getDecoratorWithExpression(this.decoratorNameRegex, onChangeMethod);
-			// If, for some reason, the decorator couldn't be matched or it if isn't a CallExpression, return
-			if (decorator == null) return false;
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, onChangeMethod);
+			const decoratorResults = decorators.map(decorator => {
+				// Make sure that it is provided with at least 1 argument
+				if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
+					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_ON_CHANGE_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(onChangeMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
+					return false;
+				}
 
-			// Make sure that it is provided with at least 1 argument
-			if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
-				this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_ON_CHANGE_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(onChangeMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-				return false;
-			}
+				// The first argument will be the prop name(s) to observe
+				const firstArgumentContents = this.codeAnalyzer.printer.print(decorator.expression.arguments[0]);
 
-			// The first argument will be the prop name(s) to observe
-			const firstArgumentContents = this.codeAnalyzer.printer.print(decorator.expression.arguments[0]);
+				// The second - optional - argument will be whether or not the observer should only be invoked when the host element is connected to the DOM
+				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
 
-			// The second - optional - argument will be whether or not the observer should only be invoked when the host element is connected to the DOM
-			const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
+				// The third - optional - argument will be whether or not all props must be initialized before invoking it
+				const thirdArgumentContents = decorator.expression.arguments.length < 3 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[2])}`;
 
-			// The third - optional - argument will be whether or not all props must be initialized before invoking it
-			const thirdArgumentContents = decorator.expression.arguments.length < 3 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[2])}`;
+				// If we're on a dry run, return true before mutating the SourceFile
+				if (compilerOptions.dryRun) return true;
 
-			// If we're on a dry run, return true before mutating the SourceFile
-			if (compilerOptions.dryRun) return true;
+				// Create the CallExpression
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents}${thirdArgumentContents});`,
+					insertPlacement
+				);
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents}${thirdArgumentContents});`,
-				insertPlacement
-			);
-
-			// Remove the @onChange decorator from it
-			context.container.remove(decorator.pos, decorator.end);
-			return true;
+				// Remove the @onChange decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+				return true;
+			});
+			return decoratorResults.some(result => result);
 		});
 		// Set 'hasChangeObservers' to true if there were any results and any of them were 'true'
 		this.stats.setHasChangeObservers(context.container.file, results.some(result => result));

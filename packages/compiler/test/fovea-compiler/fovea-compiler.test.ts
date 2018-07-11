@@ -4,6 +4,7 @@ import {FoveaCompiler} from "../../src/fovea-compiler/fovea-compiler";
 import {join} from "path";
 import {readFileSync} from "fs";
 import {FoveaCompilerCompileResult} from "../../src/fovea-compiler/i-fovea-compiler-compile-result";
+import {allIndexesOf} from "@wessberg/stringutil";
 
 interface IPrintOptions {
 	printCode: boolean;
@@ -170,7 +171,23 @@ test("Will detect precompiled components correctly when they are compiled to Typ
 
 test("Will correctly determine the type information for a prop of type: boolean", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-10.ts");
-	const result = await work(path, {printCode: true});
+	const result = await work(path, {printCode: false});
 
 	t.true(result.hasChanged);
+});
+
+test.skip("Will correctly register host attributes", async t => {
+	const path = join(process.cwd(), "test/demo/demo-component/demo-component-11.ts");
+	// @ts-ignore
+	const result = await work(path, {printCode: true});
+
+	t.fail("NOT IMPLEMENTED!");
+});
+
+test("Can handle multiple @listener() annotations for the same methods", async t => {
+	const path = join(process.cwd(), "test/demo/demo-component/demo-component-12.ts");
+	// @ts-ignore
+	const result = await work(path, {printCode: true});
+
+	t.true(result.hasChanged && allIndexesOf(result.code, /__registerHostListener/).length > 1);
 });

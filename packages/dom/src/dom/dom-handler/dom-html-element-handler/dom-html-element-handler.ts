@@ -11,9 +11,9 @@ export class DOMHTMLElementHandler extends DOMElementHandler implements IDOMHTML
 	/**
 	 * Generates an instruction to create a new HTMLElement of the given name
 	 * @param {FoveaDOMAstHTMLElement} element
-	 * @returns {IDOMHandlerCreateResult}
+	 * @returns {IDOMHandlerCreateResult|undefined}
 	 */
-	public create (element: FoveaDOMAstHTMLElement): IDOMHandlerCreateResult {
+	public create (element: FoveaDOMAstHTMLElement): IDOMHandlerCreateResult|undefined {
 		return this.createBase(element, {
 			createConditionalElementName: "createConditionalElement",
 			createElementName: "createElement",

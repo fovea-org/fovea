@@ -45,36 +45,36 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 
 		// For each method, generate a call to '__registerHostListener' and remove the '@hostListener' decorator
 		const results = allMethods.map(hostListenerMethod => {
-			// Take the decorator
-			const decorator = this.codeAnalyzer.decoratorService.getDecoratorWithExpression(this.decoratorNameRegex, hostListenerMethod);
-			// If, for some reason, the decorator couldn't be matched or it if isn't a CallExpression, return
-			if (decorator == null) return false;
+			// Take all decorators
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, hostListenerMethod);
+			const decoratorResults = decorators.map(decorator => {
+				// The emit contents will either be empty if @hostListener() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
+				if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
 
-			// The emit contents will either be empty if @hostListener() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
-			if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
+					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_HOST_LISTENER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(hostListenerMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
+					return false;
+				}
 
-				this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_HOST_LISTENER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(hostListenerMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-				return false;
-			}
+				// The first argument will be the event name(s) to listen for
+				const firstArgumentContents = this.codeAnalyzer.printer.print(decorator.expression.arguments[0]);
 
-			// The first argument will be the event name(s) to listen for
-			const firstArgumentContents = this.codeAnalyzer.printer.print(decorator.expression.arguments[0]);
+				// The second - optional - argument will be a configuration for the listener
+				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
 
-			// The second - optional - argument will be a configuration for the listener
-			const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
+				// If we're on a dry run, return true before mutating the SourceFile
+				if (compilerOptions.dryRun) return true;
 
-			// If we're on a dry run, return true before mutating the SourceFile
-			if (compilerOptions.dryRun) return true;
+				// Create the CallExpression
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("registerHostListener", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
+					insertPlacement
+				);
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerHostListener", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
-				insertPlacement
-			);
-
-			// Remove the @hostListener decorator from it
-			context.container.remove(decorator.pos, decorator.end);
-			return true;
+				// Remove the @hostListener decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+				return true;
+			});
+			return decoratorResults.some(result => result);
 		});
 		// Set 'hasHostListeners' to true if there were any results and any of them were 'true'
 		this.stats.setHasHostListeners(context.container.file, results.some(result => result));

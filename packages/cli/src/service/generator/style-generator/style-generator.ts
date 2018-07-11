@@ -152,6 +152,7 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 
 							body {
 								margin: 0;
+								background: var(--color-background);
 							}
 
 							`, {...this.config.formatOptions, parser: this.config.defaultCssExtension}

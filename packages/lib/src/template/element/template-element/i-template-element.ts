@@ -20,7 +20,7 @@ export interface ITemplateElement extends ITemplateBase {
 	addRef (ref: Ref): void;
 	appendChild (child: TemplateNode): void;
 	addCustomAttribute (name: string, value?: ExpressionChain|IExpressionChainDict): void;
-	addAttribute (key: string, value?: ExpressionChain): void;
+	addAttribute (key: string, value?: ExpressionChain|IExpressionChainDict): void;
 	setProperty (key: string, value?: ExpressionChain): void;
 	addListener (name: string, handler: ExpressionChain): void;
 	construct (options: ITemplateConstructOptions): TemplateElementResult;

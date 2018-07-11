@@ -44,30 +44,30 @@ export class EmitExtractor implements IEmitExtractor {
 		// For each prop, generate a call to '__registerEmitter' and remove the '@emit' decorator
 		const results = allProps.map(emitProperty => {
 			// Take the decorator
-			const decorator = this.codeAnalyzer.decoratorService.getDecoratorWithExpression(this.decoratorNameRegex, emitProperty);
-			// If, for some reason, the decorator couldn't be matched or it if isn't a CallExpression, return
-			if (decorator == null) return false;
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, emitProperty);
+			const decoratorResults = decorators.map(decorator => {
+				// If we're on a dry run, return true before performing the SourceFile mutations
+				if (compilerOptions.dryRun) return true;
 
-			// If we're on a dry run, return true before performing the SourceFile mutations
-			if (compilerOptions.dryRun) return true;
+				// The emit contents will either be empty if @emit() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
+				const emitContents = !isCallExpression(decorator.expression) || decorator.expression.arguments.length === 0 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
-			// The emit contents will either be empty if @emit() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
-			const emitContents = !isCallExpression(decorator.expression) || decorator.expression.arguments.length === 0 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
+				// Create the CallExpression
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`,
+					insertPlacement
+				);
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`,
-				insertPlacement
-			);
+				// Remove the @emit decorator from it
+				context.container.remove(decorator.pos, decorator.end);
 
-			// Remove the @emit decorator from it
-			context.container.remove(decorator.pos, decorator.end);
+				// Make sure that it has a @prop decorator
+				this.assertHasPropDecorator(emitProperty, context);
 
-			// Make sure that it has a @prop decorator
-			this.assertHasPropDecorator(emitProperty, context);
-
-			// Return true
-			return true;
+				// Return true
+				return true;
+			});
+			return decoratorResults.some(result => result);
 		});
 
 		// Set 'hasEventEmitters' to true if there were any results and any of them were 'true'

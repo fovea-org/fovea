@@ -371,7 +371,7 @@ export class BuildTask implements IBuildTask {
 						subscriber.onEnd(assets);
 					}
 
-					// If any exception happens while optimizing assets, invoke the onError hook
+						// If any exception happens while optimizing assets, invoke the onError hook
 					catch (ex) {
 						subscriber.onError({data: ex, fatal: true});
 					}
@@ -756,6 +756,7 @@ export class BuildTask implements IBuildTask {
 				outputPaths,
 				bundleName: output.tag,
 				hash,
+				sourcemap: !buildTaskOptions.production,
 				context: "window",
 				browserslist: output.browserslist,
 				additionalBabelPresets: buildTaskOptions.production ? [["minify", this.minifyOptions]] : [],
@@ -1095,6 +1096,7 @@ export class BuildTask implements IBuildTask {
 					[this.config.serviceWorkerName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.serviceWorker)
 				},
 				outputPaths,
+				sourcemap: !buildTaskOptions.production,
 				bundleName: `${this.config.serviceWorkerChunkPrefix}${output.tag}`,
 				hash,
 				format: moduleKind,
@@ -1102,6 +1104,14 @@ export class BuildTask implements IBuildTask {
 				banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
 				browserslist: output.browserslist,
 				additionalBabelPresets: buildTaskOptions.production ? [["minify", this.minifyOptions]] : [],
+				plugins: [
+					...(buildTaskOptions.production ? [
+						// Apply Brotli and Zlib compression
+						compressRollupPlugin({
+							compressor: this.compressor
+						})
+					] : [])
+				],
 				observer: {
 					onError: error => {
 						subscriber.onError(error);
