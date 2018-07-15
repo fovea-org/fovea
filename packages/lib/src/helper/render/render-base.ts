@@ -5,6 +5,7 @@ import {bindStaticCSS} from "../../css/static-css/bind-static-css";
 import {bindStaticTemplate} from "../../template/static-template/bind-static-template";
 import {bindMutationObservers} from "../../dom-mutation/bind-mutation-observers";
 import {bindPropsForHost} from "../../prop/props-for-host/bind-props-for-host/bind-props-for-host";
+import {bindHostAttributesForHost} from "../../host-attributes/bind-host-attributes-for-host/bind-host-attributes-for-host";
 
 /**
  * Runs all common render functionality for the provided host
@@ -23,4 +24,5 @@ export function renderBase (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|
 	/*# IF hasVisibilityObservers */ bindVisibilityObservers(host); /*# END IF hasVisibilityObservers */
 	/*# IF hasStaticCSS */ bindStaticCSS(host); /*# END IF hasStaticCSS */
 	/*# IF hasMutationObservers */ bindMutationObservers(host); /*# END IF hasMutationObservers */
+	/*# IF hasHostAttributes */ bindHostAttributesForHost(host); /*# END IF hasHostAttributes */
 }

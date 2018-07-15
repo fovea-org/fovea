@@ -16,7 +16,7 @@ const OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true};
  * @returns {boolean}
  */
 function testIsConnected (observer: IDOMConnectionMutationObserver): boolean {
-	return observer.root.contains(observer.node);
+	return observer.node.isConnected || observer.root.contains(observer.node);
 }
 
 /**

@@ -19,6 +19,7 @@ import {IDOMHandlerCreateResult} from "../dom-handler/i-dom-handler-create-resul
 import {IDOMElementHandlerCreateBaseOptions} from "./i-dom-element-handler-create-base-options";
 import {IRawExpressionChainBindableDict} from "../../../expression/i-raw-expression-chain-bindable-dict/i-raw-expression-chain-bindable-dict";
 import {camelCase, isInCamelCase, isInPascalCase, kebabCase} from "@wessberg/stringutil";
+import {IContext} from "../../../util/context-util/i-context";
 
 /**
  * An abstract class that handles Elements.
@@ -28,11 +29,11 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	/**
 	 * Adds an attribute to an element.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {string} name
-	 * @param {string} value
+	 * @param {IFoveaDOMAstAttribute} attribute
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute): string {
+	public addAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute, context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// If the key is in camelCase or PascalCase, update it to kebab-case.
@@ -40,17 +41,17 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
 		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
-		return this.format(`${this.useHelper(node, "addAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`);
+		return this.format(`${this.useHelper(node, "addAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
 	}
 
 	/**
 	 * Adds a Custom Attribute to an element.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {string} name
-	 * @param {string} value
+	 * @param {IFoveaDOMAstCustomAttribute} attribute
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute): string {
+	public addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// If the key is in camelCase or PascalCase, update it to kebab-case.
@@ -58,16 +59,17 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
 		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
-		return this.format(`${this.useHelper(node, "addCustomAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`);
+		return this.format(`${this.useHelper(node, "addCustomAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
 	}
 
 	/**
 	 * Adds all the provided attributes to the provided element
 	 * @param {NodeUuid | FoveaDOMAstElement} element
 	 * @param {IFoveaDOMAstAttribute[]} attributes
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addAttributes (element: NodeUuid|FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[]): string {
+	public addAttributes (element: NodeUuid|FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[], context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// Prepare the 'value' argument. Give it tuples of key-value pairs as REST arguments
@@ -77,17 +79,17 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 			return `[${this.quote(normalizedName)}${valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`}]`;
 
 		}).join(", ");
-		return this.format(`${this.useHelper(node, "addAttributes")}(${nodeUuid}, ${valueArgument})`);
+		return this.format(`${this.useHelper(node, "addAttributes")}(${nodeUuid}, ${valueArgument})`, context);
 	}
 
 	/**
 	 * Sets a property value directly on an element.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {string} name
-	 * @param {string} value
+	 * @param {IFoveaDOMAstAttribute} attribute
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addValue (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute): string {
+	public addValue (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute, context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// Prepare the 'value' argument. If it is null or the empty string, set the property value to 'true'. Otherwise, assign the literal value to the property.
@@ -95,21 +97,22 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 		// Make sure that the key is camelCased.
 		const propertyKey = camelCase(name);
-		return this.format(`${this.useHelper(node, "addProperty")}(${nodeUuid}, ${this.quote(propertyKey)}${valueArgument})`);
+		return this.format(`${this.useHelper(node, "addProperty")}(${nodeUuid}, ${this.quote(propertyKey)}${valueArgument})`, context);
 	}
 
 	/**
 	 * Adds all the provided properties to the element.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
 	 * @param {IFoveaDOMAstAttribute[]} properties
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addValues (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[]): string {
+	public addValues (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[], context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// Prepare the 'value' argument. Give it tuples of key-value pairs as REST arguments
 		const valueArgument = properties.map(property => `[${this.quote(property.name)}, ${valueIsEmpty(property.value) ? `[${this.quote("true")}]` : `${this.stringifyExpressionChain(node, property.value)}`}]`).join(", ");
-		return this.format(`${this.useHelper(node, "addProperties")}(${nodeUuid}, ${valueArgument})`);
+		return this.format(`${this.useHelper(node, "addProperties")}(${nodeUuid}, ${valueArgument})`, context);
 	}
 
 	/**
@@ -117,24 +120,24 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @param {FoveaDOMAstElement} node
 	 * @returns {IDOMElementHandlerResult}
 	 */
-	public handle ({node}: IDOMElementHandlerOptions): IDOMElementHandlerResult {
+	public handle ({node, context}: IDOMElementHandlerOptions): IDOMElementHandlerResult {
 		// Generate a 'create' instruction.
-		const createInstruction = this.create(node);
+		const createInstruction = this.create(node, context);
 
 		// Generate an 'append' instruction if the node has a parent.
-		const appendInstructions = node.parentNode == null ? [] : [this.append(node, node.parentNode)];
+		const appendInstructions = node.parentNode == null ? [] : [this.append(node, node.parentNode, context)];
 
 		// Add a ref for the node (if need be)
-		const addRefInstructions = this.addRef(node);
+		const addRefInstructions = this.addRef(node, context);
 
 		// Generate instructions for all the attributes of the element
-		const handleAttributeInstructions = this.handleAttributes(node);
+		const handleAttributeInstructions = this.handleAttributes(node, context);
 
 		// Generate instructions for all Custom Attributes of the element
-		const addCustomAttributeInstructions = this.handleCustomAttributes(node);
+		const addCustomAttributeInstructions = this.handleCustomAttributes(node, context);
 
 		// Generate instructions for all listeners on the element
-		const addListenerInstructions = this.handleListeners(node);
+		const addListenerInstructions = this.handleListeners(node, context);
 
 		// If the node has no parent, this is one of the root nodes of the template
 		const rootIdentifiers = createInstruction == null ? undefined : node.parentNode == null ? [createInstruction.identifier] : [];
@@ -153,16 +156,17 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	/**
 	 * Adds a ref to the provided child (if it is selectable. It is selectable if it has a '#' followed by some text).
 	 * @param {NodeUuid | FoveaDOMAstElement} child
+	 * @param {IContext} context
 	 * @returns {IDOMElementHandlerAddSelectorResult}
 	 */
-	public addRef (child: NodeUuid|FoveaDOMAstElement): IDOMElementHandlerAddSelectorResult|null {
+	public addRef (child: NodeUuid|FoveaDOMAstElement, context: IContext): IDOMElementHandlerAddSelectorResult|null {
 		const {node, nodeUuid} = this.getNodeDict(child);
 
 		// If the node has no ref, return null
 		if (node.ref == null) return null;
 
 		return {
-			instruction: this.format(`${this.useHelper(node, "addRef")}(${nodeUuid}, "${node.ref}")`),
+			instruction: this.format(`${this.useHelper(node, "addRef")}(${nodeUuid}, "${node.ref}")`, context),
 			ref: node.ref,
 			type: node.name.toLowerCase()
 		}
@@ -172,16 +176,16 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	/**
 	 * Adds a 'listener' instruction
 	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {string} name
-	 * @param {RawExpressionChainBindable} handler
+	 * @param {IFoveaDOMAstListener} listener
+	 * @param {IContext} context
 	 * @returns {IDOMElementHandlerAddListenerResult}
 	 */
-	public addListener (element: NodeUuid|FoveaDOMAstElement, {name, handler}: IFoveaDOMAstListener): IDOMElementHandlerAddListenerResult {
+	public addListener (element: NodeUuid|FoveaDOMAstElement, {name, handler}: IFoveaDOMAstListener, context: IContext): IDOMElementHandlerAddListenerResult {
 		const {nodeUuid, node} = this.getNodeDict(element);
 		this.contextUtil.addTemplateVariablesForNode(node, ["event"]);
 
 		return {
-			instruction: this.format(`${this.useHelper(node, "addListener")}(${nodeUuid}, ${this.quote(name)}, ${this.stringifyExpressionChain(node, handler)})`)
+			instruction: this.format(`${this.useHelper(node, "addListener")}(${nodeUuid}, ${this.quote(name)}, ${this.stringifyExpressionChain(node, handler)})`, context)
 		};
 	}
 
@@ -189,9 +193,10 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * Adds all the given 'listener' instructions
 	 * @param {NodeUuid | FoveaDOMAstElement} element
 	 * @param {IFoveaDOMAstListener} listeners
+	 * @param {IContext} context
 	 * @returns {IDOMElementHandlerAddListenerResult}
 	 */
-	public addListeners (element: NodeUuid|FoveaDOMAstElement, listeners: IFoveaDOMAstListener[]): IDOMElementHandlerAddListenersResult {
+	public addListeners (element: NodeUuid|FoveaDOMAstElement, listeners: IFoveaDOMAstListener[], context: IContext): IDOMElementHandlerAddListenersResult {
 		const {nodeUuid, node} = this.getNodeDict(element);
 		this.contextUtil.addTemplateVariablesForNode(node, ["event"]);
 
@@ -199,31 +204,38 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		const valueArgument = listeners.map(listener => `[${this.quote(listener.name)}, ${this.stringifyExpressionChain(node, listener.handler)}]`).join(", ");
 
 		return {
-			instruction: this.format(`${this.useHelper(node, "addListeners")}(${nodeUuid}, ${valueArgument})`)
+			instruction: this.format(`${this.useHelper(node, "addListeners")}(${nodeUuid}, ${valueArgument})`, context)
 		};
 	}
 
 	/**
 	 * Handles all the listeners on the node. Will generate '__addListener' or '__addListeners' instructions, depending on the amount of listeners.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
+	 * @param {IContext} context
 	 * @returns {IDOMElementHandlerAddListenersResult[]}
 	 */
-	public handleListeners (element: NodeUuid|FoveaDOMAstElement): IDOMElementHandlerAddListenersResult[] {
+	public handleListeners (element: NodeUuid|FoveaDOMAstElement, context: IContext): IDOMElementHandlerAddListenersResult[] {
 		const {node} = this.getNodeDict(element);
 		return node.listeners.length === 0
 			? []
 			: node.listeners.length === 1
-				? [this.addListener(element, node.listeners[0])]
-				: [this.addListeners(element, node.listeners)];
+				? [this.addListener(element, node.listeners[0], context)]
+				: [this.addListeners(element, node.listeners, context)];
 	}
 
 	/**
 	 * Creates a new TemplateElement
 	 * @param {FoveaDOMAstElement} element
 	 * @param {IDOMElementHandlerCreateBaseOptions} options
+	 * @param {IContext} context
 	 * @returns {IDOMHandlerCreateResult?}
 	 */
-	protected createBase (element: FoveaDOMAstElement, {createConditionalElementName, createElementName, createMultiElementName}: IDOMElementHandlerCreateBaseOptions): IDOMHandlerCreateResult|undefined {
+	protected createBase (element: FoveaDOMAstElement, {createConditionalElementName, createElementName, createMultiElementName}: IDOMElementHandlerCreateBaseOptions, context: IContext): IDOMHandlerCreateResult|undefined {
+		if (context.mode === "hostAttributes" && element.name === this.domUtil.selfReferenceNodeName) {
+			this.setNodeUuid(element, element.name);
+			return undefined;
+		}
+
 		const ifCustomAttribute = element.customAttributes.find(customAttribute => customAttribute.name === IF_CUSTOM_ATTRIBUTE_QUALIFIER);
 		const forEachCustomAttribute = element.customAttributes.find(customAttribute => customAttribute.name === FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER);
 
@@ -253,13 +265,13 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 				const conditionalElementInstruction = `${this.useHelper(element, createConditionalElementName)}(${selector}, ${this.stringifyExpressionChain(element, ifCustomAttribute.value)}, () => ${normalElementInstruction})`;
 
 				// Generate the full instruction
-				return this.createNodeWithArguments(element, `${multiElementInstruction}, () => ${conditionalElementInstruction})`);
+				return this.createNodeWithArguments(element, `${multiElementInstruction}, () => ${conditionalElementInstruction})`, context);
 			}
 
 			// Otherwise, if it only has an *foreach instruction, add a TemplateMultiElement instruction
 			else {
 				// Generate the full instruction
-				return this.createNodeWithArguments(element, `${multiElementInstruction}, () => ${normalElementInstruction})`);
+				return this.createNodeWithArguments(element, `${multiElementInstruction}, () => ${normalElementInstruction})`, context);
 			}
 		}
 
@@ -272,14 +284,14 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 			const conditionalElementInstruction = `${this.useHelper(element, createConditionalElementName)}(${selector}, ${this.stringifyExpressionChain(element, ifCustomAttribute.value)}, () => ${normalElementInstruction})`;
 
 			// Generate the full instruction
-			return this.createNodeWithArguments(element, conditionalElementInstruction);
+			return this.createNodeWithArguments(element, conditionalElementInstruction, context);
 		}
 
 		// Otherwise, it is a simple TemplateNormalElement
 		else {
 			const normalElementInstruction = `${this.useHelper(element, createElementName)}(${selector})`;
 			// Generate the full instruction
-			return this.createNodeWithArguments(element, normalElementInstruction);
+			return this.createNodeWithArguments(element, normalElementInstruction, context);
 		}
 	}
 
@@ -381,22 +393,24 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	/**
 	 * Handles all attributes of the provided node.
 	 * @param {FoveaDOMAstElement} node
+	 * @param {IContext} context
 	 * @returns {IDOMHandlerAddPropertyResult[]}
 	 */
-	private handleAttributes (node: FoveaDOMAstElement): IDOMHandlerAddPropertyResult[] {
-		return this.addProperties(node, node.attributes);
+	private handleAttributes (node: FoveaDOMAstElement, context: IContext): IDOMHandlerAddPropertyResult[] {
+		return this.addProperties(node, node.attributes, context);
 	}
 
 	/**
 	 * Handles all Custom Attributes of the provided node.
 	 * @param {FoveaDOMAstElement} node
+	 * @param {IContext} context
 	 * @returns {string[]}
 	 */
-	private handleCustomAttributes (node: FoveaDOMAstElement): string[] {
+	private handleCustomAttributes (node: FoveaDOMAstElement, context: IContext): string[] {
 		return node.customAttributes
 		// Filter out the special custom attributes *foreach and *if
 			.filter(customAttribute => customAttribute.name !== IF_CUSTOM_ATTRIBUTE_QUALIFIER && customAttribute.name !== FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER)
-			.map(customAttribute => this.addCustomAttribute(node, customAttribute));
+			.map(customAttribute => this.addCustomAttribute(node, customAttribute, context));
 	}
 
 	/**
@@ -404,9 +418,10 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * These will be grouped to safe precious bytes in the generated instructions.
 	 * @param {FoveaDOMAstElement} node
 	 * @param {IFoveaDOMAstAttribute[]} attributes
+	 * @param {IContext} context
 	 * @returns {IDOMHandlerAddPropertyResult[]}
 	 */
-	private addProperties (node: FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[]): IDOMHandlerAddPropertyResult[] {
+	private addProperties (node: FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[], context: IContext): IDOMHandlerAddPropertyResult[] {
 		const attributeProperties: IFoveaDOMAstAttribute[] = [];
 		const propertyProperties: IFoveaDOMAstAttribute[] = [];
 
@@ -422,13 +437,13 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		// Prepare instructions for the attributes, if any exists
 		const attributesResult: IDOMHandlerAddPropertyResult[]|(never[]) = attributeProperties.length === 0 ? [] : [{
 			kind: "attribute",
-			instruction: attributeProperties.length === 1 ? this.addAttribute(node, attributeProperties[0]) : this.addAttributes(node, attributeProperties)
+			instruction: attributeProperties.length === 1 ? this.addAttribute(node, attributeProperties[0], context) : this.addAttributes(node, attributeProperties, context)
 		}];
 
 		// Prepare instructions for the properties, if any exists
 		const propertiesResult: IDOMHandlerAddPropertyResult[]|(never[]) = propertyProperties.length === 0 ? [] : [{
 			kind: "property",
-			instruction: propertyProperties.length === 1 ? this.addValue(node, propertyProperties[0]) : this.addValues(node, propertyProperties)
+			instruction: propertyProperties.length === 1 ? this.addValue(node, propertyProperties[0], context) : this.addValues(node, propertyProperties, context)
 		}];
 		return [
 			...attributesResult,

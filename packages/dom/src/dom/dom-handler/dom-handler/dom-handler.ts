@@ -16,6 +16,7 @@ import {IContextUtil} from "../../../util/context-util/i-context-util";
 import {IRawExpressionChainBindableDict} from "../../../expression/i-raw-expression-chain-bindable-dict/i-raw-expression-chain-bindable-dict";
 import {ITemplateMultiElementOptions} from "../dom-element-handler/i-template-multi-element-options";
 import {isQuoted} from "@wessberg/stringutil";
+import {IContext} from "../../../util/context-util/i-context";
 
 /**
  * An abstract base class for generating instructions for nodes, HTMLElements and SVGElements
@@ -46,30 +47,32 @@ export abstract class DOMHandler implements IDOMHandler {
 	 * Generates an appendChild instruction.
 	 * @param {NodeUuid|FoveaDOMAstNode} nodeOrNodeUuid
 	 * @param {NodeUuid|FoveaDOMAstNode} toNode
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public append (nodeOrNodeUuid: NodeUuid|FoveaDOMAstNode, toNode: NodeUuid|FoveaDOMAstNode): IDOMHandlerAppendResult {
+	public append (nodeOrNodeUuid: NodeUuid|FoveaDOMAstNode, toNode: NodeUuid|FoveaDOMAstNode, context: IContext): IDOMHandlerAppendResult {
 		const {nodeUuid, node} = this.getNodeDict(nodeOrNodeUuid);
 
 		return {
-			instruction: this.format(`${this.useHelper(node, "addElement")}(${nodeUuid}, ${this.getNodeDict(toNode).nodeUuid})`)
+			instruction: this.format(`${this.useHelper(node, "addElement")}(${nodeUuid}, ${this.getNodeDict(toNode).nodeUuid})`, context)
 		};
 	}
 
 	/**
 	 * Creates an instruction for a new Node, HTMLElement or SVGElement
 	 * @param {FoveaDOMAstNode} node
+	 * @param {IContext} context
 	 * @returns {IDOMHandlerCreateResult?}
 	 */
-	public abstract create (node: FoveaDOMAstNode): IDOMHandlerCreateResult|undefined;
+	public abstract create (node: FoveaDOMAstNode, context: IContext): IDOMHandlerCreateResult|undefined;
 
 	/**
 	 * Handles a Node.
 	 * @abstract
-	 * @param {FoveaDOMAstNode} node
+	 * @param {IDOMHandlerOptions} options
 	 * @returns {IDOMHandlerResult}
 	 */
-	public abstract handle ({node}: IDOMHandlerOptions): IDOMHandlerResult;
+	public abstract handle ({node, context}: IDOMHandlerOptions): IDOMHandlerResult;
 
 	/**
 	 * Resets the uuid
@@ -83,12 +86,13 @@ export abstract class DOMHandler implements IDOMHandler {
 	 * @abstract
 	 * @param {FoveaDOMAstNode} node
 	 * @param {string} argument
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	protected createNodeWithArguments (node: FoveaDOMAstNode, argument: string): IDOMHandlerCreateResult {
+	protected createNodeWithArguments (node: FoveaDOMAstNode, argument: string, context: IContext): IDOMHandlerCreateResult {
 		const {instruction, identifier} = this.assignToVariableInstruction(node);
 		return {
-			instruction: this.format(`${instruction}${argument}`),
+			instruction: this.format(`${instruction}${argument}`, context),
 			identifier
 		};
 	}
@@ -146,13 +150,16 @@ export abstract class DOMHandler implements IDOMHandler {
 	/**
 	 * Formats an instruction.
 	 * @param {string} instruction
+	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	protected format (instruction: string): string {
+	protected format (instruction: string, context: IContext): string {
 		// Make sure that the instruction starts with a newline.
 		const beginning = instruction.startsWith("\n") ? "" : "\n";
 		// Make sure that the instruction ends with a semi-colon.
-		const end = instruction.endsWith(";") ? "" : ";";
+		const end = context.mode === "template"
+			? instruction.endsWith(";") ? "" : ";"
+			: instruction.endsWith(",") ? "" : ",";
 		return `${beginning}${instruction}${end}`;
 	}
 
@@ -217,7 +224,7 @@ export abstract class DOMHandler implements IDOMHandler {
 			const entries = Object.entries(value);
 			entries.forEach(([propertyKey, propertyValue], index) => {
 				str += `"${propertyKey}": ${this.stringifyExpressionChain(node, propertyValue)}`;
-				if (index !== entries.length -1) str += ",";
+				if (index !== entries.length - 1) str += ",";
 			});
 			str += "}";
 			return str;

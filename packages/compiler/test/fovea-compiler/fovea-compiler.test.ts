@@ -176,12 +176,12 @@ test("Will correctly determine the type information for a prop of type: boolean"
 	t.true(result.hasChanged);
 });
 
-test.skip("Will correctly register host attributes", async t => {
+test.only("Will correctly register host attributes", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-11.ts");
 	// @ts-ignore
 	const result = await work(path, {printCode: true});
 
-	t.fail("NOT IMPLEMENTED!");
+	t.true(result.hasChanged && result.code.includes("__registerHostAttributes"));
 });
 
 test("Can handle multiple @listener() annotations for the same methods", async t => {

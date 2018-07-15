@@ -55,6 +55,20 @@ export interface IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor extends I
 	decoratorContent: string;
 }
 
+export interface IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
+	kind: FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE;
+	hostKind: FoveaHostKind|string;
+	hostName: string;
+	decoratorContent: string;
+}
+
+export interface IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
+	kind: FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE;
+	hostKind: FoveaHostKind|string;
+	hostName: string;
+	decoratorContent: string;
+}
+
 export interface IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
 	kind: FoveaDiagnosticKind.INVALID_VISIBILITY_OBSERVER_DECORATOR_USAGE;
 	hostKind: FoveaHostKind|string;
@@ -128,4 +142,6 @@ export declare type FoveaDiagnosticCtor =
 	IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor|
 	IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor|
 	IInvalidCssFoveaDiagnosticCtor|
-	IInvalidTemplateFoveaDiagnosticCtor;
+	IInvalidTemplateFoveaDiagnosticCtor|
+	IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor|
+	IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor;

@@ -11,6 +11,7 @@ export interface IFoveaDiagnostic {
 export interface IUnknownSelectorFoveaDiagnostic extends IFoveaDiagnostic {
 	kind: FoveaDiagnosticKind.UNKNOWN_SELECTOR;
 	degree: FoveaDiagnosticDegree.WARNING;
+	selector: string;
 }
 
 export interface IAmbiguousHostFoveaDiagnostic extends IFoveaDiagnostic {
@@ -40,6 +41,11 @@ export interface IInvalidOnChangeDecoratorUsageFoveaDiagnostic extends IFoveaDia
 
 export interface IInvalidHostListenerDecoratorUsageFoveaDiagnostic extends IFoveaDiagnostic {
 	kind: FoveaDiagnosticKind.INVALID_HOST_LISTENER_DECORATOR_USAGE;
+	degree: FoveaDiagnosticDegree.ERROR;
+}
+
+export interface IInvalidHostAttributesDecoratorUsageFoveaDiagnostic extends IFoveaDiagnostic {
+	kind: FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE;
 	degree: FoveaDiagnosticDegree.ERROR;
 }
 
@@ -73,6 +79,11 @@ export interface IInvalidSelectorIsNotAllLowerCaseFoveaDiagnostic extends IFovea
 	degree: FoveaDiagnosticDegree.ERROR;
 }
 
+export interface IOnlyLiteralValuesSupportedHereFoveaDiagnostic extends IFoveaDiagnostic {
+	kind: FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE;
+	degree: FoveaDiagnosticDegree.ERROR;
+}
+
 export interface IInvalidCssFoveaDiagnostic extends IFoveaDiagnostic {
 	kind: FoveaDiagnosticKind.INVALID_CSS;
 	degree: FoveaDiagnosticDegree.ERROR;
@@ -98,4 +109,6 @@ export declare type FoveaDiagnostic =
 	IInvalidSelectorHasWhitespaceFoveaDiagnostic|
 	IInvalidSelectorIsNotAllLowerCaseFoveaDiagnostic|
 	IInvalidCssFoveaDiagnostic|
-	IInvalidTemplateFoveaDiagnostic;
+	IInvalidTemplateFoveaDiagnostic|
+	IInvalidHostAttributesDecoratorUsageFoveaDiagnostic|
+	IOnlyLiteralValuesSupportedHereFoveaDiagnostic;

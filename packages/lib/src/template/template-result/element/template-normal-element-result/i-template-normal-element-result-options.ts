@@ -4,7 +4,6 @@ import {ITemplateListener} from "../../../template-listener/i-template-listener"
 import {Ref} from "@fovea/common";
 import {ITemplateVariables} from "../../../template-variables/i-template-variables";
 import {TemplateNode} from "../../../node/template-node";
-import {ITemplateCustomAttributeProperty} from "../../../template-property/i-template-custom-attribute-property";
 
 export interface ITemplateNormalElementResultOptions extends ITemplateResultOptions {
 	lastNode: Element;
@@ -12,7 +11,7 @@ export interface ITemplateNormalElementResultOptions extends ITemplateResultOpti
 	root: ShadowRoot|Element;
 	children: TemplateNode[];
 	attributes: ITemplateProperty[];
-	customAttributes: ITemplateCustomAttributeProperty[];
+	customAttributes: ITemplateProperty[];
 	templateVariables?: ITemplateVariables;
 	properties: ITemplateProperty[];
 	listeners: ITemplateListener[];

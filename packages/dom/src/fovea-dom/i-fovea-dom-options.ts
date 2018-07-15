@@ -1,12 +1,18 @@
 export interface IHostAttributeValues {
-	[key: string]: string|{ [key: string]: string };
+	[key: string]: (string|number|boolean)|{[key: string]: (string|number|boolean)};
 }
 
 export interface IFoveaDOMBaseOptions {
 	dryRun?: boolean;
 }
 
-export interface IFoveaDOMOptions extends IFoveaDOMBaseOptions {
+export interface IFoveaTemplateDOMOptions extends IFoveaDOMBaseOptions {
 	template: string;
 	skipTags?: Set<string>;
 }
+
+export interface IFoveaHostAttributesDOMOptions extends IFoveaDOMBaseOptions {
+	hostAttributes: IHostAttributeValues;
+}
+
+export declare type FoveaDOMOptions = IFoveaTemplateDOMOptions|IFoveaHostAttributesDOMOptions;

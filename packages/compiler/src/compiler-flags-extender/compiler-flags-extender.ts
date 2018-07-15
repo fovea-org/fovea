@@ -37,7 +37,7 @@ export class CompilerFlagsExtender implements ICompilerFlagsExtender {
 	 * @returns {string}
 	 */
 	public getCompilerFlags (file: string): string {
-		const {hasStaticCSS, hasEventEmitters, hasProps, hasHostProps, hasTemplateAttributes, hasTemplateRefs, hasTemplateCustomAttributes, hasTemplateListeners, hasChangeObservers, hasVisibilityObservers, hasMutationObservers, hasHostListeners, hasICustomAttributes, hasIFoveaHosts, hasAsyncEvaluations, hasSyncEvaluations} = this.stats.getStatsForFile(file);
+		const {hasStaticCSS, hasEventEmitters, hasProps, hasHostProps, hasTemplateAttributes, hasTemplateRefs, hasTemplateCustomAttributes, hasTemplateListeners, hasChangeObservers, hasVisibilityObservers, hasMutationObservers, hasHostListeners, hasICustomAttributes, hasIFoveaHosts, hasAsyncEvaluations, hasSyncEvaluations, hasHostAttributes} = this.stats.getStatsForFile(file);
 		return ("" +
 			Number(hasStaticCSS) +
 			Number(hasSyncEvaluations) +
@@ -54,7 +54,8 @@ export class CompilerFlagsExtender implements ICompilerFlagsExtender {
 			Number(hasTemplateAttributes) +
 			Number(hasHostProps) +
 			Number(hasProps) +
-			Number(hasEventEmitters)
+			Number(hasEventEmitters) +
+			Number(hasHostAttributes)
 		);
 	}
 
@@ -89,7 +90,7 @@ export class CompilerFlagsExtender implements ICompilerFlagsExtender {
 		}
 
 		// Take the initialization value and parse all of the flags
-		const [hasStaticCSS, hasSyncEvaluations, hasAsyncEvaluations, hasIFoveaHosts, hasICustomAttributes, hasHostListeners, hasVisibilityObservers, hasMutationObservers, hasChangeObservers, hasTemplateListeners, hasTemplateCustomAttributes, hasTemplateRefs, hasTemplateAttributes, hasHostProps, hasProps, hasEventEmitters]: (1|0)[] = compilerFlagsString
+		const [hasStaticCSS, hasSyncEvaluations, hasAsyncEvaluations, hasIFoveaHosts, hasICustomAttributes, hasHostListeners, hasVisibilityObservers, hasMutationObservers, hasChangeObservers, hasTemplateListeners, hasTemplateCustomAttributes, hasTemplateRefs, hasTemplateAttributes, hasHostProps, hasProps, hasEventEmitters, hasHostAttributes]: (1|0)[] = compilerFlagsString
 			.split("")
 			.map(part => <1|0> parseInt(part));
 
@@ -110,7 +111,8 @@ export class CompilerFlagsExtender implements ICompilerFlagsExtender {
 			hasTemplateAttributes: Boolean(hasTemplateAttributes),
 			hasHostProps: Boolean(hasHostProps),
 			hasProps: Boolean(hasProps),
-			hasEventEmitters: Boolean(hasEventEmitters)
+			hasEventEmitters: Boolean(hasEventEmitters),
+			hasHostAttributes: Boolean(hasHostAttributes)
 		};
 	}
 

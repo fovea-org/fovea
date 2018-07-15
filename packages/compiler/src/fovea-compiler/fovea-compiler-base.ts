@@ -35,6 +35,7 @@ import {IFoveaUsePrecompiledFileOptions} from "./i-fovea-use-precompiled-file-op
 import {ICompilerFlagsExtender} from "../compiler-flags-extender/i-compiler-flags-extender";
 import {IMutationObserverExtractor} from "../mutation-observer-extractor/i-mutation-observer-extractor";
 import {libHelperName} from "@fovea/common";
+import {IHostAttributesExtractor} from "../host-attributes-extractor/i-host-attributes-extractor";
 
 /**
  * A class that can upgrade source code containing Fovea components
@@ -51,6 +52,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 							 private readonly propExtractor: IPropExtractor,
 							 private readonly hostListenerExtractor: IHostListenerExtractor,
 							 private readonly onChangeExtractor: IOnChangeExtractor,
+							 private readonly hostAttributesExtractor: IHostAttributesExtractor,
 							 private readonly visibilityObserverExtractor: IVisibilityObserverExtractor,
 							 private readonly mutationObserverExtractor: IMutationObserverExtractor,
 							 private readonly emitExtractor: IEmitExtractor,
@@ -276,6 +278,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 
 			if (mark.className != null && !stats.componentNames.includes(mark.className)) stats.componentNames.push(mark.className);
 			stats.hasStaticCSS = stats.hasStaticCSS || markStats.hasStaticCSS;
+			stats.hasHostAttributes = stats.hasHostAttributes || markStats.hasHostAttributes;
 			stats.hasSyncEvaluations = stats.hasSyncEvaluations || markStats.hasSyncEvaluations;
 			stats.hasAsyncEvaluations = stats.hasAsyncEvaluations || markStats.hasAsyncEvaluations;
 			stats.hasIFoveaHosts = stats.hasIFoveaHosts || markStats.hasIFoveaHosts;
@@ -401,6 +404,9 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 
 			// Prepare the styles of the component
 			await this.templator.generateStyles(options);
+
+			// Prepare the host attributes
+			this.hostAttributesExtractor.extract(options);
 
 			// Map properties to attributes
 			this.propertiesToAttributesMapper.map(options);

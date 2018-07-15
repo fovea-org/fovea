@@ -1,6 +1,6 @@
 import {IFoveaDiagnostics} from "./i-fovea-diagnostics";
 import {FoveaDiagnostic} from "./fovea-diagnostic";
-import {FoveaDiagnosticCtor, IAmbiguousHostFoveaDiagnosticCtor, IInvalidCssFoveaDiagnosticCtor, IInvalidDependsOnDecoratorUsageFoveaDiagnosticCtor, IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor, IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor, IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor, IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor, IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor, IInvalidSrcDecoratorUsageFoveaDiagnosticCtor, IInvalidTemplateFoveaDiagnosticCtor, IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor, IUnknownSelectorFoveaDiagnosticCtor, IUnresolvedSrcFoveaDiagnosticCtor} from "./fovea-diagnostic-ctor";
+import {FoveaDiagnosticCtor, IAmbiguousHostFoveaDiagnosticCtor, IInvalidCssFoveaDiagnosticCtor, IInvalidDependsOnDecoratorUsageFoveaDiagnosticCtor, IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor, IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor, IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor, IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor, IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor, IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor, IInvalidSrcDecoratorUsageFoveaDiagnosticCtor, IInvalidTemplateFoveaDiagnosticCtor, IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor, IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor, IUnknownSelectorFoveaDiagnosticCtor, IUnresolvedSrcFoveaDiagnosticCtor} from "./fovea-diagnostic-ctor";
 import {FoveaDiagnosticKind} from "./fovea-diagnostic-kind";
 import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import chalk from "chalk";
@@ -100,6 +100,12 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 
 			case FoveaDiagnosticKind.INVALID_TEMPLATE:
 				return this.addInvalidTemplateDiagnostic(file, diagnostic);
+
+			case FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE:
+				return this.addInvalidHostAttributesDecoratorUsageDiagnostic(file, diagnostic);
+
+			case FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE:
+				return this.addOnlyLiteralValuesSupportedHereDiagnostic(file, diagnostic);
 		}
 	}
 
@@ -113,7 +119,7 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 	private addUnknownSelectorDiagnostic (file: string, {kind, hostName, selector, hostKind}: IUnknownSelectorFoveaDiagnosticCtor): void {
 		this.getDiagnosticsForFile(file).push(
 			this.finalizeDiagnostic({
-				kind, file, degree: FoveaDiagnosticDegree.WARNING,
+				kind, file, degree: FoveaDiagnosticDegree.WARNING, selector,
 				description: `You depend on the ${this.stringifyHostKind(hostKind)} with selector: '${this.paintSelector(selector)}' within the template for the component '${this.paintHost(hostName)}', but no ${this.stringifyHostKind(hostKind)} with that selector could be resolved`
 			}));
 	}
@@ -173,6 +179,39 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 			this.finalizeDiagnostic({
 				kind, file, degree: FoveaDiagnosticDegree.ERROR,
 				description: `The ${this.stringifyHostKind(hostKind)}: '${this.paintHost(hostName)}' is annotated with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but the argument it receives must follow this syntax: ${this.paintFunction(`<PATH_TO_FILE>.[css|scss]`)}`
+			}));
+	}
+
+	/**
+	 * Adds a diagnostic for a @hostAttributes decorator that is not properly invoked.
+	 * This will be the case if it doesn't follow the form: '@hostAttributes({foo: 1, bar: {baz: 2}})'
+	 * @param {string} file
+	 * @param {FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE} kind
+	 * @param {string} hostName
+	 * @param {FoveaHostKind | string} hostKind
+	 * @param {string} decoratorContent
+	 */
+	private addInvalidHostAttributesDecoratorUsageDiagnostic (file: string, {kind, hostName, hostKind, decoratorContent}: IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor): void {
+		this.getDiagnosticsForFile(file).push(
+			this.finalizeDiagnostic({
+				kind, file, degree: FoveaDiagnosticDegree.ERROR,
+				description: `The ${this.stringifyHostKind(hostKind)}: '${this.paintHost(hostName)}' is annotated with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but it must receive an object literal! For example: ${this.paintFunction(`{something: "value", style: {background: "red"}}`)}`
+			}));
+	}
+
+	/**
+	 * Adds a diagnostic for something that expects only to receive literal values (e.g. no references)
+	 * @param {string} file
+	 * @param {FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE} kind
+	 * @param {string} hostName
+	 * @param {FoveaHostKind | string} hostKind
+	 * @param {string} decoratorContent
+	 */
+	private addOnlyLiteralValuesSupportedHereDiagnostic (file: string, {kind, hostName, hostKind, decoratorContent}: IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor): void {
+		this.getDiagnosticsForFile(file).push(
+			this.finalizeDiagnostic({
+				kind, file, degree: FoveaDiagnosticDegree.ERROR,
+				description: `The ${this.stringifyHostKind(hostKind)}: '${this.paintHost(hostName)}' is annotated with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but it must receive only literal values! References to other identifiers, shorthand property assignments, spread assignments, accessors, or method declarations were found, which is currently not supported for this type of decorator. Please following a form that matches the following example: ${this.paintFunction(`{something: "value", style: {background: "red"}}`)}`
 			}));
 	}
 
@@ -535,5 +574,21 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 		let str = "";
 		pairs.forEach(([key, value]) => str += `${key}:`.padEnd(padSize, padWith) + value + "\n");
 		return str;
+	}
+
+	/**
+	 * Filters all diagnostics for all files
+	 * @param {(diagnostic: FoveaDiagnostic) => boolean} callback
+	 */
+	public filterAndUpdate (callback: (diagnostic: FoveaDiagnostic) => boolean): void {
+		for (const diagnostics of this.fileToDiagnosticsMap.values()) {
+			for (let i = 0; i < diagnostics.length; i++) {
+				const diagnostic = diagnostics[i];
+				if (!callback(diagnostic)) {
+					// Remove the diagnostic
+					diagnostics.splice(i, 1);
+				}
+			}
+		}
 	}
 }

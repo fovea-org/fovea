@@ -1,9 +1,13 @@
 /*tslint:disable*/
 // @ts-ignore
-import {prop, hostAttributes} from "@fovea/core";
+import {customAttribute, hostAttributes} from "@fovea/core";
 
 @hostAttributes({
 	"*something": `whatever: ${true}`,
+	"$foo": "",
+	"onclick": `doStuff()`,
+	foo: true,
+	lolz: 123,
 	class: {
 		highlight: `${this.bar}`
 	},
@@ -11,6 +15,7 @@ import {prop, hostAttributes} from "@fovea/core";
 		background: "red"
 	}
 })
-class Foo extends HTMLElement {
+	@customAttribute
+class Foo {
 	public bar: string;
 }

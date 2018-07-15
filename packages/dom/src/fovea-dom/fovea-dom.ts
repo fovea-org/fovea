@@ -2,7 +2,7 @@ import {IFoveaDOM} from "./i-fovea-dom";
 import {DIContainer} from "@wessberg/di";
 import {IFoveaDOMResult} from "./i-fovea-dom-result";
 import {IFoveaDOMHost} from "./i-fovea-dom-host";
-import {IFoveaDOMOptions} from "./i-fovea-dom-options";
+import {FoveaDOMOptions} from "./i-fovea-dom-options";
 
 /**
  * A FoveaDOM class meant for public consumption. This shadows the actual FoveaDOMHost class to ensure
@@ -15,10 +15,10 @@ export class FoveaDOM implements IFoveaDOM {
 
 	/**
 	 * This is a noop. The constructor returns the proper implementation of IFoveaDOM
-	 * @param {IFoveaDOMOptions} options
+	 * @param {FoveaDOMOptions} options
 	 * @returns {IFoveaDOMResult}
 	 */
-	public generate (options: IFoveaDOMOptions): IFoveaDOMResult {
+	public generate (options: FoveaDOMOptions): IFoveaDOMResult {
 		throw new Error(options.toString());
 	}
 }

@@ -6,4 +6,5 @@ export interface IFoveaDiagnostics {
 	getDiagnosticsForFile (file: string): FoveaDiagnostic[];
 	clearDiagnosticsForFile (file: string): void;
 	addDiagnostic (file: string, diagnostic: FoveaDiagnosticCtor): void;
+	filterAndUpdate (callback: (diagnostic: FoveaDiagnostic) => boolean): void;
 }

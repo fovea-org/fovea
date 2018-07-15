@@ -7,7 +7,6 @@ import {TemplateElementResult} from "../../template-result/template-result/templ
 import {TemplateBase} from "../../template-base/template-base";
 import {ITemplateConstructOptions} from "../../template-construct-options/i-template-construct-options";
 import {IExpressionChainDict} from "../../../observe/expression-chain/i-expression-chain-dict";
-import {ITemplateCustomAttributeProperty} from "../../template-property/i-template-custom-attribute-property";
 
 /**
  * An abstract base TemplateElement class
@@ -50,7 +49,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 * All customAttributes (not including *foreach and/or *if) of this TemplateElement
 	 * @type {ITemplateProperty[]}
 	 */
-	public customAttributes: ITemplateCustomAttributeProperty[] = []; /*# END IF hasTemplateCustomAttributes */
+	public customAttributes: ITemplateProperty[] = []; /*# END IF hasTemplateCustomAttributes */
 
 	/*# IF hasTemplateAttributes */
 
@@ -81,7 +80,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 * @param {ExpressionChain|IExpressionChainDict} value
 	 */
 	public addCustomAttribute (name: string, value?: ExpressionChain|IExpressionChainDict): void {
-		this.customAttributes.push({key: name, value: value == null || Array.isArray(value) ? {value} : value});
+		this.customAttributes.push({key: name, value});
 	} /*# END IF hasTemplateCustomAttributes */
 
 	/*# IF hasTemplateAttributes */
@@ -145,14 +144,14 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 			/*# IF hasTemplateListeners */
 			this.listeners.push(...this.copyTemplateListeners(base.listeners)); /*# END IF hasTemplateListeners */
 			/*# IF hasTemplateCustomAttributes */
-			this.customAttributes.push(...this.copyTemplateCustomAttributeProperties(base.customAttributes)); /*# END IF hasTemplateCustomAttributes */
+			this.customAttributes.push(...this.copyTemplateProperties(base.customAttributes)); /*# END IF hasTemplateCustomAttributes */
 			/*# IF hasTemplateAttributes */
 			this.properties.push(...this.copyTemplateProperties(base.properties));
 			this.attributes.push(...this.copyTemplateProperties(base.attributes)); /*# END IF hasTemplateAttributes */
 		}
 	}
 
-	/*# IF hasTemplateAttributes */
+	/*# IF hasTemplateAttributes || hasTemplateCustomAttributes */
 
 	/**
 	 * Copies the given ITemplateProperty elements
@@ -174,31 +173,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 			key,
 			value: value == null ? undefined: Array.isArray(value) ? [...value] : Object.assign({}, ...Object.entries(value).map(([propertyName, chain]) => ({[propertyName]: chain == null ? undefined : [...chain]})))
 		};
-	} /*# END IF hasTemplateAttributes */
-
-	/*# IF hasTemplateCustomAttributes */
-
-	/**
-	 * Copies the given ITemplateCustomAttributeProperty elements
-	 * @param {ITemplateCustomAttributeProperty[]} properties
-	 * @returns {ITemplateCustomAttributeProperty[]}
-	 */
-	private copyTemplateCustomAttributeProperties (properties: ITemplateCustomAttributeProperty[]): ITemplateCustomAttributeProperty[] {
-		return properties.map(property => this.copyTemplateCustomAttributeProperty(property));
-	}
-
-	/**
-	 * Copies the given ITemplateProperty
-	 * @param {string} key
-	 * @param {ExpressionChain|IExpressionChainDict} value
-	 * @returns {ITemplateCustomAttributeProperty}
-	 */
-	private copyTemplateCustomAttributeProperty ({key, value}: ITemplateCustomAttributeProperty): ITemplateCustomAttributeProperty {
-		return {
-			key,
-			value: Object.assign({}, ...Object.entries(value).map(([propertyName, chain]) => ({[propertyName]: chain == null ? undefined : [...chain]})))
-		};
-	} /*# END IF hasTemplateCustomAttributes */
+	} /*# END IF hasTemplateAttributes || hasTemplateCustomAttributes */
 
 	/*# IF hasTemplateListeners */
 

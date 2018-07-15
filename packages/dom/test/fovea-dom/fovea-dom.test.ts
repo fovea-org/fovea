@@ -38,3 +38,22 @@ test("generate () => Will generate key-value pairs for expressions provided to c
 	console.log(instructions);
 	t.true(instructions != null);
 });
+
+test.only("generate () => Will correctly generate template instructions for host attributes", async t => {
+	const {instructions} = foveaDOM.generate({
+		hostAttributes: {
+			"*routerLink": "",
+			foo: "${bar}",
+			class: {
+				something: ""
+			},
+			style: {
+				background: "red"
+			}
+		}
+	});
+
+	console.log(instructions);
+
+	t.true(instructions != null);
+});

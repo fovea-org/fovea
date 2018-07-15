@@ -48,6 +48,9 @@ export class FoveaHostDefiner implements IFoveaHostDefiner {
 
 		if (!hasDeclarationAlready) {
 			const exportStatus = this.checkHostExportStatus(mark.classDeclaration, className, sourceFile);
+
+			// Remove any UNKNOWN_SELECTOR diagnostics that may exist and that points to this selector now that it has been defined
+			this.diagnostics.filterAndUpdate(diagnostic => !(diagnostic.kind === FoveaDiagnosticKind.UNKNOWN_SELECTOR && diagnostic.selector === selector));
 			this.stats.setDeclaredCustomSelectors(context.container.file, [...declaredCustomSelectors, {
 				// If the host is being exported, it may be exported with an aliased name
 				hostName: exportStatus.isDefaultExport || exportStatus.isNamedExport ? exportStatus.exportName : className,

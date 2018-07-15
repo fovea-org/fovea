@@ -51,6 +51,14 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
+	 * Returns true if any file has a 'hasHostAttributes' property value of 'true'
+	 * @returns {boolean}
+	 */
+	public get hasHostAttributes (): boolean {
+		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasHostAttributes);
+	}
+
+	/**
 	 * Returns true if any file has a 'hasStaticCSS' property value of 'true'
 	 * @returns {boolean}
 	 */
@@ -187,6 +195,7 @@ export class FoveaStats implements IFoveaStats {
 			declaredCustomSelectors: this.declaredCustomSelectors,
 			referencedCustomSelectors: this.referencedCustomSelectors,
 			componentNames: this.componentNames,
+			hasHostAttributes: this.hasHostAttributes,
 			hasStaticCSS: this.hasStaticCSS,
 			hasSyncEvaluations: this.hasSyncEvaluations,
 			hasAsyncEvaluations: this.hasAsyncEvaluations,
@@ -231,6 +240,15 @@ export class FoveaStats implements IFoveaStats {
 	 */
 	public setComponentNames (file: string, componentNames: string[]): void {
 		this.getMutableStatsForFile(file).componentNames = componentNames;
+	}
+
+	/**
+	 * Sets the 'hasHostAttributes' property on the IFoveaStats for the given file
+	 * @param {string} file
+	 * @param {boolean} hasHostAttributes
+	 */
+	public setHasHostAttributes (file: string, hasHostAttributes: boolean): void {
+		this.getMutableStatsForFile(file).hasHostAttributes = hasHostAttributes;
 	}
 
 	/**
@@ -422,6 +440,7 @@ export class FoveaStats implements IFoveaStats {
 			declaredCustomSelectors: [],
 			referencedCustomSelectors: [],
 			componentNames: [],
+			hasHostAttributes: false,
 			hasStaticCSS: false,
 			hasSyncEvaluations: false,
 			hasAsyncEvaluations: false,

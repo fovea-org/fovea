@@ -1,6 +1,6 @@
 import "./services";
 export {FoveaDOM} from "./fovea-dom/fovea-dom";
 export {IFoveaDOM} from "./fovea-dom/i-fovea-dom";
-export {IFoveaDOMOptions} from "./fovea-dom/i-fovea-dom-options";
+export {IFoveaTemplateDOMOptions, IFoveaHostAttributesDOMOptions, FoveaDOMOptions, IHostAttributeValues} from "./fovea-dom/i-fovea-dom-options";
 export {IFoveaDOMResult} from "./fovea-dom/i-fovea-dom-result";
 export {IReferencedCustomSelector} from "./meta/i-referenced-custom-selector";

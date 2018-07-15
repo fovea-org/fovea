@@ -40,3 +40,4 @@ export {__registerMutationObserver} from "./helper/register-mutation-observer/re
 export {__registerStaticCSS} from "./helper/register-static-css/register-static-css";
 export {__dependsOn} from "./helper/depends-on/depends-on";
 export {__useStaticCSS} from "./helper/use-static-css/use-static-css";
+export {__registerHostAttributes} from "./helper/register-host-attributes/register-host-attributes";

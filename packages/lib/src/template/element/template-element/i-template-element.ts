@@ -6,7 +6,6 @@ import {TemplateElementResult} from "../../template-result/template-result/templ
 import {ITemplateBase} from "../../template-base/i-template-base";
 import {ITemplateConstructOptions} from "../../template-construct-options/i-template-construct-options";
 import {IExpressionChainDict} from "../../../observe/expression-chain/i-expression-chain-dict";
-import {ITemplateCustomAttributeProperty} from "../../template-property/i-template-custom-attribute-property";
 
 export interface ITemplateElement extends ITemplateBase {
 	namespace: string|null;
@@ -14,7 +13,7 @@ export interface ITemplateElement extends ITemplateBase {
 	ref: Ref|null;
 	children: TemplateNode[];
 	attributes: ITemplateProperty[];
-	customAttributes: ITemplateCustomAttributeProperty[];
+	customAttributes: ITemplateProperty[];
 	listeners: ITemplateListener[];
 	properties: ITemplateProperty[];
 	addRef (ref: Ref): void;

@@ -30,6 +30,14 @@ export class DOMGenerator implements IDOMGenerator {
 	}
 
 	/**
+	 * Returns a @ts-ignore comment. Use it to silence implicit any errors
+	 * @returns {string}
+	 */
+	private get tsIgnoreComment (): string {
+		return `\n// @ts-ignore`;
+	}
+
+	/**
 	 * Recursively generates statements to generate a component's local DOM.
 	 * @param {FoveaDOMAst} ast
 	 * @param {IContext} context
@@ -45,9 +53,7 @@ export class DOMGenerator implements IDOMGenerator {
 	/**
 	 * Generates template instructions for the provided AST. This builds up a HTMLTemplate element that
 	 * can be imported for concrete instances
-	 * @param {FoveaDOMAst} ast
-	 * @param {IContext} context
-	 * @param {Set<string>} skipTags
+	 * @param {IDOMGeneratorGenerateTemplateInstructionsOptions} options
 	 * @returns {IDOMGeneratorTemplateInstructionsResult}
 	 */
 	private generateTemplateInstructions ({ast, context, skipTags}: IDOMGeneratorGenerateTemplateInstructionsOptions): IDOMGeneratorTemplateInstructionsResult {
@@ -71,10 +77,17 @@ export class DOMGenerator implements IDOMGenerator {
 				nodeInstructions.createInstructions.length
 			),
 			instructions: (
-				// Add in all node instructions
-				flattenedBuildNodeInstructions +
-				// Map the generated root nodes to the host constructor
-				this.generateReturnInstruction(nodeInstructions.rootIdentifiers)
+				context.mode === "template" ? (
+						// Add in all node instructions
+						flattenedBuildNodeInstructions +
+						// Map the generated root nodes to the host constructor
+						this.generateRootNodesReturnInstruction(nodeInstructions.rootIdentifiers)
+					)
+					: (
+						`return [` +
+						flattenedBuildNodeInstructions +
+						`\n];`
+					)
 			)
 		};
 	}
@@ -84,17 +97,9 @@ export class DOMGenerator implements IDOMGenerator {
 	 * @param {NodeUuid[]} rootNodes
 	 * @returns {string}
 	 */
-	private generateReturnInstruction (rootNodes?: NodeUuid[]): string {
+	private generateRootNodesReturnInstruction (rootNodes?: NodeUuid[]): string {
 		if (rootNodes == null) return "";
 		return `\nreturn [${rootNodes.join(", ")}];`;
-	}
-
-	/**
-	 * Returns a @ts-ignore comment. Use it to silence implicit any errors
-	 * @returns {string}
-	 */
-	private get tsIgnoreComment (): string {
-		return `\n// @ts-ignore`;
 	}
 
 	/**
@@ -154,7 +159,7 @@ export class DOMGenerator implements IDOMGenerator {
 	 */
 	private conditionallyConsumeReferencedCustomSelector (selector: string, kind: "component"|"custom-attribute", context: IContext): void {
 		// If its' selector is not one of the built-in ones, add it to the Set of referenced Custom Selectors
-		if (!this.domUtil.isBuiltInSelector(selector)) {
+		if (!this.domUtil.isBuiltInSelector(selector) && selector !== this.domUtil.selfReferenceNodeName) {
 			const has = context.referencedCustomSelectors.some(value => value.kind === kind && value.selector === selector);
 			if (!has) {
 				context.referencedCustomSelectors.push({kind, selector});
@@ -165,9 +170,7 @@ export class DOMGenerator implements IDOMGenerator {
 	/**
 	 * Recursively walks through all the provided nodes and delegates the responsibility of handling the nodes to the various handlers.
 	 * For example, SVGElements are handled by the DOMSVGElementHandler and so on.
-	 * @param {FoveaDOMAst} ast
-	 * @param {IContext} context
-	 * @param {Set<string>} skipTags
+	 * @param {IDOMGeneratorBuildNodeInstructionsOptions} options
 	 * @returns {IDOMElementHandlerResult}
 	 */
 	private buildNodeInstructions ({ast, context, skipTags}: IDOMGeneratorBuildNodeInstructionsOptions): IDOMElementHandlerResult {
@@ -189,9 +192,9 @@ export class DOMGenerator implements IDOMGenerator {
 
 			// Otherwise, pass it through its paces
 			else {
-				if (isFoveaDOMAstSvgElement(node)) domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domSvgElementHandler.handle({node}));
-				else if (isFoveaDOMAstHTMLElement(node)) domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domHtmlElementHandler.handle({node}));
-				else domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domNodeHandler.handle({node}));
+				if (isFoveaDOMAstSvgElement(node)) domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domSvgElementHandler.handle({node, context}));
+				else if (isFoveaDOMAstHTMLElement(node)) domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domHtmlElementHandler.handle({node, context}));
+				else domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.domNodeHandler.handle({node, context}));
 
 				// Call generate recursively for all children of the node.
 				if (isFoveaDOMAstElement(node)) domHandlerResults = this.domUtil.mergeInstructions(domHandlerResults, this.buildNodeInstructions({ast: node.children, context, skipTags}));

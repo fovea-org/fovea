@@ -39,7 +39,8 @@ export const libHelperName = {
 	useStaticCSS: "__useStaticCSS",
 	use: "__use",
 	dependsOn: "__dependsOn",
-	ICustomAttribute: "ICustomAttribute"
+	ICustomAttribute: "ICustomAttribute",
+	registerHostAttributes: "__registerHostAttributes"
 };
 
 export declare type LibHelperName = keyof typeof libHelperName;

@@ -9,6 +9,12 @@ import {IContext} from "../context-util/i-context";
 export class DOMUtil implements IDOMUtil {
 
 	/**
+	 * The name for a node that references itself
+	 * @type {string}
+	 */
+	public readonly selfReferenceNodeName = "host";
+
+	/**
 	 * Returns an empty IDOMElementHandlerResult
 	 * @returns {IDOMElementHandlerResult}
 	 */

@@ -57,6 +57,8 @@ import {IMutationObserverExtractor} from "./mutation-observer-extractor/i-mutati
 import {MutationObserverExtractor} from "./mutation-observer-extractor/mutation-observer-extractor";
 import {ITypeExtractorService} from "./type-extractor/i-type-extractor-service";
 import {TypeExtractorService} from "./type-extractor/type-extractor-service";
+import {IHostAttributesExtractor} from "./host-attributes-extractor/i-host-attributes-extractor";
+import {HostAttributesExtractor} from "./host-attributes-extractor/host-attributes-extractor";
 
 DIContainer.registerSingleton<IFoveaHostMarker, FoveaHostMarker>();
 DIContainer.registerSingleton<ICompilerFlagsExtender, CompilerFlagsExtender>();
@@ -67,6 +69,7 @@ DIContainer.registerSingleton<IOnChangeExtractor, OnChangeExtractor>();
 DIContainer.registerSingleton<ITypeExtractorService, TypeExtractorService>();
 DIContainer.registerSingleton<IVisibilityObserverExtractor, VisibilityObserverExtractor>();
 DIContainer.registerSingleton<IMutationObserverExtractor, MutationObserverExtractor>();
+DIContainer.registerSingleton<IHostAttributesExtractor, HostAttributesExtractor>();
 DIContainer.registerSingleton<IEmitExtractor, EmitExtractor>();
 DIContainer.registerSingleton<ISetOnHostExtractor, SetOnHostExtractor>();
 DIContainer.registerSingleton<IParentMerger, ParentMerger>();

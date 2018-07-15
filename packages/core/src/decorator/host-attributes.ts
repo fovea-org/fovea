@@ -1,7 +1,7 @@
 import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
 
 export interface IHostAttributeValues {
-	[key: string]: string|{[key: string]: string};
+	[key: string]: (string|number|boolean)|{[key: string]: (string|number|boolean)};
 }
 
 /**

@@ -3,6 +3,7 @@ import {IDeclaredCustomSelector} from "./i-declared-custom-selector";
 
 export interface IMutableCompilerHintStats {
 	hasStaticCSS: boolean;
+	hasHostAttributes: boolean;
 	hasSyncEvaluations: boolean;
 	hasAsyncEvaluations: boolean;
 	hasIFoveaHosts: boolean;
@@ -38,6 +39,7 @@ export interface IFoveaStats extends IImmutableFoveaStats {
 	setDeclaredCustomSelectors (file: string, customSelectors: IDeclaredCustomSelector[]): void;
 	setReferencedCustomSelectors (file: string, customSelectors: IReferencedCustomSelector[]): void;
 	setComponentNames (file: string, componentNames: string[]): void;
+	setHasHostAttributes (file: string, hasHostAttributes: boolean): void;
 	setHasStaticCSS (file: string, hasStaticCSS: boolean): void;
 	setHasAsyncEvaluations (file: string, hasAsyncEvaluations: boolean): void;
 	setHasSyncEvaluations (file: string, hasSyncEvaluations: boolean): void;
