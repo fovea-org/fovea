@@ -54,7 +54,6 @@ export class FoveaDOMHost implements IFoveaDOMHost {
 				.map(([attributeName, attributeValue]) => {
 					return `${attributeName}${typeof attributeValue === "object" ? "+" : ""}="${typeof attributeValue === "object" ? Object.entries(attributeValue).map(([propertyName, propertyValue]) => `${propertyName}: ${typeof propertyValue === "string" && isEmpty(propertyValue) ? "''" : propertyValue}`).join("; ") : attributeValue}"`;
 			}).join(" ")}></${this.domUtil.selfReferenceNodeName}>`;
-			console.log(template);
 
 			const {ast} = this.domTemplator.template({template, context});
 			return {
