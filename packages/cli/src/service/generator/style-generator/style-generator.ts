@@ -109,6 +109,8 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 							:host,
 							:root {
 								--font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+								--font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
 							}
 							`, {...this.config.formatOptions, parser: this.config.defaultCssExtension}
 						)
