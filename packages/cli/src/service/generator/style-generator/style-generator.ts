@@ -60,7 +60,7 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 						content: this.formatter.format(`
 							// This file contains color variables
 
-							:host, :root {
+							:root {
 								--rgb-black: 0, 0, 0;
 								--rgb-white: 255, 255, 255;
 								--rgb-red: 221, 44, 0;
@@ -106,7 +106,6 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 						content: this.formatter.format(`
 							// This file contains font variables
 
-							:host,
 							:root {
 								--font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 								--font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
