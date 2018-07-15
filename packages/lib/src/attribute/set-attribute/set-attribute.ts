@@ -36,7 +36,7 @@ export function setAttribute (host: IFoveaHost|ICustomAttribute, element: Elemen
 			}
 
 			case "class": {
-				shouldRemoveAttribute ? element.classList.length < 2 ? element.removeAttribute("class") : element.classList.remove(setForValueProperty) : element.classList.add(setForValueProperty);
+				shouldRemoveAttribute ? element.classList.remove(setForValueProperty) : element.classList.add(setForValueProperty);
 				// Cache the expected attribute value
 				setExpectedAttributeValue(host, key, element.getAttribute("class"));
 				return;
