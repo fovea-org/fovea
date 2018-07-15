@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.106"></a>
+## [1.0.106](https://github.com/fovea-org/fovea/compare/v1.0.105...v1.0.106) (2018-07-15)
+
+
+### Features
+
+* Implemented support for host attributes. This allows hosts to declaratively data bind to the host, including default style properties, classes, custom attributes, et cetera ([b004e10](https://github.com/fovea-org/fovea/commit/b004e10))
+
+
+
+
 <a name="1.0.105"></a>
 ## [1.0.105](https://github.com/fovea-org/fovea/compare/v1.0.104...v1.0.105) (2018-07-11)
 
