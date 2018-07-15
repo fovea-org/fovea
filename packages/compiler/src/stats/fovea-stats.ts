@@ -27,6 +27,18 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
+	 * Returns all foreign files
+	 * @returns {string[]}
+	 */
+	public get foreignFiles (): string[] {
+		const all = Array.from(this.fileToStatsMap.values());
+		if (all.length < 1) return [];
+		return all
+			.map(stats => stats.foreignFiles)
+			.reduce((first, next) => first.concat(next));
+	}
+
+	/**
 	 * Returns all referenced custom selectors
 	 * @returns {IReferencedCustomSelector[]}
 	 */
@@ -193,6 +205,7 @@ export class FoveaStats implements IFoveaStats {
 	public get stats (): IImmutableFoveaStats {
 		return {
 			declaredCustomSelectors: this.declaredCustomSelectors,
+			foreignFiles: this.foreignFiles,
 			referencedCustomSelectors: this.referencedCustomSelectors,
 			componentNames: this.componentNames,
 			hasHostAttributes: this.hasHostAttributes,
@@ -222,6 +235,15 @@ export class FoveaStats implements IFoveaStats {
 	 */
 	public setDeclaredCustomSelectors (file: string, customSelectors: IDeclaredCustomSelector[]): void {
 		this.getMutableStatsForFile(file).declaredCustomSelectors = customSelectors;
+	}
+
+	/**
+	 * Sets the 'foreign files' property on the IFoveaStats for the given file
+	 * @param {string} file
+	 * @param {string[]} foreignFiles
+	 */
+	public setForeignFiles (file: string, foreignFiles: string[]): void {
+		this.getMutableStatsForFile(file).foreignFiles = foreignFiles;
 	}
 
 	/**
@@ -439,6 +461,7 @@ export class FoveaStats implements IFoveaStats {
 		this.fileToStatsMap.set(file, {
 			declaredCustomSelectors: [],
 			referencedCustomSelectors: [],
+			foreignFiles: [],
 			componentNames: [],
 			hasHostAttributes: false,
 			hasStaticCSS: false,

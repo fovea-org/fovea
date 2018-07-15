@@ -1,3 +1,5 @@
+@import "./shared";
+
 :host {
 	color: ${this.value};
 	display: block;

@@ -41,7 +41,7 @@ async function handleResult (result: FoveaCompilerCompileResult, {printCode = de
 	if (result.hasChanged && printCode) {
 		console.log(result.code);
 	}
-	if (printStats) console.log(result.stats);
+	if (printStats) console.log(result.statsForFile);
 	if (printDiagnostics) console.log(result.diagnostics.toString());
 	if (!silent) console.log("");
 	return result;
@@ -66,12 +66,12 @@ async function dryRun (files: string[]) {
 	await Promise.all(files.map(async file => await compiler.compile({options: {dryRun: true}, file, code: readFileSync(file).toString()})));
 }
 
-test("playground", async t => {
-	const path1 = join(process.cwd(), "test/demo/demo-component/demo-component-2.ts");
-	const path2 = join(process.cwd(), "test/demo/demo-component/demo-component-1.ts");
-	const path3 = join(process.cwd(), "test/demo/demo-component/demo-component-2.scss");
-	const path4 = join(process.cwd(), "test/demo/demo-component/demo-component-1.scss");
-	const path5 = join(process.cwd(), "test/demo/demo-component/demo-component-1.html");
+test.only("playground", async t => {
+	const demoComponent1 = join(process.cwd(), "test/demo/demo-component/demo-component-1.ts");
+	const demoComponent2 = join(process.cwd(), "test/demo/demo-component/demo-component-2.ts");
+	const demoComponent1Scss = join(process.cwd(), "test/demo/demo-component/demo-component-1.scss");
+	const demoComponent1Html = join(process.cwd(), "test/demo/demo-component/demo-component-1.html");
+	const demoComponent2Scss = join(process.cwd(), "test/demo/demo-component/demo-component-2.scss");
 
 	console.log(compiler.transformCompilerHints(`
 	/*# IF hasStaticCSS */
@@ -80,13 +80,13 @@ test("playground", async t => {
 	console.log(true);
 	`, "foo").code);
 
-	await dryRun([path1, path2, path3, path4, path5]);
+	await dryRun([demoComponent2, demoComponent1, demoComponent2Scss, demoComponent1Scss, demoComponent1Html]);
 
-	await work(path3, {printCode: false});
-	await work(path4, {printCode: false});
-	await work(path5, {printCode: false, printDiagnostics: false, printStats: false});
-	await work(path1, {printCode: false});
-	await work(path2, {printCode: false, printDiagnostics: true, printStats: false});
+	await work(demoComponent2Scss, {printCode: true, printStats: true});
+	await work(demoComponent1Scss, {printCode: true, printStats: true});
+	await work(demoComponent1Html, {printCode: true, printDiagnostics: false, printStats: false});
+	await work(demoComponent2, {printCode: true});
+	await work(demoComponent1, {printCode: true, printDiagnostics: true, printStats: true});
 
 	t.true(true);
 });
@@ -176,10 +176,10 @@ test("Will correctly determine the type information for a prop of type: boolean"
 	t.true(result.hasChanged);
 });
 
-test.only("Will correctly register host attributes", async t => {
+test("Will correctly register host attributes", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-11.ts");
 	// @ts-ignore
-	const result = await work(path, {printCode: true});
+	const result = await work(path, {printCode: true, printDiagnostics: false});
 
 	t.true(result.hasChanged && result.code.includes("__registerHostAttributes"));
 });

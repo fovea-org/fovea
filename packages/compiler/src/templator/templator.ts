@@ -159,6 +159,20 @@ export class Templator implements ITemplator {
 				pluginConfigurationHook: compilerOptions.postcss == null || compilerOptions.postcss.hook == null ? undefined : compilerOptions.postcss.hook
 			});
 
+			const {paths: foreignFiles} = await this.foveaStyles.takeImportPaths({
+				template: content,
+				file: resolvedPath
+			});
+
+			// Take all stats for the file
+			const statsForFile = this.stats.getStatsForFile(context.container.file);
+			// Mark the foreign files of the styles as dependencies of it
+			for (const path of foreignFiles) {
+				if (!statsForFile.foreignFiles.includes(path)) {
+					statsForFile.foreignFiles.push(path);
+				}
+			}
+
 			hasInstanceCSS = instanceCSS != null && !isEmpty(instanceCSS) && !containsOnlyWhitespace(instanceCSS);
 			hasStaticCSS = staticCSS != null && !isEmpty(staticCSS) && !containsOnlyWhitespace(staticCSS);
 
@@ -278,12 +292,10 @@ export class Templator implements ITemplator {
 
 		// If we're not using a template or some styles from the same SourceFile, check if it already imports it and if not, add an import
 		if (!isSamePath) {
-			// Add an import for the file containing that resolved path - EVEN in a dry run! Otherwise, the files won't be added to the bundler
-			context.container.prepend(`import "${resolvedPath}";\n`);
-
-			// And then otherwise, if we are not in a dry run, add one more for the specific module we want to import (Yup, that's how Rollup works)
-			if (!compilerOptions.dryRun) {
-				context.container.prepend(`\n// @ts-ignore\nimport {${scopeName}} from "${resolvedPath}";\n`);
+			const statsForFile = this.stats.getStatsForFile(context.container.file);
+			// Mark the file as foreign, as a dependency
+			if (!statsForFile.foreignFiles.includes(resolvedPath)) {
+				statsForFile.foreignFiles.push(resolvedPath);
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 
 import {FoveaCompiler, FoveaDiagnostic, IFoveaCompiler, IFoveaOptions} from "@fovea/compiler";
 import * as rollup from "rollup";
-import {Plugin, RollupDirOptions, RollupFileOptions, SourceDescription} from "rollup";
+import {Plugin, RollupDirOptions, RollupFileOptions, TransformSourceDescription} from "rollup";
 import {IFoveaRollupPluginOptions} from "./i-fovea-rollup-plugin-options";
 
 /**
@@ -142,9 +142,9 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 		 * Here the source code is parsed and upgraded. A sourcemap will be returned if need be.
 		 * @param {string} code
 		 * @param {string} file
-		 * @returns {Promise<SourceDescription|void>}
+		 * @returns {Promise<TransformSourceDescription|void>}
 		 */
-		async transform (code: string, file: string): Promise<SourceDescription|void> {
+		async transform (code: string, file: string): Promise<TransformSourceDescription|void> {
 
 			// If 'optimize' is on, we need to perform a full two compile runs.
 			// The first is to calculate the correct IFoveaStats. The second is then the actual one.
@@ -178,7 +178,11 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 			if (!fileResult.hasChanged) return;
 
 			// Finally, return the changed code as well as the sourcemap
-			return fileResult;
+			return {
+				code: fileResult.code,
+				map: fileResult.map,
+				dependencies: fileResult.statsForFile.foreignFiles
+			};
 		}
 	};
 }
