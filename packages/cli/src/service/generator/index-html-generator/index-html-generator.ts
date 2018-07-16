@@ -63,6 +63,9 @@ export default ({resource, globalStyles, polyfillContent}: IIndexHtmlOptions) =>
 		<meta name="apple-mobile-web-app-status-bar-style" content="white">
 		<meta name="mobile-web-app-status-bar-style" content="white">
 
+		<!-- Mobile-friendly MS meta tags -->
+		<meta name="msapplication-tap-highlight" content="no">
+
 		<!-- Preload contents -->
 		\${config.isESM()
 			? \`

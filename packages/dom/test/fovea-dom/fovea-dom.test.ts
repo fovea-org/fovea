@@ -39,7 +39,7 @@ test("generate () => Will generate key-value pairs for expressions provided to c
 	t.true(instructions != null);
 });
 
-test.only("generate () => Will correctly generate template instructions for host attributes", async t => {
+test("generate () => Will correctly generate template instructions for host attributes", async t => {
 	const {instructions} = foveaDOM.generate({
 		hostAttributes: {
 			"*routerLink": "",

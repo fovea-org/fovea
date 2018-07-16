@@ -50,6 +50,13 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 							$WATCH: null;
 							$TAG: null;
 							$HASH: null;
+
+							@mixin reset {
+								font-family: var(--font-family);
+								-webkit-tap-highlight-color: rgba(0,0,0,0);
+								-webkit-tap-highlight-color: transparent;
+								box-sizing: border-box;
+							}
 							`, {...this.config.formatOptions, parser: this.config.defaultCssExtension}
 						)
 					},
@@ -147,8 +154,7 @@ export class StyleGenerator extends Generator implements IStyleGenerator {
 
 							// This file should contain the global styles that will appear in your index.html file
 							* {
-								font-family: var(--font-family);
-								box-sizing: border-box;
+								@include reset();
 							}
 
 							body {
