@@ -25,7 +25,7 @@ function testIsConnected (observer: IDOMConnectionMutationObserver): boolean {
  * @returns {boolean}
  */
 function testIsDisconnected (observer: IDOMConnectionMutationObserver): boolean {
-	return !observer.root.contains(observer.node);
+	return !observer.node.isConnected && !observer.root.contains(observer.node);
 }
 
 /**
