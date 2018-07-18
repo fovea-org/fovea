@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.108"></a>
+## [1.0.108](https://github.com/fovea-org/fovea/compare/v1.0.107...v1.0.108) (2018-07-18)
+
+
+### Bug Fixes
+
+* Fixed a bug in which custom attributes would sometimes be disposed prematurely ([97256fc](https://github.com/fovea-org/fovea/commit/97256fc))
+* Fixed a bug in which stats would be calculated wrong under some circumstances when multiple components or custom attributes are declared within the same file ([becd27f](https://github.com/fovea-org/fovea/commit/becd27f))
+* Fixed an issue where connectedCallbacks and disconnectedCallbacks of Custom Attributes would either not fire or fire at the wrong times under some circumstances. ([f20aac9](https://github.com/fovea-org/fovea/commit/f20aac9))
+* Fixed an issue with compiler comments that would be stripped under some circumstances when not anticipated ([da3d6fc](https://github.com/fovea-org/fovea/commit/da3d6fc))
+
+
+
+
 <a name="1.0.107"></a>
 ## [1.0.107](https://github.com/fovea-org/fovea/compare/v1.0.106...v1.0.107) (2018-07-16)
 

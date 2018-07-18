@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.108"></a>
+## [1.0.108](https://github.com/fovea-org/fovea/compare/v1.0.107...v1.0.108) (2018-07-18)
+
+
+### Bug Fixes
+
+* Fixed an issue where connectedCallbacks and disconnectedCallbacks of Custom Attributes would either not fire or fire at the wrong times under some circumstances. ([f20aac9](https://github.com/fovea-org/fovea/commit/f20aac9))
+
+
+
+
 <a name="1.0.107"></a>
 ## [1.0.107](https://github.com/fovea-org/fovea/compare/v1.0.106...v1.0.107) (2018-07-16)
 
