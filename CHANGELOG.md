@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.109"></a>
+## [1.0.109](https://github.com/fovea-org/fovea/compare/v1.0.108...v1.0.109) (2018-07-18)
+
+
+### Bug Fixes
+
+* Made sure to upgrade custom attributes within the __construct private lib helper, and to dispose them from __dispose to avoid having to make 'constructCustomAttribute' public ([6180e8a](https://github.com/fovea-org/fovea/commit/6180e8a))
+
+
+
+
 <a name="1.0.108"></a>
 ## [1.0.108](https://github.com/fovea-org/fovea/compare/v1.0.107...v1.0.108) (2018-07-18)
 
