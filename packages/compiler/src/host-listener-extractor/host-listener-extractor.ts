@@ -76,7 +76,8 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 			});
 			return decoratorResults.some(result => result);
 		});
-		// Set 'hasHostListeners' to true if there were any results and any of them were 'true'
-		this.stats.setHasHostListeners(context.container.file, results.some(result => result));
+		// Set 'hasHostListeners' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasHostListeners(context.container.file, statsForFile.hasHostListeners || results.some(result => result));
 	}
 }

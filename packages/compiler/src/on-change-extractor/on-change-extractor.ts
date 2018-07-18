@@ -75,7 +75,8 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 			});
 			return decoratorResults.some(result => result);
 		});
-		// Set 'hasChangeObservers' to true if there were any results and any of them were 'true'
-		this.stats.setHasChangeObservers(context.container.file, results.some(result => result));
+		// Set 'hasChangeObservers' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasChangeObservers(context.container.file, statsForFile.hasChangeObservers || results.some(result => result));
 	}
 }

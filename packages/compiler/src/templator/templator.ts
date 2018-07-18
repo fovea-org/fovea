@@ -70,7 +70,7 @@ export class Templator implements ITemplator {
 	 * @returns {Promise<IRegisterResult>}
 	 */
 	public async registerTemplate (options: ITemplatorRegisterOptions, content: string, resolvedPath: string): Promise<IRegisterResult> {
-		const {context, insertPlacement, compilerOptions, generateForStyles = false, otherTemplateStats, shouldExport = false} = options;
+		const {context, insertPlacement, compilerOptions, generateForStyles = false, shouldExport = false} = options;
 
 		// Initialize the array of generated hashes
 		const generatedHashes: IUseItem[] = [];
@@ -79,14 +79,17 @@ export class Templator implements ITemplator {
 			// Generate DOM instructions for the class. Skip style tags and pass them on to the style generator
 			const {requiredHelpers, instructions, amount, skippedParts, referencedCustomSelectors, ...stats} = this.foveaDOM.generate({template: content, dryRun: compilerOptions.dryRun, skipTags: new Set(generateForStyles ? [] : ["style"])});
 
+			// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+			const statsForFile = this.stats.getStatsForFile(context.container.file);
+
 			// Add the IFoveaStats for the file
-			this.stats.setHasSyncEvaluations(context.container.file, stats.hasSyncEvaluations || (otherTemplateStats != null && otherTemplateStats.hasSyncEvaluations));
-			this.stats.setHasAsyncEvaluations(context.container.file, stats.hasAsyncEvaluations || (otherTemplateStats != null && otherTemplateStats.hasAsyncEvaluations));
-			this.stats.setHasTemplateListeners(context.container.file, stats.hasTemplateListeners || (otherTemplateStats != null && otherTemplateStats.hasTemplateListeners));
-			this.stats.setHasTemplateCustomAttributes(context.container.file, stats.hasTemplateCustomAttributes || (otherTemplateStats != null && otherTemplateStats.hasTemplateCustomAttributes));
-			this.stats.setHasTemplateRefs(context.container.file, stats.hasTemplateRefs || (otherTemplateStats != null && otherTemplateStats.hasTemplateRefs));
-			this.stats.setHasTemplateAttributes(context.container.file, stats.hasTemplateAttributes || (otherTemplateStats != null && otherTemplateStats.hasTemplateAttributes));
-			this.stats.setReferencedCustomSelectors(context.container.file, [...referencedCustomSelectors, ...(otherTemplateStats == null ? [] : otherTemplateStats.referencedCustomSelectors)]);
+			this.stats.setHasSyncEvaluations(context.container.file, stats.hasSyncEvaluations || statsForFile.hasSyncEvaluations);
+			this.stats.setHasAsyncEvaluations(context.container.file, stats.hasAsyncEvaluations || statsForFile.hasAsyncEvaluations);
+			this.stats.setHasTemplateListeners(context.container.file, stats.hasTemplateListeners || statsForFile.hasTemplateListeners);
+			this.stats.setHasTemplateCustomAttributes(context.container.file, stats.hasTemplateCustomAttributes || statsForFile.hasTemplateCustomAttributes);
+			this.stats.setHasTemplateRefs(context.container.file, stats.hasTemplateRefs || statsForFile.hasTemplateRefs);
+			this.stats.setHasTemplateAttributes(context.container.file, stats.hasTemplateAttributes || statsForFile.hasTemplateAttributes);
+			this.stats.setReferencedCustomSelectors(context.container.file, [...referencedCustomSelectors, ...statsForFile.referencedCustomSelectors]);
 
 			// Mark all required helpers as used
 			this.libUser.markAsUsed(requiredHelpers, compilerOptions, context);
@@ -111,8 +114,7 @@ export class Templator implements ITemplator {
 					context,
 					insertPlacement,
 					compilerOptions,
-					shouldExport: false,
-					otherTemplateStats: this.stats.getStatsForFile(context.container.file)
+					shouldExport: false
 				}, skippedPart.inner, resolvedPath);
 
 				// Add all of the generated style hashes to the set of total generated hashes
@@ -141,7 +143,7 @@ export class Templator implements ITemplator {
 	 * @returns {IRegisterResult}
 	 */
 	public async registerStyles (options: ITemplatorRegisterOptions, content: string, resolvedPath: string): Promise<IRegisterResult> {
-		const {context, insertPlacement, compilerOptions, otherTemplateStats, shouldExport = false} = options;
+		const {context, insertPlacement, compilerOptions, shouldExport = false} = options;
 
 		let hasInstanceCSS: boolean = false;
 		let hasStaticCSS: boolean = false;
@@ -169,8 +171,7 @@ export class Templator implements ITemplator {
 					compilerOptions,
 					insertPlacement,
 					generateForStyles: true,
-					shouldExport: false,
-					otherTemplateStats: this.stats.getStatsForFile(context.container.file)
+					shouldExport: false
 				}, `<style>${instanceCSS}</style>`, resolvedPath);
 
 				// Add all of the generated template hashes to the set of total generated hashes
@@ -197,8 +198,9 @@ export class Templator implements ITemplator {
 			this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_CSS, formattedErrorMessage: ex.toString()});
 		}
 
-		// Add the IFoveaStats for the file
-		this.stats.setHasStaticCSS(context.container.file, hasStaticCSS || (otherTemplateStats != null && otherTemplateStats.hasStaticCSS));
+		// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasStaticCSS(context.container.file, hasStaticCSS || statsForFile.hasStaticCSS);
 
 		if (!compilerOptions.dryRun && shouldExport) {
 			context.container.append(`\nexport const ${this.generateExportScopeName(resolvedPath)} = ${JSON.stringify(generatedHashes)};`);

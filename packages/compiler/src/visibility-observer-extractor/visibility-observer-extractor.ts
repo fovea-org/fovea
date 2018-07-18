@@ -88,7 +88,8 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 			});
 			return decoratorResults.some(result => result);
 		});
-		// Set 'hasVisibilityObservers' to true if there were any results and any of them were 'true'
-		this.stats.setHasVisibilityObservers(context.container.file, results.some(result => result));
+		// Set 'hasVisibilityObservers' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasVisibilityObservers(context.container.file, statsForFile.hasVisibilityObservers || results.some(result => result));
 	}
 }

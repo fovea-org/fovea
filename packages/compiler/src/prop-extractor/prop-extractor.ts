@@ -57,8 +57,9 @@ export class PropExtractor implements IPropExtractor {
 			context.container.prependLeft(observedProp.pos, "\n// @ts-ignore\n");
 		});
 
-		// Set 'hasProps' on the stats to 'true' if there were at least 1 prop
-		this.stats.setHasProps(context.container.file, allProps.length > 0);
+		// Set 'hasProps' if there were at least 1 prop, or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasProps(context.container.file, statsForFile.hasProps || allProps.length > 0);
 	}
 
 }

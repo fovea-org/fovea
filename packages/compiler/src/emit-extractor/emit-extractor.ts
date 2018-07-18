@@ -70,8 +70,9 @@ export class EmitExtractor implements IEmitExtractor {
 			return decoratorResults.some(result => result);
 		});
 
-		// Set 'hasEventEmitters' to true if there were any results and any of them were 'true'
-		this.stats.setHasEventEmitters(context.container.file, results.some(result => result));
+		// Set 'hasEventEmitters' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasEventEmitters(context.container.file, statsForFile.hasEventEmitters || results.some(result => result));
 	}
 
 	/**

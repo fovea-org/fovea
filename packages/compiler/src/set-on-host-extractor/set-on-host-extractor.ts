@@ -53,8 +53,9 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 			// Make sure that it has a @prop decorator
 			this.assertHasPropDecorator(setOnHostProperty, context);
 		});
-		// Set 'hasHostProps' on the stats to 'true' if there were at least 1 prop
-		this.stats.setHasHostProps(context.container.file, allProps.length > 0);
+		// Set 'hasHostProps' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+		this.stats.setHasHostProps(context.container.file, statsForFile.hasHostProps || allProps.length > 0);
 	}
 
 	/**
