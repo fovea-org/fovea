@@ -11,7 +11,7 @@ import {IDOMConnectionObserverResult} from "../dom-mutation/dom-mutation-observe
  * @param {string} name
  * @returns {object}
  */
-export function constructCustomAttribute (hostElement: Element, name: string): { customAttribute: ICustomAttribute; dispose (): void } {
+export function constructCustomAttribute<T = ICustomAttribute> (hostElement: Element, name: string): { customAttribute: T; dispose (): void } {
 	// Get the constructor for it
 	const constructor = customAttributes.get(name);
 
@@ -30,14 +30,14 @@ export function constructCustomAttribute (hostElement: Element, name: string): {
 		if (customAttribute.connectedCallback != null) {
 			customAttribute.connectedCallback();
 		}
-	}, false);
+	}, {nextTime: false});
 
 	// Subscribe to the event that the host element is detached from the DOM and invoke the 'disconnectedCallback' if it provided
 	let disconnectionObserver: IDOMConnectionObserverResult|null = onDisconnected(hostElement, () => {
 		if (customAttribute.disconnectedCallback != null) {
 			customAttribute.disconnectedCallback();
 		}
-	});
+	}, {nextTime: true});
 	return {
 		customAttribute, dispose: () => {
 			if (connectionObserver != null) {

@@ -115,11 +115,19 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
-	 * Returns true if any file has a 'hasMutationObservers' property value of 'true'
+	 * Returns true if any file has a 'hasChildListObservers' property value of 'true'
 	 * @returns {boolean}
 	 */
-	public get hasMutationObservers (): boolean {
-		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasMutationObservers);
+	public get hasChildListObservers (): boolean {
+		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasChildListObservers);
+	}
+
+	/**
+	 * Returns true if any file has a 'hasAttributeChangeObservers' property value of 'true'
+	 * @returns {boolean}
+	 */
+	public get hasAttributeChangeObservers (): boolean {
+		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasAttributeChangeObservers);
 	}
 
 	/**
@@ -202,7 +210,8 @@ export class FoveaStats implements IFoveaStats {
 			hasEventEmitters: this.hasEventEmitters,
 			hasHostListeners: this.hasHostListeners,
 			hasVisibilityObservers: this.hasVisibilityObservers,
-			hasMutationObservers: this.hasMutationObservers,
+			hasChildListObservers: this.hasChildListObservers,
+			hasAttributeChangeObservers: this.hasAttributeChangeObservers,
 			hasChangeObservers: this.hasChangeObservers,
 			hasHostProps: this.hasHostProps,
 			hasICustomAttributes: this.hasICustomAttributes,
@@ -315,12 +324,21 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
-	 * Sets the 'hasMutationObservers' property on the IFoveaStats for the given file
+	 * Sets the 'hasChildListObservers' property on the IFoveaStats for the given file
 	 * @param {string} file
-	 * @param {boolean} hasMutationObservers
+	 * @param {boolean} hasChildListObservers
 	 */
-	public setHasMutationObservers (file: string, hasMutationObservers: boolean): void {
-		this.getMutableStatsForFile(file).hasMutationObservers = hasMutationObservers;
+	public setHasChildListObservers (file: string, hasChildListObservers: boolean): void {
+		this.getMutableStatsForFile(file).hasChildListObservers = hasChildListObservers;
+	}
+
+	/**
+	 * Sets the 'hasAttributeChangeObservers' property on the IFoveaStats for the given file
+	 * @param {string} file
+	 * @param {boolean} hasAttributeChangeObservers
+	 */
+	public setHasAttributeChangeObservers (file: string, hasAttributeChangeObservers: boolean): void {
+		this.getMutableStatsForFile(file).hasAttributeChangeObservers = hasAttributeChangeObservers;
 	}
 
 	/**
@@ -449,7 +467,8 @@ export class FoveaStats implements IFoveaStats {
 			hasEventEmitters: false,
 			hasHostListeners: false,
 			hasVisibilityObservers: false,
-			hasMutationObservers: false,
+			hasChildListObservers: false,
+			hasAttributeChangeObservers: false,
 			hasChangeObservers: false,
 			hasHostProps: false,
 			hasProps: false,

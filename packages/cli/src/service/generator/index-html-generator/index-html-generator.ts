@@ -67,7 +67,7 @@ export default ({resource, globalStyles, polyfillContent}: IIndexHtmlOptions) =>
 		<meta name="msapplication-tap-highlight" content="no">
 
 		<!-- Preload contents -->
-		\${config.isESM()
+		\${config.MODULE_KIND === "es"
 			? \`
 		<link rel="modulepreload" href="\${resource.output.chunk.main}">
 		<link rel="modulepreload" href="\${resource.output.chunk.serviceWorker}">
@@ -98,7 +98,7 @@ export default ({resource, globalStyles, polyfillContent}: IIndexHtmlOptions) =>
 		\${polyfillContent}
 
 		<!-- This is where your main bundle is loaded -->
-		\${config.isESM()
+		\${config.MODULE_KIND === "es"
 			? \`<script type="module" src="\${resource.output.chunk.main}"></script>\`
 			: \`<script>SystemJS.import("\${resource.output.chunk.main}")</script>\`
 		}

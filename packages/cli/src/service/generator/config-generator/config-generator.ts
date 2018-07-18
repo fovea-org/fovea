@@ -42,8 +42,7 @@ export class ConfigGenerator extends Generator implements IConfigGenerator {
 								DEVELOPMENT: environment.NODE_ENV === "development",
 								STAGING: environment.NODE_ENV === "staging",
 								RESOURCE: <IResource> JSON.parse(environment.RESOURCE),
-								WATCH: environment.WATCH === "true",
-								isESM: () => environment.MODULE_KIND === "es"
+								WATCH: environment.WATCH === "true"
 								// Add additional config properties here
 							};
 							`, {...this.config.formatOptions, parser: "typescript"}

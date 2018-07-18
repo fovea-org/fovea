@@ -32,16 +32,17 @@
 		"prepare": "NODE_ENV=production lerna run prepare",
 		"update:shared": "ncu -ua && npm update && npm install",
 		"update:packages": "lerna exec -- ncu -ua --reject '/fovea/' && lerna exec -- npm update && lerna exec -- npm install",
+		"update": "npm run update:shared && npm run update:packages",
 		"audit": "lerna exec -- nsp check",
-		"prebootstrap": "npm run codegen && npm run update:shared && npm run update:packages",
+		"prebootstrap": "npm run codegen && npm run update",
 		"bootstrap": "NODE_ENV=production lerna bootstrap",
 		"validate": "npm run lint && npm run test",
 		"publish": "npm run bootstrap && npm run validate && lerna publish --cd-version patch --conventional-commits --yes",
 		"lerna": "lerna"
 	},
 	"devDependencies": {
-		"@wessberg/rollup-plugin-di": "^1.0.84",
-		"@wessberg/rollup-plugin-ts": "0.0.30",
+		"@wessberg/rollup-plugin-di": "^1.0.85",
+		"@wessberg/rollup-plugin-ts": "0.0.32",
 		"@wessberg/scaffold": "1.0.0",
 		"ava": "^0.25.0",
 		"chalk": "^2.4.1",
@@ -50,10 +51,10 @@
 		"lerna": "^2.11.0",
 		"npm-check-updates": "^2.14.2",
 		"nsp": "^3.2.1",
-		"rollup": "^0.62.0",
+		"rollup": "^0.63.2",
 		"ts-node": "^7.0.0",
 		"tslib": "^1.9.3",
-		"tslint": "^5.10.0",
+		"tslint": "^5.11.0",
 		"typescript": "^2.9.2"
 	},
 	"dependencies": {

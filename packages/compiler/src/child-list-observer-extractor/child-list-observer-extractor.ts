@@ -1,17 +1,17 @@
-import {IMutationObserverExtractor} from "./i-mutation-observer-extractor";
 import {IConfiguration} from "../configuration/i-configuration";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {IFoveaStats} from "../stats/i-fovea-stats";
-import {IMutationObserverExtractorExtractOptions} from "./i-mutation-observer-extractor-extract-options";
 import {isCallExpression} from "typescript";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
+import {IChildListObserverExtractor} from "./i-child-list-observer-extractor";
+import {IChildListObserverExtractorExtractOptions} from "./i-child-list-observer-extractor-extract-options";
 
 /**
  * A class that can extract methods annotated with a @onChildrenAdded or @onChildrenRemoved decorator from a Component prototype and invoke the helpers in fovea-lib
  */
-export class MutationObserverExtractor implements IMutationObserverExtractor {
+export class ChildListObserverExtractor implements IChildListObserverExtractor {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
@@ -36,10 +36,10 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @onChildrenAdded or @onChildrenRemoved decorator and delegates it to the fovea-lib helper '__registerMutationObserver'.
-	 * @param {IMutationObserverExtractorExtractOptions} options
+	 * Extracts all properties decorated with a @onChildrenAdded or @onChildrenRemoved decorator and delegates it to the fovea-lib helper '__registerChildListObserver'.
+	 * @param {IChildListObserverExtractorExtractOptions} options
 	 */
-	public extract (options: IMutationObserverExtractorExtractOptions): void {
+	public extract (options: IChildListObserverExtractorExtractOptions): void {
 		const {mark, insertPlacement, context, compilerOptions} = options;
 		const {className, classDeclaration} = mark;
 
@@ -54,7 +54,7 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 		// Take all methods
 		const allMethods = [...onChildrenAddedInstanceMethods, ...onChildrenAddedStaticMethods, ...onChildrenRemovedInstanceMethods, ...onChildrenRemovedStaticMethods];
 
-		// For each method, generate a call to '__registerMutationObserver' and remove the '@[onChildrenAdded|onChildrenRemoved]' decorator
+		// For each method, generate a call to '__registerChildListObserver' and remove the '@[onChildrenAdded|onChildrenRemoved]' decorator
 		const results = allMethods.map(({method, added}) => {
 
 			// Take the relevant decorator name
@@ -67,7 +67,7 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 				// The contents will either be empty if @[onChildrenAdded|onChildrenRemoved]() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				if (!isCallExpression(decorator.expression)) {
 
-					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(method), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
+					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(method), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 					return false;
 				}
 
@@ -79,7 +79,7 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 
 				// Create the CallExpression
 				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerMutationObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`,
+					`\n${this.libUser.use("registerChildListObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`,
 					insertPlacement
 				);
 
@@ -89,7 +89,7 @@ export class MutationObserverExtractor implements IMutationObserverExtractor {
 			});
 			return decoratorResults.some(result => result);
 		});
-		// Set 'hasMutationObservers' to true if there were any results and any of them were 'true'
-		this.stats.setHasMutationObservers(context.container.file, results.some(result => result));
+		// Set 'hasChildListObservers' to true if there were any results and any of them were 'true'
+		this.stats.setHasChildListObservers(context.container.file, results.some(result => result));
 	}
 }

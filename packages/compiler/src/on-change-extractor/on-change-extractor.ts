@@ -57,18 +57,15 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 				// The first argument will be the prop name(s) to observe
 				const firstArgumentContents = this.codeAnalyzer.printer.print(decorator.expression.arguments[0]);
 
-				// The second - optional - argument will be whether or not the observer should only be invoked when the host element is connected to the DOM
+				// The second - optional - argument will be whether or not all props must be initialized before invoking it
 				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
-
-				// The third - optional - argument will be whether or not all props must be initialized before invoking it
-				const thirdArgumentContents = decorator.expression.arguments.length < 3 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[2])}`;
 
 				// If we're on a dry run, return true before mutating the SourceFile
 				if (compilerOptions.dryRun) return true;
 
 				// Create the CallExpression
 				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents}${thirdArgumentContents});`,
+					`\n${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
 					insertPlacement
 				);
 

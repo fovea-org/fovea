@@ -1,6 +1,6 @@
 import {IFoveaDiagnostics} from "./i-fovea-diagnostics";
 import {FoveaDiagnostic} from "./fovea-diagnostic";
-import {FoveaDiagnosticCtor, IAmbiguousHostFoveaDiagnosticCtor, IInvalidCssFoveaDiagnosticCtor, IInvalidDependsOnDecoratorUsageFoveaDiagnosticCtor, IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor, IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor, IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor, IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor, IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor, IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor, IInvalidSrcDecoratorUsageFoveaDiagnosticCtor, IInvalidTemplateFoveaDiagnosticCtor, IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor, IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor, IUnknownSelectorFoveaDiagnosticCtor, IUnresolvedSrcFoveaDiagnosticCtor} from "./fovea-diagnostic-ctor";
+import {FoveaDiagnosticCtor, IAmbiguousHostFoveaDiagnosticCtor, IInvalidCssFoveaDiagnosticCtor, IInvalidDependsOnDecoratorUsageFoveaDiagnosticCtor, IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor, IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor, IInvalidChildListObserverDecoratorUsageFoveaDiagnosticCtor, IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor, IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor, IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor, IInvalidSrcDecoratorUsageFoveaDiagnosticCtor, IInvalidTemplateFoveaDiagnosticCtor, IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor, IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor, IUnknownSelectorFoveaDiagnosticCtor, IUnresolvedSrcFoveaDiagnosticCtor, IInvalidAttributeObserverDecoratorUsageFoveaDiagnosticCtor} from "./fovea-diagnostic-ctor";
 import {FoveaDiagnosticKind} from "./fovea-diagnostic-kind";
 import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import chalk from "chalk";
@@ -80,8 +80,11 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 			case FoveaDiagnosticKind.INVALID_VISIBILITY_OBSERVER_DECORATOR_USAGE:
 				return this.addInvalidVisibilityObserverDecoratorUsageDiagnostic(file, diagnostic);
 
-			case FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE:
-				return this.addInvalidMutationObserverDecoratorUsageDiagnostic(file, diagnostic);
+			case FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE:
+				return this.addInvalidChildListObserverDecoratorUsageDiagnostic(file, diagnostic);
+
+			case FoveaDiagnosticKind.INVALID_ATTRIBUTE_OBSERVER_DECORATOR_USAGE:
+				return this.addInvalidAttributeObserverDecoratorUsageDiagnostic(file, diagnostic);
 
 			case FoveaDiagnosticKind.UNRESOLVED_SRC:
 				return this.addUnresolvedSrcDiagnostic(file, diagnostic);
@@ -303,17 +306,35 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 	/**
 	 * Adds a diagnostic for a @[onChildrenAdded|onChildrenRemoved] decorator that is not properly invoked.
 	 * @param {string} file
-	 * @param {FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE} kind
+	 * @param {FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE} kind
 	 * @param {string} hostName
 	 * @param {FoveaHostKind | string} hostKind
 	 * @param {string} decoratorContent
 	 * @param {string} methodName
 	 */
-	private addInvalidMutationObserverDecoratorUsageDiagnostic (file: string, {kind, hostName, hostKind, decoratorContent, methodName}: IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor): void {
+	private addInvalidChildListObserverDecoratorUsageDiagnostic (file: string, {kind, hostName, hostKind, decoratorContent, methodName}: IInvalidChildListObserverDecoratorUsageFoveaDiagnosticCtor): void {
 		this.getDiagnosticsForFile(file).push(
 			this.finalizeDiagnostic({
 				kind, file, degree: FoveaDiagnosticDegree.ERROR,
 				description: `You have annotated the method '${this.paintFunction(methodName)}' on the ${this.stringifyHostKind(hostKind)} '${this.paintHost(hostName)}' with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but you haven't invoked it. You must invoke it, optionally passing an object of arguments!`
+			}));
+	}
+
+
+	/**
+	 * Adds a diagnostic for a @onAttributeChange decorator that is not properly invoked.
+	 * @param {string} file
+	 * @param {FoveaDiagnosticKind.INVALID_ATTRIBUTE_OBSERVER_DECORATOR_USAGE} kind
+	 * @param {string} hostName
+	 * @param {FoveaHostKind | string} hostKind
+	 * @param {string} decoratorContent
+	 * @param {string} methodName
+	 */
+	private addInvalidAttributeObserverDecoratorUsageDiagnostic (file: string, {kind, hostName, hostKind, decoratorContent, methodName}: IInvalidAttributeObserverDecoratorUsageFoveaDiagnosticCtor): void {
+		this.getDiagnosticsForFile(file).push(
+			this.finalizeDiagnostic({
+				kind, file, degree: FoveaDiagnosticDegree.ERROR,
+				description: `You have annotated the method '${this.paintFunction(methodName)}' on the ${this.stringifyHostKind(hostKind)} '${this.paintHost(hostName)}' with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but you haven't provided it with any arguments. The first argument must be one or more attributes to observe changes for!`
 			}));
 	}
 

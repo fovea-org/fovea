@@ -41,8 +41,8 @@
 		"@wessberg/stringutil": "^1.0.17"
 	},
 	"devDependencies": {
-		"@wessberg/rollup-plugin-ts": "0.0.30",
-		"rollup": "^0.62.0"
+		"@wessberg/rollup-plugin-ts": "0.0.32",
+		"rollup": "^0.63.2"
 	},
 	"publishConfig": {
 		"access": "public"

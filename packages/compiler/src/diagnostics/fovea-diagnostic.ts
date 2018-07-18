@@ -54,8 +54,13 @@ export interface IInvalidVisibilityObserverDecoratorUsageFoveaDiagnostic extends
 	degree: FoveaDiagnosticDegree.ERROR;
 }
 
-export interface IInvalidMutationObserverDecoratorUsageFoveaDiagnostic extends IFoveaDiagnostic {
-	kind: FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE;
+export interface IInvalidChildListObserverDecoratorUsageFoveaDiagnostic extends IFoveaDiagnostic {
+	kind: FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE;
+	degree: FoveaDiagnosticDegree.ERROR;
+}
+
+export interface IInvalidAttributeObserverDecoratorUsageFoveaDiagnostic extends IFoveaDiagnostic {
+	kind: FoveaDiagnosticKind.INVALID_ATTRIBUTE_OBSERVER_DECORATOR_USAGE;
 	degree: FoveaDiagnosticDegree.ERROR;
 }
 
@@ -103,7 +108,8 @@ export declare type FoveaDiagnostic =
 	IInvalidOnChangeDecoratorUsageFoveaDiagnostic|
 	IInvalidHostListenerDecoratorUsageFoveaDiagnostic|
 	IInvalidVisibilityObserverDecoratorUsageFoveaDiagnostic|
-	IInvalidMutationObserverDecoratorUsageFoveaDiagnostic|
+	IInvalidChildListObserverDecoratorUsageFoveaDiagnostic|
+	IInvalidAttributeObserverDecoratorUsageFoveaDiagnostic|
 	IUnresolvedSrcFoveaDiagnostic|
 	IInvalidSelectorNeedsHyphenFoveaDiagnostic|
 	IInvalidSelectorHasWhitespaceFoveaDiagnostic|

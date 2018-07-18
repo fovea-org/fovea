@@ -1,32 +1,22 @@
 import {IDOMConnectionObserverResult} from "./i-dom-connection-observer-result";
-import {DOMMutationObserver, IDOMConnectionMutationObserver} from "./i-dom-mutation-observer";
+import {DOMMutationObserver} from "./i-dom-mutation-observer";
 import {DOMMutationObserverKind} from "./dom-mutation-observer-kind";
-import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-root-for-node";
 import {DOMConnectionCallback} from "./dom-connection-callback";
 import {DOMCallbackCondition} from "./dom-callback-condition";
+import {IDOMConnectionObserverOptions} from "./i-dom-connection-observer-options";
+import {DOMAttributeCallback} from "./dom-attribute-callback";
 
-/*# IF hasTemplateCustomAttributes || hasMutationObservers */
+/*# IF hasChildListObservers */
 
 // The options to provide when observing nodes
-const OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true};
+const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true}; /*# END IF hasChildListObservers */
 
-/**
- * Checks if the given observer is connected
- * @param {IDOMConnectionMutationObserver} observer
- * @returns {boolean}
- */
-function testIsConnected (observer: IDOMConnectionMutationObserver): boolean {
-	return observer.node.isConnected || observer.root.contains(observer.node);
-}
+/*# IF hasAttributeChangeObservers */
 
-/**
- * Checks if the given observer is disconnected
- * @param {IDOMConnectionMutationObserver} observer
- * @returns {boolean}
- */
-function testIsDisconnected (observer: IDOMConnectionMutationObserver): boolean {
-	return !observer.node.isConnected && !observer.root.contains(observer.node);
-}
+// The options to provide when observing nodes for changes to their attributes
+const ATTRIBUTE_OBSERVER_OPTIONS: MutationObserverInit = {attributes: true, attributeOldValue: true}; /*# END IF hasAttributeChangeObservers */
+
+/*# IF hasChildListObservers || hasAttributeChangeObservers */
 
 /**
  * Invoke this function when MutationRecords are available
@@ -34,8 +24,19 @@ function testIsDisconnected (observer: IDOMConnectionMutationObserver): boolean 
  * @param {DOMMutationObserver} observer
  * @param {DOMCallbackCondition} [callbackCondition]
  */
-function onChanges (changes: MutationRecord[], observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition = () => true): void {
+function onMutationChanges (changes: MutationRecord[], observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition = () => true): void {
 	changes.forEach(change => {
+		switch (observer.kind) {
+			case DOMMutationObserverKind.ATTRIBUTE_CHANGED:
+				// Test the condition
+				if (!callbackCondition()) return;
+				observer.callback({
+					attributeName: change.attributeName!,
+					newValue: "getAttribute" in observer.node ? (<Element>observer.node).getAttribute(change.attributeName!) : null,
+					oldValue: change.oldValue
+				});
+				break;
+		}
 
 		switch (observer.kind) {
 			case DOMMutationObserverKind.CHILDREN_ADDED:
@@ -53,22 +54,6 @@ function onChanges (changes: MutationRecord[], observer: DOMMutationObserver, ca
 					observer.callback(Array.from(change.removedNodes));
 				}
 				break;
-
-			case DOMMutationObserverKind.CONNECTED:
-				if (testIsConnected(observer)) {
-					// Test the condition
-					if (!callbackCondition()) return;
-					observer.callback();
-				}
-				break;
-
-			case DOMMutationObserverKind.DISCONNECTED:
-				if (testIsDisconnected(observer)) {
-					// Test the condition
-					if (!callbackCondition()) return;
-					observer.callback();
-				}
-				break;
 		}
 	});
 }
@@ -80,70 +65,16 @@ function onChanges (changes: MutationRecord[], observer: DOMMutationObserver, ca
  * @returns {IDOMConnectionObserverResult}
  */
 function onMutation (observer: DOMMutationObserver, callbackCondition?: DOMCallbackCondition): IDOMConnectionObserverResult {
-	const mutationObserver = new MutationObserver(changes => onChanges(changes, observer, callbackCondition));
-	mutationObserver.observe(observer.root, OBSERVER_OPTIONS);
+	const mutationObserver = new MutationObserver(changes => onMutationChanges(changes, observer, callbackCondition));
+	mutationObserver.observe(observer.root, observer.kind === DOMMutationObserverKind.ATTRIBUTE_CHANGED ? ATTRIBUTE_OBSERVER_OPTIONS : MUTATION_OBSERVER_OPTIONS);
 
 	// Return an object with an 'unobserve' property which clears the observer
 	return {
 		unobserve: () => mutationObserver.disconnect()
 	};
-}
+} /*# END IF hasChildListObservers || hasAttributeChangeObservers */
 
-/**
- * Subscribes the given callback to the event that a Node is connected to the DOM
- * @param {Node} node
- * @param {DOMConnectionCallback} callback
- * @param {boolean} [nextTime=true]
- * @returns {IDOMConnectionObserverResult}
- */
-export function onConnected (node: Node, callback: DOMConnectionCallback, nextTime: boolean = true): IDOMConnectionObserverResult {
-	// Prepare the observer
-	const observer: IDOMConnectionMutationObserver = {
-		kind: DOMMutationObserverKind.CONNECTED,
-		callback: () => {
-			isConnected = true;
-			callback();
-		},
-		root: getRootForNode(node),
-		node
-	};
-
-	// Check if the node is connected
-	let isConnected = nextTime ? false : testIsConnected(observer);
-	// Invoke the callback immediately if the node is already connected
-	if (isConnected) callback();
-
-	// Listen for mutations
-	return onMutation(observer, () => !isConnected);
-}
-
-/**
- * Subscribes the given callback to the event that a Node is disconnected from the DOM
- * @param {Node} node
- * @param {DOMConnectionCallback} callback
- * @param {boolean} [nextTime=true]
- * @returns {IDOMConnectionObserverResult}
- */
-export function onDisconnected (node: Node, callback: DOMConnectionCallback, nextTime: boolean = true): IDOMConnectionObserverResult {
-	// Prepare the observer
-	const observer: IDOMConnectionMutationObserver = {
-		kind: DOMMutationObserverKind.DISCONNECTED,
-		callback: () => {
-			isDisconnected = true;
-			callback();
-		},
-		root: getRootForNode(node),
-		node
-	};
-
-	// Check if the node is connected
-	let isDisconnected = nextTime ? false : testIsDisconnected(observer);
-	// Invoke the callback immediately if the node is already disconnected
-	if (isDisconnected) callback();
-
-	// Listen for mutations
-	return onMutation(observer, () => !isDisconnected);
-}
+/*# IF hasChildListObservers */
 
 /**
  * Subscribes the given callback to the event that the given node receives children
@@ -163,6 +94,82 @@ export function onChildrenAdded (node: Node|ShadowRoot, callback: DOMConnectionC
  */
 export function onChildrenRemoved (node: Node|ShadowRoot, callback: DOMConnectionCallback): IDOMConnectionObserverResult {
 	return onMutation({kind: DOMMutationObserverKind.CHILDREN_REMOVED, callback, root: node, node});
+} /*# END IF hasChildListObservers */
+
+/*# IF hasAttributeChangeObservers */
+
+/**
+ * Subscribes the given callback to the event that attributes of the given node changed
+ * @param {Node} node
+ * @param {DOMAttributeCallback} callback
+ * @returns {IDOMConnectionObserverResult}
+ */
+export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttributeCallback): IDOMConnectionObserverResult {
+	return onMutation({kind: DOMMutationObserverKind.ATTRIBUTE_CHANGED, callback, root: node, node});
+} /*# END IF hasAttributeChangeObservers */
+
+/*# IF hasTemplateCustomAttributes */
+
+/**
+ * Subscribes the given callback to the event that a Node is connected to the DOM
+ * TODO: Migrate away from deprecated MutationEvents when the web platform has an intuitive way of detecting when a node connects/disconnects
+ * @param {Node} node
+ * @param {DOMConnectionCallback} callback
+ * @param {Partial<IDOMConnectionObserverOptions>} options
+ * @returns {IDOMConnectionObserverResult}
+ */
+export function onConnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	let hasReceivedEvent: boolean = false;
+
+	if (!nextTime) {
+		if (node.isConnected) callback();
+		else {
+			// Wait a tick and check again. If the DOMNodeInserted event has fired since then, do nothing
+			setTimeout(() => {
+				if (node.isConnected && !hasReceivedEvent) callback();
+			});
+		}
+	}
+
+	const eventHandler = () => {
+		hasReceivedEvent = true;
+		callback();
+	};
+
+	node.addEventListener("DOMNodeInserted", eventHandler);
+	return {
+		unobserve: () => node.removeEventListener("DOMNodeInserted", eventHandler)
+	};
 }
 
-/*# END IF hasTemplateCustomAttributes || hasMutationObservers */
+/**
+ * Subscribes the given callback to the event that a Node is disconnected from the DOM
+ * TODO: Migrate away from deprecated MutationEvents when the web platform has an intuitive way of detecting when a node connects/disconnects
+ * @param {Node} node
+ * @param {DOMConnectionCallback} callback
+ * @param {Partial<IDOMConnectionObserverOptions>} options
+ * @returns {IDOMConnectionObserverResult}
+ */
+export function onDisconnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	let hasReceivedEvent: boolean = false;
+
+	if (!nextTime) {
+		if (!node.isConnected) callback();
+		else {
+			// Wait a tick and check again. If the DOMNodeInserted event has fired since then, do nothing
+			setTimeout(() => {
+				if (!node.isConnected && !hasReceivedEvent) callback();
+			});
+		}
+	}
+
+	const eventHandler = () => {
+		hasReceivedEvent = true;
+		callback();
+	};
+
+	node.addEventListener("DOMNodeRemoved", eventHandler);
+	return {
+		unobserve: () => node.removeEventListener("DOMNodeRemoved", eventHandler)
+	};
+} /*# END IF hasTemplateCustomAttributes */

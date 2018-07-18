@@ -15,6 +15,7 @@ export const preCompileConfiguration: IPreCompileConfiguration = {
 	onChildrenAddedDecoratorName: "onChildrenAdded",
 	onChildrenRemovedDecoratorName: "onChildrenRemoved",
 	onChangeDecoratorName: "onChange",
+	onAttributeChangeDecoratorName: "onAttributeChange",
 	selectorDecoratorName: "selector",
 	customAttributeDecoratorName: "customAttribute",
 	hostAttributesDecoratorName: "hostAttributes"

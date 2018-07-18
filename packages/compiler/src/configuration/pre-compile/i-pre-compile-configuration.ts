@@ -14,6 +14,7 @@ export interface IPreCompileConfiguration {
 	onChildrenAddedDecoratorName: string;
 	onChildrenRemovedDecoratorName: string;
 	onChangeDecoratorName: string;
+	onAttributeChangeDecoratorName: string;
 	selectorDecoratorName: string;
 	customAttributeDecoratorName: string;
 }

@@ -6,8 +6,9 @@ import {addParentHostListenersForHost} from "../../listener/host-listener/host-l
 import {addParentEventEmittersForHost} from "../../event/host-event-emitters-for-host/add-parent-event-emitters-for-host";
 import {addParentVisibilityObserversForHost} from "../../visibility/host-visibility-observers-for-host/add-parent-visibility-observers-for-host";
 import {addParentStaticCSSForHost} from "../../css/static-css/add-parent-static-css-for-host";
-import {addParentMutationObserversForHost} from "../../dom-mutation/mutation-observers-for-host/add-parent-mutation-observers-for-host";
 import {addParentHostAttributesForHost} from "../../host-attributes/add-parent-host-attributes-for-host/add-parent-host-attributes-for-host";
+import {addParentChildListObserversForHost} from "../../dom-mutation/child-list-observers-for-host/add-parent-child-list-observers-for-host";
+import {addParentAttributeChangeObserversForHost} from "../../dom-mutation/attribute-change-observers-for-host/add-parent-attribute-change-observers-for-host";
 
 /**
  * Merges the given host its' parent
@@ -21,7 +22,8 @@ export function __mergeWithParent (host: IFoveaHostConstructor|ICustomAttributeC
 	/*# IF hasHostListeners */ addParentHostListenersForHost(host); /*# END IF hasHostListeners */
 	/*# IF hasEventEmitters */ addParentEventEmittersForHost(host); /*# END IF hasEventEmitters */
 	/*# IF hasVisibilityObservers */ addParentVisibilityObserversForHost(host); /*# END IF hasVisibilityObservers */
-	/*# IF hasMutationObservers */ addParentMutationObserversForHost(host); /*# END IF hasMutationObservers */
+	/*# IF hasChildListObservers */ addParentChildListObserversForHost(host); /*# END IF hasChildListObservers */
+	/*# IF hasAttributeChangeObservers */ addParentAttributeChangeObserversForHost(host); /*# END IF hasAttributeChangeObservers */
 	/*# IF hasStaticCSS */ addParentStaticCSSForHost(host); /*# END IF hasStaticCSS */
 	/*# IF hasHostAttributes */ addParentHostAttributesForHost(host); /*# END IF hasHostAttributes */
 }

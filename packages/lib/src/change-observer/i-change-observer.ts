@@ -4,5 +4,4 @@ export interface IChangeObserver {
 	method: IHostProp;
 	props: string[];
 	whenAllAreInitialized: boolean;
-	whenConnected: boolean;
 }

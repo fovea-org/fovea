@@ -77,8 +77,16 @@ export interface IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor ext
 	decoratorContent: string;
 }
 
-export interface IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
-	kind: FoveaDiagnosticKind.INVALID_MUTATION_OBSERVER_DECORATOR_USAGE;
+export interface IInvalidChildListObserverDecoratorUsageFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
+	kind: FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE;
+	hostKind: FoveaHostKind|string;
+	hostName: string;
+	methodName: string;
+	decoratorContent: string;
+}
+
+export interface IInvalidAttributeObserverDecoratorUsageFoveaDiagnosticCtor extends IFoveaDiagnosticCtor {
+	kind: FoveaDiagnosticKind.INVALID_ATTRIBUTE_OBSERVER_DECORATOR_USAGE;
 	hostKind: FoveaHostKind|string;
 	hostName: string;
 	methodName: string;
@@ -136,7 +144,8 @@ export declare type FoveaDiagnosticCtor =
 	IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor|
 	IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor|
 	IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor|
-	IInvalidMutationObserverDecoratorUsageFoveaDiagnosticCtor|
+	IInvalidChildListObserverDecoratorUsageFoveaDiagnosticCtor|
+	IInvalidAttributeObserverDecoratorUsageFoveaDiagnosticCtor|
 	IUnresolvedSrcFoveaDiagnosticCtor|
 	IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor|
 	IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor|

@@ -33,9 +33,10 @@ import {IFoveaCompileFileOptions} from "./i-fovea-compile-file-options";
 import {IFoveaCompileForeignFileOptions} from "./i-fovea-compile-foreign-file-options";
 import {IFoveaUsePrecompiledFileOptions} from "./i-fovea-use-precompiled-file-options";
 import {ICompilerFlagsExtender} from "../compiler-flags-extender/i-compiler-flags-extender";
-import {IMutationObserverExtractor} from "../mutation-observer-extractor/i-mutation-observer-extractor";
 import {libHelperName} from "@fovea/common";
 import {IHostAttributesExtractor} from "../host-attributes-extractor/i-host-attributes-extractor";
+import {IChildListObserverExtractor} from "../child-list-observer-extractor/i-child-list-observer-extractor";
+import {IOnAttributeChangeExtractor} from "../on-attribute-change-extractor/i-on-attribute-change-extractor";
 
 /**
  * A class that can upgrade source code containing Fovea components
@@ -51,10 +52,11 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 							 private readonly propertiesToAttributesMapper: IPropertiesToAttributesMapper,
 							 private readonly propExtractor: IPropExtractor,
 							 private readonly hostListenerExtractor: IHostListenerExtractor,
+							 private readonly onAttributeChangeExtractor: IOnAttributeChangeExtractor,
 							 private readonly onChangeExtractor: IOnChangeExtractor,
 							 private readonly hostAttributesExtractor: IHostAttributesExtractor,
 							 private readonly visibilityObserverExtractor: IVisibilityObserverExtractor,
-							 private readonly mutationObserverExtractor: IMutationObserverExtractor,
+							 private readonly childListObserverExtractor: IChildListObserverExtractor,
 							 private readonly emitExtractor: IEmitExtractor,
 							 private readonly setOnHostExtractor: ISetOnHostExtractor,
 							 private readonly parentMerger: IParentMerger,
@@ -285,7 +287,8 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			stats.hasICustomAttributes = stats.hasICustomAttributes || markStats.hasICustomAttributes;
 			stats.hasHostListeners = stats.hasHostListeners || markStats.hasHostListeners;
 			stats.hasVisibilityObservers = stats.hasVisibilityObservers || markStats.hasVisibilityObservers;
-			stats.hasMutationObservers = stats.hasMutationObservers || markStats.hasMutationObservers;
+			stats.hasChildListObservers = stats.hasChildListObservers || markStats.hasChildListObservers;
+			stats.hasAttributeChangeObservers = stats.hasAttributeChangeObservers || markStats.hasAttributeChangeObservers;
 			stats.hasChangeObservers = stats.hasChangeObservers || markStats.hasChangeObservers;
 			stats.hasTemplateListeners = stats.hasTemplateListeners || markStats.hasTemplateListeners;
 			stats.hasTemplateCustomAttributes = stats.hasTemplateCustomAttributes || markStats.hasTemplateCustomAttributes;
@@ -426,11 +429,14 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			// Extract methods annotated with '@onChange'
 			this.onChangeExtractor.extract(options);
 
+			// Extract methods annotated with '@onAttributeChange'
+			this.onAttributeChangeExtractor.extract(options);
+
 			// Extract methods annotated with '@onBecameVisible' or '@onBecameInvisible'
 			this.visibilityObserverExtractor.extract(options);
 
 			// Extract methods annotated with '@onChildrenAdded' or '@onChildrenRemoved'
-			this.mutationObserverExtractor.extract(options);
+			this.childListObserverExtractor.extract(options);
 
 			// Extract the properties annotated with '@prop'
 			this.propExtractor.extract(options);

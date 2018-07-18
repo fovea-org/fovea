@@ -45,7 +45,8 @@ export class RollupService implements IRollupService {
 				...builtinModules.filter(module => module !== "process")
 			],
 			...(cache == null ? {} : {cache}),
-			experimentalCodeSplitting: true
+			experimentalCodeSplitting: true,
+			inlineDynamicImports: false
 		};
 
 		// If watch mode should be active

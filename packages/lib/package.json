@@ -40,6 +40,10 @@
 	"dependencies": {
 		"@fovea/common": "^1.0.107"
 	},
+	"devDependencies": {
+		"@wessberg/rollup-plugin-ts": "0.0.32",
+		"rollup": "^0.63.2"
+	},
 	"publishConfig": {
 		"access": "public"
 	}

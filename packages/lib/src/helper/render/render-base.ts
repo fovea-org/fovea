@@ -3,9 +3,10 @@ import {bindHostListeners} from "../../listener/host-listener/bind-host-listener
 import {bindVisibilityObservers} from "../../visibility/bind-visibility-observers";
 import {bindStaticCSS} from "../../css/static-css/bind-static-css";
 import {bindStaticTemplate} from "../../template/static-template/bind-static-template";
-import {bindMutationObservers} from "../../dom-mutation/bind-mutation-observers";
 import {bindPropsForHost} from "../../prop/props-for-host/bind-props-for-host/bind-props-for-host";
 import {bindHostAttributesForHost} from "../../host-attributes/bind-host-attributes-for-host/bind-host-attributes-for-host";
+import {bindChildListObservers} from "../../dom-mutation/child-list-observers-for-host/bind-child-list-observers";
+import {bindAttributeChangeObservers} from "../../dom-mutation/attribute-change-observers-for-host/bind-attribute-change-observers";
 
 /**
  * Runs all common render functionality for the provided host
@@ -23,6 +24,7 @@ export function renderBase (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|
 	/*# IF hasHostListeners */ bindHostListeners(host); /*# END IF hasHostListeners */
 	/*# IF hasVisibilityObservers */ bindVisibilityObservers(host); /*# END IF hasVisibilityObservers */
 	/*# IF hasStaticCSS */ bindStaticCSS(host); /*# END IF hasStaticCSS */
-	/*# IF hasMutationObservers */ bindMutationObservers(host); /*# END IF hasMutationObservers */
+	/*# IF hasChildListObservers */ bindChildListObservers(host); /*# END IF hasChildListObservers */
+	/*# IF hasAttributeChangeObservers */ bindAttributeChangeObservers(host); /*# END IF hasAttributeChangeObservers */
 	/*# IF hasHostAttributes */ bindHostAttributesForHost(host); /*# END IF hasHostAttributes */
 }

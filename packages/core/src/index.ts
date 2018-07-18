@@ -15,3 +15,4 @@ export {onChildrenRemoved} from "./decorator/on-children-removed";
 export {customAttribute} from "./decorator/custom-attribute";
 export {dependsOn} from "./decorator/depends-on";
 export {hostAttributes} from "./decorator/host-attributes";
+export {onAttributeChange} from "./decorator/on-attribute-change";

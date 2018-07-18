@@ -1,4 +1,6 @@
-/*# IF hasTemplateCustomAttributes || hasMutationObservers */
+/*# IF hasChildListObservers || hasAttributeChangeObservers */
 export enum DOMMutationObserverKind {
-	CONNECTED, DISCONNECTED, CHILDREN_ADDED, CHILDREN_REMOVED
-} /*# END IF hasTemplateCustomAttributes || hasMutationObservers */
+	ATTRIBUTE_CHANGED,
+	CHILDREN_ADDED,
+	CHILDREN_REMOVED
+} /*# END IF hasChildListObservers || hasAttributeChangeObservers */

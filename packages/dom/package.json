@@ -51,10 +51,10 @@
 		"posthtml-parser": "^0.4.1"
 	},
 	"devDependencies": {
-		"@wessberg/rollup-plugin-di": "^1.0.84",
-		"@wessberg/rollup-plugin-ts": "0.0.30",
+		"@wessberg/rollup-plugin-di": "^1.0.85",
+		"@wessberg/rollup-plugin-ts": "0.0.32",
 		"ava": "^0.25.0",
-		"rollup": "^0.62.0"
+		"rollup": "^0.63.2"
 	},
 	"publishConfig": {
 		"access": "public"

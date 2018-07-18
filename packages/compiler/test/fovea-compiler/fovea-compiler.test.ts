@@ -176,7 +176,7 @@ test("Will correctly determine the type information for a prop of type: boolean"
 	t.true(result.hasChanged);
 });
 
-test.only("Will correctly register host attributes", async t => {
+test("Will correctly register host attributes", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-11.ts");
 	// @ts-ignore
 	const result = await work(path, {printCode: true});
@@ -190,4 +190,12 @@ test("Can handle multiple @listener() annotations for the same methods", async t
 	const result = await work(path, {printCode: true});
 
 	t.true(result.hasChanged && allIndexesOf(result.code, /__registerHostListener/).length > 1);
+});
+
+test.only("Will correctly register attribute change observers", async t => {
+	const path = join(process.cwd(), "test/demo/demo-component/demo-component-13.ts");
+	// @ts-ignore
+	const result = await work(path, {printCode: true});
+
+	t.true(result.hasChanged && result.code.includes("__registerAttributeChangeObserver"));
 });

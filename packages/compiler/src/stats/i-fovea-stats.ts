@@ -10,7 +10,8 @@ export interface IMutableCompilerHintStats {
 	hasICustomAttributes: boolean;
 	hasHostListeners: boolean;
 	hasVisibilityObservers: boolean;
-	hasMutationObservers: boolean;
+	hasChildListObservers: boolean;
+	hasAttributeChangeObservers: boolean;
 	hasChangeObservers: boolean;
 	hasTemplateListeners: boolean;
 	hasTemplateCustomAttributes: boolean;
@@ -47,7 +48,8 @@ export interface IFoveaStats extends IImmutableFoveaStats {
 	setHasICustomAttributes (file: string, hasICustomAttributes: boolean): void;
 	setHasHostListeners (file: string, hasHostListeners: boolean): void;
 	setHasVisibilityObservers (file: string, hasVisibilityObservers: boolean): void;
-	setHasMutationObservers (file: string, hasMutationObservers: boolean): void;
+	setHasChildListObservers (file: string, hasChildListObservers: boolean): void;
+	setHasAttributeChangeObservers (file: string, hasAttributeChangeObservers: boolean): void;
 	setHasChangeObservers (file: string, hasChangeObservers: boolean): void;
 	setHasTemplateListeners (file: string, hasTemplateListeners: boolean): void;
 	setHasTemplateCustomAttributes (file: string, hasTemplateCustomAttributes: boolean): void;

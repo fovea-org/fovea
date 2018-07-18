@@ -1,7 +1,7 @@
 import {ICustomAttributeConstructor, IFoveaHostConstructor, IMutationObserverBaseOptions} from "@fovea/common";
-import {addMutationObserversForHost} from "../../dom-mutation/mutation-observers-for-host/add-mutation-observers-for-host";
+import {addChildListObserversForHost} from "../../dom-mutation/child-list-observers-for-host/add-child-list-observers-for-host";
 
-/*# IF hasMutationObservers */
+/*# IF hasChildListObservers */
 
 /**
  * Registers the provided method for invocation when the host element or the given target receives or loses children
@@ -12,7 +12,7 @@ import {addMutationObserversForHost} from "../../dom-mutation/mutation-observers
  * @param {Partial<IMutationObserverBaseOptions>} [options]
  * @private
  */
-export function __registerMutationObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, added: boolean, options?: Partial<IMutationObserverBaseOptions>): void {
+export function __registerChildListObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, added: boolean, options?: Partial<IMutationObserverBaseOptions>): void {
 	const target = options == null || options.target == null ? undefined : options.target;
-	addMutationObserversForHost(host, {method: {name: method, isStatic}, added, target});
-} /*# END IF hasMutationObservers */
+	addChildListObserversForHost(host, {method: {name: method, isStatic}, added, target});
+} /*# END IF hasChildListObservers */
