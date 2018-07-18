@@ -3,6 +3,7 @@ import {incrementUuid} from "../../uuid/increment-uuid/increment-uuid";
 import {setHostElementForHost} from "../../host/host-element-for-host/set-host-element-for-host/set-host-element-for-host";
 import {setHostForNode} from "../../host/host-for-node/set-host-for-node/set-host-for-node";
 import {setUuidForNode} from "../../uuid/uuid-for-node/set-uuid-for-node/set-uuid-for-node";
+import {upgradeCustomAttribute} from "../../custom-attribute/upgrade-custom-attribute";
 
 /**
  * Constructs a new IFoveaHost or ICustomAttribute
@@ -22,4 +23,9 @@ export function __construct (host: IFoveaHost|ICustomAttribute, hostElement: Ele
 
 	// Generate and map a Uuid to the host node
 	setUuidForNode(host, incrementUuid());
+
+	/*# IF hasTemplateCustomAttributes */
+	if (!isIFoveaHost(host)) {
+		upgradeCustomAttribute(host, hostElement);
+	} /*# END IF hasTemplateCustomAttributes */
 }

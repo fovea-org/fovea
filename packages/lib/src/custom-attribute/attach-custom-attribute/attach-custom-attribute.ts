@@ -21,7 +21,7 @@ import {onCustomAttributeValueShouldUpdate} from "../on-custom-attribute-should-
  * @returns {IObserver}
  */
 export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver {
-	const {customAttribute, dispose} = constructCustomAttribute(element, name);
+	const customAttribute = constructCustomAttribute(element, name);
 	const normalizedValue = normalizeCustomAttributeExpressionValue(value);
 
 	let observers: IExpressionChainObserver[]|null = Object.entries(normalizedValue).map(([propertyName, chain]) => {
@@ -40,7 +40,6 @@ export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, elemen
 			if (observers != null) {
 				observers.forEach(observer => observer.unobserve());
 				observers = null;
-				dispose();
 			}
 		}
 	};

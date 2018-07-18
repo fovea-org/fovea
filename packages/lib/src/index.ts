@@ -1,4 +1,3 @@
-export {constructCustomAttribute} from "./custom-attribute/construct-custom-attribute";
 export {ICustomAttribute} from "@fovea/common";
 export {__use} from "./helper/use/use";
 export {__renderICustomAttribute} from "./helper/render/render-i-custom-attribute";
