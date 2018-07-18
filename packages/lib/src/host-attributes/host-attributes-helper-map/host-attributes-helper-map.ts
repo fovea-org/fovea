@@ -126,12 +126,28 @@ function addRefForHost (host: IFoveaHost|ICustomAttribute, ref: Ref): IObserver 
 } /*# END IF hasHostAttributes && hasTemplateRefs */
 
 export const hostAttributesHelperMap: IHostAttributesHelperMap = {
-	/*# IF hasHostAttributes && hasTemplateAttributes */ __addAttributes: addAttributesForHost, /*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */ __addAttribute: addAttributeForHost, /*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */ __addProperties: addPropertiesForHost, /*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */ __addProperty: addPropertyForHost, /*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateRefs */ __addRef: addRefForHost, /*# END IF hasHostAttributes && hasTemplateRefs */
-	/*# IF hasHostAttributes && hasTemplateListeners */ __addListeners: addListenersForHost, /*# END IF hasHostAttributes && hasTemplateListeners */
-	/*# IF hasHostAttributes && hasTemplateListeners */ __addListener: addListenerForHost, /*# END IF hasHostAttributes && hasTemplateListeners */
-	/*# IF hasHostAttributes && hasTemplateCustomAttributes */ __addCustomAttribute: addCustomAttributeForHost /*# END IF hasHostAttributes && hasTemplateCustomAttributes */
+	/*# IF hasHostAttributes && hasTemplateAttributes */
+	__addAttributes: addAttributesForHost,
+	/*# END IF hasHostAttributes && hasTemplateAttributes */
+	/*# IF hasHostAttributes && hasTemplateAttributes */
+	__addAttribute: addAttributeForHost,
+	/*# END IF hasHostAttributes && hasTemplateAttributes */
+	/*# IF hasHostAttributes && hasTemplateAttributes */
+	__addProperties: addPropertiesForHost,
+	/*# END IF hasHostAttributes && hasTemplateAttributes */
+	/*# IF hasHostAttributes && hasTemplateAttributes */
+	__addProperty: addPropertyForHost,
+	/*# END IF hasHostAttributes && hasTemplateAttributes */
+	/*# IF hasHostAttributes && hasTemplateRefs */
+	__addRef: addRefForHost,
+	/*# END IF hasHostAttributes && hasTemplateRefs */
+	/*# IF hasHostAttributes && hasTemplateListeners */
+	__addListeners: addListenersForHost,
+	/*# END IF hasHostAttributes && hasTemplateListeners */
+	/*# IF hasHostAttributes && hasTemplateListeners */
+	__addListener: addListenerForHost,
+	/*# END IF hasHostAttributes && hasTemplateListeners */
+	/*# IF hasHostAttributes && hasTemplateCustomAttributes */
+	__addCustomAttribute: addCustomAttributeForHost
+	/*# END IF hasHostAttributes && hasTemplateCustomAttributes */
 };
