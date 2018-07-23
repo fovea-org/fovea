@@ -8,6 +8,7 @@ import {attachCustomAttribute} from "../../custom-attribute/attach-custom-attrib
 import {observeProperty} from "../../prop/observe-property/observe-property";
 import {addRef} from "../../ref/add-ref/add-ref";
 import {observeListener} from "../../listener/observe-listener/observe-listener";
+import {IDestroyable} from "../../destroyable/i-destroyable";
 
 /*# IF hasHostAttributes && hasTemplateAttributes */
 
@@ -107,9 +108,9 @@ function addListenersForHost (host: IFoveaHost|ICustomAttribute, ...listeners: [
  * @param {IFoveaHost | ICustomAttribute} host
  * @param {string} name
  * @param {ExpressionChain | IExpressionChainDict} value
- * @returns {IObserver}
+ * @returns {IObserver & IDestroyable}
  */
-function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver {
+function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver & IDestroyable {
 	return attachCustomAttribute(host, getHostElementForHost(host), name, value);
 } /*# END IF hasHostAttributes && hasTemplateCustomAttributes */
 

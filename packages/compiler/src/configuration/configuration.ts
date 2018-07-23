@@ -9,6 +9,7 @@ export const configuration: IConfiguration = {
 	disconnectedCallbackName: "disconnectedCallback",
 	observedAttributesName: "observedAttributes",
 	attributeChangedCallbackName: "attributeChangedCallback",
+	destroyedCallbackName: "destroyedCallback",
 	foveaLibModuleName: "@fovea/lib",
 	foveaModuleName: "@fovea/core",
 	componentFallbackSuffix: "component"

@@ -8,5 +8,6 @@ import {BOUND_CHILD_LIST_OBSERVERS} from "./bound-child-list-observers";
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindChildListObservers (host: IFoveaHost|ICustomAttribute): void {
+	if (!BOUND_CHILD_LIST_OBSERVERS.has(host)) return;
 	BOUND_CHILD_LIST_OBSERVERS.popAll(host, observer => observer.unobserve());
 } /*# END IF hasChildListObservers */

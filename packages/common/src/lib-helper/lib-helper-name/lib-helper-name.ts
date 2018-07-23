@@ -41,7 +41,8 @@ export const libHelperName = {
 	use: "__use",
 	dependsOn: "__dependsOn",
 	ICustomAttribute: "ICustomAttribute",
-	registerHostAttributes: "__registerHostAttributes"
+	registerHostAttributes: "__registerHostAttributes",
+	destroy: "__destroy"
 };
 
 export declare type LibHelperName = keyof typeof libHelperName;

@@ -15,6 +15,8 @@ import {IParams} from "../query/i-params";
 import {IDeepResolveResolveAliasValueMapper} from "./i-deep-resolve-result";
 import {RouteGuard} from "../route/route-guard";
 
+// tslint:disable:no-any
+
 /**
  * This is the Router that handles all navigation
  */
@@ -652,7 +654,12 @@ export class Router {
 			}
 
 			// Otherwise remove the instance
-			poppedInstance.instance.remove();
+			if (poppedInstance.instance.parentNode != null) {
+				if ("destroyedCallback" in poppedInstance.instance) {
+					(<any>poppedInstance).instance.destroyedCallback();
+				}
+				poppedInstance.instance.parentNode.removeChild(poppedInstance.instance);
+			}
 		}
 	}
 
@@ -673,7 +680,12 @@ export class Router {
 				routerOutlet.clearRoute(instantiatedRoute.route);
 			} catch {
 				// This is okay
-				instantiatedRoute.instance.remove();
+				if (instantiatedRoute.instance.parentNode != null) {
+					if ("destroyedCallback" in instantiatedRoute.instance) {
+						(<any>instantiatedRoute).instance.destroyedCallback();
+					}
+					instantiatedRoute.instance.parentNode.removeChild(instantiatedRoute.instance);
+				}
 			}
 		}
 	}

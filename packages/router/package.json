@@ -48,6 +48,6 @@
 	"devDependencies": {
 		"@fovea/rollup-plugin-fovea": "^1.0.109",
 		"@wessberg/rollup-plugin-ts": "0.0.32",
-		"rollup": "^0.63.2"
+		"rollup": "^0.63.4"
 	}
 }

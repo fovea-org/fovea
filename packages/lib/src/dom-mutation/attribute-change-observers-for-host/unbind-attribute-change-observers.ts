@@ -8,5 +8,6 @@ import {BOUND_ATTRIBUTE_CHANGE_OBSERVERS} from "./bound-attribute-change-observe
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindAttributeChangeObservers (host: IFoveaHost|ICustomAttribute): void {
+	if (!BOUND_ATTRIBUTE_CHANGE_OBSERVERS.has(host)) return;
 	BOUND_ATTRIBUTE_CHANGE_OBSERVERS.popAll(host, observer => observer.unobserve());
 } /*# END IF hasAttributeChangeObservers */

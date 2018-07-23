@@ -84,11 +84,29 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 	}
 
 	/**
+	 * Destroys a TemplateConditionalElement
+	 */
+	public destroy (): void {
+		this.destroyTemplate();
+		this.conditionObserver.unobserve();
+	}
+
+	/**
 	 * Disposes a TemplateConditionalElement
 	 */
 	public dispose (): void {
 		this.disposeTemplate();
 		this.conditionObserver.unobserve();
+	}
+
+	/**
+	 * Destroys a Template
+	 */
+	private destroyTemplate (): void {
+		if (this.templateResult != null) {
+			this.templateResult.destroy();
+			this.templateResult = null;
+		}
 	}
 
 	/**
@@ -114,9 +132,9 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 
 		this.oldValue = newValue;
 
-		// If the new value is null, dispose the template
+		// If the new value is null, destroy the template
 		if (newValue == null || !newValue) {
-			this.disposeTemplate();
+			this.destroyTemplate();
 		}
 
 		// Otherwise, render a new TemplateResult

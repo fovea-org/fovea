@@ -2,7 +2,7 @@ import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostCon
 import {BOUND_HOST_ATTRIBUTES_FOR_HOST} from "../bound-host-attributes-for-host/bound-host-attributes-for-host";
 import {HOST_ATTRIBUTES_FOR_HOST} from "../host-attributes-for-host/host-attributes-for-host";
 import {hostAttributesHelperMap} from "../host-attributes-helper-map/host-attributes-helper-map";
-import {IObserver} from "../../observe/i-observer";
+import {HostAttributesCallback} from "../host-attributes-callback/host-attributes-callback";
 
 /*# IF hasHostAttributes */
 
@@ -15,11 +15,17 @@ export function bindHostAttributesForHost (host: IFoveaHost|ICustomAttribute): v
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 
 	BOUND_HOST_ATTRIBUTES_FOR_HOST.add(host, ...HOST_ATTRIBUTES_FOR_HOST.mapValue(constructor, hostAttributesCallback => {
-		let observers: IObserver[]|null = hostAttributesCallback(host, hostAttributesHelperMap);
+		let observers: ReturnType<HostAttributesCallback>|null = hostAttributesCallback(host, hostAttributesHelperMap);
 			return {
 				unobserve: () => {
 					if (observers != null) {
 						observers.forEach(observer => observer.unobserve());
+						observers = null;
+					}
+				},
+				destroy : () => {
+					if (observers != null) {
+						observers.forEach(observer => "destroy" in observer ? observer.destroy() : observer.unobserve());
 						observers = null;
 					}
 				}

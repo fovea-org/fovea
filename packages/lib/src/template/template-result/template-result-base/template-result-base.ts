@@ -47,6 +47,11 @@ export abstract class TemplateResultBase implements ITemplateResult {
 	public abstract dispose (): void;
 
 	/**
+	 * Destroys a TemplateResultBase (such that it can never be re-instantiated)
+	 */
+	public abstract destroy (): void;
+
+	/**
 	 * Upgrades the given host
 	 * @param {IFoveaHost|ICustomAttribute} host
 	 * @param {Node} node

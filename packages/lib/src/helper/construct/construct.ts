@@ -4,6 +4,11 @@ import {setHostElementForHost} from "../../host/host-element-for-host/set-host-e
 import {setHostForNode} from "../../host/host-for-node/set-host-for-node/set-host-for-node";
 import {setUuidForNode} from "../../uuid/uuid-for-node/set-uuid-for-node/set-uuid-for-node";
 import {upgradeCustomAttribute} from "../../custom-attribute/upgrade-custom-attribute";
+import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
+import {removeUuidForNode} from "../../uuid/uuid-for-node/remove-uuid-for-node/remove-uuid-for-node";
+import {removeHostElementForHost} from "../../host/host-element-for-host/remove-host-element-for-host/remove-host-element-for-host";
+import {removeHostForNode} from "../../host/host-for-node/remove-host-for-node/remove-host-for-node";
+import {IDestroyable} from "../../destroyable/i-destroyable";
 
 /**
  * Constructs a new IFoveaHost or ICustomAttribute
@@ -24,8 +29,22 @@ export function __construct (host: IFoveaHost|ICustomAttribute, hostElement: Ele
 	// Generate and map a Uuid to the host node
 	setUuidForNode(host, incrementUuid());
 
-	/*# IF hasTemplateCustomAttributes */
-	if (!isIFoveaHost(host)) {
-		upgradeCustomAttribute(host, hostElement);
-	} /*# END IF hasTemplateCustomAttributes */
+	let upgradedCustomAttribute: IDestroyable|null = /*# IF hasTemplateCustomAttributes */ !isIFoveaHost(host) ? upgradeCustomAttribute(host, hostElement) : /*# END IF hasTemplateCustomAttributes */ null;
+
+	// Make sure that it can be disposed later on
+	CONSTRUCTED_HOSTS.add(host, {
+		destroy: () => {
+			/*# IF hasTemplateCustomAttributes */
+			if (upgradedCustomAttribute != null) {
+				upgradedCustomAttribute.destroy();
+				upgradedCustomAttribute = null;
+			}
+			/*# END IF hasTemplateCustomAttributes */
+			removeUuidForNode(host);
+			removeHostElementForHost(host);
+			if (isIFoveaHost(host)) {
+				removeHostForNode(host);
+			}
+		}
+	});
 }

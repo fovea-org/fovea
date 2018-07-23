@@ -11,13 +11,21 @@ import {getHostElementForHost} from "../../host/host-element-for-host/get-host-e
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindStaticCSS (host: IFoveaHost|ICustomAttribute): void {
-	const root = getRootForNode(getHostElementForHost(host));
+	try {
+		const root = getRootForNode(getHostElementForHost(host));
 
-	// Remove all the style fragments from their parents
-	BOUND_STATIC_CSS_FOR_ROOT.popAll(root, fragment => {
-		if (fragment.parentNode != null) fragment.parentNode.removeChild(fragment);
-	});
+		// Remove all the style fragments from their parents
+		if (BOUND_STATIC_CSS_FOR_ROOT.has(root)) {
+			BOUND_STATIC_CSS_FOR_ROOT.popAll(root, fragment => {
+				if (fragment.parentNode != null) fragment.parentNode.removeChild(fragment);
+			});
+		}
 
-	// Clear all templates for the root
-	BOUND_STATIC_CSS_TEMPLATES_FOR_ROOT.delete(root);
+		// Clear all templates for the root
+		if (BOUND_STATIC_CSS_TEMPLATES_FOR_ROOT.has(root)) {
+			BOUND_STATIC_CSS_TEMPLATES_FOR_ROOT.delete(root);
+		}
+	} catch (ex) {
+		// This fails if no root could be detected. This is OK
+	}
 } /*# END IF hasStaticCSS */

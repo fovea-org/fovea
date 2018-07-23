@@ -53,6 +53,9 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// Extend the disconnectedCallback lifecycle hook
 		this.extendDisconnectedCallback(mark.classDeclaration, compilerOptions, context, parentIsComponent);
 
+		// Extend the destroyedCallback lifecycle hook
+		this.extendDestroyedCallback(mark.classDeclaration, compilerOptions, context, parentIsComponent);
+
 		// If the host is an IFoveaHost
 		if (mark.kind === FoveaHostKind.HOST) {
 			// Extend the attributeChangedCallback lifecycle hook
@@ -395,7 +398,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// Find an existing 'disconnectedCallback' hook
 		const disconnectedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.disconnectedCallbackName, classDeclaration);
 
-		// The extension to add to the connectedCallback.
+		// The extension to add to the disconnectedCallback.
 		const extension = `${this.libUser.use("dispose", compilerOptions, context)}(<any>this);`;
 
 		// If the class doesn't implement a disconnectedCallback
@@ -426,6 +429,56 @@ export class PrototypeExtender implements IPrototypeExtender {
 				if (disconnectedCallback.body != null) {
 					context.container.appendRight(
 						superExpression != null ? superExpression.end : disconnectedCallback.body.statements.pos,
+						extension
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Extends a destroyedCallback and delegates it to the @fovea/lib function 'destroy'
+	 * @param {ClassDeclaration | ClassExpression} classDeclaration
+	 * @param {IFoveaCompilerOptions} compilerOptions
+	 * @param {ICompilationContext} context
+	 * @param {boolean} parentIsComponent
+	 */
+	private extendDestroyedCallback (classDeclaration: ClassDeclaration|ClassExpression, compilerOptions: IFoveaCompilerOptions, context: ICompilationContext, parentIsComponent: boolean): void {
+
+		// Find an existing 'destroyedCallback' hook
+		const destroyedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.destroyedCallbackName, classDeclaration);
+
+		// The extension to add to the destroyedCallback.
+		const extension = `${this.libUser.use("destroy", compilerOptions, context)}(<any>this);`;
+
+		// If the class doesn't implement a destroyedCallback
+		if (destroyedCallback == null) {
+
+			// Don't proceed if the parent is a component since it will be inherited if that is the case
+			if (!parentIsComponent) {
+
+				if (!compilerOptions.dryRun) {
+					context.container.appendLeft(
+						classDeclaration.members.end,
+						`\n	public ${this.configuration.destroyedCallbackName} (): void { ${extension} }`
+					);
+				}
+			}
+		}
+
+		// The class implements destroyedCallback as one of its own members. Extend it!
+		else {
+			if (!compilerOptions.dryRun) {
+
+				const superExpression = <null|(ExpressionStatement&{ expression: CallExpression&{ expression: PropertyAccessExpression } })> this.getSuperExpression(destroyedCallback, this.configuration.destroyedCallbackName);
+
+				// If there is a super.destroyedCallback() expression and the parent is a component, we don't have to do anything else since the logic will be inherited from the parent
+				if (parentIsComponent && superExpression != null) return;
+
+				// If the node already contains a super expression, we don't have to extend it.
+				if (destroyedCallback.body != null) {
+					context.container.appendRight(
+						superExpression != null ? superExpression.end : destroyedCallback.body.statements.pos,
 						extension
 					);
 				}

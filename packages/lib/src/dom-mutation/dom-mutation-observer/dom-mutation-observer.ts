@@ -5,6 +5,9 @@ import {DOMConnectionCallback} from "./dom-connection-callback";
 import {DOMCallbackCondition} from "./dom-callback-condition";
 import {IDOMConnectionObserverOptions} from "./i-dom-connection-observer-options";
 import {DOMAttributeCallback} from "./dom-attribute-callback";
+import {patch} from "./patch/patch";
+import {ConnectionEventKind} from "../connection-event-kind";
+import {isConnected} from "../is-connected";
 
 /*# IF hasChildListObservers */
 
@@ -109,10 +112,11 @@ export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttribu
 } /*# END IF hasAttributeChangeObservers */
 
 /*# IF hasTemplateCustomAttributes */
+const previousConnectionStateMap: WeakMap<Function, boolean> = new WeakMap();
+patch();
 
 /**
  * Subscribes the given callback to the event that a Node is connected to the DOM
- * TODO: Migrate away from deprecated MutationEvents when the web platform has an intuitive way of detecting when a node connects/disconnects
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
  * @param {Partial<IDOMConnectionObserverOptions>} options
@@ -121,30 +125,42 @@ export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttribu
 export function onConnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
 	let hasReceivedEvent: boolean = false;
 
+	const handler = (): boolean => {
+		if (isConnected(node) && !hasReceivedEvent && previousConnectionStateMap.get(callback) !== true) {
+			previousConnectionStateMap.set(callback, true);
+			callback();
+			return true;
+		}
+		return false;
+	};
+
 	if (!nextTime) {
-		if (node.isConnected) callback();
-		else {
-			// Wait a tick and check again. If the DOMNodeInserted event has fired since then, do nothing
-			setTimeout(() => {
-				if (node.isConnected && !hasReceivedEvent) callback();
-			});
+		if (!handler()) {
+			// Wait a tick and check again.
+			setTimeout(() => handler());
 		}
 	}
 
 	const eventHandler = () => {
 		hasReceivedEvent = true;
-		callback();
+		if (previousConnectionStateMap.get(callback) !== true) {
+			previousConnectionStateMap.set(callback, true);
+			callback();
+		}
 	};
 
-	node.addEventListener("DOMNodeInserted", eventHandler);
+	node.addEventListener(ConnectionEventKind.CONNECTED, eventHandler);
+
 	return {
-		unobserve: () => node.removeEventListener("DOMNodeInserted", eventHandler)
+		unobserve: () => {
+			node.removeEventListener(ConnectionEventKind.CONNECTED, eventHandler);
+			previousConnectionStateMap.delete(callback);
+		}
 	};
 }
 
 /**
  * Subscribes the given callback to the event that a Node is disconnected from the DOM
- * TODO: Migrate away from deprecated MutationEvents when the web platform has an intuitive way of detecting when a node connects/disconnects
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
  * @param {Partial<IDOMConnectionObserverOptions>} options
@@ -153,23 +169,36 @@ export function onConnected (node: Node, callback: DOMConnectionCallback, {nextT
 export function onDisconnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
 	let hasReceivedEvent: boolean = false;
 
+	const handler = (): boolean => {
+		if (!isConnected(node) && !hasReceivedEvent && previousConnectionStateMap.get(callback) !== false) {
+			previousConnectionStateMap.set(callback, false);
+			callback();
+			return true;
+		}
+		return false;
+	};
+
 	if (!nextTime) {
-		if (!node.isConnected) callback();
-		else {
-			// Wait a tick and check again. If the DOMNodeInserted event has fired since then, do nothing
-			setTimeout(() => {
-				if (!node.isConnected && !hasReceivedEvent) callback();
-			});
+		if (!handler()) {
+			// Wait a tick and check again.
+			setTimeout(() => handler());
 		}
 	}
 
 	const eventHandler = () => {
 		hasReceivedEvent = true;
-		callback();
+		if (previousConnectionStateMap.get(callback) !== false) {
+			previousConnectionStateMap.set(callback, false);
+			callback();
+		}
 	};
 
-	node.addEventListener("DOMNodeRemoved", eventHandler);
+	node.addEventListener(ConnectionEventKind.DISCONNECTED, eventHandler);
+
 	return {
-		unobserve: () => node.removeEventListener("DOMNodeRemoved", eventHandler)
+		unobserve: () => {
+			node.removeEventListener(ConnectionEventKind.DISCONNECTED, eventHandler);
+			previousConnectionStateMap.delete(callback);
+		}
 	};
 } /*# END IF hasTemplateCustomAttributes */

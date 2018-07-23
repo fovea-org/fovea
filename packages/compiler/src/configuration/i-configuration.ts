@@ -6,6 +6,7 @@ export interface IConfiguration {
 	postCompile: IPostCompileConfiguration;
 	connectedCallbackName: string;
 	disconnectedCallbackName: string;
+	destroyedCallbackName: string;
 	observedAttributesName: string;
 	attributeChangedCallbackName: string;
 	foveaLibModuleName: string;

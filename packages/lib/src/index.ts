@@ -42,3 +42,4 @@ export {__dependsOn} from "./helper/depends-on/depends-on";
 export {__useStaticCSS} from "./helper/use-static-css/use-static-css";
 export {__registerHostAttributes} from "./helper/register-host-attributes/register-host-attributes";
 export {__registerChildListObserver} from "./helper/register-child-list-observer/register-child-list-observer";
+export {__destroy} from "./helper/destroy/destroy";

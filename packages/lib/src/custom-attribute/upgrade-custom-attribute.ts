@@ -1,7 +1,7 @@
 import {ICustomAttribute} from "@fovea/common";
 import {onConnected, onDisconnected} from "../dom-mutation/dom-mutation-observer/dom-mutation-observer";
 import {IDOMConnectionObserverResult} from "../dom-mutation/dom-mutation-observer/i-dom-connection-observer-result";
-import {UPGRADED_HOSTS} from "../host/upgraded-hosts/upgraded-hosts";
+import {IDestroyable} from "../destroyable/i-destroyable";
 
 /*# IF hasTemplateCustomAttributes */
 
@@ -9,9 +9,9 @@ import {UPGRADED_HOSTS} from "../host/upgraded-hosts/upgraded-hosts";
  * Upgrades an ICustomAttribute
  * @param {ICustomAttribute} customAttribute
  * @param {Element} hostElement
- * @returns {object}
+ * @returns {IDestroyable}
  */
-export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostElement: Element): void {
+export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostElement: Element): IDestroyable {
 	// Also set the hostElement as an internal property
 	customAttribute.___hostElement = hostElement;
 
@@ -29,8 +29,8 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 		}
 	}, {nextTime: true});
 
-	UPGRADED_HOSTS.add(customAttribute, {
-		dispose: () => {
+	return {
+		destroy: () => {
 			if (connectionObserver != null) {
 				connectionObserver.unobserve();
 				connectionObserver = null;
@@ -41,5 +41,5 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 				disconnectionObserver = null;
 			}
 		}
-	});
+	};
 } /*# END IF hasTemplateCustomAttributes */

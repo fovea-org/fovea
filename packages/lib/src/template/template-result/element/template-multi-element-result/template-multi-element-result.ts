@@ -14,6 +14,7 @@ import {TemplateElement} from "../../../element/template-element/template-elemen
 import {copyTemplateVariables} from "../../../template-variables/copy-template-variables";
 import {ITemplateResult} from "../../template-result/i-template-result";
 import {constructType} from "../../../../prop/construct-type/construct-type";
+import {proxyToValue, valueToProxy} from "../../../../observe/observed-values/observed-values";
 
 /*tslint:disable:no-unused-expression*/
 
@@ -98,6 +99,14 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	/**
 	 * Disposes a TemplateMultiElementResult
 	 */
+	public destroy (): void {
+		this.destroyChildren();
+		this.modelObserver.unobserve();
+	}
+
+	/**
+	 * Disposes a TemplateMultiElementResult
+	 */
 	public dispose (): void {
 		this.disposeChildren();
 		this.modelObserver.unobserve();
@@ -112,11 +121,27 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	}
 
 	/**
+	 * Destroys all TemplateResults
+	 */
+	private destroyChildren (): void {
+		this.templateResults.forEach(templateResult => this.destroyChild(templateResult));
+		this.templateResults = [];
+	}
+
+	/**
 	 * Disposes the given TemplateResult
 	 * @param {TemplateElementResult} child
 	 */
 	private disposeChild (child: TemplateElementResult): void {
 		child.dispose();
+	}
+
+	/**
+	 * Destroys the given TemplateResult
+	 * @param {TemplateElementResult} child
+	 */
+	private destroyChild (child: TemplateElementResult): void {
+		child.destroy();
 	}
 
 	/**
@@ -148,9 +173,9 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	private stamp (item: () => T, index: number, host: IFoveaHost|ICustomAttribute, owner: Node, root: ShadowRoot|Element, previousSibling: ITemplateResult|null): TemplateElementResult {
 		// Check for an existing TemplateResult on the given index
 		const existing = this.templateResults[index];
-		// If it exists, dispose it
+		// If it exists, destroy it
 		if (existing != null) {
-			this.disposeChild(existing);
+			this.destroyChild(existing);
 		}
 
 		// Don't wrap the computed key in the closure
@@ -179,7 +204,7 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	private pop (): void {
 		const lastTemplateResult = this.templateResults.pop();
 		if (lastTemplateResult != null) {
-			lastTemplateResult.dispose();
+			lastTemplateResult.destroy();
 		}
 	}
 
@@ -193,9 +218,12 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	 * @param {ShadowRoot} root
 	 */
 	private onModelChanged (newValue: Optional<U>, change: Change<U>|undefined, host: IFoveaHost|ICustomAttribute, owner: Node, root: ShadowRoot|Element): void {
-		// If the new value is null, dispose all children
+		// If the new value hasn't been "proxified", do nothing. A new version will be incoming shortly that will be
+		if (valueToProxy.get(<{}>newValue) == null || proxyToValue.get(<{}>newValue) == null) return;
+
+		// If the new value is null, destroy all children
 		if (newValue == null) {
-			return this.disposeChildren();
+			return this.destroyChildren();
 		}
 
 		if (change == null) {
@@ -210,9 +238,9 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 		// Normalize the iterable as an array
 		const iterable = Array.isArray(newValue) ? newValue : Array.from(newValue);
 
-		// If the length is equal to zero, dispose all children
+		// If the length is equal to zero, destroy all children
 		if (iterable.length === 0) {
-			return this.disposeChildren();
+			return this.destroyChildren();
 		}
 
 		// If no change is provided, this is the initial render. Stamp it
@@ -227,10 +255,6 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 
 			case ChangeKind.SPLICE:
 				this.stamp(() => iterable[change.property], change.property, host, owner, root, this.findPreviousSiblingForIndex(change.property));
-				break;
-
-			case ChangeKind.UPDATE:
-				// TODO: What to do about updates? Nothing maybe?
 				break;
 		}
 	}

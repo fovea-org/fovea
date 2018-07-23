@@ -8,5 +8,6 @@ import {BOUND_HOST_ATTRIBUTES_FOR_HOST} from "../bound-host-attributes-for-host/
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindHostAttributesForHost (host: IFoveaHost|ICustomAttribute): void {
-	BOUND_HOST_ATTRIBUTES_FOR_HOST.popAll(host, observer => observer.unobserve());
+	if (!BOUND_HOST_ATTRIBUTES_FOR_HOST.has(host)) return;
+	BOUND_HOST_ATTRIBUTES_FOR_HOST.popAll(host, observer => observer.destroy());
 } /*# END IF hasHostAttributes */

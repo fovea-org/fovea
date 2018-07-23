@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-ts": "0.0.32",
-		"rollup": "^0.63.2"
+		"rollup": "^0.63.4"
 	},
 	"publishConfig": {
 		"access": "public"

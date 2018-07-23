@@ -3,7 +3,7 @@ import {ITemplateExpressionTextResult} from "./i-template-expression-text-result
 import {ITemplateExpressionTextResultOptions} from "./i-template-expression-text-result-options";
 import {IExpressionChainObserver} from "../../../../observe/expression-chain/expression-chain-observer/i-expression-chain-observer";
 import {observeExpressionChain} from "../../../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
-import {Json, Optional} from "@fovea/common";
+import {Optional} from "@fovea/common";
 import {constructType} from "../../../../prop/construct-type/construct-type";
 
 /**
@@ -15,13 +15,13 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	 * The expression observer that, when changed, should mutate the textContent of the TextNode
 	 * @type {IExpressionChainObserver}
 	 */
-	private readonly expressionObserver: IExpressionChainObserver;
+	private expressionObserver: IExpressionChainObserver|null;
 
 	/**
 	 * A reference to the TextNode within the DOM
 	 * @type {Text}
 	 */
-	public lastNode: Text;
+	public lastNode: Text|null;
 
 	constructor ({host, expression, templateVariables, previousSibling, owner, root}: ITemplateExpressionTextResultOptions) {
 		super({host, previousSibling, owner});
@@ -46,16 +46,26 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	}
 
 	/**
+	 * Destroys the TemplateExpressionTextResult
+	 */
+	public destroy (): void {
+		this.dispose();
+	}
+
+	/**
 	 * Disposes a TemplateExpressionTextResult
 	 */
 	public dispose (): void {
-		this.detach(this.lastNode);
+		if (this.lastNode != null) {
+			this.detach(this.lastNode);
+			this.lastNode = null;
+		}
 
 		// Stop observing the expression
-		this.expressionObserver.unobserve();
-
-		// Mark for garbage collection
-		(<Json>this.expressionObserver) = null;
+		if (this.expressionObserver != null) {
+			this.expressionObserver.unobserve();
+			this.expressionObserver = null;
+		}
 	}
 
 	/**
@@ -63,6 +73,7 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	 * @param {Optional<string>} newValue
 	 */
 	private onExpressionChanged (newValue: Optional<string>): void {
+		if (this.lastNode == null) return;
 		this.lastNode.textContent = newValue == null ? null : newValue;
 	}
 }

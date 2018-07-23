@@ -11,7 +11,7 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 	 * A reference to the TextNode within the DOM
 	 * @type {Text}
 	 */
-	public lastNode: Text;
+	public lastNode: Text|null;
 
 	constructor ({host, previousSibling, text, owner, root}: ITemplateNormalTextResultOptions) {
 		super({host, previousSibling, owner});
@@ -27,9 +27,19 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 	}
 
 	/**
+	 * Destroys the TemplateNormalTextResult
+	 */
+	public destroy (): void {
+		this.dispose();
+	}
+
+	/**
 	 * Disposes a TemplateNormalTextResult
 	 */
 	public dispose (): void {
-		this.detach(this.lastNode);
+		if (this.lastNode != null) {
+			this.detach(this.lastNode);
+			this.lastNode = null;
+		}
 	}
 }

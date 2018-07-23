@@ -8,5 +8,6 @@ import {BOUND_VISIBILITY_OBSERVERS} from "./bound-visibility-observers";
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindVisibilityObservers (host: IFoveaHost|ICustomAttribute): void {
+	if (!BOUND_VISIBILITY_OBSERVERS.has(host)) return;
 	BOUND_VISIBILITY_OBSERVERS.popAll(host, observer => observer.unobserve());
 } /*# END IF hasVisibilityObservers */

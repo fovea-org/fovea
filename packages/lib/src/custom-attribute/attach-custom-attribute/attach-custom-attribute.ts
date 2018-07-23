@@ -8,6 +8,8 @@ import {observeExpressionChain} from "../../observe/expression-chain/observe-exp
 import {IFoveaHost, ICustomAttribute, ICustomAttributeConstructor, ExpressionChain} from "@fovea/common";
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
 import {onCustomAttributeValueShouldUpdate} from "../on-custom-attribute-should-update/on-custom-attribute-should-update";
+import {IDestroyable} from "../../destroyable/i-destroyable";
+import {__destroy} from "../../helper/destroy/destroy";
 
 /*# IF hasTemplateCustomAttributes */
 
@@ -20,7 +22,7 @@ import {onCustomAttributeValueShouldUpdate} from "../on-custom-attribute-should-
  * @param {ITemplateVariables} [templateVariables
  * @returns {IObserver}
  */
-export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver {
+export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver & IDestroyable {
 	const customAttribute = constructCustomAttribute(element, name);
 	const normalizedValue = normalizeCustomAttributeExpressionValue(value);
 
@@ -35,12 +37,18 @@ export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, elemen
 		});
 	});
 
-	return {
-		unobserve: () => {
-			if (observers != null) {
-				observers.forEach(observer => observer.unobserve());
-				observers = null;
-			}
+	const unobserve = () => {
+		if (observers != null) {
+			observers.forEach(observer => observer.unobserve());
+			observers = null;
 		}
+	};
+
+	return {
+		destroy: () => {
+			unobserve();
+			__destroy(customAttribute);
+		},
+		unobserve
 	};
 } /*# END IF hasTemplateCustomAttributes */

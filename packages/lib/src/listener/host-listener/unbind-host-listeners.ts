@@ -8,5 +8,6 @@ import {BOUND_HOST_LISTENERS} from "./bound-host-listeners";
  * @param {IFoveaHost | ICustomAttribute} host
  */
 export function unbindHostListeners (host: IFoveaHost|ICustomAttribute): void {
+	if (!BOUND_HOST_LISTENERS.has(host)) return;
 	BOUND_HOST_LISTENERS.popAll(host, listener => listener.unobserve());
 } /*# END IF hasHostListeners */

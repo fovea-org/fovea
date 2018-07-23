@@ -55,13 +55,13 @@
 		"@wessberg/typescript-ast-util": "0.0.46",
 		"chalk": "^2.4.1",
 		"magic-string": "^0.25.0",
-		"postcss": "^7.0.0"
+		"postcss": "^7.0.1"
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-di": "^1.0.85",
 		"@wessberg/rollup-plugin-ts": "0.0.32",
 		"ava": "^0.25.0",
-		"rollup": "^0.63.2"
+		"rollup": "^0.63.4"
 	},
 	"publishConfig": {
 		"access": "public"
