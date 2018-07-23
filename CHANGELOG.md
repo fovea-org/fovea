@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.110"></a>
+## [1.0.110](https://github.com/fovea-org/fovea/compare/v1.0.109...v1.0.110) (2018-07-23)
+
+
+### Bug Fixes
+
+* Fixed a bug where the same component could be rendered multiple times if connectedCallback was invoked manually ([26dd8cd](https://github.com/fovea-org/fovea/commit/26dd8cd))
+
+
+
+
 <a name="1.0.109"></a>
 ## [1.0.109](https://github.com/fovea-org/fovea/compare/v1.0.108...v1.0.109) (2018-07-18)
 

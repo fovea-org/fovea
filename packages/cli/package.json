@@ -33,7 +33,7 @@
   },
   "preferGlobal": true,
   "name": "@fovea/cli",
-  "version": "1.0.109",
+  "version": "1.0.110",
   "description": "Let's compile the web!",
   "scripts": {
     "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -42,9 +42,9 @@
     "prepare": "npm run rollup"
   },
   "dependencies": {
-    "@fovea/compiler": "^1.0.109",
-    "@fovea/rollup-plugin-fovea": "^1.0.109",
-    "@fovea/style": "^1.0.109",
+    "@fovea/compiler": "^1.0.110",
+    "@fovea/rollup-plugin-fovea": "^1.0.110",
+    "@fovea/style": "^1.0.110",
     "@types/chokidar": "^1.7.5",
     "@types/deep-equal": "^1.0.1",
     "@types/deep-extend": "^0.4.31",
@@ -97,7 +97,7 @@
     "svgo": "^1.0.5",
     "temp-dir": "^1.0.0",
     "to-ico": "^1.1.5",
-    "ws": "^5.2.2"
+    "ws": "^6.0.0"
   },
   "publishConfig": {
     "access": "public"

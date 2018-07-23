@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/postcss-fovea-parser",
-	"version": "1.0.109",
+	"version": "1.0.110",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -41,7 +41,7 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.109",
+		"@fovea/common": "^1.0.110",
 		"postcss": "^7.0.1",
 		"postcss-scss": "^2.0.0"
 	},
