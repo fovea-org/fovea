@@ -301,12 +301,13 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * For custom elements, we always place the properties as properties (like element.foo = "bar") unless
 	 * the key is included in the set of required attributes (for example, 'class' is a required attribute).
 	 * @param {FoveaDOMAstElement} element
+	 * @param {IContext} context
 	 * @param {string} key
 	 * @returns {PropertyPosition}
 	 */
-	protected getPropertyPosition (element: FoveaDOMAstElement, key: string): PropertyPosition {
+	protected getPropertyPosition (element: FoveaDOMAstElement, context: IContext, key: string): PropertyPosition {
 		if (
-			(isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(key)) || !isFoveaDOMAstCustomElement(element)) {
+			context.mode === "hostAttributes" || (isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(key)) || !isFoveaDOMAstCustomElement(element)) {
 			return "attribute";
 		}
 		// Otherwise, set it as a property
@@ -427,7 +428,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 		attributes.forEach(attribute => {
 			// Figure out the position for the property
-			const position = this.getPropertyPosition(node, attribute.name);
+			const position = this.getPropertyPosition(node, context, attribute.name);
 
 			// Append it to the array of attributes or properties, depending on where to place it
 			if (position === "attribute") attributeProperties.push(attribute);
