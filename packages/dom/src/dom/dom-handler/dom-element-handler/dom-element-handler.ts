@@ -55,7 +55,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// If the key is in camelCase or PascalCase, update it to kebab-case.
-		const normalizedName = isInCamelCase(name) || isInPascalCase(name) ? kebabCase(name) : name;
+		const normalizedName = node.type !== "svg" && (isInCamelCase(name) || isInPascalCase(name)) ? kebabCase(name) : name;
 
 		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
 		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
