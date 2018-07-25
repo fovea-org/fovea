@@ -150,7 +150,7 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 			// The first is to calculate the correct IFoveaStats. The second is then the actual one.
 			// This is because we don't decide the order in which rollup will invoke this plugin with files
 			// Instead, we make sure to traverse all files to ensure that we have right stats before proceeding.
-			if (isFirstBuild && !hasPerformedDryRun && normalizedFoveaOptions.optimize && !isInWatchMode()) {
+			if (isFirstBuild && !hasPerformedDryRun && normalizedFoveaOptions.optimize) {
 				hasPerformedDryRun = true;
 				await performDryRun(normalizedFoveaOptions.compiler, normalizedFoveaOptions, rollupOptions);
 			}
