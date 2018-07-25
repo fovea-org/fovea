@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.112"></a>
+## [1.0.112](https://github.com/fovea-org/fovea/compare/v1.0.111...v1.0.112) (2018-07-25)
+
+
+### Bug Fixes
+
+* Fixed an issue where extending other components would break in watch mode because it doesn't guarantee the discovery order of components without dry runs ([336fe67](https://github.com/fovea-org/fovea/commit/336fe67))
+
+
+
+
 <a name="1.0.111"></a>
 ## [1.0.111](https://github.com/fovea-org/fovea/compare/v1.0.110...v1.0.111) (2018-07-24)
 
