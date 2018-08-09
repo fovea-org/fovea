@@ -33,7 +33,7 @@
 	},
 	"preferGlobal": true,
 	"name": "@fovea/cli",
-	"version": "1.0.119",
+	"version": "1.0.120",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -42,9 +42,9 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.119",
-		"@fovea/rollup-plugin-fovea": "^1.0.119",
-		"@fovea/style": "^1.0.119",
+		"@fovea/compiler": "^1.0.120",
+		"@fovea/rollup-plugin-fovea": "^1.0.120",
+		"@fovea/style": "^1.0.120",
 		"@types/chokidar": "^1.7.5",
 		"@types/deep-equal": "^1.0.1",
 		"@types/deep-extend": "^0.4.31",
@@ -102,5 +102,5 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"gitHead": "40f10d46c45d7d578911f50108e7092af82056b9"
+	"gitHead": "76601007c97233acaacb9763ab19d736a07d8bc9"
 }
