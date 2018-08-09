@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.119"></a>
+## [1.0.119](https://github.com/fovea-org/fovea/compare/v1.0.118...v1.0.119) (2018-08-09)
+
+**Note:** Version bump only for package @fovea/compiler
+
+
+
+
+
 <a name="1.0.118"></a>
 ## [1.0.118](https://github.com/fovea-org/fovea/compare/v1.0.117...v1.0.118) (2018-08-09)
 
