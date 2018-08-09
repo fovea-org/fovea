@@ -29,16 +29,16 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/lib",
-	"version": "1.0.120",
+	"version": "1.0.121",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
 		"prerollup": "rm -r -f dist",
 		"rollup": "rollup -c rollup.config.js",
-		"prepare": "npm run rollup"
+		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.120",
+		"@fovea/common": "^1.0.121",
 		"@wessberg/stringutil": "^1.0.17"
 	},
 	"devDependencies": {
@@ -47,6 +47,5 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"gitHead": "76601007c97233acaacb9763ab19d736a07d8bc9"
+	}
 }
