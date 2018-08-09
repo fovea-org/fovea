@@ -2,8 +2,12 @@ import {ICustomAttribute, IFoveaHost, Json} from "@fovea/common";
 import {setExpectedAttributeValue} from "../expected-attribute-value/set-expected-attribute-value/set-expected-attribute-value";
 import {coerceValue} from "../../observe/expression-chain/coercion/coerce-value";
 import {constructType} from "../../prop/construct-type/construct-type";
+import {isHTMLElement} from "../../element/is-html-element";
+import {NonReadonly} from "../../non-readonly/non-readonly";
+import {kebabCase} from "@wessberg/stringutil";
 
 // tslint:disable:no-any
+// tslint:disable:strict-boolean-expressions
 
 /*# IF hasTemplateAttributes || hasHostProps */
 
@@ -27,10 +31,32 @@ export function setAttribute (host: IFoveaHost|ICustomAttribute, element: Elemen
 
 		switch (key) {
 			case "style": {
-				if ("style" in element) {
-					(<any>element).style[setForValueProperty] = shouldRemoveAttribute ? null : value;
+				if (isHTMLElement(element)) {
+					// If the property exists in the CSSStyleDeclaration of the user agent, it is enough to set it on the "style" property of the element
+					// in order for it to bubble up on the host element. Otherwise, we need to append/remove the style property manually
+					if (setForValueProperty in element.style) {
+						(<NonReadonly<CSSStyleDeclaration>>element.style)[<keyof CSSStyleDeclaration>setForValueProperty] = shouldRemoveAttribute ? null : value;
+					}
+					// Append/remove the style property manually
+					else {
+						// kebab-case/dash-case the CSS property. For example, 'touchAction' becomes 'touch-action'
+						const kebabCasedProperty = kebabCase(setForValueProperty);
+						// Generate a Regular Expression to match it within the style attribute
+						const regexp = new RegExp(`${kebabCasedProperty}:[^;]*;?`, "g");
+						// Prepare a new value for it
+						const replacement = `${kebabCasedProperty}: ${value};`;
+
+						// Take the existing value of the attribute (or otherwise fallback to the empty string) and remove the style property from it
+						const styleAttributeValue: string = (element.getAttribute("style") || "").replace(regexp, "");
+
+						// Set the attribute. If the style property should be removed, use the existing value. Otherwise, prepend the replacement
+						element.setAttribute("style", shouldRemoveAttribute
+							? styleAttributeValue
+							: `${replacement}${styleAttributeValue}`
+						);
+					}
 					// Cache the expected attribute value
-					setExpectedAttributeValue(host, key, (<any>element).style[setForValueProperty]);
+					setExpectedAttributeValue(host, key, element.getAttribute("style"));
 				}
 				return;
 			}

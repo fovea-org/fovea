@@ -1,105 +1,105 @@
 {
-	"main": "./dist/cjs/index.js",
-	"module": "./dist/esm/index.js",
-	"browser": "./dist/esm/index.js",
-	"types": "./dist/esm/index.d.ts",
-	"typings": "./dist/esm/index.d.ts",
-	"es2015": "./dist/esm/index.js",
-	"files": [
-		"dist/**/*.*",
-		"bin/*"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fovea-org/fovea.git"
-	},
-	"bugs": {
-		"url": "https://github.com/fovea-org/fovea/issues"
-	},
-	"contributors": [
-		{
-			"name": "Frederik Wessberg",
-			"email": "frederikwessberg@hotmail.com",
-			"url": "https://github.com/wessberg"
-		}
-	],
-	"engines": {
-		"node": ">=10.1.0"
-	},
-	"license": "MIT",
-	"keywords": [],
-	"bin": {
-		"fovea": "bin/fovea"
-	},
-	"preferGlobal": true,
-	"name": "@fovea/cli",
-	"version": "1.0.113",
-	"description": "Let's compile the web!",
-	"scripts": {
-		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
-		"prerollup": "rm -r -f dist",
-		"rollup": "rollup -c rollup.config.js",
-		"prepare": "npm run rollup"
-	},
-	"dependencies": {
-		"@fovea/compiler": "^1.0.113",
-		"@fovea/rollup-plugin-fovea": "^1.0.113",
-		"@fovea/style": "^1.0.113",
-		"@types/chokidar": "^1.7.5",
-		"@types/deep-equal": "^1.0.1",
-		"@types/deep-extend": "^0.4.31",
-		"@types/file-type": "^5.2.1",
-		"@types/iltorb": "^2.0.1",
-		"@types/mime": "^2.0.0",
-		"@types/node": "^10.5.2",
-		"@types/ora": "^1.3.4",
-		"@types/prettier": "^1.13.2",
-		"@types/resolve": "0.0.8",
-		"@types/sharp": "^0.17.9",
-		"@types/stringify-object": "^3.2.0",
-		"@types/svgo": "^1.0.1",
-		"@types/ws": "^5.1.2",
-		"@wessberg/arrayutil": "0.0.4",
-		"@wessberg/browserslist-generator": "0.0.37",
-		"@wessberg/di": "^1.1.0",
-		"@wessberg/fileloader": "^1.1.9",
-		"@wessberg/filesaver": "^1.0.8",
-		"@wessberg/pathutil": "0.0.10",
-		"@wessberg/rollup-plugin-ts": "0.0.32",
-		"@wessberg/stringutil": "^1.0.17",
-		"babel-minify": "^0.4.3",
-		"buffer-serializer": "^1.1.0",
-		"chalk": "^2.4.1",
-		"chokidar": "^2.0.4",
-		"commander": "^2.16.0",
-		"cross-spawn-promise": "^0.10.1",
-		"deep-equal": "^1.0.1",
-		"deep-extend": "^0.6.0",
-		"devcert": "^1.0.0",
-		"file-type": "^8.1.0",
-		"html-format": "^1.0.1",
-		"http-signature": "^1.2.0",
-		"iltorb": "^2.3.2",
-		"latest-version": "^4.0.0",
-		"magic-string": "^0.25.0",
-		"mime": "^2.3.1",
-		"ora": "^3.0.0",
-		"postcss": "^7.0.1",
-		"postcss-svgo": "^4.0.0",
-		"prettier": "^1.13.7",
-		"resolve": "^1.8.1",
-		"rollup": "^0.63.4",
-		"rollup-plugin-commonjs": "^9.1.3",
-		"rollup-plugin-node-resolve": "^3.3.0",
-		"rollup-pluginutils": "^2.3.0",
-		"sharp": "^0.20.5",
-		"stringify-object": "^3.2.2",
-		"svgo": "^1.0.5",
-		"temp-dir": "^1.0.0",
-		"to-ico": "^1.1.5",
-		"ws": "^6.0.0"
-	},
-	"publishConfig": {
-		"access": "public"
-	}
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "typings": "./dist/esm/index.d.ts",
+  "es2015": "./dist/esm/index.js",
+  "files": [
+    "dist/**/*.*",
+    "bin/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fovea-org/fovea.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fovea-org/fovea/issues"
+  },
+  "contributors": [
+    {
+      "name": "Frederik Wessberg",
+      "email": "frederikwessberg@hotmail.com",
+      "url": "https://github.com/wessberg"
+    }
+  ],
+  "engines": {
+    "node": ">=10.1.0"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "bin": {
+    "fovea": "bin/fovea"
+  },
+  "preferGlobal": true,
+  "name": "@fovea/cli",
+  "version": "1.0.113",
+  "description": "Let's compile the web!",
+  "scripts": {
+    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+    "prerollup": "rm -r -f dist",
+    "rollup": "rollup -c rollup.config.js",
+    "prepare": "npm run rollup"
+  },
+  "dependencies": {
+    "@fovea/compiler": "^1.0.113",
+    "@fovea/rollup-plugin-fovea": "^1.0.113",
+    "@fovea/style": "^1.0.113",
+    "@types/chokidar": "^1.7.5",
+    "@types/deep-equal": "^1.0.1",
+    "@types/deep-extend": "^0.4.31",
+    "@types/file-type": "^5.2.1",
+    "@types/iltorb": "^2.0.1",
+    "@types/mime": "^2.0.0",
+    "@types/node": "^10.5.7",
+    "@types/ora": "^1.3.4",
+    "@types/prettier": "^1.13.2",
+    "@types/resolve": "0.0.8",
+    "@types/sharp": "^0.17.9",
+    "@types/stringify-object": "^3.2.0",
+    "@types/svgo": "^1.0.1",
+    "@types/ws": "^5.1.2",
+    "@wessberg/arrayutil": "0.0.4",
+    "@wessberg/browserslist-generator": "0.0.38",
+    "@wessberg/di": "^1.1.0",
+    "@wessberg/fileloader": "^1.1.9",
+    "@wessberg/filesaver": "^1.0.8",
+    "@wessberg/pathutil": "0.0.10",
+    "@wessberg/rollup-plugin-ts": "0.0.34",
+    "@wessberg/stringutil": "^1.0.17",
+    "babel-minify": "^0.4.3",
+    "buffer-serializer": "^1.1.0",
+    "chalk": "^2.4.1",
+    "chokidar": "^2.0.4",
+    "commander": "^2.17.1",
+    "cross-spawn-promise": "^0.10.1",
+    "deep-equal": "^1.0.1",
+    "deep-extend": "^0.6.0",
+    "devcert": "^1.0.0",
+    "file-type": "^8.1.0",
+    "html-format": "^1.0.1",
+    "http-signature": "^1.2.0",
+    "iltorb": "^2.4.0",
+    "latest-version": "^4.0.0",
+    "magic-string": "^0.25.0",
+    "mime": "^2.3.1",
+    "ora": "^3.0.0",
+    "postcss": "^7.0.2",
+    "postcss-svgo": "^4.0.0",
+    "prettier": "^1.14.2",
+    "resolve": "^1.8.1",
+    "rollup": "^0.64.1",
+    "rollup-plugin-commonjs": "^9.1.5",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-pluginutils": "^2.3.1",
+    "sharp": "^0.20.5",
+    "stringify-object": "^3.2.2",
+    "svgo": "^1.0.5",
+    "temp-dir": "^1.0.0",
+    "to-ico": "^1.1.5",
+    "ws": "^6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
