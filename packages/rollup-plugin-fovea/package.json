@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/rollup-plugin-fovea",
-	"version": "1.0.116",
+	"version": "1.0.117",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -38,10 +38,10 @@
 		"prepare": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.116"
+		"@fovea/compiler": "^1.0.117"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
-	"gitHead": "23f7f8987e0d20e6e6066c52dd7d48811835a04b"
+	"gitHead": "f516bf2f0ffae68777025df02ddd2aa6e9eb3672"
 }
