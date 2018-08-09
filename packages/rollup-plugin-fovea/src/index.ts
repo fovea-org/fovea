@@ -186,4 +186,3 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 // Exports
 export {IFoveaRollupPluginOptions} from "./i-fovea-rollup-plugin-options";
 export default Fovea;
-export {Fovea};

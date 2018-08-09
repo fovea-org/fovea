@@ -75,7 +75,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		// Prepare the 'value' argument. Give it tuples of key-value pairs as REST arguments
 		const valueArgument = attributes.map(({name, value}) => {
 			// If the key is in camelCase or PascalCase, update it to kebab-case.
-			const normalizedName = isInCamelCase(name) || isInPascalCase(name) ? kebabCase(name) : name;
+			const normalizedName = node.type !== "svg" && (isInCamelCase(name) || isInPascalCase(name)) ? kebabCase(name) : name;
 			return `[${this.quote(normalizedName)}${valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`}]`;
 
 		}).join(", ");
