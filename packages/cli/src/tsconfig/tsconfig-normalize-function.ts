@@ -47,8 +47,8 @@ function getDefaultTsconfigJsonData (config: IBuildConfig) {
 			noImplicitReturns: true,
 			noImplicitThis: true,
 			lib: [
-				"ES5", "ES2015", "ES6", "ES7", "ES2016", "ES2017", "ESNext",
-				"DOM", "DOM.iterable", "WebWorker", "ScriptHost"
+				"es5", "es2015", "es6", "es7", "es2016", "es2017", "esnext",
+				"dom", "dom.iterable", "webworker", "webworker.importscripts", "scripthost"
 			],
 			baseUrl: ".",
 			paths: {
