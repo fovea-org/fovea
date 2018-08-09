@@ -132,7 +132,7 @@ export class ExpressionUtil implements IExpressionUtil {
 
 		nodes.forEach((statement, index) => {
 			// Assign the parent to the Node if it is undefined
-			if (statement.parent == null) statement.parent = parent;
+			if (statement.parent == null) statement.parent = <Readonly<Node>> parent;
 			const isLastIndex = index === nodes.length - 1;
 
 			// If it is an Identifier, push the text of it to the ExpressionContent
