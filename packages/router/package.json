@@ -47,7 +47,7 @@
 	},
 	"devDependencies": {
 		"@fovea/rollup-plugin-fovea": "^1.0.113",
-		"@wessberg/rollup-plugin-ts": "0.0.34",
+		"@wessberg/rollup-plugin-ts": "0.0.35",
 		"rollup": "^0.64.1"
 	}
 }

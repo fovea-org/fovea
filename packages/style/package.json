@@ -1,67 +1,67 @@
 {
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "browser": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
-  "typings": "./dist/esm/index.d.ts",
-  "es2015": "./dist/esm/index.js",
-  "files": [
-    "dist/**/*.*",
-    "bin/*"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fovea-org/fovea.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fovea-org/fovea/issues"
-  },
-  "contributors": [
-    {
-      "name": "Frederik Wessberg",
-      "email": "frederikwessberg@hotmail.com",
-      "url": "https://github.com/wessberg"
-    }
-  ],
-  "engines": {
-    "node": ">=10.1.0"
-  },
-  "license": "MIT",
-  "keywords": [],
-  "name": "@fovea/style",
-  "version": "1.0.113",
-  "description": "Let's compile the web!",
-  "scripts": {
-    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
-    "prerollup": "rm -r -f dist",
-    "rollup": "rollup -c rollup.config.js",
-    "pretest": "rollup -c rollup.test.config.js",
-    "test": "ava",
-    "posttest": "rm -r -f compiled",
-    "prepare": "npm run rollup"
-  },
-  "dependencies": {
-    "@fovea/common": "^1.0.113",
-    "@fovea/postcss-fovea-parser": "^1.0.113",
-    "@types/deep-extend": "^0.4.31",
-    "@types/node": "^10.5.7",
-    "@types/node-sass": "^3.10.32",
-    "@wessberg/di": "^1.1.0",
-    "cssnano": "^4.0.5",
-    "deep-extend": "^0.6.0",
-    "node-sass": "^4.9.3",
-    "postcss": "^7.0.2",
-    "postcss-import": "^12.0.0",
-    "postcss-preset-env": "^5.3.0",
-    "request": "^2.87.0"
-  },
-  "devDependencies": {
-    "@wessberg/rollup-plugin-di": "^1.0.86",
-    "@wessberg/rollup-plugin-ts": "0.0.34",
-    "ava": "^0.25.0",
-    "rollup": "^0.64.1"
-  },
-  "publishConfig": {
-    "access": "public"
-  }
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.js",
+	"browser": "./dist/esm/index.js",
+	"types": "./dist/esm/index.d.ts",
+	"typings": "./dist/esm/index.d.ts",
+	"es2015": "./dist/esm/index.js",
+	"files": [
+		"dist/**/*.*",
+		"bin/*"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fovea-org/fovea.git"
+	},
+	"bugs": {
+		"url": "https://github.com/fovea-org/fovea/issues"
+	},
+	"contributors": [
+		{
+			"name": "Frederik Wessberg",
+			"email": "frederikwessberg@hotmail.com",
+			"url": "https://github.com/wessberg"
+		}
+	],
+	"engines": {
+		"node": ">=10.1.0"
+	},
+	"license": "MIT",
+	"keywords": [],
+	"name": "@fovea/style",
+	"version": "1.0.113",
+	"description": "Let's compile the web!",
+	"scripts": {
+		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+		"prerollup": "rm -r -f dist",
+		"rollup": "rollup -c rollup.config.js",
+		"pretest": "rollup -c rollup.test.config.js",
+		"test": "ava",
+		"posttest": "rm -r -f compiled",
+		"prepare": "npm run rollup"
+	},
+	"dependencies": {
+		"@fovea/common": "^1.0.113",
+		"@fovea/postcss-fovea-parser": "^1.0.113",
+		"@types/deep-extend": "^0.4.31",
+		"@types/node": "^10.5.7",
+		"@types/node-sass": "^3.10.32",
+		"@wessberg/di": "^1.1.0",
+		"cssnano": "^4.0.5",
+		"deep-extend": "^0.6.0",
+		"node-sass": "^4.9.3",
+		"postcss": "^7.0.2",
+		"postcss-import": "^12.0.0",
+		"postcss-preset-env": "^5.3.0",
+		"request": "^2.87.0"
+	},
+	"devDependencies": {
+		"@wessberg/rollup-plugin-di": "^1.0.86",
+		"@wessberg/rollup-plugin-ts": "0.0.35",
+		"ava": "^0.25.0",
+		"rollup": "^0.64.1"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }
