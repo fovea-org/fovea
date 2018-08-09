@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.114"></a>
+## [1.0.114](https://github.com/fovea-org/fovea/compare/v1.0.113...v1.0.114) (2018-08-09)
+
+
+### Bug Fixes
+
+* Fixed an issue where attributes provided to SVG elements would be forced into dash-case, even though SVG elements may receive case-sensitive attributes ([4694e0b](https://github.com/fovea-org/fovea/commit/4694e0b))
+* Fixed an issue where attributes provided to SVG elements would be forced into dash-case, even though SVG elements may receive case-sensitive attributes ([e6d24ec](https://github.com/fovea-org/fovea/commit/e6d24ec))
+
+
+
+
+
 <a name="1.0.113"></a>
 ## [1.0.113](https://github.com/fovea-org/fovea/compare/v1.0.112...v1.0.113) (2018-07-25)
 
