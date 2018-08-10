@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.122"></a>
+## [1.0.122](https://github.com/fovea-org/fovea/compare/v1.0.121...v1.0.122) (2018-08-10)
+
+
+### Bug Fixes
+
+* Fixed an SVG issue. ([0d6068c](https://github.com/fovea-org/fovea/commit/0d6068c))
+* Removed redundant tsconfig libs ([ec9c69b](https://github.com/fovea-org/fovea/commit/ec9c69b))
+
+
+
+
+
 <a name="1.0.121"></a>
 ## [1.0.121](https://github.com/fovea-org/fovea/compare/v1.0.120...v1.0.121) (2018-08-09)
 
