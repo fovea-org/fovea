@@ -1,5 +1,5 @@
 import {IFoveaCompilerCompileOptions} from "./i-fovea-compiler-compile-options";
-import {FoveaCompilerCompileResult, ISourceCodeResult} from "./i-fovea-compiler-compile-result";
+import {FoveaCompilerCompileResult} from "./i-fovea-compiler-compile-result";
 import {ICodeAnalyzer, IPlacement} from "@wessberg/codeanalyzer";
 import {ITemplator} from "../templator/i-templator";
 import {IPrototypeExtender} from "../prototype-extender/i-prototype-extender";
@@ -19,8 +19,6 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {IEmitExtractor} from "../emit-extractor/i-emit-extractor";
 import {IHostListenerExtractor} from "../host-listener-extractor/i-host-listener-extractor";
 import {IFoveaStats, IImmutableFoveaStats, IMutableFoveaStats} from "../stats/i-fovea-stats";
-import {ICompilerHintParser} from "../compiler-hint/compiler-hint-parser/i-compiler-hint-parser";
-import {CompilerHintToken} from "../compiler-hint/compiler-hint-token/compiler-hint-token";
 import {IFoveaCompilerOptions} from "../options/i-fovea-compiler-options";
 import {IOnChangeExtractor} from "../on-change-extractor/i-on-change-extractor";
 import {IVisibilityObserverExtractor} from "../visibility-observer-extractor/i-visibility-observer-extractor";
@@ -62,7 +60,6 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 							 private readonly parentMerger: IParentMerger,
 							 private readonly hostDefiner: IFoveaHostDefiner,
 							 private readonly dependencyImporter: IDependencyImporter,
-							 private readonly compilerHintParser: ICompilerHintParser,
 							 private readonly templator: ITemplator,
 							 private readonly libUser: ILibUser,
 							 private readonly prototypeExtender: IPrototypeExtender,
@@ -136,36 +133,6 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			statsForFile: this.foveaStats.getStatsForFile(file),
 			diagnostics: this.diagnostics
 		};
-	}
-
-	/**
-	 * Transforms the lib code in respect to the given Compiler comments
-	 * @param {string} libCode
-	 * @param {string} file
-	 * @returns {ISourceCodeResult}
-	 */
-	public transformCompilerHints (libCode: string, file: string): ISourceCodeResult {
-		const newCode = new this.containerConstructor(libCode, {filename: file, indentExclusionRanges: []});
-		const ast = this.compilerHintParser.parse(libCode);
-		const stats = this.stats;
-
-		ast.forEach(part => {
-			switch (part.kind) {
-				case CompilerHintToken.IF:
-					// If the expression refers to a property that is falsy on the IFoveaStats, remove it from the SourceCode
-					if (!part.evaluate(stats)) {
-						newCode.remove(part.pos, part.endHint.end);
-					}
-
-					// Otherwise, remove both it as well as its end hint - but not the content in-between
-					else {
-						newCode.remove(part.pos, part.end);
-						newCode.remove(part.endHint.pos, part.endHint.end);
-					}
-					break;
-			}
-		});
-		return {code: newCode.toString(), map: newCode.generateMap({file, hires: true})};
 	}
 
 	/**

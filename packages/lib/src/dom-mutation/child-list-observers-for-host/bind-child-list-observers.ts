@@ -6,8 +6,6 @@ import {parseTarget} from "../../target/parse-target";
 import {CHILD_LIST_OBSERVERS_FOR_HOST} from "./child-list-observers-for-host";
 import {BOUND_CHILD_LIST_OBSERVERS} from "./bound-child-list-observers";
 
-/*# IF hasChildListObservers */
-
 /**
  * Binds all child list observers for the given host
  * @param {IFoveaHost | ICustomAttribute} host
@@ -24,4 +22,4 @@ export function bindChildListObservers (host: IFoveaHost|ICustomAttribute): void
 			return added! ? onChildrenAdded(targetNode, bound) : onChildrenRemoved(targetNode, bound);
 		}
 	));
-} /*# END IF hasChildListObservers */
+}

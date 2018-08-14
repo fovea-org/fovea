@@ -1,4 +1,4 @@
-import {IFoveaHost, ICustomAttribute} from "@fovea/common";
+import {ICustomAttribute, IFoveaHost} from "@fovea/common";
 import {UPGRADED_HOSTS} from "../../host/upgraded-hosts/upgraded-hosts";
 import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
 import {disposeOrDestroyShared} from "../dispose/dispose-or-destroy-shared";

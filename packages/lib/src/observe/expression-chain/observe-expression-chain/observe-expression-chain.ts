@@ -86,8 +86,7 @@ function evaluate<T> (host: AnyHost, onChange: ExpressionChainObserverCallback<T
 	}
 
 	else {
-		/*# IF hasAsyncEvaluations */
-		evaluateAsyncExpressionChain(host, chain, templateVariables).then(result => onEvaluateResult(result, onChange, change));  /*# END IF hasAsyncEvaluations */
+		evaluateAsyncExpressionChain(host, chain, templateVariables).then(result => onEvaluateResult(result, onChange, change));
 	}
 }
 

@@ -5,13 +5,11 @@ import {normalizeCustomAttributeExpressionValue} from "../../template/normalize-
 import {IExpressionChainObserver} from "../../observe/expression-chain/expression-chain-observer/i-expression-chain-observer";
 import {getTypeForPropName} from "../../prop/type-for-prop-name/get-type-for-prop-name";
 import {observeExpressionChain} from "../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
-import {IFoveaHost, ICustomAttribute, ICustomAttributeConstructor, ExpressionChain} from "@fovea/common";
+import {ExpressionChain, ICustomAttribute, ICustomAttributeConstructor, IFoveaHost} from "@fovea/common";
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
 import {onCustomAttributeValueShouldUpdate} from "../on-custom-attribute-should-update/on-custom-attribute-should-update";
 import {IDestroyable} from "../../destroyable/i-destroyable";
 import {__destroy} from "../../helper/destroy/destroy";
-
-/*# IF hasTemplateCustomAttributes */
 
 /**
  * Adds the given Custom Attribute to the given host
@@ -22,7 +20,7 @@ import {__destroy} from "../../helper/destroy/destroy";
  * @param {ITemplateVariables} [templateVariables
  * @returns {IObserver}
  */
-export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver & IDestroyable {
+export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver&IDestroyable {
 	const customAttribute = constructCustomAttribute(element, name);
 	const normalizedValue = normalizeCustomAttributeExpressionValue(value);
 
@@ -51,4 +49,4 @@ export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, elemen
 		},
 		unobserve
 	};
-} /*# END IF hasTemplateCustomAttributes */
+}

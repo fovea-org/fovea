@@ -3,7 +3,7 @@ import {MultiMap} from "./multi-map";
 /**
  * A WeakMultiMap is like a MultiMap but where the keys are weak
  */
-export class WeakMultiMap<K extends object, V, C extends Set<V> = Set<V>> extends MultiMap<K, V, C>{
+export class WeakMultiMap<K extends object, V, C extends Set<V> = Set<V>> extends MultiMap<K, V, C> {
 	/**
 	 * The inner WeakMap between keys and collections
 	 * @template K, C

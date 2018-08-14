@@ -1,8 +1,6 @@
 import {ICustomAttributeConstructor, IFoveaHostConstructor, IHostListenerBaseOptions} from "@fovea/common";
 import {addHostListenersForHost} from "../../listener/host-listener/host-listeners-for-host/add-host-listeners-for-host";
 
-/*# IF hasHostListeners */
-
 /**
  * Registers a host listener for the given host and method
  * @param {IFoveaHostConstructor | ICustomAttributeConstructor} host
@@ -21,4 +19,4 @@ export function __registerHostListener (host: IFoveaHostConstructor|ICustomAttri
 
 	// Add all of them
 	eventNames.forEach(eventName => addHostListenersForHost(host, {eventName, passive, once, on, condition, method: {name: method, isStatic}}));
-} /*# END IF hasHostListeners */
+}

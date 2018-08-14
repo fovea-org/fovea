@@ -10,8 +10,6 @@ import {deleteProxyChangeHandler} from "../../../observe/observed-values/observe
 import {INITIALIZED_PROPS_FOR_HOST} from "../../initialized-props-for-host/initialized-props-for-host";
 import {isBooleanType} from "../../type-for-prop-name/get-type-for-prop-name";
 
-/*# IF hasProps */
-
 /**
  * Binds all props for the given host
  * @param {IFoveaHost | ICustomAttribute} host
@@ -82,5 +80,3 @@ export function bindPropsForHost (host: IFoveaHost|ICustomAttribute): void {
 		}
 	));
 }
-
-/*# END IF hasProps */

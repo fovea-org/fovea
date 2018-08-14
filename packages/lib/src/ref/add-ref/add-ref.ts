@@ -1,7 +1,5 @@
-import {IFoveaHost, ICustomAttribute, Ref, Json} from "@fovea/common";
+import {ICustomAttribute, IFoveaHost, Json, Ref} from "@fovea/common";
 import {IObserver} from "../../observe/i-observer";
-
-/*# IF hasTemplateRefs */
 
 /**
  * Binds a Ref to a host, prepended with a '$'
@@ -16,4 +14,4 @@ export function addRef (host: IFoveaHost|ICustomAttribute, element: Element, ref
 			(<Json>host)[`$${ref}`] = null;
 		}
 	};
-} /*# END IF hasTemplateRefs */
+}

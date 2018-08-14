@@ -6,8 +6,6 @@ import {getHostElementForHost} from "../host/host-element-for-host/get-host-elem
 import {takeRelevantHost} from "../host/take-relevant-host/take-relevant-host";
 import {parseTarget} from "../target/parse-target";
 
-/*# IF hasVisibilityObservers */
-
 /**
  * Binds all visibility observers for the given host
  * @param {IFoveaHost | ICustomAttribute} host
@@ -24,4 +22,4 @@ export function bindVisibilityObservers (host: IFoveaHost|ICustomAttribute): voi
 			return visible! ? onVisible(targetElement, bound) : onInvisible(targetElement, bound);
 		}
 	));
-} /*# END IF hasVisibilityObservers */
+}

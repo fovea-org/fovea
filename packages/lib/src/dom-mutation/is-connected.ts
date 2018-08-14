@@ -1,4 +1,5 @@
 declare const ShadowRoot: Function;
+
 /**
  * Returns true if the given node is connected to the document
  * @param {Node} node
@@ -13,7 +14,7 @@ export function isConnected (node: Node|ShadowRoot): boolean {
 			current = current.parentNode;
 		}
 		else {
-		current = (<ShadowRoot> current).host;
+			current = (<ShadowRoot> current).host;
 		}
 	}
 }

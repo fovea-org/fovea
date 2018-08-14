@@ -1,9 +1,7 @@
 import {constructType} from "../../prop/construct-type/construct-type";
 import {getTypeForPropName} from "../../prop/type-for-prop-name/get-type-for-prop-name";
 import {getPropNameForAttributeName} from "../../prop/prop-name-to-attribute-name/get-prop-name-for-attribute-name/get-prop-name-for-attribute-name";
-import {IFoveaHostConstructor, ICustomAttributeConstructor, IType} from "@fovea/common";
-
-/*# IF hasTemplateAttributes */
+import {ICustomAttributeConstructor, IFoveaHostConstructor, IType} from "@fovea/common";
 
 /**
  * Gets the coerce type to use for an attribute.
@@ -21,4 +19,4 @@ export function getCoerceTypeForAttributeName (name: string, append: boolean, ho
 			? constructType("boolean")
 			// Otherwise, attempt to take the type of whatever prop the attribute maps to (if any)
 			: getTypeForPropName(hostCtor, getPropNameForAttributeName(name));
-} /*# END IF hasTemplateAttributes */
+}

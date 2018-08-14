@@ -29,17 +29,15 @@ export function __construct (host: IFoveaHost|ICustomAttribute, hostElement: Ele
 	// Generate and map a Uuid to the host node
 	setUuidForNode(host, incrementUuid());
 
-	let upgradedCustomAttribute: IDestroyable|null = /*# IF hasTemplateCustomAttributes */ !isIFoveaHost(host) ? upgradeCustomAttribute(host, hostElement) : /*# END IF hasTemplateCustomAttributes */ null;
+	let upgradedCustomAttribute: IDestroyable|null = !isIFoveaHost(host) ? upgradeCustomAttribute(host, hostElement) : null;
 
 	// Make sure that it can be disposed later on
 	CONSTRUCTED_HOSTS.add(host, {
 		destroy: () => {
-			/*# IF hasTemplateCustomAttributes */
 			if (upgradedCustomAttribute != null) {
 				upgradedCustomAttribute.destroy();
 				upgradedCustomAttribute = null;
 			}
-			/*# END IF hasTemplateCustomAttributes */
 			removeUuidForNode(host);
 			removeHostElementForHost(host);
 			if (isIFoveaHost(host)) {

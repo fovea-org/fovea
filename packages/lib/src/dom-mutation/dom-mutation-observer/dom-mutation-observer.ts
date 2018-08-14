@@ -9,17 +9,11 @@ import {patch} from "./patch/patch";
 import {ConnectionEventKind} from "../connection-event-kind";
 import {isConnected} from "../is-connected";
 
-/*# IF hasChildListObservers */
-
 // The options to provide when observing nodes
-const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true}; /*# END IF hasChildListObservers */
-
-/*# IF hasAttributeChangeObservers */
+const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true};
 
 // The options to provide when observing nodes for changes to their attributes
-const ATTRIBUTE_OBSERVER_OPTIONS: MutationObserverInit = {attributes: true, attributeOldValue: true}; /*# END IF hasAttributeChangeObservers */
-
-/*# IF hasChildListObservers || hasAttributeChangeObservers */
+const ATTRIBUTE_OBSERVER_OPTIONS: MutationObserverInit = {attributes: true, attributeOldValue: true};
 
 /**
  * Invoke this function when MutationRecords are available
@@ -75,9 +69,7 @@ function onMutation (observer: DOMMutationObserver, callbackCondition?: DOMCallb
 	return {
 		unobserve: () => mutationObserver.disconnect()
 	};
-} /*# END IF hasChildListObservers || hasAttributeChangeObservers */
-
-/*# IF hasChildListObservers */
+}
 
 /**
  * Subscribes the given callback to the event that the given node receives children
@@ -97,9 +89,7 @@ export function onChildrenAdded (node: Node|ShadowRoot, callback: DOMConnectionC
  */
 export function onChildrenRemoved (node: Node|ShadowRoot, callback: DOMConnectionCallback): IDOMConnectionObserverResult {
 	return onMutation({kind: DOMMutationObserverKind.CHILDREN_REMOVED, callback, root: node, node});
-} /*# END IF hasChildListObservers */
-
-/*# IF hasAttributeChangeObservers */
+}
 
 /**
  * Subscribes the given callback to the event that attributes of the given node changed
@@ -109,9 +99,8 @@ export function onChildrenRemoved (node: Node|ShadowRoot, callback: DOMConnectio
  */
 export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttributeCallback): IDOMConnectionObserverResult {
 	return onMutation({kind: DOMMutationObserverKind.ATTRIBUTE_CHANGED, callback, root: node, node});
-} /*# END IF hasAttributeChangeObservers */
+}
 
-/*# IF hasTemplateCustomAttributes */
 const previousConnectionStateMap: WeakMap<Function, boolean> = new WeakMap();
 patch();
 
@@ -201,4 +190,4 @@ export function onDisconnected (node: Node, callback: DOMConnectionCallback, {ne
 			previousConnectionStateMap.delete(callback);
 		}
 	};
-} /*# END IF hasTemplateCustomAttributes */
+}

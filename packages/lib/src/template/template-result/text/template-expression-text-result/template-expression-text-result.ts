@@ -12,16 +12,15 @@ import {constructType} from "../../../../prop/construct-type/construct-type";
 export class TemplateExpressionTextResult extends TemplateResultBase implements ITemplateExpressionTextResult {
 
 	/**
-	 * The expression observer that, when changed, should mutate the textContent of the TextNode
-	 * @type {IExpressionChainObserver}
-	 */
-	private expressionObserver: IExpressionChainObserver|null;
-
-	/**
 	 * A reference to the TextNode within the DOM
 	 * @type {Text}
 	 */
 	public lastNode: Text|null;
+	/**
+	 * The expression observer that, when changed, should mutate the textContent of the TextNode
+	 * @type {IExpressionChainObserver}
+	 */
+	private expressionObserver: IExpressionChainObserver|null;
 
 	constructor ({host, expression, templateVariables, previousSibling, owner, root}: ITemplateExpressionTextResultOptions) {
 		super({host, previousSibling, owner});

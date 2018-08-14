@@ -1,4 +1,3 @@
-
 import {ChangeKind} from "../change-kind/change-kind";
 
 export declare type ChangePath = (string|number)[];

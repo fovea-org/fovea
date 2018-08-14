@@ -1,8 +1,6 @@
 import {WeakMultiMap} from "../../multi-map/weak-multi-map";
 import {ProxyChangeHandler} from "../observe/observe/proxy-change-handler";
 
-/*# IF hasProps */
-
 /**
  * A map between observed values and their proxies
  * @type {WeakMap<{}, {}>}
@@ -65,4 +63,4 @@ export function deleteProxyChangeHandler<T> (handler: ProxyChangeHandler<T>): vo
 			}
 		}
 	});
-} /*# END IF hasProps */
+}

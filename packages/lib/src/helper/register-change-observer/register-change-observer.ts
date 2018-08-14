@@ -1,8 +1,6 @@
 import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common";
 import {addChangeObserversForHost} from "../../change-observer/change-observers-for-host/add-change-observers-for-host";
 
-/*# IF hasChangeObservers */
-
 /**
  * Registers a method to be invoked when any of the provided props change
  * @param {IFoveaHostConstructor | ICustomAttributeConstructor} host
@@ -17,4 +15,4 @@ export function __registerChangeObserver (host: IFoveaHostConstructor|ICustomAtt
 
 	// Add the ChangeObserver
 	addChangeObserversForHost(host, {whenAllAreInitialized, props: propNames, method: {name: method, isStatic}});
-} /*# END IF hasChangeObservers */
+}

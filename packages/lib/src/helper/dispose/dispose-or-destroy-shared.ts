@@ -13,11 +13,11 @@ import {unbindHostAttributesForHost} from "../../host-attributes/unbind-host-att
  * @private
  */
 export function disposeOrDestroyShared (host: IFoveaHost|ICustomAttribute): void {
-	/*# IF hasProps */ unbindPropsForHost(host); /*# END IF hasProps */
-	/*# IF hasHostListeners */ unbindHostListeners(host); /*# END IF hasHostListeners */
-	/*# IF hasVisibilityObservers */ unbindVisibilityObservers(host); /*# END IF hasVisibilityObservers */
-	/*# IF hasStaticCSS */ unbindStaticCSS(host); /*# END IF hasStaticCSS */
-	/*# IF hasChildListObservers */ unbindChildListObservers(host); /*# END IF hasChildListObservers */
-	/*# IF hasAttributeChangeObservers */ unbindAttributeChangeObservers(host); /*# END IF hasAttributeChangeObservers */
-	/*# IF hasHostAttributes */ unbindHostAttributesForHost(host); /*# END IF hasHostAttributes */
+	unbindPropsForHost(host);
+	unbindHostListeners(host);
+	unbindVisibilityObservers(host);
+	unbindStaticCSS(host);
+	unbindChildListObservers(host);
+	unbindAttributeChangeObservers(host);
+	unbindHostAttributesForHost(host);
 }

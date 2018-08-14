@@ -10,12 +10,12 @@ import {isICustomAttribute} from "../../../custom-attribute/is-i-custom-attribut
 export function getRootForNode (node: Node|ICustomAttribute): Element|ShadowRoot {
 	let root: Element|ShadowRoot|undefined = NODE_TO_ROOT_MAP.get(node);
 	if (root == null) {
-		root = /*# IF hasICustomAttributes */ isICustomAttribute(node) ? getRootForNode(node.___hostElement) : /*# END IF hasICustomAttributes */ (<Json>node).getRootNode();
+		root = isICustomAttribute(node) ? getRootForNode(node.___hostElement) : (<Json>node).getRootNode();
 	}
 
 	// If the root is still undefined, throw an exception
 	if (root == null) {
-		throw new ReferenceError(`Internal Error: A ShadowRoot could not be retrieved for a ${/*# IF hasICustomAttributes */ isICustomAttribute(node) ? `Custom Attribute` : /*# END IF hasICustomAttributes */ `node with tagName: ${node.nodeName}`}`);
+		throw new ReferenceError(`Internal Error: A ShadowRoot could not be retrieved for a ${isICustomAttribute(node) ? `Custom Attribute` : `node with tagName: ${node.nodeName}`}`);
 	}
 
 	return root;

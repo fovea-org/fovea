@@ -12,7 +12,7 @@ export function __use (host: IFoveaHostConstructor|ICustomAttributeConstructor, 
 	items.forEach(([kind, hash]) => {
 		switch (kind) {
 			case "styles":
-				/*# IF hasStaticCSS */ return __useStaticCSS(hash, host); /*# END IF hasStaticCSS */
+				return __useStaticCSS(hash, host);
 			case "template":
 				return __useStaticTemplate(hash, host);
 		}

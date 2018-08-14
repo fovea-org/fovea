@@ -18,12 +18,12 @@ export function renderBase (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|
 
 	if (root != null) {
 		bindStaticTemplate(host, root);
-		/*# IF hasProps */ bindPropsForHost(host); /*# END IF hasProps */
-		/*# IF hasHostListeners */ bindHostListeners(host); /*# END IF hasHostListeners */
-		/*# IF hasVisibilityObservers */ bindVisibilityObservers(host); /*# END IF hasVisibilityObservers */
-		/*# IF hasStaticCSS */ bindStaticCSS(host); /*# END IF hasStaticCSS */
-		/*# IF hasChildListObservers */ bindChildListObservers(host); /*# END IF hasChildListObservers */
-		/*# IF hasAttributeChangeObservers */ bindAttributeChangeObservers(host); /*# END IF hasAttributeChangeObservers */
-		/*# IF hasHostAttributes */ bindHostAttributesForHost(host); /*# END IF hasHostAttributes */
+		bindPropsForHost(host);
+		bindHostListeners(host);
+		bindVisibilityObservers(host);
+		bindStaticCSS(host);
+		bindChildListObservers(host);
+		bindAttributeChangeObservers(host);
+		bindHostAttributesForHost(host);
 	}
 }

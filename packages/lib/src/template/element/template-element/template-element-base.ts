@@ -13,13 +13,11 @@ import {IExpressionChainDict} from "../../../observe/expression-chain/i-expressi
  */
 export abstract class TemplateElementBase extends TemplateBase implements ITemplateElement {
 
-	/*# IF hasTemplateRefs */
-
 	/**
 	 * The ref for the TemplateElement (such as: '#myRef')
 	 * @type {Ref}
 	 */
-	public ref: Ref|null = null; /*# END IF hasTemplateRefs */
+	public ref: Ref|null = null;
 
 	/**
 	 * The children of this TemplateElement
@@ -27,37 +25,29 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 */
 	public children: TemplateNode[] = [];
 
-	/*# IF hasTemplateAttributes */
-
 	/**
 	 * The attributes of this TemplateElement
 	 * @type {ITemplateProperty[]}
 	 */
-	public attributes: ITemplateProperty[] = []; /*# END IF hasTemplateAttributes */
-
-	/*# IF hasTemplateListeners */
+	public attributes: ITemplateProperty[] = [];
 
 	/**
 	 * The listeners of this TemplateElement
 	 * @type {ITemplateListener[]}
 	 */
-	public listeners: ITemplateListener[] = []; /*# END IF hasTemplateListeners */
-
-	/*# IF hasTemplateCustomAttributes */
+	public listeners: ITemplateListener[] = [];
 
 	/**
 	 * All customAttributes (not including *foreach and/or *if) of this TemplateElement
 	 * @type {ITemplateProperty[]}
 	 */
-	public customAttributes: ITemplateProperty[] = []; /*# END IF hasTemplateCustomAttributes */
-
-	/*# IF hasTemplateAttributes */
+	public customAttributes: ITemplateProperty[] = [];
 
 	/**
 	 * The properties of this TemplateElement
 	 * @type {ITemplateProperty[]}
 	 */
-	public properties: ITemplateProperty[] = []; /*# END IF hasTemplateAttributes */
+	public properties: ITemplateProperty[] = [];
 
 	constructor (public readonly selector: string,
 							 public readonly namespace: string|null) {
@@ -72,8 +62,6 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 		this.children.push(child);
 	}
 
-	/*# IF hasTemplateCustomAttributes */
-
 	/**
 	 * Adds a Custom Attribute to the Template
 	 * @param {string} name
@@ -81,9 +69,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 */
 	public addCustomAttribute (name: string, value?: ExpressionChain|IExpressionChainDict): void {
 		this.customAttributes.push({key: name, value});
-	} /*# END IF hasTemplateCustomAttributes */
-
-	/*# IF hasTemplateAttributes */
+	}
 
 	/**
 	 * Adds an attribute to the Template
@@ -101,9 +87,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 */
 	public setProperty (key: string, value?: ExpressionChain): void {
 		this.properties.push({key, value});
-	} /*# END IF hasTemplateAttributes */
-
-	/*# IF hasTemplateListeners */
+	}
 
 	/**
 	 * Adds a listener.
@@ -112,9 +96,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 */
 	public addListener (name: string, handler: ExpressionChain): void {
 		this.listeners.push({name, handler});
-	} /*# END IF hasTemplateListeners */
-
-	/*# IF hasTemplateRefs */
+	}
 
 	/**
 	 * Adds a Ref.
@@ -122,7 +104,7 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	 */
 	public addRef (ref: Ref): void {
 		this.ref = ref;
-	} /*# END IF hasTemplateRefs */
+	}
 
 	/**
 	 * Constructs a new element
@@ -139,19 +121,13 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 		// If a base is given, merge with the model
 		if (base != null) {
 			this.children.push(...base.children);
-			/*# IF hasTemplateRefs */
-			if (base.ref != null) this.ref = base.ref; /*# END IF hasTemplateRefs */
-			/*# IF hasTemplateListeners */
-			this.listeners.push(...this.copyTemplateListeners(base.listeners)); /*# END IF hasTemplateListeners */
-			/*# IF hasTemplateCustomAttributes */
-			this.customAttributes.push(...this.copyTemplateProperties(base.customAttributes)); /*# END IF hasTemplateCustomAttributes */
-			/*# IF hasTemplateAttributes */
+			if (base.ref != null) this.ref = base.ref;
+			this.listeners.push(...this.copyTemplateListeners(base.listeners));
+			this.customAttributes.push(...this.copyTemplateProperties(base.customAttributes));
 			this.properties.push(...this.copyTemplateProperties(base.properties));
-			this.attributes.push(...this.copyTemplateProperties(base.attributes)); /*# END IF hasTemplateAttributes */
+			this.attributes.push(...this.copyTemplateProperties(base.attributes));
 		}
 	}
-
-	/*# IF hasTemplateAttributes || hasTemplateCustomAttributes */
 
 	/**
 	 * Copies the given ITemplateProperty elements
@@ -171,11 +147,9 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 	private copyProperty ({key, value}: ITemplateProperty): ITemplateProperty {
 		return {
 			key,
-			value: value == null ? undefined: Array.isArray(value) ? [...value] : Object.assign({}, ...Object.entries(value).map(([propertyName, chain]) => ({[propertyName]: chain == null ? undefined : [...chain]})))
+			value: value == null ? undefined : Array.isArray(value) ? [...value] : Object.assign({}, ...Object.entries(value).map(([propertyName, chain]) => ({[propertyName]: chain == null ? undefined : [...chain]})))
 		};
-	} /*# END IF hasTemplateAttributes || hasTemplateCustomAttributes */
-
-	/*# IF hasTemplateListeners */
+	}
 
 	/**
 	 * Copies the given ITemplateListener elements
@@ -197,5 +171,5 @@ export abstract class TemplateElementBase extends TemplateBase implements ITempl
 			name,
 			handler: [...handler]
 		};
-	} /*# END IF hasTemplateListeners */
+	}
 }

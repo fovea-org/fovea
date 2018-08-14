@@ -7,8 +7,6 @@ import {Json} from "@fovea/common";
 import {ProxyChangeHandler} from "./proxy-change-handler";
 import {ProxyObjectChangeHandler} from "./proxy-object-change-handler";
 
-/*# IF hasProps */
-
 /**
  * Observes all children (e.g. nested ObjectLikes) of the given value
  * @template T extends object, U, V extends U[]
@@ -233,4 +231,4 @@ function observeArray<T, U extends T[]> (value: U, changeHandler: ProxyChangeHan
 	// Add the raw value as well as its proxy to the Set of observed values
 	addObservedValue(value, proxy, changeHandler);
 	return proxy;
-} /*# END IF hasProps */
+}

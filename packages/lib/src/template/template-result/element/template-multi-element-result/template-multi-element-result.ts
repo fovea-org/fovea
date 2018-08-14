@@ -97,6 +97,20 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	}
 
 	/**
+	 * Provide an accessor to retrieve the last node of the TemplateResult
+	 * @returns {Node | null}
+	 */
+	public get lastNode (): Node|null {
+		const result = this.templateResults[this.templateResults.length - 1];
+		// If there is any TemplateResults, return the lastNode of the last result
+		if (result != null) return result.lastNode;
+
+		// Otherwise, return the last node of the previous sibling
+		if (this.previousSibling != null) return this.previousSibling.lastNode;
+		return null;
+	}
+
+	/**
 	 * Disposes a TemplateMultiElementResult
 	 */
 	public destroy (): void {
@@ -273,19 +287,5 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 			currentIndex--;
 		}
 		return this.previousSibling;
-	}
-
-	/**
-	 * Provide an accessor to retrieve the last node of the TemplateResult
-	 * @returns {Node | null}
-	 */
-	public get lastNode (): Node|null {
-		const result = this.templateResults[this.templateResults.length - 1];
-		// If there is any TemplateResults, return the lastNode of the last result
-		if (result != null) return result.lastNode;
-
-		// Otherwise, return the last node of the previous sibling
-		if (this.previousSibling != null) return this.previousSibling.lastNode;
-		return null;
 	}
 }

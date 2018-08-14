@@ -2,8 +2,6 @@ import {ICustomAttributeConstructor, IFoveaHostConstructor, IHostProp} from "@fo
 import {IEventEmitterOptions} from "../event-emitter/i-event-emitter-options";
 import {EVENT_EMITTERS_FOR_HOST} from "./event-emitters-for-host";
 
-/*# IF hasEventEmitters */
-
 /**
  * Returns true if the given host should emit an event when the given prop name changes on the host
  * @param {IFoveaHostConstructor|ICustomAttributeConstructor} host
@@ -14,4 +12,4 @@ export function getEventEmitterForHost (host: IFoveaHostConstructor|ICustomAttri
 
 	// Check if any of them is identical
 	return EVENT_EMITTERS_FOR_HOST.findValue(host, eventEmitter => eventEmitter.prop != null && eventEmitter.prop.name === prop.name && eventEmitter.prop.isStatic === prop.isStatic);
-} /*# END IF hasEventEmitters */
+}

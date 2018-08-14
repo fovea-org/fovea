@@ -1,8 +1,6 @@
 import {ITemplateProperty} from "../../template/template-property/i-template-property";
 import {ICustomAttribute, Json, Optional} from "@fovea/common";
 
-/*# IF hasTemplateCustomAttributes */
-
 /**
  * Invoked when an attribute should change
  * @param {ICustomAttribute} customAttribute
@@ -18,4 +16,4 @@ export function onCustomAttributeValueShouldUpdate<T> (customAttribute: ICustomA
 
 	// Set the new value
 	(<Json>customAttribute)[normalizedKey] = newValue;
-} /*# END IF hasTemplateCustomAttributes */
+}

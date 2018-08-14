@@ -9,8 +9,6 @@ import {kebabCase} from "@wessberg/stringutil";
 // tslint:disable:no-any
 // tslint:disable:strict-boolean-expressions
 
-/*# IF hasTemplateAttributes || hasHostProps */
-
 /**
  * Updates the given value on the given element as an attribute
  * @param {IFoveaHost|ICustomAttribute} host
@@ -80,4 +78,4 @@ export function setAttribute (host: IFoveaHost|ICustomAttribute, element: Elemen
 	shouldRemoveAttribute
 		? element.removeAttribute(key)
 		: element.setAttribute(key, normalizedValue);
-} /*# END IF hasTemplateAttributes || hasHostProps */
+}

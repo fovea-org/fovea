@@ -1,4 +1,4 @@
-import {Json, IType, Optional} from "@fovea/common";
+import {IType, Json, Optional} from "@fovea/common";
 
 const SYMBOL_REGEX: RegExp = /Symbol\(([^)]*)\)/;
 

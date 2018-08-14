@@ -1,7 +1,7 @@
 import {IHostAttributesHelperMap} from "./i-host-attributes-helper-map";
 import {IObserver} from "../../observe/i-observer";
 import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-chain-dict";
-import {IFoveaHost, ICustomAttribute, ExpressionChain, Ref} from "@fovea/common";
+import {ExpressionChain, ICustomAttribute, IFoveaHost, Ref} from "@fovea/common";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 import {observeAttribute} from "../../attribute/observe-attribute/observe-attribute";
 import {attachCustomAttribute} from "../../custom-attribute/attach-custom-attribute/attach-custom-attribute";
@@ -9,8 +9,6 @@ import {observeProperty} from "../../prop/observe-property/observe-property";
 import {addRef} from "../../ref/add-ref/add-ref";
 import {observeListener} from "../../listener/observe-listener/observe-listener";
 import {IDestroyable} from "../../destroyable/i-destroyable";
-
-/*# IF hasHostAttributes && hasTemplateAttributes */
 
 /**
  * Adds the given ExpressionChain or IExpressionChainDict to the given host as an attribute
@@ -68,9 +66,7 @@ function addPropertiesForHost (host: IFoveaHost|ICustomAttribute, ...properties:
 			}
 		}
 	};
-} /*# END IF hasHostAttributes && hasTemplateAttributes */
-
-/*# IF hasHostAttributes && hasTemplateListeners */
+}
 
 /**
  * Binds an event listener to the given host for events of the given name and with the given handler
@@ -99,9 +95,7 @@ function addListenersForHost (host: IFoveaHost|ICustomAttribute, ...listeners: [
 			}
 		}
 	};
-} /*# END IF hasHostAttributes && hasTemplateListeners */
-
-/*# IF hasHostAttributes && hasTemplateCustomAttributes */
+}
 
 /**
  * Adds the given Custom Attribute to the given host
@@ -110,11 +104,9 @@ function addListenersForHost (host: IFoveaHost|ICustomAttribute, ...listeners: [
  * @param {ExpressionChain | IExpressionChainDict} value
  * @returns {IObserver & IDestroyable}
  */
-function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver & IDestroyable {
+function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver&IDestroyable {
 	return attachCustomAttribute(host, getHostElementForHost(host), name, value);
-} /*# END IF hasHostAttributes && hasTemplateCustomAttributes */
-
-/*# IF hasHostAttributes && hasTemplateRefs */
+}
 
 /**
  * Adds the given Custom Attribute to the given host
@@ -124,31 +116,15 @@ function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: str
  */
 function addRefForHost (host: IFoveaHost|ICustomAttribute, ref: Ref): IObserver {
 	return addRef(host, getHostElementForHost(host), ref);
-} /*# END IF hasHostAttributes && hasTemplateRefs */
+}
 
 export const hostAttributesHelperMap: IHostAttributesHelperMap = {
-	/*# IF hasHostAttributes && hasTemplateAttributes */
 	__addAttributes: addAttributesForHost,
-	/*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */
 	__addAttribute: addAttributeForHost,
-	/*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */
 	__addProperties: addPropertiesForHost,
-	/*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateAttributes */
 	__addProperty: addPropertyForHost,
-	/*# END IF hasHostAttributes && hasTemplateAttributes */
-	/*# IF hasHostAttributes && hasTemplateRefs */
 	__addRef: addRefForHost,
-	/*# END IF hasHostAttributes && hasTemplateRefs */
-	/*# IF hasHostAttributes && hasTemplateListeners */
 	__addListeners: addListenersForHost,
-	/*# END IF hasHostAttributes && hasTemplateListeners */
-	/*# IF hasHostAttributes && hasTemplateListeners */
 	__addListener: addListenerForHost,
-	/*# END IF hasHostAttributes && hasTemplateListeners */
-	/*# IF hasHostAttributes && hasTemplateCustomAttributes */
 	__addCustomAttribute: addCustomAttributeForHost
-	/*# END IF hasHostAttributes && hasTemplateCustomAttributes */
 };

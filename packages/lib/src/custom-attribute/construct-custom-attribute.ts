@@ -1,8 +1,6 @@
 import {customAttributes} from "./custom-attributes";
 import {ICustomAttribute, Json} from "@fovea/common";
 
-/*# IF hasTemplateCustomAttributes */
-
 /**
  * Constructs a new ICustomAttribute
  * @param {Element} hostElement
@@ -20,4 +18,4 @@ export function constructCustomAttribute (hostElement: Element, name: string): I
 
 	// Otherwise, invoke the constructor and pass the element as a reference to it
 	return new (<Json>constructor)(hostElement);
-} /*# END IF hasTemplateCustomAttributes */
+}

@@ -1,7 +1,5 @@
 import {ICustomAttributeConstructor} from "@fovea/common";
 
-/*# IF hasTemplateCustomAttributes */
-
 /**
  * A class that can define and get Custom Attributes
  */
@@ -11,7 +9,8 @@ export class CustomAttributeRegistry {
 	 * A Map between custom attribute names and their constructors
 	 * @type {Map<string, ICustomAttributeConstructor>}
 	 */
-	private readonly customAttributes:  Map<string, ICustomAttributeConstructor> = new Map();
+	private readonly customAttributes: Map<string, ICustomAttributeConstructor> = new Map();
+
 	/**
 	 * Defines a new Custom Attribute
 	 * @param {string} name
@@ -33,4 +32,4 @@ export class CustomAttributeRegistry {
 	public get (name: string): ICustomAttributeConstructor|undefined {
 		return this.customAttributes.get(name);
 	}
-} /*# END IF hasTemplateCustomAttributes */
+}

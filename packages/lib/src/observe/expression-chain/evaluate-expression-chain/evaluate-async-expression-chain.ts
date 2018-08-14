@@ -5,8 +5,6 @@ import {UpgradedExpressionChain} from "../upgraded-expression-chain/upgraded-exp
 import {AnyHost} from "../../../host/any-host/any-host";
 import {ITemplateVariables} from "../../../template/template-variables/i-template-variables";
 
-/*# IF hasAsyncEvaluations */
-
 /**
  * Evaluates all of the expressions provided in the given ExpressionChain and returns
  * an array of the results
@@ -21,4 +19,4 @@ export async function evaluateAsyncExpressionChain (host: AnyHost, expressions: 
 
 	// Delegate the rest of the work to the common logic
 	return evaluateExpressionChainCommon(results, expressions.coerceTo);
-} /*# END IF hasAsyncEvaluations */
+}

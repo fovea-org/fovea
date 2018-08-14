@@ -3,7 +3,7 @@ import {IConfiguration} from "../configuration/i-configuration";
 import {IPrototypeExtenderExtendOptions} from "./i-prototype-extender-extend-options";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
-import {CallExpression, ClassDeclaration, ClassExpression, ConstructorDeclaration, ExpressionStatement, isCallExpression, isExpressionStatement, isPropertyAccessExpression, MethodDeclaration, PropertyAccessExpression, SuperExpression, SyntaxKind} from "typescript";
+import {CallExpression, ClassDeclaration, ClassExpression, ConstructorDeclaration, ExpressionStatement, isCallExpression, isClassDeclaration, isClassExpression, isExpressionStatement, isPropertyAccessExpression, MethodDeclaration, PropertyAccessExpression, SuperExpression, SyntaxKind} from "typescript";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import {IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
@@ -12,6 +12,9 @@ import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
 import {isSuperExpression, ITypescriptASTUtil} from "@wessberg/typescript-ast-util";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {kebabCase} from "@wessberg/stringutil";
+import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
+import {HTML_INTERFACE_NAMES, HtmlInterfaceName} from "../../../common/src/tag/html/html-interface-names";
+import {SVG_INTERFACE_NAMES, SvgInterfaceName} from "../../../common/src/tag/svg/svg-interface-names";
 
 /**
  * A class that can extend the prototype of an IFoveaHost
@@ -20,6 +23,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
+							 private readonly marker: IFoveaHostMarker,
 							 private readonly astUtil: ITypescriptASTUtil,
 							 private readonly foveaHostUtil: IFoveaHostUtil,
 							 private readonly libUser: ILibUser) {
@@ -42,7 +46,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const parentClassName = this.codeAnalyzer.classService.getNameOfExtendedClass(mark.classDeclaration);
 
 		// Check if the parent itself is a Fovea Component
-		const parentIsComponent = parentClassName != null && this.stats.componentNames.includes(parentClassName);
+		const parentIsComponent = parentClassName != null && this.isComponent(options, parentClassName);
 
 		// Extend the constructor
 		this.extendConstructor(mark, compilerOptions, context, parentIsComponent);
@@ -69,6 +73,29 @@ export class PrototypeExtender implements IPrototypeExtender {
 		else {
 			this.extendWithHostElementProp(mark.classDeclaration, compilerOptions, context);
 		}
+	}
+
+	/**
+	 * Returns true if the given identifier is a component
+	 * @param {IPrototypeExtenderExtendOptions} options
+	 * @param {string} identifier
+	 * @returns {boolean}
+	 */
+	private isComponent (options: IPrototypeExtenderExtendOptions, identifier: string): boolean {
+		// If it is a built-in HTML- or SVGElement, it isn't a component
+		if (identifier === "HTMLElement" || HTML_INTERFACE_NAMES.has(<HtmlInterfaceName> identifier) || SVG_INTERFACE_NAMES.has(<SvgInterfaceName> identifier)) return false;
+
+		// If it is an identified component already, return true
+		if (this.stats.componentNames.includes(identifier)) return true;
+
+		// Attempt to resolve the class
+		const resolved = this.codeAnalyzer.resolver.resolve(identifier, options.mark.sourceFile);
+
+		// If the resolved identifier isn't a class, return false
+		if (resolved == null || (!isClassDeclaration(resolved) && !isClassExpression(resolved))) return false;
+
+		const markResult = this.marker.mark({classDeclaration: resolved, file: resolved.getSourceFile().fileName});
+		return markResult.include;
 	}
 
 	/**

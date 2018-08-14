@@ -6,8 +6,6 @@ import {setStaticCSSTemplateForRoot} from "./set-static-css-template-for-root";
 import {setStaticCSSForRoot} from "./set-static-css-for-root";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 
-/*# IF hasStaticCSS */
-
 /**
  * Binds all static CSS for the given host
  * @param {IFoveaHost | ICustomAttribute} host
@@ -30,4 +28,4 @@ export function bindStaticCSS (host: IFoveaHost|ICustomAttribute): void {
 			});
 		}
 	});
-} /*# END IF hasStaticCSS */
+}

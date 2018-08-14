@@ -1,8 +1,6 @@
 import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common";
 import {HOST_LISTENERS_FOR_HOST} from "./host-listeners-for-host";
 
-/*# IF hasHostListeners */
-
 /**
  * Adds all the host listeners of the parent of the given IFoveaHostConstructor or ICustomAttributeConstructor to the set of all host listeners for the given host
  * @param {IFoveaHostConstructor|ICustomAttributeConstructor} host
@@ -14,4 +12,4 @@ export function addParentHostListenersForHost (host: IFoveaHostConstructor|ICust
 		// Add all of the host listeners of the parent to the host listeners of the host if it doesn't include them already
 		HOST_LISTENERS_FOR_HOST.add(host, ...HOST_LISTENERS_FOR_HOST.get(parent));
 	}
-} /*# END IF hasHostListeners */
+}

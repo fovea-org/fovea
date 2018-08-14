@@ -3,8 +3,6 @@ import {onConnected, onDisconnected} from "../dom-mutation/dom-mutation-observer
 import {IDOMConnectionObserverResult} from "../dom-mutation/dom-mutation-observer/i-dom-connection-observer-result";
 import {IDestroyable} from "../destroyable/i-destroyable";
 
-/*# IF hasTemplateCustomAttributes */
-
 /**
  * Upgrades an ICustomAttribute
  * @param {ICustomAttribute} customAttribute
@@ -42,4 +40,4 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 			}
 		}
 	};
-} /*# END IF hasTemplateCustomAttributes */
+}

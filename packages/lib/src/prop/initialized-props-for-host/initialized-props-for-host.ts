@@ -1,10 +1,8 @@
 import {WeakMultiMap} from "../../multi-map/weak-multi-map";
 import {AnyHost} from "../../host/any-host/any-host";
 
-/*# IF hasProps */
-
 /**
  * A map between hosts and the props that has been initialized on them
  * @type {WeakMultiMap<AnyHost, string>}
  */
-export const INITIALIZED_PROPS_FOR_HOST: WeakMultiMap<AnyHost, string> = new WeakMultiMap(); /*# END IF hasProps */
+export const INITIALIZED_PROPS_FOR_HOST: WeakMultiMap<AnyHost, string> = new WeakMultiMap();

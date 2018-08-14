@@ -1,7 +1,5 @@
 import {Json, Optional} from "@fovea/common";
 
-/*# IF hasTemplateAttributes */
-
 /**
  * Invoked when a property should change
  * @param {Element} node
@@ -18,4 +16,4 @@ export function onPropertyShouldUpdate<T> (node: Element, propertyName: string, 
 
 // Set the new value
 	(<Json>node)[normalizedKey] = newValue;
-} /*# END IF hasTemplateAttributes */
+}

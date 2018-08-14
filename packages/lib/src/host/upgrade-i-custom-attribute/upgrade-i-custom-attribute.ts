@@ -4,8 +4,6 @@ import {getRootForNode} from "../root-for-node/get-root-for-node/get-root-for-no
 import {setRootForNode} from "../root-for-node/set-root-for-node/set-root-for-node";
 import {getHostElementForHost} from "../host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 
-/*# IF hasICustomAttributes */
-
 /**
  * Upgrades an ICustomAttribute.
  * @param {ICustomAttribute} host
@@ -22,4 +20,4 @@ export function upgradeICustomAttribute (host: ICustomAttribute): ShadowRoot|Ele
 	setRootForNode(host, root);
 
 	return root;
-} /*# END IF hasICustomAttributes */
+}

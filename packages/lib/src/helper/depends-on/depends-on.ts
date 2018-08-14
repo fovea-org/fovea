@@ -9,5 +9,6 @@ import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common"
  */
 export function __dependsOn (..._components: (IFoveaHostConstructor|ICustomAttributeConstructor)[]): void {
 	// This is to defeat tree-shaking
-	clearTimeout(setTimeout(() => {}));
+	clearTimeout(setTimeout(() => {
+	}));
 }

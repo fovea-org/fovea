@@ -7,10 +7,8 @@ import {constructType} from "../../prop/construct-type/construct-type";
 import {copyTemplateVariables} from "../../template/template-variables/copy-template-variables";
 import {evaluateExpressionChain} from "../../observe/expression-chain/evaluate-expression-chain/evaluate-expression-chain";
 import {ITemplateListener} from "../../template/template-listener/i-template-listener";
-import {IFoveaHost, ICustomAttribute} from "@fovea/common";
+import {ICustomAttribute, IFoveaHost} from "@fovea/common";
 import {onListenerHandlerShouldUpdate} from "../on-listener-handler-should-update/on-listener-handler-should-update";
-
-/*# IF hasTemplateListeners */
 
 /**
  * Observes the expression that binds a listener for the given host on the given element
@@ -35,4 +33,4 @@ export function observeListener (host: IFoveaHost|ICustomAttribute, element: Ele
 	};
 
 	return onListenerHandlerShouldUpdate(host, element, listener, invoke);
-} /*# END IF hasTemplateListeners */
+}

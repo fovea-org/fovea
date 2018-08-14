@@ -1,7 +1,5 @@
 import {valueToProxy} from "../observed-values/observed-values";
 
-/*# IF hasProps */
-
 /**
  * Returns true if the provided value is ObjectLike
  * @param {T} value
@@ -38,4 +36,4 @@ export function isObserved<T> (value: T): boolean {
  */
 export function getObservedProxy<T> (value: T): T|undefined {
 	return <T|undefined> valueToProxy.get(value);
-} /*# END IF hasProps */
+}

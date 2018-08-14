@@ -1,10 +1,8 @@
-/*# IF hasVisibilityObservers */
-
-// Define the observer
 import {IVisibilityObserverResult} from "./i-visibility-observer-result";
 import {log} from "../log/log";
 
-let observer: IntersectionObserver|null = null;
+// Define the observer
+let intersectionObserver: IntersectionObserver|null = null;
 
 /**
  * The Set of all observed elements
@@ -77,15 +75,15 @@ function getObserversOfKindForElement (element: Element, kind: "visible"|"invisi
 	// Make sure to observe the Element if it isn't already being observed
 	if (!observedElements.has(element)) {
 		// Bind an IntersectionObserver if it isn't already bound
-		if (observer == null) {
+		if (intersectionObserver == null) {
 			// Assert that IntersectionObservers are supported
 			if (!("IntersectionObserver" in window)) {
 				log(`The @onBecame[Visible|Invisible] decorators require support for IntersectionObservers: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API. The element was:`, element);
 				return new Set();
 			}
-			else observer = new IntersectionObserver(onChanges);
+			else intersectionObserver = new IntersectionObserver(onChanges);
 		}
-		observer.observe(element);
+		intersectionObserver.observe(element);
 		observedElements.add(element);
 	}
 
@@ -97,4 +95,4 @@ function getObserversOfKindForElement (element: Element, kind: "visible"|"invisi
 		kind === "visible" ? visibleCallbacks.set(element, callbacks) : invisibleCallbacks.set(element, callbacks);
 	}
 	return callbacks;
-}  /*# END IF hasVisibilityObservers */
+}

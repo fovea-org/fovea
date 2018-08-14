@@ -73,13 +73,6 @@ test("playground", async t => {
 	const path4 = join(process.cwd(), "test/demo/demo-component/demo-component-1.scss");
 	const path5 = join(process.cwd(), "test/demo/demo-component/demo-component-1.html");
 
-	console.log(compiler.transformCompilerHints(`
-	/*# IF hasStaticCSS */
-	console.log(true);
-	/*# END IF hasStaticCSS */
-	console.log(true);
-	`, "foo").code);
-
 	await dryRun([path1, path2, path3, path4, path5]);
 
 	await work(path3, {printCode: false});

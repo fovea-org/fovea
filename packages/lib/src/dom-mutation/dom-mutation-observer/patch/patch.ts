@@ -136,15 +136,15 @@ function work<T extends Node, U extends Function|undefined> (nodes: T[]|T, opera
  */
 export function patch (): void {
 
-	Node.prototype.insertBefore = function<T extends Node> (node: T, refChild: Node|null): T {
+	Node.prototype.insertBefore = function <T extends Node> (node: T, refChild: Node|null): T {
 		return work(node, <Function> originalInsertBefore.bind(this, node, refChild));
 	};
 
-	Node.prototype.appendChild = function<T extends Node> (newChild: T): T {
+	Node.prototype.appendChild = function <T extends Node> (newChild: T): T {
 		return work(newChild, <Function> originalAppendChild.bind(this, newChild));
 	};
 
-	Node.prototype.removeChild = function<T extends Node> (oldChild: T): T {
+	Node.prototype.removeChild = function <T extends Node> (oldChild: T): T {
 		return work(oldChild, <Function> originalRemoveChild.bind(this, oldChild));
 	};
 
@@ -172,7 +172,7 @@ export function patch (): void {
 		work([this, ...nodes], <Function> originalReplaceWith.bind(this, ...nodes));
 	};
 
-	Node.prototype.replaceChild = function<T extends Node> (newChild: Node, oldChild: T): T {
+	Node.prototype.replaceChild = function <T extends Node> (newChild: Node, oldChild: T): T {
 		return <T> work([newChild, oldChild], <Function> originalReplaceChild.bind(this, newChild, oldChild));
 	};
 

@@ -14,7 +14,6 @@ import {coerceValue} from "../../observe/expression-chain/coercion/coerce-value"
  * @private
  */
 export function __attributeChanged (host: IFoveaHost, attributeName: string, _oldValue: string|null, newValue: string|null): void {
-	/*# IF hasProps */
 
 	// Start with getting the expected attribute value and see if it is identical to the new value
 	const expectedAttributeValue = getExpectedAttributeValue(host, attributeName);
@@ -40,5 +39,5 @@ export function __attributeChanged (host: IFoveaHost, attributeName: string, _ol
 	const coercedValue = coerceValue(newValue, matchingProp.type);
 	if ((<Json>host)[matchingPropName] !== coercedValue) {
 		(<Json>host)[matchingPropName] = coercedValue;
-	} /*# END IF hasProps */
+	}
 }

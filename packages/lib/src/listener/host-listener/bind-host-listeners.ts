@@ -5,8 +5,6 @@ import {BOUND_HOST_LISTENERS} from "./bound-host-listeners";
 import {HOST_LISTENERS_FOR_HOST} from "./host-listeners-for-host/host-listeners-for-host";
 import {parseTarget} from "../../target/parse-target";
 
-/*# IF hasHostListeners */
-
 /**
  * Binds all host listeners for the given host
  * @param {IFoveaHost | ICustomAttribute} host
@@ -30,4 +28,4 @@ export function bindHostListeners (host: IFoveaHost|ICustomAttribute): void {
 				name: eventName!
 			})
 		));
-} /*# END IF hasHostListeners */
+}

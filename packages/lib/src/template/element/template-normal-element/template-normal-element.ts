@@ -21,6 +21,6 @@ export class TemplateNormalElement extends TemplateElementBase implements ITempl
 		this.mergeBase(base);
 
 		// Construct a new TemplateNormalElementResult
-		return new TemplateNormalElementResult({lastNode, /*# IF hasTemplateCustomAttributes */ customAttributes: this.customAttributes, /*# END IF hasTemplateCustomAttributes */ /*# IF hasTemplateRefs */ ref: this.ref, /*# END IF hasTemplateRefs */ /*# IF hasTemplateAttributes */ attributes: this.attributes, properties: this.properties, /*# END IF hasTemplateAttributes */ children: this.children, /*# IF hasTemplateListeners */ listeners: this.listeners, /*# END IF hasTemplateListeners */ host, templateVariables, previousSibling, owner, root});
+		return new TemplateNormalElementResult({lastNode, customAttributes: this.customAttributes, ref: this.ref, attributes: this.attributes, properties: this.properties, children: this.children, listeners: this.listeners, host, templateVariables, previousSibling, owner, root});
 	}
 }

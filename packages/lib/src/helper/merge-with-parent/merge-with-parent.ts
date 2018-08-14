@@ -16,14 +16,14 @@ import {addParentAttributeChangeObserversForHost} from "../../dom-mutation/attri
  * @private
  */
 export function __mergeWithParent (host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
-	/*# IF hasChangeObservers */ addParentChangeObserversForHost(host); /*# END IF hasChangeObservers */
-	/*# IF hasProps */ addParentPropsForHost(host); /*# END IF hasProps */
-	/*# IF hasHostProps */ addParentHostPropsForHost(host); /*# END IF hasHostProps */
-	/*# IF hasHostListeners */ addParentHostListenersForHost(host); /*# END IF hasHostListeners */
-	/*# IF hasEventEmitters */ addParentEventEmittersForHost(host); /*# END IF hasEventEmitters */
-	/*# IF hasVisibilityObservers */ addParentVisibilityObserversForHost(host); /*# END IF hasVisibilityObservers */
-	/*# IF hasChildListObservers */ addParentChildListObserversForHost(host); /*# END IF hasChildListObservers */
-	/*# IF hasAttributeChangeObservers */ addParentAttributeChangeObserversForHost(host); /*# END IF hasAttributeChangeObservers */
-	/*# IF hasStaticCSS */ addParentStaticCSSForHost(host); /*# END IF hasStaticCSS */
-	/*# IF hasHostAttributes */ addParentHostAttributesForHost(host); /*# END IF hasHostAttributes */
+	addParentChangeObserversForHost(host);
+	addParentPropsForHost(host);
+	addParentHostPropsForHost(host);
+	addParentHostListenersForHost(host);
+	addParentEventEmittersForHost(host);
+	addParentVisibilityObserversForHost(host);
+	addParentChildListObserversForHost(host);
+	addParentAttributeChangeObserversForHost(host);
+	addParentStaticCSSForHost(host);
+	addParentHostAttributesForHost(host);
 }

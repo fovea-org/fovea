@@ -27,8 +27,6 @@ import {setExpectedAttributeValue} from "../../attribute/expected-attribute-valu
  */
 export function propSetter<T> (host: AnyHost, name: string, newValue: Json, isStatic: boolean, propIsBooleanType: boolean): ProxyChangeHandler<T>|undefined {
 
-	/*# IF hasProps */
-
 	// Take the old value
 	const oldValue = (<Json>host)[`_${name}`];
 
@@ -50,16 +48,12 @@ export function propSetter<T> (host: AnyHost, name: string, newValue: Json, isSt
 		addInitializedPropForHost(host, name);
 	}
 
-	/*# END IF hasProps */
-
-	/*# IF hasHostProps */ setAttributeIfNeeded(host, name, isStatic, normalizedNewValue, propIsBooleanType); /*# END IF hasHostProps */
-	/*# IF hasChangeObservers */ invokeChangeObserversIfNeeded(host, name, isStatic, normalizedNewValue, oldValue); /*# END IF hasChangeObservers */
-	/*# IF hasEventEmitters */ emitEventIfNeeded(host, name, isStatic, normalizedNewValue); /*# END IF hasEventEmitters */
+	setAttributeIfNeeded(host, name, isStatic, normalizedNewValue, propIsBooleanType);
+	invokeChangeObserversIfNeeded(host, name, isStatic, normalizedNewValue, oldValue);
+	emitEventIfNeeded(host, name, isStatic, normalizedNewValue);
 
 	return changeHandler;
 }
-
-/*# IF hasChangeObservers */
 
 /**
  * Invokes the host's change observers if any exists. Such ones exist if any method is annotated with the '@onChange' decorator
@@ -98,9 +92,7 @@ function invokeChangeObserversIfNeeded (host: AnyHost, name: string, isStatic: b
 			(<Json>relevantHost)[changeObserver.method.name].call(relevantHost, name, newValue, oldValue);
 		}
 	});
-} /*# END IF hasChangeObservers */
-
-/*# IF hasHostProps */
+}
 
 /**
  * Sets an attribute on the host if needed. It will be if the prop is annotated with a '@setOnHost' decorator
@@ -126,9 +118,7 @@ function setAttributeIfNeeded (host: AnyHost, name: string, isStatic: boolean, n
 
 		setAttribute(host, hostElement, attributeName, newValue, propIsBooleanType);
 	}
-} /*# END IF hasHostProps */
-
-/*# IF hasEventEmitters */
+}
 
 /**
  * Emits an event if needed. It will be needed if the prop is annotated with the '@emit' decorator
@@ -163,4 +153,4 @@ function emitEventIfNeeded (host: AnyHost, name: string, isStatic: boolean, newV
 			}
 		}
 	}
-} /*# END IF hasEventEmitters */
+}

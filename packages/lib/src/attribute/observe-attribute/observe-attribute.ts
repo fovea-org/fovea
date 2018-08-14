@@ -2,11 +2,9 @@ import {IExpressionChainObserver} from "../../observe/expression-chain/expressio
 import {getCoerceTypeForAttributeName} from "../get-coerce-type-for-attribute-name/get-coerce-type-for-attribute-name";
 import {observeExpressionChain} from "../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
 import {onAttributeShouldUpdate} from "../on-attribute-should-update/on-attribute-should-update";
-import {IFoveaHost, ICustomAttribute, IFoveaHostConstructor, ExpressionChain} from "@fovea/common";
+import {ExpressionChain, ICustomAttribute, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
 import {ITemplateProperty} from "../../template/template-property/i-template-property";
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
-
-/*# IF hasTemplateAttributes */
 
 /**
  * The inner logic for the observeAttribute function
@@ -57,4 +55,4 @@ export function observeAttribute (host: IFoveaHost|ICustomAttribute, element: El
 			}
 		};
 	}
-} /*# END IF hasTemplateAttributes */
+}

@@ -26,8 +26,6 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 */
 	public lastNode: Element|null;
 
-	/*# IF hasTemplateAttributes */
-
 	/**
 	 * The expression observers that, when changed, should mutate the elements attributes
 	 * @type {IExpressionChainObserver[]}
@@ -38,30 +36,24 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 * The expression observers that, when changed, should mutate the elements properties
 	 * @type {IExpressionChainObserver[]}
 	 */
-	private propertyObservers: IExpressionChainObserver[]|null; /*# END IF hasTemplateAttributes */
-
-	/*# IF hasICustomAttributes */
+	private propertyObservers: IExpressionChainObserver[]|null;
 
 	/**
 	 * The expression observers that, when changed, should set the 'value' property on the Custom Attributes that are set on this element
 	 */
-	private customAttributeObservers: (IObserver & IDestroyable)[]|null; /*# END IF hasICustomAttributes */
-
-	/*# IF hasTemplateListeners */
+	private customAttributeObservers: (IObserver&IDestroyable)[]|null;
 
 	/**
 	 * The expression observers that, when changed, should mutate the elements listeners
 	 * @type {IExpressionChainObserver[]}
 	 */
-	private listenerObservers: IExpressionChainObserver[]|null; /*# END IF hasTemplateListeners */
-
-	/*# IF hasTemplateRefs */
+	private listenerObservers: IExpressionChainObserver[]|null;
 
 	/**
 	 * The observer for a bound ref to the host
 	 * @type {IObserver}
 	 */
-	private refObserver: IObserver|null; /*# END IF hasTemplateRefs */
+	private refObserver: IObserver|null;
 
 	/**
 	 * All constructed children of this element
@@ -69,14 +61,13 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 */
 	private constructedChildren: TemplateResult[]|null = [];
 
-	constructor ({/*# IF hasTemplateRefs */ref, /*# END IF hasTemplateRefs */ /*# IF hasTemplateAttributes */ attributes, properties, /*# END IF hasTemplateAttributes */ /*# IF hasTemplateListeners */ listeners, /*# END IF hasTemplateListeners */ host, /*# IF hasTemplateCustomAttributes */ customAttributes, /*# END IF hasTemplateCustomAttributes */ templateVariables, previousSibling, lastNode, owner, root, children}: ITemplateNormalElementResultOptions) {
+	constructor ({ref, attributes, properties, listeners, host, customAttributes, templateVariables, previousSibling, lastNode, owner, root, children}: ITemplateNormalElementResultOptions) {
 		super({host, previousSibling, owner});
 
 		this.lastNode = lastNode;
 
 		// Upgrade it
 		this.upgrade(host, this.lastNode, root);
-
 
 		// Construct and append all children
 		let previousSiblingForChild: ITemplateResult|null;
@@ -87,32 +78,24 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			}
 		});
 
-		/*# IF hasTemplateCustomAttributes */
-
-		this.customAttributeObservers = customAttributes.map(customAttribute => attachCustomAttribute(host, lastNode, customAttribute.key, customAttribute.value, templateVariables)); /*# END IF hasTemplateCustomAttributes */
+		this.customAttributeObservers = customAttributes.map(customAttribute => attachCustomAttribute(host, lastNode, customAttribute.key, customAttribute.value, templateVariables));
 
 		// Add the node to its owner
 		this.attach(this.lastNode, owner);
 
-		/*# IF hasTemplateRefs */
-
 		// If a ref is given, bind the ref to the host, prepended with a '$'
 		if (ref != null) {
 			this.refObserver = addRef(host, lastNode, ref);
-		} /*# END IF hasTemplateRefs */
-
-		/*# IF hasTemplateAttributes */
+		}
 
 		// Observe all attributes
 		this.attributeObservers = attributes.map(attribute => observeAttribute(host, lastNode, attribute, templateVariables));
 
 		// Observe all properties
-		this.propertyObservers = properties.map(property => observeProperty(host, lastNode, property, templateVariables)); /*# END IF hasTemplateAttributes */
-
-		/*# IF hasTemplateListeners */
+		this.propertyObservers = properties.map(property => observeProperty(host, lastNode, property, templateVariables));
 
 		// Set all listeners
-		this.listenerObservers = listeners.map(listener => observeListener(host, lastNode, listener, templateVariables)); /*# END IF hasTemplateListeners */
+		this.listenerObservers = listeners.map(listener => observeListener(host, lastNode, listener, templateVariables));
 	}
 
 	/**
@@ -135,47 +118,13 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			this.lastNode = null;
 		}
 
-		/*# IF hasTemplateCustomAttributes */
-
 		// Stop observing Custom Attribute expressions
 		if (this.customAttributeObservers != null) {
 			this.customAttributeObservers.forEach(observer => observer.destroy());
 			this.customAttributeObservers = null;
-		} /*# END IF hasTemplateCustomAttributes */
+		}
 
 		this.disposeOrDestroyCommon();
-	}
-
-	/**
-	 * Common functionality across destroying and disposing
-	 */
-	private disposeOrDestroyCommon (): void {
-		/*# IF hasTemplateAttributes */
-
-		// Stop observing attribute expressions
-		if (this.attributeObservers != null) {
-			this.attributeObservers.forEach(observer => observer.unobserve());
-			this.attributeObservers = null;
-		}
-		// Stop observing property expressions
-		if (this.propertyObservers != null) {
-			this.propertyObservers.forEach(observer => observer.unobserve());
-			this.propertyObservers = null;
-		} /*# END IF hasTemplateAttributes */
-
-		/*# IF hasTemplateListeners */
-
-		// Stop observing listener expressions
-		if (this.listenerObservers != null) {
-			this.listenerObservers.forEach(observer => observer.unobserve());
-			this.listenerObservers = null;
-		} /*# END IF hasTemplateListeners */
-
-		/*# IF hasTemplateRefs */
-		if (this.refObserver != null) {
-			this.refObserver.unobserve();
-			this.refObserver = null;
-		} /*# END IF hasTemplateRefs */
 	}
 
 	/**
@@ -192,14 +141,40 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			this.lastNode = null;
 		}
 
-		/*# IF hasTemplateCustomAttributes */
-
 		// Stop observing Custom Attribute expressions
 		if (this.customAttributeObservers != null) {
 			this.customAttributeObservers.forEach(observer => observer.unobserve());
 			this.customAttributeObservers = null;
-		} /*# END IF hasTemplateCustomAttributes */
+		}
 
 		this.disposeOrDestroyCommon();
+	}
+
+	/**
+	 * Common functionality across destroying and disposing
+	 */
+	private disposeOrDestroyCommon (): void {
+
+		// Stop observing attribute expressions
+		if (this.attributeObservers != null) {
+			this.attributeObservers.forEach(observer => observer.unobserve());
+			this.attributeObservers = null;
+		}
+		// Stop observing property expressions
+		if (this.propertyObservers != null) {
+			this.propertyObservers.forEach(observer => observer.unobserve());
+			this.propertyObservers = null;
+		}
+
+		// Stop observing listener expressions
+		if (this.listenerObservers != null) {
+			this.listenerObservers.forEach(observer => observer.unobserve());
+			this.listenerObservers = null;
+		}
+
+		if (this.refObserver != null) {
+			this.refObserver.unobserve();
+			this.refObserver = null;
+		}
 	}
 }
