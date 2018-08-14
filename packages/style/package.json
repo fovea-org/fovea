@@ -44,7 +44,7 @@
 		"@fovea/common": "^1.0.122",
 		"@fovea/postcss-fovea-parser": "^1.0.122",
 		"@types/deep-extend": "^0.4.31",
-		"@types/node": "^10.5.7",
+		"@types/node": "^10.7.0",
 		"@types/node-sass": "^3.10.32",
 		"@wessberg/di": "^1.1.0",
 		"cssnano": "^4.0.5",
@@ -53,7 +53,7 @@
 		"postcss": "^7.0.2",
 		"postcss-import": "^12.0.0",
 		"postcss-preset-env": "^5.3.0",
-		"request": "^2.87.0"
+		"request": "^2.88.0"
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-di": "^1.0.86",
