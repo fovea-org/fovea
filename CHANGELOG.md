@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.123"></a>
+## [1.0.123](https://github.com/fovea-org/fovea/compare/v1.0.122...v1.0.123) (2018-08-14)
+
+
+### Features
+
+* Removed compiler hints this doesn't play well with code splitting.\nfix: Fixed a bug where parent components weren't always detected as such when using code splitting.\nfeat: Removed the need to perform a full dry run before performing compilation ([3ecb729](https://github.com/fovea-org/fovea/commit/3ecb729))
+
+
+
+
+
 <a name="1.0.122"></a>
 ## [1.0.122](https://github.com/fovea-org/fovea/compare/v1.0.121...v1.0.122) (2018-08-10)
 

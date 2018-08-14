@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/rollup-plugin-fovea",
-	"version": "1.0.122",
+	"version": "1.0.123",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -38,7 +38,7 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.122"
+		"@fovea/compiler": "^1.0.123"
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-ts": "0.0.35",
