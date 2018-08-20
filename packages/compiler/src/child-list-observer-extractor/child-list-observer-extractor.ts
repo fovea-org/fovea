@@ -54,8 +54,11 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 		// Take all methods
 		const allMethods = [...onChildrenAddedInstanceMethods, ...onChildrenAddedStaticMethods, ...onChildrenRemovedInstanceMethods, ...onChildrenRemovedStaticMethods];
 
+		// Store all calls to 'registerChildListObserver' here
+		const registerChildListObserverCalls: string[] = [];
+
 		// For each method, generate a call to '__registerChildListObserver' and remove the '@[onChildrenAdded|onChildrenRemoved]' decorator
-		const results = allMethods.map(({method, added}) => {
+		allMethods.forEach(({method, added}) => {
 
 			// Take the relevant decorator name
 			const decoratorName = added ? this.onChildrenAddedDecoratorNameRegex : this.onChildrenRemovedDecoratorNameRegex;
@@ -63,34 +66,56 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(decoratorName, method);
 
-			const decoratorResults = decorators.map(decorator => {
+			decorators.forEach(decorator => {
 				// The contents will either be empty if @[onChildrenAdded|onChildrenRemoved]() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				if (!isCallExpression(decorator.expression)) {
 
 					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_CHILD_LIST_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(method), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-					return false;
+					return;
 				}
 
 				// The first - optional - argument will be a configuration for the mutation observer
 				const argumentContents = decorator.expression.arguments.length < 1 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
 				// If we're on a dry run, return true before mutating the SourceFile
-				if (compilerOptions.dryRun) return true;
+				if (compilerOptions.dryRun) return;
 
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerChildListObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`,
-					insertPlacement
-				);
+				registerChildListObserverCalls.push(`${this.libUser.use("registerChildListObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`);
 
 				// Remove the @onChildrenAdded or @onChildrenRemoved decorator from it
 				context.container.remove(decorator.pos, decorator.end);
-				return true;
 			});
-			return decoratorResults.some(result => result);
 		});
-		// Set 'hasChildListObservers' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+
+		// If there is at least 1 child list observer, add the prototype method
+		if (registerChildListObserverCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
+				`\n		${registerChildListObserverCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerChildListObserversMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerChildListObserversMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
+		// Set 'hasChildListObservers' to true if there were any results, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasChildListObservers(context.container.file, statsForFile.hasChildListObservers || results.some(result => result));
+		this.stats.setHasChildListObservers(context.container.file, statsForFile.hasChildListObservers || registerChildListObserverCalls.length > 0);
 	}
 }

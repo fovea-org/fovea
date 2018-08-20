@@ -43,15 +43,18 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		// Take all methods
 		const allMethods = [...onAttributeChangeInstanceMethods, ...onAttributeChangeStaticMethods];
 
+		// Store all calls to 'registerAttributeChangeObserver' here
+		const registerAttributeChangeObserverCalls: string[] = [];
+
 		// For each method, generate a call to '__registerAttributeChangeObserver' and remove the '@onAttributeChange' decorator
-		const results = allMethods.map(onAttributeChangeMethod => {
+		allMethods.forEach(onAttributeChangeMethod => {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, onAttributeChangeMethod);
-			const decoratorResults = decorators.map(decorator => {
+			decorators.forEach(decorator => {
 				// Make sure that it is provided with at least 1 argument
 				if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
 					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_ATTRIBUTE_OBSERVER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(onAttributeChangeMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-					return false;
+					return;
 				}
 
 				// The first argument will be the prop name(s) to observe
@@ -61,22 +64,44 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
 
 				// If we're on a dry run, return true before mutating the SourceFile
-				if (compilerOptions.dryRun) return true;
+				if (compilerOptions.dryRun) return;
 
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerAttributeChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onAttributeChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onAttributeChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
-					insertPlacement
-				);
+				registerAttributeChangeObserverCalls.push(`${this.libUser.use("registerAttributeChangeObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(onAttributeChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onAttributeChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
 
 				// Remove the @onAttributeChange decorator from it
 				context.container.remove(decorator.pos, decorator.end);
-				return true;
 			});
-			return decoratorResults.some(result => result);
 		});
-		// Set 'hasAttributeChangeObservers' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+
+		// If there is at least 1 attribute change observer, add the prototype method
+		if (registerAttributeChangeObserverCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
+				`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
+		// Set 'hasAttributeChangeObservers' to true if there were any results, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasAttributeChangeObservers(context.container.file, statsForFile.hasAttributeChangeObservers || results.some(result => result));
+		this.stats.setHasAttributeChangeObservers(context.container.file, statsForFile.hasAttributeChangeObservers || registerAttributeChangeObserverCalls.length > 0);
 	}
 }

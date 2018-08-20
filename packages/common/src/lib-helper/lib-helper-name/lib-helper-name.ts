@@ -27,7 +27,6 @@ export const libHelperName = {
 	registerSetOnHost: "__registerSetOnHost",
 	mapPropertiesToAttributes: "__mapPropertiesToAttributes",
 	registerElement: "__registerElement",
-	mergeWithParent: "__mergeWithParent",
 	registerCustomAttribute: "__registerCustomAttribute",
 	registerHostListener: "__registerHostListener",
 	registerChangeObserver: "__registerChangeObserver",

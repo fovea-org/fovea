@@ -4,7 +4,7 @@ import {hostIsStatic} from "../host-is-static/host-is-static";
 
 /**
  * Takes either the host or its constructor, depending on the truthiness of the "isStatic" argument
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {AnyHost} host
  * @param {boolean} isStatic
  * @returns {AnyHost}
  */

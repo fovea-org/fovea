@@ -18,6 +18,14 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 	}
 
 	/**
+	 * Gets a Regular Expression that matches the name of @setOnHost decorators
+	 * @returns {RegExp}
+	 */
+	private get decoratorNameRegex (): RegExp {
+		return new RegExp(`^${this.configuration.preCompile.setOnHostDecoratorName}`);
+	}
+
+	/**
 	 * Extracts all properties decorated with a @setOnHost decorator and delegates it to the fovea-lib helper '__registerSetOnHost'.
 	 * @param {ISetOnHostExtractorExtractOptions} options
 	 */
@@ -32,30 +40,58 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 		// Take all props
 		const allProps = [...setOnHostInstanceProperties, ...setOnHostStaticProperties];
 
+		// Store all calls to 'registerSetOnHost' here
+		const registerSetOnHostCalls: string[] = [];
+
 		// For each prop, generate a call to '__registerProp' and remove the '@prop' decorator
 		allProps.forEach(setOnHostProperty => {
 
-			// If we're on a dry run, return before mutating the SourceFile
-			if (compilerOptions.dryRun) return;
+			// Take all decorators for the method
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, setOnHostProperty);
+			decorators.forEach(decorator => {
+				// If we're on a dry run, return before mutating the SourceFile
+				if (compilerOptions.dryRun) return;
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, <any>${className});`,
-				insertPlacement
+				registerSetOnHostCalls.push(`${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, <any>this);`);
+
+				// Remove the @setOnHost decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+
+				// Make sure that it has a @prop decorator
+				this.assertHasPropDecorator(setOnHostProperty, context);
+			});
+		});
+
+		// If there is at least 1 host prop, add the prototype method
+		if (registerSetOnHostCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerSetOnHostPropsMethodName} != null) super.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();` +
+				`\n		${registerSetOnHostCalls.join("\n		")}`
 			);
 
-			// Remove the @setOnHost decorator from it
-			const decorator = this.codeAnalyzer.propertyService.getDecorator(this.configuration.preCompile.setOnHostDecoratorName, setOnHostProperty);
-			if (decorator != null) {
-				context.container.remove(decorator.pos, decorator.end);
-			}
+			if (!compilerOptions.dryRun) {
 
-			// Make sure that it has a @prop decorator
-			this.assertHasPropDecorator(setOnHostProperty, context);
-		});
-		// Set 'hasHostProps' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerSetOnHostPropsMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
+		// Set 'hasHostProps' to true if there were any 'registerSetOnHost' instructions, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasHostProps(context.container.file, statsForFile.hasHostProps || allProps.length > 0);
+		this.stats.setHasHostProps(context.container.file, statsForFile.hasHostProps || registerSetOnHostCalls.length > 0);
 	}
 
 	/**

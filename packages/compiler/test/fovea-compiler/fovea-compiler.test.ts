@@ -188,7 +188,7 @@ test("Can handle multiple @listener() annotations for the same methods", async t
 test.only("Will correctly register attribute change observers", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-13.ts");
 	// @ts-ignore
-	const result = await work(path, {printCode: true});
+	const result = await work(path, {printCode: true, printDiagnostics: true});
 
 	t.true(result.hasChanged && result.code.includes("__registerAttributeChangeObserver"));
 });

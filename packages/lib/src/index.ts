@@ -2,7 +2,6 @@ export {ICustomAttribute} from "@fovea/common";
 export {__use} from "./helper/use/use";
 export {__renderICustomAttribute} from "./helper/render/render-i-custom-attribute";
 export {__renderIFoveaHost} from "./helper/render/render-i-fovea-host";
-
 export {__addRef} from "./helper/add-ref/add-ref";
 export {__addElement} from "./helper/add-element/add-element";
 export {__createElement} from "./helper/create-element/create-element/create-element";
@@ -35,7 +34,6 @@ export {__registerEmitter} from "./helper/register-emitter/register-emitter";
 export {__registerHostListener} from "./helper/register-host-listener/register-host-listener";
 export {__registerAttributeChangeObserver} from "./helper/register-attribute-change-observer/register-attribute-change-observer";
 export {__registerChangeObserver} from "./helper/register-change-observer/register-change-observer";
-export {__mergeWithParent} from "./helper/merge-with-parent/merge-with-parent";
 export {__registerVisibilityObserver} from "./helper/register-visibility-observer/register-visibility-observer";
 export {__registerStaticCSS} from "./helper/register-static-css/register-static-css";
 export {__dependsOn} from "./helper/depends-on/depends-on";

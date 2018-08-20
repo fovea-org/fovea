@@ -39,7 +39,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 	public extract (options: IHostAttributesExtractOptions): void {
 		const {mark, compilerOptions, context} = options;
 
-		// First, check if the class is annotated with a [template|style]Src decorator
+		// First, check if the class is annotated with a @hostAttributes decorator
 		const decorator = this.codeAnalyzer.classService.getDecorator(this.decoratorNameRegex, mark.classDeclaration);
 		if (decorator == null) return;
 		// Generate template or style contents from the decorator
@@ -52,7 +52,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 	}
 
 	/**
-	 * Generates a template from a '@templateSrc("<url>") decorator on the component prototype
+	 * Generates a template from a '@hostAttributes decorator on the component
 	 * @param {IHostAttributesExtractOptions} options
 	 * @param {Decorator} decorator
 	 * @returns {void}
@@ -116,12 +116,27 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				this.stats.setReferencedCustomSelectors(context.container.file, [...existingReferencedCustomSelectors, ...referencedCustomSelectors]);
 			}
 
-			// Call the fovea-lib helper method '__registerHostAttributes' with the template instructions and the Component prototype to map them to.
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
+				`\n		${`${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, <any>this);`}`
+			);
+
 			if (!compilerOptions.dryRun) {
-				const expression = `\n${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {${instructions.split("\n").map(line => `	${line}`).join("\n")}\n}, <any>${mark.className});`;
-				insertPlacement != null
-					? context.container.appendAtPlacement(expression, insertPlacement)
-					: context.container.prepend(expression);
+
+				// Create the static method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerHostAttributesMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${mark.className}.${this.configuration.postCompile.registerHostAttributesMethodName}();`,
+					insertPlacement
+				);
 			}
 		}
 

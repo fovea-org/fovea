@@ -34,7 +34,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 	public extract (options: IHostListenerExtractorExtractOptions): void {
 		const {mark, insertPlacement, context, compilerOptions} = options;
 
-		const {className} = mark;
+		const {className, classDeclaration} = mark;
 
 		// Take all methods that has a "@hostListener" decorator
 		const hostListenerInstanceMethods = this.codeAnalyzer.classService.getMethodsWithDecorator(this.decoratorNameRegex, mark.classDeclaration);
@@ -43,16 +43,20 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 		// Take all methods
 		const allMethods = [...hostListenerInstanceMethods, ...hostListenerStaticMethods];
 
+		// Store all calls to 'registerHostListener' here
+		const registerHostListenerCalls: string[] = [];
+
 		// For each method, generate a call to '__registerHostListener' and remove the '@hostListener' decorator
-		const results = allMethods.map(hostListenerMethod => {
+		allMethods.forEach(hostListenerMethod => {
 			// Take all decorators
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, hostListenerMethod);
-			const decoratorResults = decorators.map(decorator => {
+
+			decorators.forEach(decorator => {
 				// The emit contents will either be empty if @hostListener() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
 
 					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_HOST_LISTENER_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(hostListenerMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
-					return false;
+					return;
 				}
 
 				// The first argument will be the event name(s) to listen for
@@ -62,22 +66,44 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
 
 				// If we're on a dry run, return true before mutating the SourceFile
-				if (compilerOptions.dryRun) return true;
+				if (compilerOptions.dryRun) return;
 
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerHostListener", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
-					insertPlacement
+				registerHostListenerCalls.push(`${this.libUser.use("registerHostListener", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
+
+				// Remove the @listener decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+			});
+		});
+
+		// If there is at least 1 host listener, add the prototype method
+		if (registerHostListenerCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerHostListenersMethodName} != null) super.${this.configuration.postCompile.registerHostListenersMethodName}();` +
+				`\n		${registerHostListenerCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerHostListenersMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
 				);
 
-				// Remove the @hostListener decorator from it
-				context.container.remove(decorator.pos, decorator.end);
-				return true;
-			});
-			return decoratorResults.some(result => result);
-		});
-		// Set 'hasHostListeners' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerHostListenersMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
+		// Set 'hasHostListeners' to true if there were any '___registerHostListener' instructions, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasHostListeners(context.container.file, statsForFile.hasHostListeners || results.some(result => result));
+		this.stats.setHasHostListeners(context.container.file, statsForFile.hasHostListeners || registerHostListenerCalls.length > 0);
 	}
 }

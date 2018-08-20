@@ -61,7 +61,7 @@ export function invokeObservedExpressionOnChangeHandlers<T> (host: AnyHost, obse
 
 /**
  * Called when an evaluation result has arrived
- * @param {Optional<Json>} newValue
+ * @param {EvaluateExpressionChainResult} newValue
  * @param {ExpressionChainObserverCallback<T>} onChange
  * @param {Change<T>} [change]
  */
@@ -141,10 +141,7 @@ function observeSubstitutionExpressionChain<T> (options: INullableObserveExpress
  * Adds an observed expression to the Set of all observed expressions matching the combination
  * of the provided uuid and expression
  * @param {Expression} expression
- * @param {UpgradedExpressionChain} expressions
- * @param {ExpressionChainObserverCallback<T>} onChange
- * @param {IFoveaHost} host
- * @param {ITemplateVariables} [templateVariables]
+ * @param {IObserveExpressionChainOptions} options
  * @returns {string}
  */
 function formatObservedExpressions<T> (expression: Expression, {expressions, onChange, host, templateVariables}: IObserveExpressionChainOptions<T>): IFormatObservedExpressionResult<T>[] {

@@ -20,12 +20,7 @@ export class TemplateConditionalElement extends TemplateElementBase implements I
 
 	/**
 	 * Constructs a new conditional element
-	 * @param {ITemplateConstructOptions} base
-	 * @param {IFoveaHost} host
-	 * @param {ITemplateVariables} templateVariables
-	 * @param {Node} owner
-	 * @param {ShadowRoot} root
-	 * @param {ITemplateBase|null} previousSibling
+	 * @param {ITemplateConditionalElementConstructOptions} options
 	 * @returns {ITemplateConditionalElementResult}
 	 */
 	public construct ({base, host, templateVariables, owner, root, previousSibling}: ITemplateConditionalElementConstructOptions): ITemplateConditionalElementResult {

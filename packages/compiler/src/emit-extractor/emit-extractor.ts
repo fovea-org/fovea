@@ -32,7 +32,7 @@ export class EmitExtractor implements IEmitExtractor {
 	public extract (options: IEmitExtractorExtractOptions): void {
 		const {mark, insertPlacement, context, compilerOptions} = options;
 
-		const {className} = mark;
+		const {className, classDeclaration} = mark;
 
 		// Take all props that has a "@emit" decorator
 		const emitInstanceProperties = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.decoratorNameRegex, mark.classDeclaration);
@@ -41,38 +41,60 @@ export class EmitExtractor implements IEmitExtractor {
 		// Take all props
 		const allProps = [...emitInstanceProperties, ...emitStaticProperties];
 
+		// Store all calls to 'registerEmitter' here
+		const registerEmitterCalls: string[] = [];
+
 		// For each prop, generate a call to '__registerEmitter' and remove the '@emit' decorator
-		const results = allProps.map(emitProperty => {
+		allProps.forEach(emitProperty => {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, emitProperty);
-			const decoratorResults = decorators.map(decorator => {
+			decorators.forEach(decorator => {
 				// If we're on a dry run, return true before performing the SourceFile mutations
-				if (compilerOptions.dryRun) return true;
+				if (compilerOptions.dryRun) return;
 
 				// The emit contents will either be empty if @emit() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				const emitContents = !isCallExpression(decorator.expression) || decorator.expression.arguments.length === 0 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`,
-					insertPlacement
-				);
+				registerEmitterCalls.push(`${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`);
 
 				// Remove the @emit decorator from it
 				context.container.remove(decorator.pos, decorator.end);
 
 				// Make sure that it has a @prop decorator
 				this.assertHasPropDecorator(emitProperty, context);
-
-				// Return true
-				return true;
 			});
-			return decoratorResults.some(result => result);
 		});
 
-		// Set 'hasEventEmitters' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		// If there is at least 1 event emitter, add the prototype method
+		if (registerEmitterCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
+				`\n		${registerEmitterCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerEmittersMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
+		// Set 'hasEventEmitters' to true if there were any results, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasEventEmitters(context.container.file, statsForFile.hasEventEmitters || results.some(result => result));
+		this.stats.setHasEventEmitters(context.container.file, statsForFile.hasEventEmitters || registerEmitterCalls.length > 0);
 	}
 
 	/**

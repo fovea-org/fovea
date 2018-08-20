@@ -32,7 +32,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 	 * @param {IOnChangeExtractorExtractOptions} options
 	 */
 	public extract (options: IOnChangeExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, insertPlacement, compilerOptions} = options;
 
 		const {className, classDeclaration} = mark;
 
@@ -43,11 +43,14 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 		// Take all methods
 		const allMethods = [...onChangeInstanceMethods, ...onChangeStaticMethods];
 
-		// For each method, generate a call to '__registerChangeObserver' and remove the '@onChange' decorator
-		const results = allMethods.map(onChangeMethod => {
-			// Take the decorator
+		// Store all calls to 'registerChangeObserver' here
+		const registerChangeObserverCalls: string[] = [];
+
+		allMethods.forEach(onChangeMethod => {
+			// Take all decorators for the method
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, onChangeMethod);
-			const decoratorResults = decorators.map(decorator => {
+
+			decorators.forEach(decorator => {
 				// Make sure that it is provided with at least 1 argument
 				if (!isCallExpression(decorator.expression) || decorator.expression.arguments.length < 1) {
 					this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_ON_CHANGE_DECORATOR_USAGE, methodName: this.codeAnalyzer.methodService.getName(onChangeMethod), hostName: className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
@@ -59,24 +62,43 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 
 				// The second - optional - argument will be whether or not all props must be initialized before invoking it
 				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
-
-				// If we're on a dry run, return true before mutating the SourceFile
-				if (compilerOptions.dryRun) return true;
-
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`,
-					insertPlacement
-				);
+				registerChangeObserverCalls.push(`${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
 
 				// Remove the @onChange decorator from it
 				context.container.remove(decorator.pos, decorator.end);
 				return true;
 			});
-			return decoratorResults.some(result => result);
 		});
+
+		// If there is at least 1 change observer, add the prototype method
+		if (registerChangeObserverCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerChangeObserversMethodName}();` +
+				`\n		${registerChangeObserverCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerChangeObserversMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerChangeObserversMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
+
 		// Set 'hasChangeObservers' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasChangeObservers(context.container.file, statsForFile.hasChangeObservers || results.some(result => result));
+		this.stats.setHasChangeObservers(context.container.file, statsForFile.hasChangeObservers || registerChangeObserverCalls.length > 0);
 	}
 }

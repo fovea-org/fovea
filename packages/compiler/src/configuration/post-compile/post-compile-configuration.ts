@@ -5,5 +5,16 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	compilerFlagsPropName: "___compilerFlags",
 	propToAttributeMapPropName: "propToAttributeMap",
 	attributeToPropMapPropName: "attributeToPropMap",
-	hostElementPropName: "___hostElement"
+	hostElementPropName: "___hostElement",
+	registerChangeObserversMethodName: "___registerChangeObservers",
+	registerPropsMethodName: "___registerProps",
+	registerSetOnHostPropsMethodName: "___registerSetOnHostProps",
+	registerHostListenersMethodName: "___registerHostListeners",
+	registerEmittersMethodName: "___registerEmitters",
+	registerVisibilityObserversMethodName: "___registerVisibilityObservers",
+	registerChildListObserversMethodName: "___registerChildListObservers",
+	registerAttributeChangeObserversMethodName: "___registerAttributeChangeObservers",
+	registerHostAttributesMethodName: "___registerHostAttributes",
+	useCSSMethodName: "___useCSS",
+	useTemplatesMethodName: "___useTemplates"
 };

@@ -20,6 +20,14 @@ export class PropExtractor implements IPropExtractor {
 	}
 
 	/**
+	 * Gets a Regular Expression that matches the name of @prop decorators
+	 * @returns {RegExp}
+	 */
+	private get decoratorNameRegex (): RegExp {
+		return new RegExp(`^${this.configuration.preCompile.propDecoratorName}`);
+	}
+
+	/**
 	 * Extracts all properties decorated with a @prop decorator and delegates it to the fovea-lib helper '__registerProp'.
 	 * @param {IPropExtractorExtractOptions} options
 	 */
@@ -35,31 +43,58 @@ export class PropExtractor implements IPropExtractor {
 		// Take all props
 		const allProps = [...observedInstanceProps, ...observedStaticProps, ...observedExtraProps];
 
+		// Store all calls to 'registerProp' here
+		const registerPropCalls: string[] = [];
+
 		// For each prop, generate a call to '__registerProp' and remove the '@prop' decorator
-		allProps.map(observedProp => {
+		allProps.forEach(observedProp => {
 
-			// If we're on a dry run, return before mutating the SourceFile
-			if (compilerOptions.dryRun) return;
+			// Take all decorators for the method
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, observedProp);
+			decorators.forEach(decorator => {
+				// If we're on a dry run, return before mutating the SourceFile
+				if (compilerOptions.dryRun) return;
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerProp", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(observedProp.name)}", ${JSON.stringify(this.typeExtractor.getType(observedProp.type == null ? observedProp.initializer == null ? "any" : this.astUtil.getTypeNameOfExpression(observedProp.initializer) : this.codeAnalyzer.typeNodeService.getNameOfType(observedProp.type)))}, ${this.codeAnalyzer.modifierService.isStatic(observedProp)}, <any>${className});`,
-				insertPlacement
+				registerPropCalls.push(`${this.libUser.use("registerProp", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(observedProp.name)}", ${JSON.stringify(this.typeExtractor.getType(observedProp.type == null ? observedProp.initializer == null ? "any" : this.astUtil.getTypeNameOfExpression(observedProp.initializer) : this.codeAnalyzer.typeNodeService.getNameOfType(observedProp.type)))}, ${this.codeAnalyzer.modifierService.isStatic(observedProp)}, <any>this);`);
+
+				// Remove the @prop decorator
+				context.container.remove(decorator.pos, decorator.end);
+
+				// Add a '@ts-ignore' comment since Typescript may throw if it decides that the prop is unused because it is being used from outside the class
+				context.container.prependLeft(observedProp.pos, "\n// @ts-ignore\n");
+			});
+		});
+
+		// If there is at least 1 prop, add the prototype method
+		if (registerPropCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
+				`\n		${registerPropCalls.join("\n		")}`
 			);
 
-			// Remove the @prop decorator from it, if it has any
-			const decorator = this.codeAnalyzer.propertyService.getDecorator(this.configuration.preCompile.propDecoratorName, observedProp);
-			if (decorator != null) {
-				context.container.remove(decorator.pos, decorator.end);
-			}
+			if (!compilerOptions.dryRun) {
 
-			// Add a '@ts-ignore' comment since Typescript may throw if it decides that the prop is unused because it is being used from outside the class
-			context.container.prependLeft(observedProp.pos, "\n// @ts-ignore\n");
-		});
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				context.container.appendAtPlacement(
+					`\n${className}.${this.configuration.postCompile.registerPropsMethodName}();`,
+					insertPlacement
+				);
+			}
+		}
 
 		// Set 'hasProps' if there were at least 1 prop, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasProps(context.container.file, statsForFile.hasProps || allProps.length > 0);
+		this.stats.setHasProps(context.container.file, statsForFile.hasProps || registerPropCalls.length > 0);
 	}
 
 }

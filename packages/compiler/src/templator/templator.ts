@@ -43,6 +43,7 @@ export class Templator implements ITemplator {
 		await this.generate(
 			options,
 			this.configuration.preCompile.templateSrcDecoratorName,
+			this.configuration.postCompile.useTemplatesMethodName,
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -57,6 +58,7 @@ export class Templator implements ITemplator {
 		await this.generate(
 			options,
 			this.configuration.preCompile.styleSrcDecoratorName,
+			this.configuration.postCompile.useCSSMethodName,
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -244,37 +246,24 @@ export class Templator implements ITemplator {
 	 * Generates instructions to use all of the provided hashes
 	 * @param {ITemplatorUseOptions} options
 	 * @param {IUseItem[]} items
+	 * @returns {string}
 	 */
-	public use (options: ITemplatorUseOptions, items: IUseItem[]): void {
-		const {compilerOptions, context, insertPlacement, mark} = options;
+	public use (options: ITemplatorUseOptions, items: IUseItem[]): string {
+		const {compilerOptions, context} = options;
 
-		// Generate call to '__useStaticTemplate' referencing the hash for the file
-		if (!compilerOptions.dryRun) {
-			// @ts-ignore
-			const expression = `\n${this.libUser.use("use", compilerOptions, context)}(<any>${mark.className}, ${JSON.stringify(items)});`;
-			insertPlacement != null
-				? context.container.appendAtPlacement(expression, insertPlacement)
-				: context.container.prepend(expression);
-		}
+		// Generate the 'use' instruction
+		return `${this.libUser.use("use", compilerOptions, context)}(<any>this, ${JSON.stringify(items)});`;
 	}
 
 	/**
 	 * Generates instructions to use either templates or styles from the path given as an argument
 	 * @param {ITemplatorUseOptions} options
 	 * @param {string} resolvedPath
+	 * @returns {string}
 	 */
-	public useForeign (options: ITemplatorUseOptions, resolvedPath: string): void {
-		const {compilerOptions, context, insertPlacement, mark} = options;
+	public useForeign (options: ITemplatorUseOptions, resolvedPath: string): string {
+		const {compilerOptions, context} = options;
 		const scopeName = this.generateExportScopeName(resolvedPath);
-
-		// Generate call to '__useStaticTemplate' referencing the hash for the file
-		if (!compilerOptions.dryRun) {
-			// @ts-ignore
-			const expression = `\n${this.libUser.use("use", compilerOptions, context)}(<any>${mark.className}, ${scopeName});`;
-			insertPlacement != null
-				? context.container.appendAtPlacement(expression, insertPlacement)
-				: context.container.prepend(expression);
-		}
 
 		const isSamePath = resolvedPath === context.container.file;
 
@@ -288,42 +277,76 @@ export class Templator implements ITemplator {
 				context.container.prepend(`\n// @ts-ignore\nimport {${scopeName}} from "${resolvedPath}";\n`);
 			}
 		}
+
+		// Return the 'use' instruction
+		return `${this.libUser.use("use", compilerOptions, context)}(<any>this, ${scopeName});`;
 	}
 
 	/**
 	 * Generates either template or style instructions, depending on the provided arguments
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {string} srcDecoratorName
+	 * @param {string} staticUseMethodName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
-		const {mark, compilerOptions, context} = options;
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+		const {mark, compilerOptions, context, insertPlacement} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
-		const decorator = this.codeAnalyzer.classService.getDecorator(new RegExp(`${srcDecoratorName}`), mark.classDeclaration);
-		if (decorator != null) {
+		const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(new RegExp(`^${srcDecoratorName}`), mark.classDeclaration);
 
+		// Store all calls to 'use' here
+		const useCalls: string[] = [];
+
+		decorators.forEach(decorator => {
 			// Generate template or style contents from the decorator
-			this.generateFromDecorator(options, decorator);
+			useCalls.push(...this.generateFromDecorator(options, decorator));
 
 			// Remove the decorator. We are done with it
 			if (!compilerOptions.dryRun) {
 				context.container.remove(decorator.pos, decorator.end);
 			}
-		}
+		});
 
 		// Also try to find the '[template|styles]' property on the class declaration
 		const property = this.codeAnalyzer.classService.getMemberWithName(propertyName, mark.classDeclaration);
 
-		// If it *has* a [template|styles] property/method/accessor
+		// If it has a [template|styles] property/method/accessor
 		if (property != null) {
-			await this.generateFromProperty(options, property, registerMethod);
+			useCalls.push(...(await this.generateFromProperty(options, property, registerMethod)));
 
-			// Remove the user-provided 'template' property from the class. We're done with it!
+			// Remove the user-provided '[template|styles]' property from the class. We're done with it!
 			if (!compilerOptions.dryRun) {
 				context.container.remove(property.pos, property.end);
+			}
+		}
+
+		// If there is at least 1 'use' instruction, add the prototype method
+		if (useCalls.length > 0) {
+
+			const body = (
+				`\n		// ts-ignore` +
+				`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
+				`\n		${useCalls.join("\n		")}`
+			);
+
+			if (!compilerOptions.dryRun) {
+
+				// Create the static method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected static ${staticUseMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static method
+				const expression = `\n${mark.className}.${staticUseMethodName}();`;
+				insertPlacement != null
+					? context.container.appendAtPlacement(expression, insertPlacement)
+					: context.container.prepend(expression);
 			}
 		}
 	}
@@ -377,19 +400,20 @@ export class Templator implements ITemplator {
 	 * Generates a template from a '@templateSrc("<url>") decorator on the component prototype
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {Decorator} decorator
-	 * @returns {void}
+	 * @returns {string[]}
 	 */
-	private generateFromDecorator (options: ITemplatorGenerateOptions, decorator: Decorator): void {
+	private generateFromDecorator (options: ITemplatorGenerateOptions, decorator: Decorator): string[] {
 		// Take the path from the decorator
 		const resolvedPaths = this.takeResolvedPathsFromDecorator(options, decorator);
 
 		// If we retrieved a path from it, generate instructions to use the template from that path
 		if (resolvedPaths != null) {
-			resolvedPaths.forEach(resolvedPath => {
+			return resolvedPaths.map(resolvedPath => {
 				// Generate an instruction to use whatever contents will be generated
-				this.useForeign(options, resolvedPath);
+				return this.useForeign(options, resolvedPath);
 			});
 		}
+		return [];
 	}
 
 	/**
@@ -425,19 +449,19 @@ export class Templator implements ITemplator {
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {ClassElement} property
 	 * @param {RegisterMethod} registerMethod
-	 * @returns {Promise<void>}
+	 * @returns {Promise<string[]>}
 	 */
-	private async generateFromProperty (options: ITemplatorGenerateOptions, property: ClassElement, registerMethod: RegisterMethod): Promise<void> {
+	private async generateFromProperty (options: ITemplatorGenerateOptions, property: ClassElement, registerMethod: RegisterMethod): Promise<string[]> {
 		const template = this.takeContentsOfClassElement(property);
 
 		// If there are no initialized contents of the template or styles,
-		if (template == null || template.length < 1) return;
+		if (template == null || template.length < 1) return [];
 
 		// Generate the instructions
 		const result = <IRegisterResult> await registerMethod.call(this, options, template, options.context.container.file);
 
 		// Generate instructions to actually use the templates or styles.
-		this.use(options, result.generatedHashes);
+		return [this.use(options, result.generatedHashes)];
 	}
 
 	/**
