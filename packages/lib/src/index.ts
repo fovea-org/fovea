@@ -28,7 +28,8 @@ export {__registerSetOnHost} from "./helper/register-set-on-host/register-set-on
 export {__mapPropertiesToAttributes} from "./helper/map-properties-to-attributes/map-properties-to-attributes";
 export {__registerElement} from "./helper/register-element/register-element";
 export {__registerCustomAttribute} from "./helper/register-custom-attribute/register-custom-attribute";
-export {__construct} from "./helper/construct/construct";
+export {__constructFoveaHost} from "./helper/construct/construct-fovea-host";
+export {__constructCustomAttribute} from "./helper/construct/construct-custom-attribute";
 export {__addCustomAttribute} from "./helper/add-custom-attribute/add-custom-attribute";
 export {__registerEmitter} from "./helper/register-emitter/register-emitter";
 export {__registerHostListener} from "./helper/register-host-listener/register-host-listener";

@@ -8,6 +8,5 @@ import {renderBase} from "./render-base";
  * @private
  */
 export function __renderIFoveaHost (host: IFoveaHost): void {
-	// Add the host to the Set of all connected hosts
 	renderBase(host, upgradeIFoveaHost(host));
 }

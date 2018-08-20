@@ -14,6 +14,7 @@ import {IFoveaStats} from "../stats/i-fovea-stats";
 import {kebabCase} from "@wessberg/stringutil";
 import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
 import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName} from "@fovea/common";
+import {LibHelperName} from "../../../common/src/lib-helper/lib-helper-name/lib-helper-name";
 
 /**
  * A class that can extend the prototype of an IFoveaHost
@@ -253,9 +254,10 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// Find an existing constructor
 		const constructor = this.codeAnalyzer.classService.getConstructor(classDeclaration);
+		const helperFunctionName: LibHelperName = kind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "constructCustomAttribute" : "constructFoveaHost";
 
 		// The extension to add to the constructor.
-		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use("construct", compilerOptions, context)}(<any>this, ${hostElementIdentifier});`;
+		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use(helperFunctionName, compilerOptions, context)}(<any>this${kind === FoveaHostKind.HOST ? "" : `, ${hostElementIdentifier}`});`;
 
 		// Define the name of the first argument of Custom Attributes
 		let customAttributeNameArg = "hostElement";
