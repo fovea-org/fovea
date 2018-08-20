@@ -17,6 +17,7 @@ import {IUseItem} from "@fovea/common";
 import {ITemplatorUseOptions} from "./i-templator-use-options";
 import {ITemplatorRegisterOptions} from "./i-templator-register-options";
 import {containsOnlyWhitespace, isEmpty} from "@wessberg/stringutil";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that generates template instructions to a Fovea component
@@ -31,7 +32,8 @@ export class Templator implements ITemplator {
 							 private readonly moduleUtil: IModuleUtil,
 							 private readonly hashUtil: IHashUtil,
 							 private readonly foveaDOM: IFoveaDOM,
-							 private readonly foveaStyles: IFoveaStyles) {
+							 private readonly foveaStyles: IFoveaStyles,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -327,9 +329,11 @@ export class Templator implements ITemplator {
 		if (useCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
-				`\n		${useCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+					? `\n		${useCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
+					`\n		${useCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

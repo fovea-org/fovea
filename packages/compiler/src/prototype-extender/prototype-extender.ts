@@ -135,18 +135,20 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// Map the props into quoted names
 		const quotedAttributeNames = observedPropNames.map(prop => `"${kebabCase(prop)}"`);
 
-		// Add a (static) getter for observed attributes
-		if (!compilerOptions.dryRun) {
-			const body = this.foveaHostUtil.isBaseComponent(classDeclaration)
-				// If the class is a base component, just use the classes own props
-				? ` return [${quotedAttributeNames.join(",")}];`
-				// Otherwise, also call the super class's getter to add-in its props
-				: ` return [${quotedAttributeNames.join(",")}, ...<string[]>(<any>Object.getPrototypeOf(this)).${this.configuration.observedAttributesName}];`;
+		// Add a (static) getter for observed attributes, if there is at least 1. If a parent class has some, they will be inherited
+		if (quotedAttributeNames.length > 0) {
+			if (!compilerOptions.dryRun) {
+				const body = this.foveaHostUtil.isBaseComponent(classDeclaration)
+					// If the class is a base component, just use the classes own props
+					? ` return [${quotedAttributeNames.join(",")}];`
+					// Otherwise, also call the super class's getter to add-in its props
+					: `\n		// ts-ignore\n		const parentObservedAttributes = <string[]> super.${this.configuration.observedAttributesName} || [];\n		return [${quotedAttributeNames.join(",")}, ...parentObservedAttributes];`;
 
-			context.container.appendLeft(
-				classDeclaration.members.end,
-				`\n	protected static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
-			);
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
+				);
+			}
 		}
 	}
 

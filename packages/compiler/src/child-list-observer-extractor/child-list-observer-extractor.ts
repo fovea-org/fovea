@@ -7,6 +7,7 @@ import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {IChildListObserverExtractor} from "./i-child-list-observer-extractor";
 import {IChildListObserverExtractorExtractOptions} from "./i-child-list-observer-extractor-extract-options";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract methods annotated with a @onChildrenAdded or @onChildrenRemoved decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -16,7 +17,8 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
 							 private readonly diagnostics: IFoveaDiagnostics,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -91,9 +93,11 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 		if (registerChildListObserverCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
-				`\n		${registerChildListObserverCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerChildListObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
+					`\n		${registerChildListObserverCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

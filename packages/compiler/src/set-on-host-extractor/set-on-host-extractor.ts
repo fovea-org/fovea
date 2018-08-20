@@ -6,6 +6,7 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {PropertyDeclaration} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract properties annotated with a @setOnHost decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -14,7 +15,8 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -66,9 +68,11 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 		if (registerSetOnHostCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerSetOnHostPropsMethodName} != null) super.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();` +
-				`\n		${registerSetOnHostCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerSetOnHostCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerSetOnHostPropsMethodName} != null) super.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();` +
+					`\n		${registerSetOnHostCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

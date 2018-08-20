@@ -7,6 +7,7 @@ import {IVisibilityObserverExtractorExtractOptions} from "./i-visibility-observe
 import {isCallExpression} from "typescript";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract methods annotated with a @onBecameVisible or @onBecameInvisible decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -16,7 +17,8 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
 							 private readonly diagnostics: IFoveaDiagnostics,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -91,9 +93,11 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 		if (registerVisibilityObserverCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
-				`\n		${registerVisibilityObserverCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerVisibilityObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
+					`\n		${registerVisibilityObserverCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

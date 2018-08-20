@@ -7,6 +7,7 @@ import {isCallExpression} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract methods annotated with a @hostListener decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -16,7 +17,8 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 							 private readonly stats: IFoveaStats,
 							 private readonly diagnostics: IFoveaDiagnostics,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -79,9 +81,11 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 		if (registerHostListenerCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerHostListenersMethodName} != null) super.${this.configuration.postCompile.registerHostListenersMethodName}();` +
-				`\n		${registerHostListenerCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerHostListenerCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerHostListenersMethodName} != null) super.${this.configuration.postCompile.registerHostListenersMethodName}();` +
+					`\n		${registerHostListenerCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

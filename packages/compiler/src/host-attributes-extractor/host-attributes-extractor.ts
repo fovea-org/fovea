@@ -9,6 +9,7 @@ import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IConfiguration} from "../configuration/i-configuration";
 import {Json, libHelperName} from "@fovea/common";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that generates host attributes instructions to a Fovea component
@@ -20,7 +21,8 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 							 private readonly diagnostics: IFoveaDiagnostics,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
 							 private readonly libUser: ILibUser,
-							 private readonly foveaDOM: IFoveaDOM) {
+							 private readonly foveaDOM: IFoveaDOM,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -116,10 +118,14 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				this.stats.setReferencedCustomSelectors(context.container.file, [...existingReferencedCustomSelectors, ...referencedCustomSelectors]);
 			}
 
+			const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, <any>this);`;
+
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
-				`\n		${`${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, <any>this);`}`
+				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+					? `\n		${expression}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
+					`\n		${expression}`
 			);
 
 			if (!compilerOptions.dryRun) {

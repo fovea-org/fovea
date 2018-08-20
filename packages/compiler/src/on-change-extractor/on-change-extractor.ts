@@ -7,6 +7,7 @@ import {isCallExpression} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract methods annotated with a @onChange decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -16,7 +17,8 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 							 private readonly stats: IFoveaStats,
 							 private readonly diagnostics: IFoveaDiagnostics,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -74,9 +76,11 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 		if (registerChangeObserverCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerChangeObserversMethodName}();` +
-				`\n		${registerChangeObserverCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerChangeObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerChangeObserversMethodName}();` +
+					`\n		${registerChangeObserverCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

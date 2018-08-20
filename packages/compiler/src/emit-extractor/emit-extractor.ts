@@ -6,6 +6,7 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {isCallExpression, PropertyDeclaration} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract properties annotated with a @emit decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -14,7 +15,8 @@ export class EmitExtractor implements IEmitExtractor {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -69,9 +71,11 @@ export class EmitExtractor implements IEmitExtractor {
 		if (registerEmitterCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
-				`\n		${registerEmitterCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerEmitterCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
+					`\n		${registerEmitterCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

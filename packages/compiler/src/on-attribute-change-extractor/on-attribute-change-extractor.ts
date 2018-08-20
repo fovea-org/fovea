@@ -7,6 +7,7 @@ import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IOnAttributeChangeExtractor} from "./i-on-attribute-change-extractor";
 import {IOnAttributeChangeExtractorExtractOptions} from "./i-on-attribute-change-extractor-extract-options";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract methods annotated with a @onAttributeChange decorator from a Component prototype and invoke the helpers in @fovea/lib
@@ -16,7 +17,8 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 							 private readonly stats: IFoveaStats,
 							 private readonly diagnostics: IFoveaDiagnostics,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -77,9 +79,11 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		if (registerAttributeChangeObserverCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
-				`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
+					`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {

@@ -6,6 +6,7 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {ITypescriptASTUtil} from "@wessberg/typescript-ast-util";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {ITypeExtractorService} from "../type-extractor/i-type-extractor-service";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract props from a Component prototype and invoke the helpers in fovea-lib
@@ -16,7 +17,8 @@ export class PropExtractor implements IPropExtractor {
 							 private readonly codeAnalyzer: ICodeAnalyzer,
 							 private readonly typeExtractor: ITypeExtractorService,
 							 private readonly libUser: ILibUser,
-							 private readonly astUtil: ITypescriptASTUtil) {
+							 private readonly astUtil: ITypescriptASTUtil,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -69,9 +71,11 @@ export class PropExtractor implements IPropExtractor {
 		if (registerPropCalls.length > 0) {
 
 			const body = (
-				`\n		// ts-ignore` +
-				`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
-				`\n		${registerPropCalls.join("\n		")}`
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerPropCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
+					`\n		${registerPropCalls.join("\n		")}`
 			);
 
 			if (!compilerOptions.dryRun) {
