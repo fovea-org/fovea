@@ -13,8 +13,7 @@ import {isSuperExpression, ITypescriptASTUtil} from "@wessberg/typescript-ast-ut
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {kebabCase} from "@wessberg/stringutil";
 import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
-import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName} from "@fovea/common";
-import {LibHelperName} from "../../../common/src/lib-helper/lib-helper-name/lib-helper-name";
+import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName, LibHelperName} from "@fovea/common";
 
 /**
  * A class that can extend the prototype of an IFoveaHost

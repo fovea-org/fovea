@@ -1,6 +1,6 @@
+import {IFoveaHost} from "@fovea/common";
 import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
 import {construct} from "./construct";
-import {IFoveaHost} from "../../../../common/src/fovea-host/i-fovea-host";
 import {setHostForNode} from "../../host/host-for-node/set-host-for-node/set-host-for-node";
 
 /**

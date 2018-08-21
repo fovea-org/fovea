@@ -13,12 +13,11 @@ import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IRegisterResult} from "./i-register-result";
 import {IHashUtil} from "../util/hash-util/i-hash-util";
 import {IFoveaStyles} from "@fovea/style";
-import {IUseItem} from "@fovea/common";
+import {IUseItem, LibHelperName} from "@fovea/common";
 import {ITemplatorUseOptions} from "./i-templator-use-options";
 import {ITemplatorRegisterOptions} from "./i-templator-register-options";
 import {containsOnlyWhitespace, isEmpty} from "@wessberg/stringutil";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
-import {LibHelperName} from "../../../common/src/lib-helper/lib-helper-name/lib-helper-name";
 
 /**
  * A class that generates template instructions to a Fovea component
