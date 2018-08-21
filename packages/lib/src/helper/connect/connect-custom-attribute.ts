@@ -1,6 +1,9 @@
 import {ICustomAttribute} from "@fovea/common";
-import {upgradeICustomAttribute} from "../../host/upgrade-i-custom-attribute/upgrade-i-custom-attribute";
 import {connectBase} from "./connect-base";
+import {isUpgraded} from "../../host/is-upgraded/is-upgraded";
+import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-root-for-node";
+import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
+import {setRootForNode} from "../../host/root-for-node/set-root-for-node/set-root-for-node";
 
 /**
  * Runs the logic necessary to connect the provided custom attribute
@@ -8,5 +11,9 @@ import {connectBase} from "./connect-base";
  * @private
  */
 export function __connectCustomAttribute (host: ICustomAttribute): void {
-	connectBase(host, upgradeICustomAttribute(host));
+	if (!isUpgraded(host)) {
+		// Map the host to its' ShadowRoot
+		setRootForNode(host, getRootForNode(getHostElementForHost(host)));
+	}
+	connectBase(host);
 }

@@ -46,6 +46,7 @@ export class Templator implements ITemplator {
 			options,
 			this.configuration.preCompile.templateSrcDecoratorName,
 			this.configuration.postCompile.useTemplatesMethodName,
+			this.configuration.postCompile.connectTemplatesMethodName,
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -61,6 +62,7 @@ export class Templator implements ITemplator {
 			options,
 			this.configuration.preCompile.styleSrcDecoratorName,
 			this.configuration.postCompile.useCSSMethodName,
+			this.configuration.postCompile.connectCSSMethodName,
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -289,11 +291,12 @@ export class Templator implements ITemplator {
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {string} srcDecoratorName
 	 * @param {string} staticUseMethodName
+	 * @param {string} connectMethodName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
 		const {mark, compilerOptions, context, insertPlacement} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
@@ -325,28 +328,40 @@ export class Templator implements ITemplator {
 			}
 		}
 
-		// If there is at least 1 'use' instruction, add the prototype method
+		// If there is at least 1 'use' instruction, add the relevant methods
 		if (useCalls.length > 0) {
-
-			const body = (
-				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
-					? `\n		${useCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
-					`\n		${useCalls.join("\n		")}`
-			);
 
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const useBody = (
+					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+						? `\n		${useCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
+						`\n		${useCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+						`\n		${this.libUser.use("connectTemplates", compilerOptions, context)}(this);`
+				);
+
+				// Create the "use" method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
 					`\n	protected static ${staticUseMethodName} (): void {` +
-					`${body}` +
+					`${useBody}` +
 					`\n	}`
 				);
 
-				// Add an instruction to invoke the static method
+				// Create the "connectTemplates" method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${connectMethodName} (): void {` +
+					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the static "use" method immediately to register the templates/styles
 				const expression = `\n${mark.className}.${staticUseMethodName}();`;
 				insertPlacement != null
 					? context.container.appendAtPlacement(expression, insertPlacement)

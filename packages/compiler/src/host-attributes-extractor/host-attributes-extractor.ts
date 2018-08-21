@@ -1,5 +1,5 @@
 import {IHostAttributesExtractor} from "./i-host-attributes-extractor";
-import {IFoveaDOM, IHostAttributeValues} from "@fovea/dom";
+import {IFoveaDOM} from "@fovea/dom";
 import {IHostAttributesExtractOptions} from "./i-host-attributes-extract-options";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
@@ -8,7 +8,7 @@ import {IFoveaStats} from "../stats/i-fovea-stats";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IConfiguration} from "../configuration/i-configuration";
-import {Json, libHelperName} from "@fovea/common";
+import {Json, libHelperName, IHostAttributeValues} from "@fovea/common";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
@@ -118,7 +118,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				this.stats.setReferencedCustomSelectors(context.container.file, [...existingReferencedCustomSelectors, ...referencedCustomSelectors]);
 			}
 
-			const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, <any>this);`;
+			const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, this);`;
 
 			const body = (
 				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)

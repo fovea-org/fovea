@@ -16,5 +16,7 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	registerAttributeChangeObserversMethodName: "___registerAttributeChangeObservers",
 	registerHostAttributesMethodName: "___registerHostAttributes",
 	useCSSMethodName: "___useCSS",
-	useTemplatesMethodName: "___useTemplates"
+	useTemplatesMethodName: "___useTemplates",
+	connectTemplatesMethodName: "___connectTemplates",
+	connectCSSMethodName: "___connectCSS"
 };

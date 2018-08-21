@@ -15,4 +15,6 @@ export interface IPostCompileConfiguration {
 	registerHostAttributesMethodName: string;
 	useCSSMethodName: string;
 	useTemplatesMethodName: string;
+	connectTemplatesMethodName: string;
+	connectCSSMethodName: string;
 }

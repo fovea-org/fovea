@@ -1,6 +1,4 @@
-export interface IHostAttributeValues {
-	[key: string]: (string|number|boolean)|{[key: string]: (string|number|boolean)};
-}
+import {IHostAttributeValues} from "@fovea/common";
 
 export interface IFoveaDOMBaseOptions {
 	dryRun?: boolean;

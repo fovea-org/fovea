@@ -20,6 +20,8 @@ export const libHelperName = {
 	attributeChanged: "__attributeChanged",
 	connectFoveaHost: "__connectIFoveaHost",
 	connectCustomAttribute: "__connectCustomAttribute",
+	connectTemplates: "__connectTemplates",
+	connectProps: "__connectProps",
 	dispose: "__dispose",
 	registerStaticTemplate: "__registerStaticTemplate",
 	useStaticTemplate: "__useStaticTemplate",

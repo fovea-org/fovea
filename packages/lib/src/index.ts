@@ -2,6 +2,8 @@ export {ICustomAttribute} from "@fovea/common";
 export {__use} from "./helper/use/use";
 export {__connectCustomAttribute} from "./helper/connect/connect-custom-attribute";
 export {__connectFoveaHost} from "./helper/connect/connect-fovea-host";
+export {__connectTemplates} from "./helper/connect/connect-templates";
+export {__connectProps} from "./helper/connect/connect-props";
 export {__addRef} from "./helper/add-ref/add-ref";
 export {__addElement} from "./helper/add-element/add-element";
 export {__createElement} from "./helper/create-element/create-element/create-element";

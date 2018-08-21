@@ -1,5 +1,12 @@
+// tslint:disable:no-any
+
 export interface ILifecycleHookable {
-	connectedCallback? (): void|Promise<void>;
-	disconnectedCallback? (): void|Promise<void>;
-	attributeChangedCallback? (name: string, oldValue: string|null, newValue: string|null): void|Promise<void>;
+	connectedCallback? (): any;
+	disconnectedCallback? (): any;
+	destroyedCallback? (): any;
+	attributeChangedCallback? (name: string, oldValue: string|null, newValue: string|null): any;
+
+	// These hooks are specific to Fovea
+	___connectTemplate? (): void;
+	___connectProps? (): void;
 }

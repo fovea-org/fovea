@@ -1,7 +1,8 @@
 /*tslint:disable*/
 // @ts-ignore
-import {onAttributeChange} from "@fovea/core";
+import {onAttributeChange, templateSrc} from "@fovea/core";
 
+@templateSrc("./demo-component-1.html")
 class Foo extends HTMLElement {
 	public bar: string;
 

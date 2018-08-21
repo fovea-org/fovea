@@ -3,6 +3,7 @@ export * from "./json";
 export * from "./uuid";
 export * from "./optional";
 export * from "./attribute";
+export * from "./host-attributes";
 export * from "./custom-attribute";
 export * from "./expression";
 export * from "./fovea-host";

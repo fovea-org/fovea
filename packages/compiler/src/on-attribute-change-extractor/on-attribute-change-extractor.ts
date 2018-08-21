@@ -68,7 +68,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 				// If we're on a dry run, return true before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerAttributeChangeObserverCalls.push(`${this.libUser.use("registerAttributeChangeObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(onAttributeChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onAttributeChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
+				registerAttributeChangeObserverCalls.push(`${this.libUser.use("registerAttributeChangeObserver", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(onAttributeChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onAttributeChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
 
 				// Remove the @onAttributeChange decorator from it
 				context.container.remove(decorator.pos, decorator.end);

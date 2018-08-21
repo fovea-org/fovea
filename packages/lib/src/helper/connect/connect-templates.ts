@@ -1,14 +1,17 @@
-import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
+import {ICustomAttribute, IFoveaHost, IFoveaHostConstructor, ICustomAttributeConstructor} from "@fovea/common";
+import {STATIC_TEMPLATES_FOR_HOST} from "../../template/static-template/static-templates-for-host";
+import {ITemplateResult} from "../../template/template-result/template-result/i-template-result";
 import {UPGRADED_HOSTS} from "../../host/upgraded-hosts/upgraded-hosts";
-import {ITemplateResult} from "../template-result/template-result/i-template-result";
-import {STATIC_TEMPLATES_FOR_HOST} from "./static-templates-for-host";
+import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-root-for-node";
+import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 
 /**
- * Binds all static templates for the given host
+ * Connects all templates for the given host
  * @param {IFoveaHost | ICustomAttribute} host
- * @param {ShadowRoot|Element} root
  */
-export function bindStaticTemplate (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|Element): void {
+export function __connectTemplates (host: IFoveaHost|ICustomAttribute): void {
+	const root = getRootForNode(getHostElementForHost(host));
+	if (root == null) return;
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 	const templates = STATIC_TEMPLATES_FOR_HOST.get(constructor);
