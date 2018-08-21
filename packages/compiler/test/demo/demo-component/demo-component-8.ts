@@ -1,14 +1,14 @@
 /*tslint:disable*/
-import {__construct, __renderIFoveaHost, __dispose, __attributeChanged, __registerElement, __use} from "@fovea/lib";
+import {__constructFoveaHost, __connectFoveaHost, __dispose, __attributeChanged, __registerElement, __use} from "@fovea/lib";
 
 class RouterOutlet extends HTMLElement {
 	constructor() {
 		// @ts-ignore
 		super(...arguments);
-		__construct(this, this);
+		__constructFoveaHost(this);
 	}
 
-	connectedCallback() { __renderIFoveaHost(this); }
+	connectedCallback() { __connectFoveaHost(this); }
 	disconnectedCallback() { __dispose(this); }
 	// @ts-ignore
 	attributeChangedCallback(name, oldValue, newValue) { __attributeChanged(this, name, oldValue, newValue); }

@@ -82,7 +82,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 				// If we're on a dry run, return true before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerChildListObserverCalls.push(`${this.libUser.use("registerChildListObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`);
+				registerChildListObserverCalls.push(`${this.libUser.use("registerChildListObserver", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${added}${argumentContents});`);
 
 				// Remove the @onChildrenAdded or @onChildrenRemoved decorator from it
 				context.container.remove(decorator.pos, decorator.end);

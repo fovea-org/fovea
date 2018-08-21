@@ -64,7 +64,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 
 				// The second - optional - argument will be whether or not all props must be initialized before invoking it
 				const secondArgumentContents = decorator.expression.arguments.length < 2 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[1])}`;
-				registerChangeObserverCalls.push(`${this.libUser.use("registerChangeObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
+				registerChangeObserverCalls.push(`${this.libUser.use("registerChangeObserver", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(onChangeMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(onChangeMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
 
 				// Remove the @onChange decorator from it
 				context.container.remove(decorator.pos, decorator.end);

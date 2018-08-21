@@ -62,11 +62,14 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// If the host is an IFoveaHost
 		if (mark.kind === FoveaHostKind.HOST) {
-			// Extend the attributeChangedCallback lifecycle hook
-			this.extendAttributeChangedCallback(mark.classDeclaration, compilerOptions, context, parentIsComponent);
 
-			// Extend the observedAttributes static getter
-			this.extendObservedAttributes(mark.classDeclaration, observedPropNames, compilerOptions, context);
+			// If there is at least 1 prop to observe
+			if (observedPropNames.length > 0) {
+				// Extend the attributeChangedCallback lifecycle hook
+				this.extendAttributeChangedCallback(mark.classDeclaration, compilerOptions, context, parentIsComponent);
+				// Extend the observedAttributes static getter
+				this.extendObservedAttributes(mark.classDeclaration, observedPropNames, compilerOptions, context);
+			}
 		}
 
 		// Otherwise, if it is a Custom Attribute, add a 'hostElement' property to the class
@@ -136,19 +139,17 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const quotedAttributeNames = observedPropNames.map(prop => `"${kebabCase(prop)}"`);
 
 		// Add a (static) getter for observed attributes, if there is at least 1. If a parent class has some, they will be inherited
-		if (quotedAttributeNames.length > 0) {
-			if (!compilerOptions.dryRun) {
-				const body = this.foveaHostUtil.isBaseComponent(classDeclaration)
-					// If the class is a base component, just use the classes own props
-					? ` return [${quotedAttributeNames.join(",")}];`
-					// Otherwise, also call the super class's getter to add-in its props
-					: `\n		// ts-ignore\n		const parentObservedAttributes = <string[]> super.${this.configuration.observedAttributesName} || [];\n		return [${quotedAttributeNames.join(",")}, ...parentObservedAttributes];`;
+		if (!compilerOptions.dryRun) {
+			const body = this.foveaHostUtil.isBaseComponent(classDeclaration)
+				// If the class is a base component, just use the classes own props
+				? ` return [${quotedAttributeNames.join(",")}];`
+				// Otherwise, also call the super class's getter to add-in its props
+				: `\n		// ts-ignore\n		const parentObservedAttributes = <string[]> super.${this.configuration.observedAttributesName} || [];\n		return [${quotedAttributeNames.join(",")}, ...parentObservedAttributes];`;
 
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
-				);
-			}
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
+			);
 		}
 	}
 
@@ -165,7 +166,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const attributeChangedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.attributeChangedCallbackName, classDeclaration);
 
 		// The extension to add to the connectedCallback.
-		const extension = (name: string, oldValue: string, newValue: string) => ` ${this.libUser.use("attributeChanged", compilerOptions, context)}(<any>this, ${name}, ${oldValue}, ${newValue});`;
+		const extension = (name: string, oldValue: string, newValue: string) => ` ${this.libUser.use("attributeChanged", compilerOptions, context)}(this, ${name}, ${oldValue}, ${newValue});`;
 
 		// Define the names of the arguments
 		let nameArg = "name";
@@ -259,7 +260,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const helperFunctionName: LibHelperName = kind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "constructCustomAttribute" : "constructFoveaHost";
 
 		// The extension to add to the constructor.
-		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use(helperFunctionName, compilerOptions, context)}(<any>this${kind === FoveaHostKind.HOST ? "" : `, ${hostElementIdentifier}`});`;
+		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use(helperFunctionName, compilerOptions, context)}(this${kind === FoveaHostKind.HOST ? "" : `, ${hostElementIdentifier}`});`;
 
 		// Define the name of the first argument of Custom Attributes
 		let customAttributeNameArg = "hostElement";
@@ -269,11 +270,22 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 			// Only proceed if the parent is not a component - otherwise it will just inherit its' constructor
 			if (!parentIsComponent) {
+				const bodyExtension = extension(kind === FoveaHostKind.HOST ? "this" : customAttributeNameArg);
+
+				const body = (
+					this.codeAnalyzer.classService.isBaseClass(classDeclaration)
+						? `\n		${bodyExtension}`
+						: `\n		// ts-ignore` +
+						`\n		super(...arguments);` +
+						`\n		${bodyExtension}`
+				);
 
 				if (!compilerOptions.dryRun) {
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	constructor (${kind === FoveaHostKind.HOST ? "" : customAttributeNameArg}) { ${(this.codeAnalyzer.classService.isBaseClass(classDeclaration) ? "" : "\n	// @ts-ignore\n	super(...arguments);\n	") + extension(kind === FoveaHostKind.HOST ? "<any>this" : customAttributeNameArg)} }`
+						`\n	constructor (${kind === FoveaHostKind.HOST ? "" : customAttributeNameArg}) {` +
+						`${body}` +
+						`\n	}`
 					);
 				}
 			}
@@ -282,7 +294,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// The class implements the constructor as one of its own members. Extend it!
 		else {
 			// If it is an IFoveaHost, simple use 'this' as the argument name. Otherwise, use the name of the host argument
-			const extensionName = () => kind === FoveaHostKind.HOST ? "<any>this" : customAttributeNameArg;
+			const extensionName = () => kind === FoveaHostKind.HOST ? "this" : customAttributeNameArg;
 
 			if (kind === FoveaHostKind.CUSTOM_ATTRIBUTE) {
 				// We have to detect the identifier for the first argument and pass that on to __construct.
@@ -349,7 +361,8 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const connectedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.connectedCallbackName, classDeclaration);
 
 		// The extension to add to the connectedCallback.
-		const extension = `${this.libUser.use(kind === FoveaHostKind.HOST ? "renderIFoveaHost" : "renderICustomAttribute", compilerOptions, context)}(<any>this);`;
+		const extension = `${this.libUser.use(kind === FoveaHostKind.HOST ? "connectFoveaHost" : "connectCustomAttribute", compilerOptions, context)}(this);`;
+		const body = `\n		${extension}`;
 
 		// If the class doesn't implement a connectedCallback
 		if (connectedCallback == null) {
@@ -359,7 +372,9 @@ export class PrototypeExtender implements IPrototypeExtender {
 				if (!compilerOptions.dryRun) {
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	public ${this.configuration.connectedCallbackName} (): void { ${extension} }`
+						`\n	public ${this.configuration.connectedCallbackName} (): void {` +
+						`${body}` +
+						`\n	}`
 					);
 				}
 			}
@@ -429,7 +444,8 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const disconnectedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.disconnectedCallbackName, classDeclaration);
 
 		// The extension to add to the disconnectedCallback.
-		const extension = `${this.libUser.use("dispose", compilerOptions, context)}(<any>this);`;
+		const extension = `${this.libUser.use("dispose", compilerOptions, context)}(this);`;
+		const body = `\n		${extension}`;
 
 		// If the class doesn't implement a disconnectedCallback
 		if (disconnectedCallback == null) {
@@ -440,7 +456,9 @@ export class PrototypeExtender implements IPrototypeExtender {
 				if (!compilerOptions.dryRun) {
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	public ${this.configuration.disconnectedCallbackName} (): void { ${extension} }`
+						`\n	public ${this.configuration.disconnectedCallbackName} (): void {` +
+						`${body}` +
+						`\n	}`
 					);
 				}
 			}
@@ -479,7 +497,8 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const destroyedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.destroyedCallbackName, classDeclaration);
 
 		// The extension to add to the destroyedCallback.
-		const extension = `${this.libUser.use("destroy", compilerOptions, context)}(<any>this);`;
+		const extension = `${this.libUser.use("destroy", compilerOptions, context)}(this);`;
+		const body = `\n		${extension}`;
 
 		// If the class doesn't implement a destroyedCallback
 		if (destroyedCallback == null) {
@@ -490,7 +509,9 @@ export class PrototypeExtender implements IPrototypeExtender {
 				if (!compilerOptions.dryRun) {
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	public ${this.configuration.destroyedCallbackName} (): void { ${extension} }`
+						`\n	public ${this.configuration.destroyedCallbackName} (): void {` +
+						`${body}` +
+						`\n	}`
 					);
 				}
 			}

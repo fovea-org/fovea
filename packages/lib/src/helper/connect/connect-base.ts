@@ -9,12 +9,12 @@ import {bindChildListObservers} from "../../dom-mutation/child-list-observers-fo
 import {bindAttributeChangeObservers} from "../../dom-mutation/attribute-change-observers-for-host/bind-attribute-change-observers";
 
 /**
- * Runs all common render functionality for the provided host
+ * Runs the common logic necessary to connect the provided host
  * @param {IFoveaHost|ICustomAttribute} host
  * @param {ShadowRoot|Element|undefined} root
  * @private
  */
-export function renderBase (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|Element|undefined): void {
+export function connectBase (host: IFoveaHost|ICustomAttribute, root: ShadowRoot|Element|undefined): void {
 
 	if (root != null) {
 		bindStaticTemplate(host, root);

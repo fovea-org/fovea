@@ -81,7 +81,7 @@ export class DependencyImporter implements IDependencyImporter {
 		if (!compilerOptions.dryRun && dependsOnIdentifiers.size > 0) {
 			// Invoke '__dependsOn' with each imported name
 			context.container.appendAtPlacement(
-				`\n${this.libUser.use("dependsOn", compilerOptions, context)}(${[...dependsOnIdentifiers].map(name => `<any>${name}`).join(", ")});`,
+				`\n${this.libUser.use("dependsOn", compilerOptions, context)}(${[...dependsOnIdentifiers].map(name => `${name}`).join(", ")});`,
 				insertPlacement
 			);
 		}

@@ -54,7 +54,7 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 				// If we're on a dry run, return before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerSetOnHostCalls.push(`${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, <any>this);`);
+				registerSetOnHostCalls.push(`${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, this);`);
 
 				// Remove the @setOnHost decorator from it
 				context.container.remove(decorator.pos, decorator.end);

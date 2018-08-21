@@ -57,7 +57,7 @@ export class PropExtractor implements IPropExtractor {
 				// If we're on a dry run, return before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerPropCalls.push(`${this.libUser.use("registerProp", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(observedProp.name)}", ${JSON.stringify(this.typeExtractor.getType(observedProp.type == null ? observedProp.initializer == null ? "any" : this.astUtil.getTypeNameOfExpression(observedProp.initializer) : this.codeAnalyzer.typeNodeService.getNameOfType(observedProp.type)))}, ${this.codeAnalyzer.modifierService.isStatic(observedProp)}, <any>this);`);
+				registerPropCalls.push(`${this.libUser.use("registerProp", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(observedProp.name)}", ${JSON.stringify(this.typeExtractor.getType(observedProp.type == null ? observedProp.initializer == null ? "any" : this.astUtil.getTypeNameOfExpression(observedProp.initializer) : this.codeAnalyzer.typeNodeService.getNameOfType(observedProp.type)))}, ${this.codeAnalyzer.modifierService.isStatic(observedProp)}, this);`);
 
 				// Remove the @prop decorator
 				context.container.remove(decorator.pos, decorator.end);

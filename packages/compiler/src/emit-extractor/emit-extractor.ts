@@ -57,7 +57,7 @@ export class EmitExtractor implements IEmitExtractor {
 				// The emit contents will either be empty if @emit() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				const emitContents = !isCallExpression(decorator.expression) || decorator.expression.arguments.length === 0 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
-				registerEmitterCalls.push(`${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`);
+				registerEmitterCalls.push(`${this.libUser.use("registerEmitter", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`);
 
 				// Remove the @emit decorator from it
 				context.container.remove(decorator.pos, decorator.end);

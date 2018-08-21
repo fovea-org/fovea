@@ -81,7 +81,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 				// If we're on a dry run, return true before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerVisibilityObserverCalls.push(`${this.libUser.use("registerVisibilityObserver", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${visible}${argumentContents});`);
+				registerVisibilityObserverCalls.push(`${this.libUser.use("registerVisibilityObserver", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(method.name)}", ${this.codeAnalyzer.modifierService.isStatic(method)}, ${visible}${argumentContents});`);
 
 				// Remove the @onBecameVisible or @onBecameInvisible decorator from it
 				context.container.remove(decorator.pos, decorator.end);

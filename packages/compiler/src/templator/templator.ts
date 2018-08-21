@@ -254,7 +254,7 @@ export class Templator implements ITemplator {
 		const {compilerOptions, context} = options;
 
 		// Generate the 'use' instruction
-		return `${this.libUser.use("use", compilerOptions, context)}(<any>this, ${JSON.stringify(items)});`;
+		return `${this.libUser.use("use", compilerOptions, context)}(this, ${JSON.stringify(items)});`;
 	}
 
 	/**
@@ -281,7 +281,7 @@ export class Templator implements ITemplator {
 		}
 
 		// Return the 'use' instruction
-		return `${this.libUser.use("use", compilerOptions, context)}(<any>this, ${scopeName});`;
+		return `${this.libUser.use("use", compilerOptions, context)}(this, ${scopeName});`;
 	}
 
 	/**

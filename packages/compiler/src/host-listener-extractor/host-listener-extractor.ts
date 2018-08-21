@@ -70,7 +70,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 				// If we're on a dry run, return true before mutating the SourceFile
 				if (compilerOptions.dryRun) return;
 
-				registerHostListenerCalls.push(`${this.libUser.use("registerHostListener", compilerOptions, context)}(<any>this, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
+				registerHostListenerCalls.push(`${this.libUser.use("registerHostListener", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(hostListenerMethod.name)}", ${this.codeAnalyzer.modifierService.isStatic(hostListenerMethod)}, ${firstArgumentContents}${secondArgumentContents});`);
 
 				// Remove the @listener decorator from it
 				context.container.remove(decorator.pos, decorator.end);
