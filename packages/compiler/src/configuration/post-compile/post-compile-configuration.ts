@@ -21,5 +21,6 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	connectCSSMethodName: "___connectCSS",
 	connectPropsMethodName: "___connectProps",
 	connectListenersMethodName: "___connectListeners",
-	connectVisibilityObserversMethodName: "___connectVisibilityObservers"
+	connectVisibilityObserversMethodName: "___connectVisibilityObservers",
+	connectChildListObserversMethodName: "___connectChildListObservers"
 };

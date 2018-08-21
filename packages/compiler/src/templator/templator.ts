@@ -18,6 +18,7 @@ import {ITemplatorUseOptions} from "./i-templator-use-options";
 import {ITemplatorRegisterOptions} from "./i-templator-register-options";
 import {containsOnlyWhitespace, isEmpty} from "@wessberg/stringutil";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
+import {LibHelperName} from "../../../common/src/lib-helper/lib-helper-name/lib-helper-name";
 
 /**
  * A class that generates template instructions to a Fovea component
@@ -47,6 +48,7 @@ export class Templator implements ITemplator {
 			this.configuration.preCompile.templateSrcDecoratorName,
 			this.configuration.postCompile.useTemplatesMethodName,
 			this.configuration.postCompile.connectTemplatesMethodName,
+			"connectTemplates",
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -63,6 +65,7 @@ export class Templator implements ITemplator {
 			this.configuration.preCompile.styleSrcDecoratorName,
 			this.configuration.postCompile.useCSSMethodName,
 			this.configuration.postCompile.connectCSSMethodName,
+			"connectCSS",
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -292,11 +295,12 @@ export class Templator implements ITemplator {
 	 * @param {string} srcDecoratorName
 	 * @param {string} staticUseMethodName
 	 * @param {string} connectMethodName
+	 * @param {LibHelperName} connectHelperName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, connectHelperName: LibHelperName, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
 		const {mark, compilerOptions, context, insertPlacement} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
@@ -342,7 +346,7 @@ export class Templator implements ITemplator {
 				);
 
 				const connectBody = (
-						`\n		${this.libUser.use("connectTemplates", compilerOptions, context)}(this);`
+						`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
 				);
 
 				// Create the "use" method

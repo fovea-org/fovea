@@ -1,16 +1,16 @@
 import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor, Json} from "@fovea/common";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 import {takeRelevantHost} from "../../host/take-relevant-host/take-relevant-host";
-import {onChildrenAdded, onChildrenRemoved} from "../dom-mutation-observer/dom-mutation-observer";
 import {parseTarget} from "../../target/parse-target";
-import {CHILD_LIST_OBSERVERS_FOR_HOST} from "./child-list-observers-for-host";
-import {BOUND_CHILD_LIST_OBSERVERS} from "./bound-child-list-observers";
+import {BOUND_CHILD_LIST_OBSERVERS} from "../../dom-mutation/child-list-observers-for-host/bound-child-list-observers";
+import {CHILD_LIST_OBSERVERS_FOR_HOST} from "../../dom-mutation/child-list-observers-for-host/child-list-observers-for-host";
+import {onChildrenAdded, onChildrenRemoved} from "../../dom-mutation/dom-mutation-observer/dom-mutation-observer";
 
 /**
- * Binds all child list observers for the given host
+ * Connects all child list observers for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function bindChildListObservers (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectChildListObservers (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 

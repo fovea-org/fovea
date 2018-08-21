@@ -92,21 +92,33 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 		// If there is at least 1 child list observer, add the prototype method
 		if (registerChildListObserverCalls.length > 0) {
 
-			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
-					? `\n		${registerChildListObserverCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
-					`\n		${registerChildListObserverCalls.join("\n		")}`
-			);
-
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerChildListObserverCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
+						`\n		${registerChildListObserverCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectChildListObservers", compilerOptions, context)}(this);`
+				);
+
+				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerChildListObserversMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
+					`\n	}`
+				);
+
+				// Create the connect method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectChildListObserversMethodName} (): void {` +
+					`${connectBody}` +
 					`\n	}`
 				);
 

@@ -1,16 +1,16 @@
 import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
-import {STATIC_CSS_FOR_HOST} from "./static-css-for-host";
 import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-root-for-node";
-import {rootHasStaticCSSTemplate} from "./root-has-static-css-template";
-import {setStaticCSSTemplateForRoot} from "./set-static-css-template-for-root";
-import {setStaticCSSForRoot} from "./set-static-css-for-root";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
+import {STATIC_CSS_FOR_HOST} from "../../css/static-css/static-css-for-host";
+import {rootHasStaticCSSTemplate} from "../../css/static-css/root-has-static-css-template";
+import {setStaticCSSTemplateForRoot} from "../../css/static-css/set-static-css-template-for-root";
+import {setStaticCSSForRoot} from "../../css/static-css/set-static-css-for-root";
 
 /**
- * Binds all static CSS for the given host
+ * Connects all CSS for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function bindStaticCSS (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectCSS (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 	const styles = STATIC_CSS_FOR_HOST.get(constructor);
