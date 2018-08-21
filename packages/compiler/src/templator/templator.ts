@@ -49,8 +49,10 @@ export class Templator implements ITemplator {
 			this.configuration.postCompile.useTemplatesMethodName,
 			this.configuration.postCompile.connectTemplatesMethodName,
 			this.configuration.postCompile.disposeTemplatesMethodName,
+			this.configuration.postCompile.destroyTemplatesMethodName,
 			"connectTemplates",
 			"disposeTemplates",
+			"destroyTemplates",
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -68,8 +70,10 @@ export class Templator implements ITemplator {
 			this.configuration.postCompile.useCSSMethodName,
 			this.configuration.postCompile.connectCSSMethodName,
 			this.configuration.postCompile.disposeCSSMethodName,
+			null,
 			"connectCSS",
 			"disposeCSS",
+			null,
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -299,13 +303,16 @@ export class Templator implements ITemplator {
 	 * @param {string} srcDecoratorName
 	 * @param {string} staticUseMethodName
 	 * @param {string} connectMethodName
+	 * @param {string} disposeMethodName
+	 * @param {string|null} destroyMethodName
 	 * @param {LibHelperName} connectHelperName
 	 * @param {LibHelperName} disposeHelperName
+	 * @param {LibHelperName|null} destroyHelperName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, disposeMethodName: string, connectHelperName: LibHelperName, disposeHelperName: LibHelperName, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, disposeMethodName: string, destroyMethodName: string|null, connectHelperName: LibHelperName, disposeHelperName: LibHelperName, destroyHelperName: LibHelperName|null, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
 		const {mark, compilerOptions, context, insertPlacement} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
@@ -381,6 +388,20 @@ export class Templator implements ITemplator {
 					`${disposeBody}` +
 					`\n	}`
 				);
+
+				if (destroyHelperName != null && destroyMethodName != null) {
+					const destroyBody = (
+						`\n		${this.libUser.use(destroyHelperName, compilerOptions, context)}(this);`
+					);
+
+					// Create the "destroy" method
+					context.container.appendLeft(
+						mark.classDeclaration.members.end,
+						`\n	protected ${destroyMethodName} (): void {` +
+						`${destroyBody}` +
+						`\n	}`
+					);
+				}
 
 				// Add an instruction to invoke the static "use" method immediately to register the templates/styles
 				const expression = `\n${mark.className}.${staticUseMethodName}();`;

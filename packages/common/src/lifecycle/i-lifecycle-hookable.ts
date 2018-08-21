@@ -23,4 +23,5 @@ export interface ILifecycleHookable {
 	___disposeChildListObservers? (): void;
 	___disposeAttributeChangeObservers? (): void;
 	___disposeHostAttributes? (): void;
+	___destroyTemplates? (): void;
 }

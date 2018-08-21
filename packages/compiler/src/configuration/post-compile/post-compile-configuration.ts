@@ -32,5 +32,6 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	disposeCSSMethodName: "___disposeCSS",
 	disposeChildListObserversMethodName: "___disposeChildListObservers",
 	disposeAttributeChangeObserversMethodName: "___disposeAttributeChangeObservers",
-	disposeHostAttributesMethodName: "___disposeHostAttributes"
+	disposeHostAttributesMethodName: "___disposeHostAttributes",
+	destroyTemplatesMethodName: "___destroyTemplates"
 };

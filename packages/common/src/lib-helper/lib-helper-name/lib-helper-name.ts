@@ -37,6 +37,8 @@ export const libHelperName = {
 	disposeChildListObservers: "___disposeChildListObservers",
 	disposeAttributeChangeObservers: "___disposeAttributeChangeObservers",
 	disposeHostAttributes: "___disposeHostAttributes",
+	destroy: "___destroy",
+	destroyTemplates: "___destroyTemplates",
 	registerStaticTemplate: "___registerStaticTemplate",
 	useStaticTemplate: "___useStaticTemplate",
 	registerProp: "___registerProp",
@@ -56,8 +58,7 @@ export const libHelperName = {
 	useStaticCSS: "___useStaticCSS",
 	use: "___use",
 	dependsOn: "___dependsOn",
-	registerHostAttributes: "___registerHostAttributes",
-	destroy: "___destroy"
+	registerHostAttributes: "___registerHostAttributes"
 };
 
 export declare type LibHelperName = keyof typeof libHelperName;

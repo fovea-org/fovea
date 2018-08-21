@@ -31,4 +31,5 @@ export interface IPostCompileConfiguration {
 	disposeChildListObserversMethodName: string;
 	disposeAttributeChangeObserversMethodName: string;
 	disposeHostAttributesMethodName: string;
+	destroyTemplatesMethodName: string;
 }
