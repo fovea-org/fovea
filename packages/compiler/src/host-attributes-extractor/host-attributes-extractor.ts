@@ -134,6 +134,10 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 					`\n		${this.libUser.use("connectHostAttributes", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeHostAttributes", compilerOptions, context)}(this);`
+				);
+
 				// Create the register method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
@@ -147,6 +151,14 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 					mark.classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectHostAttributesMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the dispose method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeHostAttributesMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

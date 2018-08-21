@@ -106,6 +106,10 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 					`\n		${this.libUser.use("connectVisibilityObservers", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeVisibilityObservers", compilerOptions, context)}(this);`
+				);
+
 				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
@@ -119,6 +123,14 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 					classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the 'dispose' method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

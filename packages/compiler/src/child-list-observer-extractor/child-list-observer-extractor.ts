@@ -106,6 +106,10 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 					`\n		${this.libUser.use("connectChildListObservers", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeChildListObservers", compilerOptions, context)}(this);`
+				);
+
 				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
@@ -119,6 +123,14 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 					classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectChildListObserversMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the dispose method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeChildListObserversMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

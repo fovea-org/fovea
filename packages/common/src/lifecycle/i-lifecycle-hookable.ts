@@ -15,4 +15,12 @@ export interface ILifecycleHookable {
 	___connectChildListObservers? (): void;
 	___connectAttributeChangeObservers? (): void;
 	___connectHostAttributes? (): void;
+	___disposeProps? (): void;
+	___disposeListeners? (): void;
+	___disposeVisibilityObservers? (): void;
+	___disposeCSS? (): void;
+	___disposeTemplates? (): void;
+	___disposeChildListObservers? (): void;
+	___disposeAttributeChangeObservers? (): void;
+	___disposeHostAttributes? (): void;
 }

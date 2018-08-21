@@ -48,7 +48,9 @@ export class Templator implements ITemplator {
 			this.configuration.preCompile.templateSrcDecoratorName,
 			this.configuration.postCompile.useTemplatesMethodName,
 			this.configuration.postCompile.connectTemplatesMethodName,
+			this.configuration.postCompile.disposeTemplatesMethodName,
 			"connectTemplates",
+			"disposeTemplates",
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -65,7 +67,9 @@ export class Templator implements ITemplator {
 			this.configuration.preCompile.styleSrcDecoratorName,
 			this.configuration.postCompile.useCSSMethodName,
 			this.configuration.postCompile.connectCSSMethodName,
+			this.configuration.postCompile.disposeCSSMethodName,
 			"connectCSS",
+			"disposeCSS",
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -296,11 +300,12 @@ export class Templator implements ITemplator {
 	 * @param {string} staticUseMethodName
 	 * @param {string} connectMethodName
 	 * @param {LibHelperName} connectHelperName
+	 * @param {LibHelperName} disposeHelperName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, connectHelperName: LibHelperName, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, disposeMethodName: string, connectHelperName: LibHelperName, disposeHelperName: LibHelperName, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
 		const {mark, compilerOptions, context, insertPlacement} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
@@ -346,7 +351,11 @@ export class Templator implements ITemplator {
 				);
 
 				const connectBody = (
-						`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
+					`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
+				);
+
+				const disposeBody = (
+					`\n		${this.libUser.use(disposeHelperName, compilerOptions, context)}(this);`
 				);
 
 				// Create the "use" method
@@ -357,11 +366,19 @@ export class Templator implements ITemplator {
 					`\n	}`
 				);
 
-				// Create the "connectTemplates" method
+				// Create the "connectTemplates|connectCSS" method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
 					`\n	protected ${connectMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the "disposeTemplates|disposeCSS" method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${disposeMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

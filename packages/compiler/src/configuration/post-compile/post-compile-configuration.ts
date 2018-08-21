@@ -24,5 +24,13 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	connectVisibilityObserversMethodName: "___connectVisibilityObservers",
 	connectChildListObserversMethodName: "___connectChildListObservers",
 	connectAttributeChangeObserversMethodName: "___connectAttributeChangeObservers",
-	connectHostAttributesMethodName: "___connectHostAttributes"
+	connectHostAttributesMethodName: "___connectHostAttributes",
+	disposePropsMethodName: "___disposeProps",
+	disposeListenersMethodName: "___disposeListeners",
+	disposeVisibilityObserversMethodName: "___disposeVisibilityObservers",
+	disposeTemplatesMethodName: "___disposeTemplates",
+	disposeCSSMethodName: "___disposeCSS",
+	disposeChildListObserversMethodName: "___disposeChildListObservers",
+	disposeAttributeChangeObserversMethodName: "___disposeAttributeChangeObservers",
+	disposeHostAttributesMethodName: "___disposeHostAttributes"
 };

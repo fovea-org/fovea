@@ -92,6 +92,10 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 					`\n		${this.libUser.use("connectAttributeChangeObservers", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeAttributeChangeObservers", compilerOptions, context)}(this);`
+				);
+
 				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
@@ -105,6 +109,14 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 					classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the dispose method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

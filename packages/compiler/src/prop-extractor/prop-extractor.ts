@@ -84,6 +84,10 @@ export class PropExtractor implements IPropExtractor {
 					`\n		${this.libUser.use("connectProps", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeProps", compilerOptions, context)}(this);`
+				);
+
 				// Create the 'register' method
 				context.container.appendLeft(
 					classDeclaration.members.end,
@@ -97,6 +101,14 @@ export class PropExtractor implements IPropExtractor {
 					classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the 'dispose' method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

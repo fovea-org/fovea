@@ -94,6 +94,10 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 					`\n		${this.libUser.use("connectListeners", compilerOptions, context)}(this);`
 				);
 
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeListeners", compilerOptions, context)}(this);`
+				);
+
 				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
@@ -107,6 +111,14 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 					classDeclaration.members.end,
 					`\n	protected ${this.configuration.postCompile.connectListenersMethodName} (): void {` +
 					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the dispose method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
+					`${disposeBody}` +
 					`\n	}`
 				);
 

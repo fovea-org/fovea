@@ -23,4 +23,12 @@ export interface IPostCompileConfiguration {
 	connectChildListObserversMethodName: string;
 	connectAttributeChangeObserversMethodName: string;
 	connectHostAttributesMethodName: string;
+	disposePropsMethodName: string;
+	disposeListenersMethodName: string;
+	disposeVisibilityObserversMethodName: string;
+	disposeCSSMethodName: string;
+	disposeTemplatesMethodName: string;
+	disposeChildListObserversMethodName: string;
+	disposeAttributeChangeObserversMethodName: string;
+	disposeHostAttributesMethodName: string;
 }
