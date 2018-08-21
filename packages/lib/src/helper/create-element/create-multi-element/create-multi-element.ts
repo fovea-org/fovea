@@ -10,6 +10,6 @@ import {ITemplateMultiElementOptions} from "../../../template/element/template-m
  * @param {() => TemplateElement} templateElement
  * @returns {ITemplateMultiElement}
  */
-export function __createMultiElement (selector: string, options: ITemplateMultiElementOptions, templateElement: () => TemplateElement): ITemplateMultiElement {
+export function ___createMultiElement (selector: string, options: ITemplateMultiElementOptions, templateElement: () => TemplateElement): ITemplateMultiElement {
 	return new TemplateMultiElement(options, templateElement, selector, null);
 }

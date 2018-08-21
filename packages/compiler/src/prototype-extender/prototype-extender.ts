@@ -182,9 +182,17 @@ export class PrototypeExtender implements IPrototypeExtender {
 			if (!parentIsComponent) {
 
 				if (!compilerOptions.dryRun) {
+
+					const bodyExtension = extension(nameArg, oldValueArg, newValueArg);
+					const body = (
+						`\n		${bodyExtension}`
+					);
+
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	public ${this.configuration.attributeChangedCallbackName} (${nameArgWithType()}, ${oldValueArgWithType()}, ${newValueArgWithType()}): void { ${extension(nameArg, oldValueArg, newValueArg)} }`
+						`\n	public ${this.configuration.attributeChangedCallbackName} (${nameArgWithType()}, ${oldValueArgWithType()}, ${newValueArgWithType()}): void {` +
+						`${body}` +
+						`\n	}`
 					);
 				}
 			}

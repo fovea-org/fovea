@@ -28,7 +28,7 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @setOnHost decorator and delegates it to the fovea-lib helper '__registerSetOnHost'.
+	 * Extracts all properties decorated with a @setOnHost decorator and delegates it to the fovea-lib helper '___registerSetOnHost'.
 	 * @param {ISetOnHostExtractorExtractOptions} options
 	 */
 	public extract (options: ISetOnHostExtractorExtractOptions): void {
@@ -45,7 +45,7 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 		// Store all calls to 'registerSetOnHost' here
 		const registerSetOnHostCalls: string[] = [];
 
-		// For each prop, generate a call to '__registerProp' and remove the '@prop' decorator
+		// For each prop, generate a call to '___registerProp' and remove the '@prop' decorator
 		allProps.forEach(setOnHostProperty => {
 
 			// Take all decorators for the method

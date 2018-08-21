@@ -7,6 +7,6 @@ import {customAttributes} from "../../custom-attribute/custom-attributes";
  * @param {ICustomAttributeConstructor} host
  * @private
  */
-export function __registerCustomAttribute (name: string, host: ICustomAttributeConstructor): void {
+export function ___registerCustomAttribute (name: string, host: ICustomAttributeConstructor): void {
 	customAttributes.define(name, host);
 }

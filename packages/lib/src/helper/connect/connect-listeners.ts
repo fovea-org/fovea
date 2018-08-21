@@ -1,15 +1,15 @@
 import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 import {listen} from "../../listen/listen";
-import {BOUND_HOST_LISTENERS} from "./bound-host-listeners";
-import {HOST_LISTENERS_FOR_HOST} from "./host-listeners-for-host/host-listeners-for-host";
 import {parseTarget} from "../../target/parse-target";
+import {BOUND_HOST_LISTENERS} from "../../listener/host-listener/bound-host-listeners";
+import {HOST_LISTENERS_FOR_HOST} from "../../listener/host-listener/host-listeners-for-host/host-listeners-for-host";
 
 /**
- * Binds all host listeners for the given host
+ * Connects all listeners for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function bindHostListeners (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectListeners (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 

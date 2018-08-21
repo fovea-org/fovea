@@ -10,7 +10,7 @@ import {setRootForNode} from "../../host/root-for-node/set-root-for-node/set-roo
  * @param {ICustomAttribute} host
  * @private
  */
-export function __connectCustomAttribute (host: ICustomAttribute): void {
+export function ___connectCustomAttribute (host: ICustomAttribute): void {
 	if (!isUpgraded(host)) {
 		// Map the host to its' ShadowRoot
 		setRootForNode(host, getRootForNode(getHostElementForHost(host)));

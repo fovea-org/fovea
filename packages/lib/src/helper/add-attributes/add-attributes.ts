@@ -1,4 +1,4 @@
-import {__addAttribute} from "../add-attribute/add-attribute";
+import {___addAttribute} from "../add-attribute/add-attribute";
 import {ExpressionChain} from "@fovea/common";
 import {TemplateElement} from "../../template/element/template-element/template-element";
 
@@ -8,6 +8,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {TemplateElement} element
  * @param {...[string, ExpressionChain|undefined]} attributes
  */
-export function __addAttributes (element: TemplateElement, ...attributes: [string, ExpressionChain|undefined][]): void {
-	attributes.forEach(([key, value]) => __addAttribute(element, key, value));
+export function ___addAttributes (element: TemplateElement, ...attributes: [string, ExpressionChain|undefined][]): void {
+	attributes.forEach(([key, value]) => ___addAttribute(element, key, value));
 }

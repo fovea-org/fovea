@@ -30,7 +30,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @onAttributeChange decorator and delegates it to the @fovea/lib helper '__registerAttributeChangeObserver'.
+	 * Extracts all properties decorated with a @onAttributeChange decorator and delegates it to the @fovea/lib helper '___registerAttributeChangeObserver'.
 	 * @param {IOnAttributeChangeExtractorExtractOptions} options
 	 */
 	public extract (options: IOnAttributeChangeExtractorExtractOptions): void {
@@ -48,7 +48,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		// Store all calls to 'registerAttributeChangeObserver' here
 		const registerAttributeChangeObserverCalls: string[] = [];
 
-		// For each method, generate a call to '__registerAttributeChangeObserver' and remove the '@onAttributeChange' decorator
+		// For each method, generate a call to '___registerAttributeChangeObserver' and remove the '@onAttributeChange' decorator
 		allMethods.forEach(onAttributeChangeMethod => {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, onAttributeChangeMethod);

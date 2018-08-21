@@ -7,7 +7,7 @@ import {addStaticTemplate} from "../../template/static-template/add-static-templ
  * @param {string} identifier
  * @private
  */
-export function __registerStaticTemplate (templateFunction: () => TemplateNode[], identifier: string): void {
+export function ___registerStaticTemplate (templateFunction: () => TemplateNode[], identifier: string): void {
 	// For now, just invoke it immediately
 	addStaticTemplate(templateFunction(), identifier);
 }

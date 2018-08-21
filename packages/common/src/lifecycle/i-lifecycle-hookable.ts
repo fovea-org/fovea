@@ -9,4 +9,6 @@ export interface ILifecycleHookable {
 	// These hooks are specific to Fovea
 	___connectTemplate? (): void;
 	___connectProps? (): void;
+	___connectListeners? (): void;
+	___connectVisibilityObservers? (): void;
 }

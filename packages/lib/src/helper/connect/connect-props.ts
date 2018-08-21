@@ -14,7 +14,7 @@ import {INITIALIZED_PROPS_FOR_HOST} from "../../prop/initialized-props-for-host/
  * Connects all props for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function __connectProps (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectProps (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 

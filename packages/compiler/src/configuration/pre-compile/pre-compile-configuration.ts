@@ -8,7 +8,7 @@ export const preCompileConfiguration: IPreCompileConfiguration = {
 	styleSrcDecoratorName: "styleSrc",
 	setOnHostDecoratorName: "setOnHost",
 	emitDecoratorName: "emit",
-	hostListenerDecoratorName: "listener",
+	listenerDecoratorName: "listener",
 	dependsOnDecoratorName: "dependsOn",
 	onBecameVisibleDecoratorName: "onBecameVisible",
 	onBecameInvisibleDecoratorName: "onBecameInvisible",

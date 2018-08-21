@@ -36,7 +36,7 @@ export class DependencyImporter implements IDependencyImporter {
 	}
 
 	/**
-	 * Adds import statements and calls the lib helper '__dependsOn' for each
+	 * Adds import statements and calls the lib helper '___dependsOn' for each
 	 * component or custom attribute that the component depends on
 	 * @param {IDependencyImporterImportOptions} options
 	 */
@@ -79,7 +79,7 @@ export class DependencyImporter implements IDependencyImporter {
 			.forEach((name: string) => dependsOnIdentifiers.add(name));
 
 		if (!compilerOptions.dryRun && dependsOnIdentifiers.size > 0) {
-			// Invoke '__dependsOn' with each imported name
+			// Invoke '___dependsOn' with each imported name
 			context.container.appendAtPlacement(
 				`\n${this.libUser.use("dependsOn", compilerOptions, context)}(${[...dependsOnIdentifiers].map(name => `${name}`).join(", ")});`,
 				insertPlacement

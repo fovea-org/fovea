@@ -7,7 +7,7 @@ import {getHostElementForHost} from "../../host/host-element-for-host/get-host-e
  * @returns {ShadowRoot}
  * @private
  */
-export function __addShadowRoot (host: IFoveaHost): ShadowRoot {
+export function ___addShadowRoot (host: IFoveaHost): ShadowRoot {
 	return getHostElementForHost(host)
 		.attachShadow({mode: "open"});
 }

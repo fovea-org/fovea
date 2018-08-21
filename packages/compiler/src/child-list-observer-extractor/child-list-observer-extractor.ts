@@ -38,7 +38,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @onChildrenAdded or @onChildrenRemoved decorator and delegates it to the fovea-lib helper '__registerChildListObserver'.
+	 * Extracts all properties decorated with a @onChildrenAdded or @onChildrenRemoved decorator and delegates it to the fovea-lib helper '___registerChildListObserver'.
 	 * @param {IChildListObserverExtractorExtractOptions} options
 	 */
 	public extract (options: IChildListObserverExtractorExtractOptions): void {
@@ -59,7 +59,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 		// Store all calls to 'registerChildListObserver' here
 		const registerChildListObserverCalls: string[] = [];
 
-		// For each method, generate a call to '__registerChildListObserver' and remove the '@[onChildrenAdded|onChildrenRemoved]' decorator
+		// For each method, generate a call to '___registerChildListObserver' and remove the '@[onChildrenAdded|onChildrenRemoved]' decorator
 		allMethods.forEach(({method, added}) => {
 
 			// Take the relevant decorator name

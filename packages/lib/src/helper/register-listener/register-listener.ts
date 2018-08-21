@@ -10,7 +10,7 @@ import {addHostListenersForHost} from "../../listener/host-listener/host-listene
  * @param {Partial<IHostListenerBaseOptions>} options
  * @private
  */
-export function __registerHostListener (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, name: string|string[], options?: Partial<IHostListenerBaseOptions>): void {
+export function ___registerListener (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, name: string|string[], options?: Partial<IHostListenerBaseOptions>): void {
 	const passive = options == null || options.passive == null ? undefined : options.passive;
 	const once = options == null || options.once == null ? false : options.once;
 	const condition = options == null || options.condition == null ? true : options.condition;

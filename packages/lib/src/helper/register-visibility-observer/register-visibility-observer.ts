@@ -10,7 +10,7 @@ import {addVisibilityObserversForHost} from "../../visibility/host-visibility-ob
  * @param {Partial<IVisibilityObserverBaseOptions>} [options]
  * @private
  */
-export function __registerVisibilityObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, visible: boolean, options?: Partial<IVisibilityObserverBaseOptions>): void {
+export function ___registerVisibilityObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, visible: boolean, options?: Partial<IVisibilityObserverBaseOptions>): void {
 	const target = options == null || options.target == null ? undefined : options.target;
 	addVisibilityObserversForHost(host, {method: {name: method, isStatic}, visible, target});
 }

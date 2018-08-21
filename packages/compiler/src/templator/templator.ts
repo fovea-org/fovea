@@ -184,7 +184,7 @@ export class Templator implements ITemplator {
 				generatedHashes.push(...templateResult.generatedHashes);
 			}
 
-			// For the static styles, generate call to '__registerStaticCSS' with the styles unless it has them already or unless they are empty!
+			// For the static styles, generate call to '___registerStaticCSS' with the styles unless it has them already or unless they are empty!
 			if (hasStaticCSS) {
 				// Generate a hash
 				const hash = this.generateStylesHash(resolvedPath);

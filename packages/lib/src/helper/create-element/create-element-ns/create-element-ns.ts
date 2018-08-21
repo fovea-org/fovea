@@ -7,6 +7,6 @@ import {SVG_NAMESPACE_NAME} from "@fovea/common";
  * @param {string} qualifiedName
  * @returns {ITemplateNormalElement}
  */
-export function __createElementNS (qualifiedName: string): ITemplateNormalElement {
+export function ___createElementNS (qualifiedName: string): ITemplateNormalElement {
 	return new TemplateNormalElement(qualifiedName, SVG_NAMESPACE_NAME);
 }

@@ -30,7 +30,7 @@ export class PropExtractor implements IPropExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @prop decorator and delegates it to the fovea-lib helper '__registerProp'.
+	 * Extracts all properties decorated with a @prop decorator and delegates it to the fovea-lib helper '___registerProp'.
 	 * @param {IPropExtractorExtractOptions} options
 	 */
 	public extract (options: IPropExtractorExtractOptions): void {
@@ -48,7 +48,7 @@ export class PropExtractor implements IPropExtractor {
 		// Store all calls to 'registerProp' here
 		const registerPropCalls: string[] = [];
 
-		// For each prop, generate a call to '__registerProp' and remove the '@prop' decorator
+		// For each prop, generate a call to '___registerProp' and remove the '@prop' decorator
 		allProps.forEach(observedProp => {
 
 			// Take all decorators for the method
@@ -70,25 +70,37 @@ export class PropExtractor implements IPropExtractor {
 		// If there is at least 1 prop, add the prototype method
 		if (registerPropCalls.length > 0) {
 
-			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
-					? `\n		${registerPropCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
-					`\n		${registerPropCalls.join("\n		")}`
-			);
-
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerPropCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
+						`\n		${registerPropCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectProps", compilerOptions, context)}(this);`
+				);
+
+				// Create the 'register' method
 				context.container.appendLeft(
 					classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
 					`\n	}`
 				);
 
-				// Add an instruction to invoke the static method
+				// Create the 'connect' method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
+					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Add an instruction to invoke the register method
 				context.container.appendAtPlacement(
 					`\n${className}.${this.configuration.postCompile.registerPropsMethodName}();`,
 					insertPlacement

@@ -38,7 +38,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 	}
 
 	/**
-	 * Extracts all properties decorated with a @onBecameVisible or @onBecameInvisible decorator and delegates it to the fovea-lib helper '__registerVisibilityObserver'.
+	 * Extracts all properties decorated with a @onBecameVisible or @onBecameInvisible decorator and delegates it to the fovea-lib helper '___registerVisibilityObserver'.
 	 * @param {IVisibilityObserverExtractorExtractOptions} options
 	 */
 	public extract (options: IVisibilityObserverExtractorExtractOptions): void {
@@ -59,7 +59,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 		// Store all calls to 'registerVisibilityObserver' here
 		const registerVisibilityObserverCalls: string[] = [];
 
-		// For each method, generate a call to '__registerVisibilityObserver' and remove the '@[onBecameVisible|onBecameInvisible]' decorator
+		// For each method, generate a call to '___registerVisibilityObserver' and remove the '@[onBecameVisible|onBecameInvisible]' decorator
 		allMethods.forEach(({method, visible}) => {
 
 			// Take the relevant decorator name
@@ -92,21 +92,33 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 		// If there is at least 1 visibility observer, add the prototype method
 		if (registerVisibilityObserverCalls.length > 0) {
 
-			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
-					? `\n		${registerVisibilityObserverCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
-					`\n		${registerVisibilityObserverCalls.join("\n		")}`
-			);
-
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerVisibilityObserverCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
+						`\n		${registerVisibilityObserverCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectVisibilityObservers", compilerOptions, context)}(this);`
+				);
+
+				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerVisibilityObserversMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
+					`\n	}`
+				);
+
+				// Create the 'connect' method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
+					`${connectBody}` +
 					`\n	}`
 				);
 

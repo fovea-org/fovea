@@ -10,7 +10,7 @@ import {addAttributeChangeObserversForHost} from "../../dom-mutation/attribute-c
  * @param {Partial<IMutationObserverBaseOptions>} options
  * @private
  */
-export function __registerAttributeChangeObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, attributes: string|string[], options?: Partial<IMutationObserverBaseOptions>): void {
+export function ___registerAttributeChangeObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, attributes: string|string[], options?: Partial<IMutationObserverBaseOptions>): void {
 	const attributeNames: string[] = Array.isArray(attributes) ? attributes : [attributes];
 	const target = options == null || options.target == null ? undefined : options.target;
 

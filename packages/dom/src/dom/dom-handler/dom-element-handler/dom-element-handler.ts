@@ -209,7 +209,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	}
 
 	/**
-	 * Handles all the listeners on the node. Will generate '__addListener' or '__addListeners' instructions, depending on the amount of listeners.
+	 * Handles all the listeners on the node. Will generate '___addListener' or '___addListeners' instructions, depending on the amount of listeners.
 	 * @param {NodeUuid | FoveaDOMAstElement} element
 	 * @param {IContext} context
 	 * @returns {IDOMElementHandlerAddListenersResult[]}

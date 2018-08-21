@@ -28,7 +28,7 @@ export class EmitExtractor implements IEmitExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @emit decorator and delegates it to the fovea-lib helper '__registerEmitter'.
+	 * Extracts all properties decorated with a @emit decorator and delegates it to the fovea-lib helper '___registerEmitter'.
 	 * @param {IEmitExtractorExtractOptions} options
 	 */
 	public extract (options: IEmitExtractorExtractOptions): void {
@@ -46,7 +46,7 @@ export class EmitExtractor implements IEmitExtractor {
 		// Store all calls to 'registerEmitter' here
 		const registerEmitterCalls: string[] = [];
 
-		// For each prop, generate a call to '__registerEmitter' and remove the '@emit' decorator
+		// For each prop, generate a call to '___registerEmitter' and remove the '@emit' decorator
 		allProps.forEach(emitProperty => {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, emitProperty);

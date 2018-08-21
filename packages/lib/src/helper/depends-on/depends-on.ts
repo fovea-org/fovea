@@ -7,7 +7,7 @@ import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common"
  * @param {...(IFoveaHostConstructor|ICustomAttributeConstructor)[]} _components
  * @private
  */
-export function __dependsOn (..._components: (IFoveaHostConstructor|ICustomAttributeConstructor)[]): void {
+export function ___dependsOn (..._components: (IFoveaHostConstructor|ICustomAttributeConstructor)[]): void {
 	// This is to defeat tree-shaking
 	clearTimeout(setTimeout(() => {
 	}));

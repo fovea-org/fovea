@@ -15,7 +15,7 @@ export class PropertiesToAttributesMapper implements IPropertiesToAttributesMapp
 	}
 
 	/**
-	 * Extracts all properties that should be observed or set on the host and delegates them to the fovea-lib helper '__mapPropertiesToAttributes'
+	 * Extracts all properties that should be observed or set on the host and delegates them to the fovea-lib helper '___mapPropertiesToAttributes'
 	 * @param {ClassDeclaration | ClassExpression} classDeclaration
 	 * @param {IPlacement} insertPlacement
 	 * @param {IFoveaCompilerOptions} compilerOptions

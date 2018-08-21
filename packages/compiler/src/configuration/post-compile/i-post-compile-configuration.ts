@@ -7,7 +7,7 @@ export interface IPostCompileConfiguration {
 	registerChangeObserversMethodName: string;
 	registerPropsMethodName: string;
 	registerSetOnHostPropsMethodName: string;
-	registerHostListenersMethodName: string;
+	registerListenersMethodName: string;
 	registerEmittersMethodName: string;
 	registerVisibilityObserversMethodName: string;
 	registerChildListObserversMethodName: string;
@@ -17,4 +17,7 @@ export interface IPostCompileConfiguration {
 	useTemplatesMethodName: string;
 	connectTemplatesMethodName: string;
 	connectCSSMethodName: string;
+	connectPropsMethodName: string;
+	connectListenersMethodName: string;
+	connectVisibilityObserversMethodName: string;
 }

@@ -1,5 +1,5 @@
 import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
-import {__construct} from "./construct";
+import {construct} from "./construct";
 import {IFoveaHost} from "../../../../common/src/fovea-host/i-fovea-host";
 import {setHostForNode} from "../../host/host-for-node/set-host-for-node/set-host-for-node";
 
@@ -9,10 +9,10 @@ import {setHostForNode} from "../../host/host-for-node/set-host-for-node/set-hos
  * @param {Element} [hostElement]
  * @private
  */
-export function __constructFoveaHost (host: IFoveaHost, hostElement: Element = host): void {
+export function ___constructFoveaHost (host: IFoveaHost, hostElement: Element = host): void {
 	// Mark the host node as the host itself.
 	setHostForNode(host, host);
 
 	// Invoke the common construct functionality
-	CONSTRUCTED_HOSTS.add(host, __construct(host, hostElement));
+	CONSTRUCTED_HOSTS.add(host, construct(host, hostElement));
 }

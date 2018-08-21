@@ -30,7 +30,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @onChange decorator and delegates it to the fovea-lib helper '__registerChangeObserver'.
+	 * Extracts all properties decorated with a @onChange decorator and delegates it to the fovea-lib helper '___registerChangeObserver'.
 	 * @param {IOnChangeExtractorExtractOptions} options
 	 */
 	public extract (options: IOnChangeExtractorExtractOptions): void {

@@ -6,7 +6,7 @@ export interface IPreCompileConfiguration {
 	templateSrcDecoratorName: string;
 	styleSrcDecoratorName: string;
 	emitDecoratorName: string;
-	hostListenerDecoratorName: string;
+	listenerDecoratorName: string;
 	hostAttributesDecoratorName: string;
 	dependsOnDecoratorName: string;
 	onBecameVisibleDecoratorName: string;

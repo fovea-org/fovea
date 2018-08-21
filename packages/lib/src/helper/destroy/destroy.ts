@@ -8,7 +8,7 @@ import {disposeOrDestroyShared} from "../dispose/dispose-or-destroy-shared";
  * @param {IFoveaHost|ICustomAttribute} host
  * @private
  */
-export function __destroy (host: IFoveaHost|ICustomAttribute): void {
+export function ___destroy (host: IFoveaHost|ICustomAttribute): void {
 	disposeOrDestroyShared(host);
 
 	// If it has been upgraded, destroy upgraded features

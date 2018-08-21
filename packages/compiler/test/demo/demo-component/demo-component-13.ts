@@ -1,12 +1,15 @@
 /*tslint:disable*/
 // @ts-ignore
-import {onAttributeChange, templateSrc} from "@fovea/core";
+import {onAttributeChange, templateSrc, prop, onBecameVisible, onBecameInvisible, listener} from "@fovea/core";
 
 @templateSrc("./demo-component-1.html")
 class Foo extends HTMLElement {
-	public bar: string;
+	@prop public bar: string;
 
 	@onAttributeChange("disabled", {target: "this"})
+	@listener("click")
+	@onBecameVisible()
+	@onBecameInvisible()
 	onFoo () {
 	}
 }

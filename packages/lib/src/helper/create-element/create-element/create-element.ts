@@ -6,6 +6,6 @@ import {TemplateNormalElement} from "../../../template/element/template-normal-e
  * @param {string} selector
  * @returns {ITemplateNormalElement}
  */
-export function __createElement (selector: string): ITemplateNormalElement {
+export function ___createElement (selector: string): ITemplateNormalElement {
 	return new TemplateNormalElement(selector, null);
 }

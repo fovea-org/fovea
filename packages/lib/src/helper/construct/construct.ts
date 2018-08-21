@@ -13,7 +13,7 @@ import {IDestroyable} from "../../destroyable/i-destroyable";
  * @param {Element} hostElement
  * @private
  */
-export function __construct (host: IFoveaHost|ICustomAttribute, hostElement: Element): IDestroyable {
+export function construct (host: IFoveaHost|ICustomAttribute, hostElement: Element): IDestroyable {
 
 	// Map the host element to the host
 	setHostElementForHost(host, hostElement);

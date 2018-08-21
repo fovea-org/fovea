@@ -7,6 +7,6 @@ import {Expression} from "@fovea/common";
  * @param {Expression} expression
  * @returns {ITemplateExpressionText}
  */
-export function __createExpressionTextNode (expression: Expression): ITemplateExpressionText {
+export function ___createExpressionTextNode (expression: Expression): ITemplateExpressionText {
 	return new TemplateExpressionText(expression);
 }

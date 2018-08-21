@@ -9,7 +9,7 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	registerChangeObserversMethodName: "___registerChangeObservers",
 	registerPropsMethodName: "___registerProps",
 	registerSetOnHostPropsMethodName: "___registerSetOnHostProps",
-	registerHostListenersMethodName: "___registerHostListeners",
+	registerListenersMethodName: "___registerListeners",
 	registerEmittersMethodName: "___registerEmitters",
 	registerVisibilityObserversMethodName: "___registerVisibilityObservers",
 	registerChildListObserversMethodName: "___registerChildListObservers",
@@ -18,5 +18,8 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	useCSSMethodName: "___useCSS",
 	useTemplatesMethodName: "___useTemplates",
 	connectTemplatesMethodName: "___connectTemplates",
-	connectCSSMethodName: "___connectCSS"
+	connectCSSMethodName: "___connectCSS",
+	connectPropsMethodName: "___connectProps",
+	connectListenersMethodName: "___connectListeners",
+	connectVisibilityObserversMethodName: "___connectVisibilityObservers"
 };

@@ -10,7 +10,7 @@ import {addChildListObserversForHost} from "../../dom-mutation/child-list-observ
  * @param {Partial<IMutationObserverBaseOptions>} [options]
  * @private
  */
-export function __registerChildListObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, added: boolean, options?: Partial<IMutationObserverBaseOptions>): void {
+export function ___registerChildListObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, added: boolean, options?: Partial<IMutationObserverBaseOptions>): void {
 	const target = options == null || options.target == null ? undefined : options.target;
 	addChildListObserversForHost(host, {method: {name: method, isStatic}, added, target});
 }

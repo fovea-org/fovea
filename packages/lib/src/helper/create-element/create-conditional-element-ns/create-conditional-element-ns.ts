@@ -10,6 +10,6 @@ import {TemplateElement} from "../../../template/element/template-element/templa
  * @param {() => TemplateElement} templateElement
  * @returns {ITemplateConditionalElement}
  */
-export function __createConditionalElementNS (qualifiedName: string, condition: ExpressionChain, templateElement: () => TemplateElement): ITemplateConditionalElement {
+export function ___createConditionalElementNS (qualifiedName: string, condition: ExpressionChain, templateElement: () => TemplateElement): ITemplateConditionalElement {
 	return new TemplateConditionalElement(condition, templateElement, qualifiedName, SVG_NAMESPACE_NAME);
 }

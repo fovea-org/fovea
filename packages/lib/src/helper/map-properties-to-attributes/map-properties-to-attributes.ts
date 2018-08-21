@@ -6,7 +6,7 @@ import {PropertyToAttributeTuple} from "./property-to-attribute-tuple";
  * @param {[string , string][]} tuples
  * @private
  */
-export function __mapPropertiesToAttributes (...tuples: PropertyToAttributeTuple[]): void {
+export function ___mapPropertiesToAttributes (...tuples: PropertyToAttributeTuple[]): void {
 	tuples.forEach(tuple => {
 
 		// If the tuple is just a string, the attribute name will be identical to the property name

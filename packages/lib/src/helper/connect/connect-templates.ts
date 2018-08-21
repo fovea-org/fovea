@@ -9,7 +9,7 @@ import {getHostElementForHost} from "../../host/host-element-for-host/get-host-e
  * Connects all templates for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function __connectTemplates (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectTemplates (host: IFoveaHost|ICustomAttribute): void {
 	const root = getRootForNode(getHostElementForHost(host));
 	if (root == null) return;
 

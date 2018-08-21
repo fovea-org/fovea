@@ -6,6 +6,6 @@ import {IFoveaHostConstructor} from "@fovea/common";
  * @param {IFoveaHostConstructor} host
  * @private
  */
-export function __registerElement (selector: string, host: IFoveaHostConstructor): void {
+export function ___registerElement (selector: string, host: IFoveaHostConstructor): void {
 	customElements.define(selector, host);
 }
