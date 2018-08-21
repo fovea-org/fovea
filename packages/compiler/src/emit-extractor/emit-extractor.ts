@@ -70,21 +70,21 @@ export class EmitExtractor implements IEmitExtractor {
 		// If there is at least 1 event emitter, add the prototype method
 		if (registerEmitterCalls.length > 0) {
 
-			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
-					? `\n		${registerEmitterCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
-					`\n		${registerEmitterCalls.join("\n		")}`
-			);
-
 			if (!compilerOptions.dryRun) {
+
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerEmitterCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
+						`\n		${registerEmitterCalls.join("\n		")}`
+				);
 
 				// Create the static method
 				context.container.appendLeft(
 					classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
 					`\n	}`
 				);
 

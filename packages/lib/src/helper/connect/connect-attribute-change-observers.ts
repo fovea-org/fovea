@@ -1,16 +1,16 @@
 import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor, Json} from "@fovea/common";
 import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
 import {takeRelevantHost} from "../../host/take-relevant-host/take-relevant-host";
-import {onAttributesChanged} from "../dom-mutation-observer/dom-mutation-observer";
 import {parseTarget} from "../../target/parse-target";
-import {BOUND_ATTRIBUTE_CHANGE_OBSERVERS} from "./bound-attribute-change-observers";
-import {ATTRIBUTE_CHANGE_OBSERVERS_FOR_HOST} from "./attribute-change-observers-for-host";
+import {BOUND_ATTRIBUTE_CHANGE_OBSERVERS} from "../../dom-mutation/attribute-change-observers-for-host/bound-attribute-change-observers";
+import {ATTRIBUTE_CHANGE_OBSERVERS_FOR_HOST} from "../../dom-mutation/attribute-change-observers-for-host/attribute-change-observers-for-host";
+import {onAttributesChanged} from "../../dom-mutation/dom-mutation-observer/dom-mutation-observer";
 
 /**
- * Binds all attribute change observers for the given host
+ * Connects all attribute change observers for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function bindAttributeChangeObservers (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectAttributeChangeObservers (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 

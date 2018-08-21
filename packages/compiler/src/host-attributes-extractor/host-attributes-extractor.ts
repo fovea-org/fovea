@@ -118,25 +118,38 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				this.stats.setReferencedCustomSelectors(context.container.file, [...existingReferencedCustomSelectors, ...referencedCustomSelectors]);
 			}
 
-			const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, this);`;
-
-			const body = (
-				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
-					? `\n		${expression}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
-					`\n		${expression}`
-			);
-
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, this);`;
+
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+						? `\n		${expression}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
+						`\n		${expression}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectHostAttributes", compilerOptions, context)}(this);`
+				);
+
+				// Create the register method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerHostAttributesMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
 					`\n	}`
 				);
+
+				// Create the connect method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectHostAttributesMethodName} (): void {` +
+					`${connectBody}` +
+					`\n	}`
+				);
+
 
 				// Add an instruction to invoke the static method
 				context.container.appendAtPlacement(

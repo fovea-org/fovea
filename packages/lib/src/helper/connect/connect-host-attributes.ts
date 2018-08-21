@@ -1,14 +1,14 @@
 import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
-import {BOUND_HOST_ATTRIBUTES_FOR_HOST} from "../bound-host-attributes-for-host/bound-host-attributes-for-host";
-import {HOST_ATTRIBUTES_FOR_HOST} from "../host-attributes-for-host/host-attributes-for-host";
-import {hostAttributesHelperMap} from "../host-attributes-helper-map/host-attributes-helper-map";
-import {HostAttributesCallback} from "../host-attributes-callback/host-attributes-callback";
+import {BOUND_HOST_ATTRIBUTES_FOR_HOST} from "../../host-attributes/bound-host-attributes-for-host/bound-host-attributes-for-host";
+import {HOST_ATTRIBUTES_FOR_HOST} from "../../host-attributes/host-attributes-for-host/host-attributes-for-host";
+import {HostAttributesCallback} from "../../host-attributes/host-attributes-callback/host-attributes-callback";
+import {hostAttributesHelperMap} from "../../host-attributes/host-attributes-helper-map/host-attributes-helper-map";
 
 /**
- * Binds all host attributes for the given host
+ * Connects all host attributes for the given host
  * @param {IFoveaHost | ICustomAttribute} host
  */
-export function bindHostAttributesForHost (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectHostAttributes (host: IFoveaHost|ICustomAttribute): void {
 
 	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
 

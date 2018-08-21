@@ -22,5 +22,7 @@ export const postCompileConfiguration: IPostCompileConfiguration = {
 	connectPropsMethodName: "___connectProps",
 	connectListenersMethodName: "___connectListeners",
 	connectVisibilityObserversMethodName: "___connectVisibilityObservers",
-	connectChildListObserversMethodName: "___connectChildListObservers"
+	connectChildListObserversMethodName: "___connectChildListObservers",
+	connectAttributeChangeObserversMethodName: "___connectAttributeChangeObservers",
+	connectHostAttributesMethodName: "___connectHostAttributes"
 };

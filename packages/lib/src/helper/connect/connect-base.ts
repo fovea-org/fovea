@@ -1,6 +1,4 @@
 import {ICustomAttribute, IFoveaHost} from "@fovea/common";
-import {bindHostAttributesForHost} from "../../host-attributes/bind-host-attributes-for-host/bind-host-attributes-for-host";
-import {bindAttributeChangeObservers} from "../../dom-mutation/attribute-change-observers-for-host/bind-attribute-change-observers";
 
 /**
  * Runs the common logic necessary to connect the provided host
@@ -14,6 +12,6 @@ export function connectBase (host: IFoveaHost|ICustomAttribute): void {
 	if (host.___connectVisibilityObservers != null) host.___connectVisibilityObservers();
 	if (host.___connectCSS != null) host.___connectCSS();
 	if (host.___connectChildListObservers != null) host.___connectChildListObservers();
-	bindAttributeChangeObservers(host);
-	bindHostAttributesForHost(host);
+	if (host.___connectAttributeChangeObservers != null) host.___connectAttributeChangeObservers();
+	if (host.___connectHostAttributes != null) host.___connectHostAttributes();
 }

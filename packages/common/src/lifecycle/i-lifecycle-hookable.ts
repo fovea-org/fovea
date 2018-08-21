@@ -13,4 +13,6 @@ export interface ILifecycleHookable {
 	___connectListeners? (): void;
 	___connectVisibilityObservers? (): void;
 	___connectChildListObservers? (): void;
+	___connectAttributeChangeObservers? (): void;
+	___connectHostAttributes? (): void;
 }

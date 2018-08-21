@@ -78,21 +78,33 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		// If there is at least 1 attribute change observer, add the prototype method
 		if (registerAttributeChangeObserverCalls.length > 0) {
 
-			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
-					? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
-					: `\n		// ts-ignore` +
-					`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
-					`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
-			);
-
 			if (!compilerOptions.dryRun) {
 
-				// Create the static method
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
+						`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectAttributeChangeObservers", compilerOptions, context)}(this);`
+				);
+
+				// Create the register method
 				context.container.appendLeft(
 					classDeclaration.members.end,
 					`\n	protected static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
-					`${body}` +
+					`${registerBody}` +
+					`\n	}`
+				);
+
+				// Create the connect method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
+					`${connectBody}` +
 					`\n	}`
 				);
 

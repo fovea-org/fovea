@@ -26,6 +26,8 @@ export const libHelperName = {
 	connectListeners: "___connectListeners",
 	connectVisibilityObservers: "___connectVisibilityObservers",
 	connectChildListObservers: "___connectChildListObservers",
+	connectAttributeChangeObservers: "___connectAttributeChangeObservers",
+	connectHostAttributes: "___connectHostAttributes",
 	dispose: "___dispose",
 	registerStaticTemplate: "___registerStaticTemplate",
 	useStaticTemplate: "___useStaticTemplate",

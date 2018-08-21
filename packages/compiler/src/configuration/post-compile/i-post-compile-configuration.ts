@@ -21,4 +21,6 @@ export interface IPostCompileConfiguration {
 	connectListenersMethodName: string;
 	connectVisibilityObserversMethodName: string;
 	connectChildListObserversMethodName: string;
+	connectAttributeChangeObserversMethodName: string;
+	connectHostAttributesMethodName: string;
 }
