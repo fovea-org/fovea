@@ -312,7 +312,7 @@ export class Templator implements ITemplator {
 	 * @returns {Promise<void>}
 	 */
 	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, disposeMethodName: string, destroyMethodName: string|null, connectHelperName: LibHelperName, disposeHelperName: LibHelperName, destroyHelperName: LibHelperName|null, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
-		const {mark, compilerOptions, context, insertPlacement} = options;
+		const {mark, compilerOptions, context} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
 		const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(new RegExp(`^${srcDecoratorName}`), mark.classDeclaration);
@@ -401,12 +401,6 @@ export class Templator implements ITemplator {
 						`\n	}`
 					);
 				}
-
-				// Add an instruction to invoke the static "use" method immediately to register the templates/styles
-				const expression = `\n${mark.className}.${staticUseMethodName}();`;
-				insertPlacement != null
-					? context.container.appendAtPlacement(expression, insertPlacement)
-					: context.container.prepend(expression);
 			}
 		}
 	}

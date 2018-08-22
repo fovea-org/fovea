@@ -10,6 +10,8 @@ export interface IStaticLifecycleHookable {
 	___registerChildListObservers? (): void;
 	___registerAttributeChangeObservers? (): void;
 	___registerHostAttributes? (): void;
+	___useCSS? (): void;
+	___useTemplates? (): void;
 }
 
 export interface ILifecycleHookable {

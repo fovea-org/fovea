@@ -5,7 +5,8 @@ import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common"
  * @param {IFoveaHostConstructor|ICustomAttributeConstructor} host
  */
 export function ___bootstrap (host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
-
+	if (host.___useCSS != null) host.___useCSS();
+	if (host.___useTemplates != null) host.___useTemplates();
 	if (host.___registerChangeObservers != null) host.___registerChangeObservers();
 	if (host.___registerProps != null) host.___registerProps();
 	if (host.___registerSetOnHostProps != null) host.___registerSetOnHostProps();
