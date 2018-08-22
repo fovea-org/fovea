@@ -34,8 +34,8 @@ export class PropExtractor implements IPropExtractor {
 	 * @param {IPropExtractorExtractOptions} options
 	 */
 	public extract (options: IPropExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
-		const {className, classDeclaration} = mark;
+		const {mark, context, compilerOptions} = options;
+		const {classDeclaration} = mark;
 
 		// Take all props that has a "@prop" decorator (which will be those that should be extracted)
 		const observedInstanceProps = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.configuration.preCompile.propDecoratorName, classDeclaration);
@@ -114,12 +114,6 @@ export class PropExtractor implements IPropExtractor {
 					`\n	protected ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the register method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerPropsMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

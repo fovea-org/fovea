@@ -18,6 +18,7 @@ export const libHelperName = {
 	addListeners: "___addListeners",
 	addShadowRoot: "___addShadowRoot",
 	attributeChanged: "___attributeChanged",
+	bootstrap: "___bootstrap",
 	connectFoveaHost: "___connectFoveaHost",
 	connectCustomAttribute: "___connectCustomAttribute",
 	connectTemplates: "___connectTemplates",

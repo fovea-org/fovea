@@ -32,9 +32,9 @@ export class EmitExtractor implements IEmitExtractor {
 	 * @param {IEmitExtractorExtractOptions} options
 	 */
 	public extract (options: IEmitExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 
-		const {className, classDeclaration} = mark;
+		const {classDeclaration} = mark;
 
 		// Take all props that has a "@emit" decorator
 		const emitInstanceProperties = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.decoratorNameRegex, mark.classDeclaration);
@@ -86,12 +86,6 @@ export class EmitExtractor implements IEmitExtractor {
 					`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
 					`${registerBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerEmittersMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

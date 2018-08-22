@@ -412,6 +412,14 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			// Add the relevant compiler flags based on the current stats
 			this.compilerFlagsExtender.extend(options);
 
+			// Add an instruction to bootstrap the component as the last statement
+			if (!options.compilerOptions.dryRun) {
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("bootstrap", compilerOptions, context)}(${options.mark.className});`,
+					insertPlacement
+				);
+			}
+
 			// Add the name of the class to the Set of all compiled components
 			const {componentNames} = this.foveaStats.getStatsForFile(context.container.file);
 			if (!componentNames.includes(mark.className)) {

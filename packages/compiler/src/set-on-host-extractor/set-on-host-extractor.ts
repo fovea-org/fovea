@@ -32,8 +32,8 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 	 * @param {ISetOnHostExtractorExtractOptions} options
 	 */
 	public extract (options: ISetOnHostExtractorExtractOptions): void {
-		const {mark, insertPlacement, compilerOptions, context} = options;
-		const {className, classDeclaration} = mark;
+		const {mark, compilerOptions, context} = options;
+		const {classDeclaration} = mark;
 
 		// Take all props that has a "@setOnHost" decorator
 		const setOnHostInstanceProperties = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.configuration.preCompile.setOnHostDecoratorName, classDeclaration);
@@ -83,12 +83,6 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 					`\n	protected static ${this.configuration.postCompile.registerSetOnHostPropsMethodName} (): void {` +
 					`${body}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

@@ -34,7 +34,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 	 * @param {IOnAttributeChangeExtractorExtractOptions} options
 	 */
 	public extract (options: IOnAttributeChangeExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 
 		const {className, classDeclaration} = mark;
 
@@ -118,12 +118,6 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 					`\n	protected ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

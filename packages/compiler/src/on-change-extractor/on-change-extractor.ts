@@ -34,7 +34,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 	 * @param {IOnChangeExtractorExtractOptions} options
 	 */
 	public extract (options: IOnChangeExtractorExtractOptions): void {
-		const {mark, context, insertPlacement, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 
 		const {className, classDeclaration} = mark;
 
@@ -91,12 +91,6 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 					`\n	protected static ${this.configuration.postCompile.registerChangeObserversMethodName} (): void {` +
 					`${body}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerChangeObserversMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

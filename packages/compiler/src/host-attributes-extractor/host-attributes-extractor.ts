@@ -59,7 +59,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 	 * @param {Decorator} decorator
 	 * @returns {void}
 	 */
-	private generateFromDecorator ({context, compilerOptions, mark, insertPlacement}: IHostAttributesExtractOptions, decorator: Decorator): void {
+	private generateFromDecorator ({context, compilerOptions, mark}: IHostAttributesExtractOptions, decorator: Decorator): void {
 		const addInvalidDecoratorDiagnostic = () => this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 		const addOnlyLiteralValuesSupportedHereDiagnostic = () => this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 
@@ -160,13 +160,6 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 					`\n	protected ${this.configuration.postCompile.disposeHostAttributesMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${mark.className}.${this.configuration.postCompile.registerHostAttributesMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

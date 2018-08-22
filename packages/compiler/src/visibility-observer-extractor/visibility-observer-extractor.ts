@@ -42,7 +42,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 	 * @param {IVisibilityObserverExtractorExtractOptions} options
 	 */
 	public extract (options: IVisibilityObserverExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 		const {className, classDeclaration} = mark;
 
 		// Take all methods that has a "@onBecameVisible" decorator
@@ -132,12 +132,6 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 					`\n	protected ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerVisibilityObserversMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

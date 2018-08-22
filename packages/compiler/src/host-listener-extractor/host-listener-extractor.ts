@@ -34,7 +34,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 	 * @param {IHostListenerExtractorExtractOptions} options
 	 */
 	public extract (options: IHostListenerExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 
 		const {className, classDeclaration} = mark;
 
@@ -120,12 +120,6 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 					`\n	protected ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerListenersMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

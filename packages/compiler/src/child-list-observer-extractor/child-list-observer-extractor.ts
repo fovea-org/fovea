@@ -42,7 +42,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 	 * @param {IChildListObserverExtractorExtractOptions} options
 	 */
 	public extract (options: IChildListObserverExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 		const {className, classDeclaration} = mark;
 
 		// Take all methods that has a "@onChildrenAdded" decorator
@@ -132,12 +132,6 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 					`\n	protected ${this.configuration.postCompile.disposeChildListObserversMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
-				);
-
-				// Add an instruction to invoke the static method
-				context.container.appendAtPlacement(
-					`\n${className}.${this.configuration.postCompile.registerChildListObserversMethodName}();`,
-					insertPlacement
 				);
 			}
 		}

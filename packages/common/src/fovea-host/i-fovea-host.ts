@@ -1,9 +1,9 @@
-import {ILifecycleHookable} from "../lifecycle/i-lifecycle-hookable";
+import {ILifecycleHookable, IStaticLifecycleHookable} from "../lifecycle/i-lifecycle-hookable";
 
 export interface IFoveaHost extends HTMLElement, ILifecycleHookable {
 }
 
-export interface IFoveaHostConstructor {
+export interface IFoveaHostConstructor extends IStaticLifecycleHookable {
 	___compilerFlags: string;
 	new (): IFoveaHost;
 }

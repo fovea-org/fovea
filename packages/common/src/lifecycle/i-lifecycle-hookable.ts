@@ -1,5 +1,17 @@
 // tslint:disable:no-any
 
+export interface IStaticLifecycleHookable {
+	___registerChangeObservers? (): void;
+	___registerProps? (): void;
+	___registerSetOnHostProps? (): void;
+	___registerListeners? (): void;
+	___registerEmitters? (): void;
+	___registerVisibilityObservers? (): void;
+	___registerChildListObservers? (): void;
+	___registerAttributeChangeObservers? (): void;
+	___registerHostAttributes? (): void;
+}
+
 export interface ILifecycleHookable {
 	connectedCallback? (): any;
 	disconnectedCallback? (): any;
