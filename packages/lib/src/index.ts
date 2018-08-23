@@ -1,4 +1,3 @@
-export {ICustomAttribute} from "@fovea/common";
 export {___use} from "./helper/use/use";
 export {___bootstrap} from "./helper/bootstrap/bootstrap";
 export {___connectCustomAttribute} from "./helper/connect/connect-custom-attribute";

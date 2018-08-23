@@ -5,7 +5,7 @@ import {DOMConnectionCallback} from "./dom-connection-callback";
 import {DOMCallbackCondition} from "./dom-callback-condition";
 import {IDOMConnectionObserverOptions} from "./i-dom-connection-observer-options";
 import {DOMAttributeCallback} from "./dom-attribute-callback";
-import {patch} from "./patch/patch";
+import {HAS_PATCHED_PROTOTYPES, patch} from "./patch/patch";
 import {ConnectionEventKind} from "../connection-event-kind";
 import {isConnected} from "../is-connected";
 
@@ -102,7 +102,6 @@ export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttribu
 }
 
 const previousConnectionStateMap: WeakMap<Function, boolean> = new WeakMap();
-patch();
 
 /**
  * Subscribes the given callback to the event that a Node is connected to the DOM
@@ -112,6 +111,8 @@ patch();
  * @returns {IDOMConnectionObserverResult}
  */
 export function onConnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	if (!HAS_PATCHED_PROTOTYPES()) patch();
+
 	let hasReceivedEvent: boolean = false;
 
 	const handler = (): boolean => {
@@ -156,6 +157,8 @@ export function onConnected (node: Node, callback: DOMConnectionCallback, {nextT
  * @returns {IDOMConnectionObserverResult}
  */
 export function onDisconnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	if (!HAS_PATCHED_PROTOTYPES()) patch();
+
 	let hasReceivedEvent: boolean = false;
 
 	const handler = (): boolean => {

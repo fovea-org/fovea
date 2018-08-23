@@ -2,6 +2,11 @@
 
 import {ConnectionEventKind} from "../../connection-event-kind";
 import {isConnected} from "../../is-connected";
+import {originalAfter, originalAppend, originalAppendChild, originalBefore, originalElementInnerHTML, originalElementInsertAdjacentElement, originalHTMLElementInnerHTML, originalHTMLElementInsertAdjacentElement, originalInsertAdjacentHtml, originalInsertBefore, originalPrepend, originalRemove, originalRemoveChild, originalReplaceChild, originalReplaceWith, originalSVGElementInnerHTML, originalSVGElementInsertAdjacentElement} from "./original";
+
+// Whether or not the patch has been applied
+let hasPatched: boolean = false;
+export const HAS_PATCHED_PROTOTYPES = () => hasPatched;
 
 /**
  * Fires an event on a Node
@@ -72,24 +77,6 @@ export function walkDeepDescendantElements (root: Node, callback: (node: Node) =
 	}
 }
 
-const originalInsertBefore = Node.prototype.insertBefore;
-const originalAppendChild = Node.prototype.appendChild;
-const originalRemoveChild = Node.prototype.removeChild;
-const originalReplaceChild = Node.prototype.replaceChild;
-const originalPrepend = (<any>Element).prototype.prepend;
-const originalAppend = (<any>Element).prototype.append;
-const originalBefore = (<any>Element).prototype.before;
-const originalAfter = (<any>Element).prototype.after;
-const originalReplaceWith = (<any>Element).prototype.replaceWith;
-const originalRemove = Element.prototype.remove;
-const originalInsertAdjacentHtml = Element.prototype.insertAdjacentHTML;
-const originalElementInsertAdjacentElement = Element.prototype.insertAdjacentElement;
-const originalHTMLElementInsertAdjacentElement = HTMLElement.prototype.insertAdjacentElement;
-const originalSVGElementInsertAdjacentElement = SVGElement.prototype.insertAdjacentElement;
-const originalElementInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
-const originalHTMLElementInnerHTML = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerHTML");
-const originalSVGElementInnerHTML = Object.getOwnPropertyDescriptor(SVGElement.prototype, "innerHTML");
-
 /**
  * Handles a DOM Mutation
  * @param {Node} node
@@ -135,6 +122,8 @@ function work<T extends Node, U extends Function|undefined> (nodes: T[]|T, opera
  * Patches Nodes, Elements, HTMLElements and SVGElements to fire events when they are connected and disconnected
  */
 export function patch (): void {
+	if (hasPatched) return;
+	hasPatched = true;
 
 	Node.prototype.insertBefore = function <T extends Node> (node: T, refChild: Node|null): T {
 		return work(node, <Function> originalInsertBefore.bind(this, node, refChild));
