@@ -6,7 +6,6 @@ export {ISourceCodeResult} from "./fovea-compiler/i-fovea-compiler-compile-resul
 export {FoveaDiagnosticKind} from "./diagnostics/fovea-diagnostic-kind";
 export {FoveaDiagnosticDegree} from "./diagnostics/fovea-diagnostic-degree";
 export {FoveaDiagnostic, IUnknownSelectorFoveaDiagnostic} from "./diagnostics/fovea-diagnostic";
-export {IWatchedFile} from "./fovea-compiler/i-fovea-compiler-compile-result";
 export {IImmutableFoveaStats} from "./stats/i-fovea-stats";
 export {FoveaCompilerCompileResult, IFoveaCompilerCompileChangeResult, IFoveaCompilerCompileNoChangeResult} from "./fovea-compiler/i-fovea-compiler-compile-result";
 export {IFoveaOptions} from "./options/i-fovea-options";

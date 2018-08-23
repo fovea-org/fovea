@@ -14,11 +14,6 @@ export interface ISourceCodeResult {
 	map: SourceMap;
 }
 
-export interface IWatchedFile {
-	file: string;
-	recompileOnChange: Set<string>;
-}
-
 export interface IFoveaCompilerCompileChangeResult extends IFoveaCompilerCompileResult, ISourceCodeResult {
 	hasChanged: true;
 	context: ICompilationContext;

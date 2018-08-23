@@ -39,6 +39,18 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
+	 * Returns all file dependencies
+	 * @returns {string[]}
+	 */
+	public get fileDependencies (): string[] {
+		const all = Array.from(this.fileToStatsMap.values());
+		if (all.length < 1) return [];
+		return all
+			.map(stats => stats.fileDependencies)
+			.reduce((first, next) => first.concat(next));
+	}
+
+	/**
 	 * Returns all registered component names
 	 * @returns {string[]}
 	 */
@@ -220,7 +232,8 @@ export class FoveaStats implements IFoveaStats {
 			hasTemplateAttributes: this.hasTemplateAttributes,
 			hasTemplateCustomAttributes: this.hasTemplateCustomAttributes,
 			hasTemplateListeners: this.hasTemplateListeners,
-			hasTemplateRefs: this.hasTemplateRefs
+			hasTemplateRefs: this.hasTemplateRefs,
+			fileDependencies: this.fileDependencies
 		};
 	}
 
@@ -240,6 +253,15 @@ export class FoveaStats implements IFoveaStats {
 	 */
 	public setReferencedCustomSelectors (file: string, customSelectors: IReferencedCustomSelector[]): void {
 		this.getMutableStatsForFile(file).referencedCustomSelectors = customSelectors;
+	}
+
+	/**
+	 * Sets the 'fileDependencies' property on the IFoveaStats for the given file
+	 * @param {string} file
+	 * @param {string[]} fileDependencies
+	 */
+	public setFileDependencies (file: string, fileDependencies: string[]): void {
+		this.getMutableStatsForFile(file).fileDependencies = fileDependencies;
 	}
 
 	/**
@@ -457,6 +479,7 @@ export class FoveaStats implements IFoveaStats {
 		this.fileToStatsMap.set(file, {
 			declaredCustomSelectors: [],
 			referencedCustomSelectors: [],
+			fileDependencies: [],
 			componentNames: [],
 			hasHostAttributes: false,
 			hasStaticCSS: false,

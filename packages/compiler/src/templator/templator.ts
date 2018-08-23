@@ -167,6 +167,9 @@ export class Templator implements ITemplator {
 		// Initialize the array of generated hashes
 		const generatedHashes: IUseItem[] = [];
 
+		// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+
 		try {
 			// Generate style instructions for the class
 			const {instanceCSS, staticCSS} = await this.foveaStyles.generate({
@@ -176,6 +179,10 @@ export class Templator implements ITemplator {
 				postCSSPlugins: compilerOptions.postcss == null || compilerOptions.postcss.plugins == null ? undefined : compilerOptions.postcss.plugins,
 				pluginConfigurationHook: compilerOptions.postcss == null || compilerOptions.postcss.hook == null ? undefined : compilerOptions.postcss.hook
 			});
+
+			// Resolve all imports of the file and mark them as dependencies
+			const {paths} = await this.foveaStyles.takeImportPaths({file: resolvedPath, template: content});
+			this.stats.setFileDependencies(context.container.file, [...paths, ...statsForFile.fileDependencies]);
 
 			hasInstanceCSS = instanceCSS != null && !isEmpty(instanceCSS) && !containsOnlyWhitespace(instanceCSS);
 			hasStaticCSS = staticCSS != null && !isEmpty(staticCSS) && !containsOnlyWhitespace(staticCSS);
@@ -214,8 +221,6 @@ export class Templator implements ITemplator {
 			this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_CSS, formattedErrorMessage: ex.toString()});
 		}
 
-		// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
-		const statsForFile = this.stats.getStatsForFile(context.container.file);
 		this.stats.setHasStaticCSS(context.container.file, hasStaticCSS || statsForFile.hasStaticCSS);
 
 		if (!compilerOptions.dryRun && shouldExport) {
@@ -283,10 +288,12 @@ export class Templator implements ITemplator {
 
 		// If we're not using a template or some styles from the same SourceFile, check if it already imports it and if not, add an import
 		if (!isSamePath) {
-			// Add an import for the file containing that resolved path - EVEN in a dry run! Otherwise, the files won't be added to the bundler
-			context.container.prepend(`import "${resolvedPath}";\n`);
 
-			// And then otherwise, if we are not in a dry run, add one more for the specific module we want to import (Yup, that's how Rollup works)
+			// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+			const statsForFile = this.stats.getStatsForFile(context.container.file);
+			this.stats.setFileDependencies(context.container.file, [resolvedPath, ...statsForFile.fileDependencies]);
+
+			// Import the module we want to use
 			if (!compilerOptions.dryRun) {
 				context.container.prepend(`\n// @ts-ignore\nimport {${scopeName}} from "${resolvedPath}";\n`);
 			}
