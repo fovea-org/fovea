@@ -98,6 +98,7 @@ export class WatchService implements IWatchService {
 						// Close the file watcher unless it has already been closed
 						if (Array.from(self.keyToWatcherMap.values()).includes(watcher)) {
 							watcher.close();
+							watcher.removeAllListeners();
 						}
 						// Remove it from the Map
 						self.keyToWatcherMap.delete(key);
