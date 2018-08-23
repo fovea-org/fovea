@@ -33,7 +33,7 @@
 	},
 	"preferGlobal": true,
 	"name": "@fovea/cli",
-	"version": "1.0.123",
+	"version": "1.0.124",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -42,9 +42,9 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.123",
-		"@fovea/rollup-plugin-fovea": "^1.0.123",
-		"@fovea/style": "^1.0.123",
+		"@fovea/compiler": "^1.0.124",
+		"@fovea/rollup-plugin-fovea": "^1.0.124",
+		"@fovea/style": "^1.0.124",
 		"@types/chokidar": "^1.7.5",
 		"@types/deep-equal": "^1.0.1",
 		"@types/deep-extend": "^0.4.31",

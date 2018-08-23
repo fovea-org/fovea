@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.124"></a>
+## [1.0.124](https://github.com/fovea-org/fovea/compare/v1.0.123...v1.0.124) (2018-08-23)
+
+
+### Bug Fixes
+
+* Fixed an issue where global styles wouldn't be updated in watch mode. Fixes [#1](https://github.com/fovea-org/fovea/issues/1) ([c507eea](https://github.com/fovea-org/fovea/commit/c507eea))
+
+
+
+
+
 <a name="1.0.123"></a>
 ## [1.0.123](https://github.com/fovea-org/fovea/compare/v1.0.122...v1.0.123) (2018-08-14)
 

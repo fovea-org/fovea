@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.124"></a>
+## [1.0.124](https://github.com/fovea-org/fovea/compare/v1.0.123...v1.0.124) (2018-08-23)
+
+**Note:** Version bump only for package @fovea/router
+
+
+
+
+
 <a name="1.0.123"></a>
 ## [1.0.123](https://github.com/fovea-org/fovea/compare/v1.0.122...v1.0.123) (2018-08-14)
 
