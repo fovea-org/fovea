@@ -7,6 +7,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {string} path
  * @param {ExpressionChain} value
  */
-export function __addProperty (element: TemplateElement, path: string, value?: ExpressionChain): void {
+export function ___addProperty (element: TemplateElement, path: string, value?: ExpressionChain): void {
 	element.setProperty(path, value);
 }

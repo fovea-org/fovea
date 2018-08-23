@@ -1,8 +1,5 @@
-import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
-
-export interface IHostAttributeValues {
-	[key: string]: (string|number|boolean)|{[key: string]: (string|number|boolean)};
-}
+import {IHostAttributeValues} from "@fovea/common";
+import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
  * Declares the host attributes that will always be placed on the annotated component when constructed
@@ -11,5 +8,6 @@ export interface IHostAttributeValues {
  * @returns {(target: T) => void}
  */
 export function hostAttributes (attributes: IHostAttributeValues) {
-	return function <T extends typeof HTMLElement|ICustomAttributeConstructor> (target: T): void {};
+	return function <T extends HostDecoratorTarget> (target: T): void {
+	};
 }

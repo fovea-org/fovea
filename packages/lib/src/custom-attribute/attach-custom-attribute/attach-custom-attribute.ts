@@ -9,7 +9,7 @@ import {ExpressionChain, ICustomAttribute, ICustomAttributeConstructor, IFoveaHo
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
 import {onCustomAttributeValueShouldUpdate} from "../on-custom-attribute-should-update/on-custom-attribute-should-update";
 import {IDestroyable} from "../../destroyable/i-destroyable";
-import {__destroy} from "../../helper/destroy/destroy";
+import {___destroy} from "../../helper/destroy/destroy";
 
 /**
  * Adds the given Custom Attribute to the given host
@@ -45,7 +45,7 @@ export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, elemen
 	return {
 		destroy: () => {
 			unobserve();
-			__destroy(customAttribute);
+			___destroy(customAttribute);
 		},
 		unobserve
 	};

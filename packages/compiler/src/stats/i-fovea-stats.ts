@@ -28,6 +28,7 @@ export interface IMutableFoveaStats extends IMutableCompilerHintStats {
 	declaredCustomSelectors: IDeclaredCustomSelector[];
 	referencedCustomSelectors: IReferencedCustomSelector[];
 	componentNames: string[];
+	fileDependencies: string[];
 }
 
 export declare type IImmutableFoveaStats = Readonly<IMutableFoveaStats>;
@@ -39,6 +40,7 @@ export interface IFoveaStats extends IImmutableFoveaStats {
 	clearStatsForFile (file: string): void;
 	setDeclaredCustomSelectors (file: string, customSelectors: IDeclaredCustomSelector[]): void;
 	setReferencedCustomSelectors (file: string, customSelectors: IReferencedCustomSelector[]): void;
+	setFileDependencies (file: string, fileDependencies: string[]): void;
 	setComponentNames (file: string, componentNames: string[]): void;
 	setHasHostAttributes (file: string, hasHostAttributes: boolean): void;
 	setHasStaticCSS (file: string, hasStaticCSS: boolean): void;

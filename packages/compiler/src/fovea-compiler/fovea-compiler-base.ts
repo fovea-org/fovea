@@ -12,7 +12,6 @@ import {IConfiguration} from "../configuration/i-configuration";
 import {ClassDeclaration, ClassExpression, NodeArray} from "typescript";
 import {IFoveaOptions} from "../options/i-fovea-options";
 import {IFoveaCompilerBase} from "./i-fovea-compiler-base";
-import {IParentMerger} from "../parent-merger/i-parent-merger";
 import {IFoveaHostMarkerMarkExcludeResult, IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
 import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import {ILibUser} from "../lib-user/i-lib-user";
@@ -57,7 +56,6 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 							 private readonly childListObserverExtractor: IChildListObserverExtractor,
 							 private readonly emitExtractor: IEmitExtractor,
 							 private readonly setOnHostExtractor: ISetOnHostExtractor,
-							 private readonly parentMerger: IParentMerger,
 							 private readonly hostDefiner: IFoveaHostDefiner,
 							 private readonly dependencyImporter: IDependencyImporter,
 							 private readonly templator: ITemplator,
@@ -414,8 +412,13 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			// Add the relevant compiler flags based on the current stats
 			this.compilerFlagsExtender.extend(options);
 
-			// Finally, Invoke the relevant parent merger helpers
-			this.parentMerger.merge(options);
+			// Add an instruction to bootstrap the component as the last statement
+			if (!options.compilerOptions.dryRun) {
+				context.container.appendAtPlacement(
+					`\n${this.libUser.use("bootstrap", compilerOptions, context)}(${options.mark.className});`,
+					insertPlacement
+				);
+			}
 
 			// Add the name of the class to the Set of all compiled components
 			const {componentNames} = this.foveaStats.getStatsForFile(context.container.file);

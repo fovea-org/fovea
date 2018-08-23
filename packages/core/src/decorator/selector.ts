@@ -1,4 +1,4 @@
-import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
+import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
  * Provides a specific selector to use when defining and referencing a Fovea component inside the DOM
@@ -7,5 +7,6 @@ import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribut
  * @returns {(target: T) => void}
  */
 export function selector (name: string) {
-	return function <T extends typeof HTMLElement|ICustomAttributeConstructor> (target: T): void {};
+	return function <T extends HostDecoratorTarget> (target: T): void {
+	};
 }

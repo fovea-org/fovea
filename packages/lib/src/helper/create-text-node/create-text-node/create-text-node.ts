@@ -6,6 +6,6 @@ import {ITemplateNormalText} from "../../../template/text/template-normal-text/i
  * @param {string} data
  * @returns {ITemplateNormalText}
  */
-export function __createTextNode (data: string): ITemplateNormalText {
+export function ___createTextNode (data: string): ITemplateNormalText {
 	return new TemplateNormalText(data);
 }

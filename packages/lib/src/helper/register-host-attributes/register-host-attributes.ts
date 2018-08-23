@@ -8,6 +8,6 @@ import {addHostAttributesForHost} from "../../host-attributes/add-host-attribute
  * @param {ICustomAttributeConstructor|IFoveaHostConstructor} host
  * @private
  */
-export function __registerHostAttributes (hostAttributes: HostAttributesCallback, host: ICustomAttributeConstructor|IFoveaHostConstructor): void {
+export function ___registerHostAttributes (hostAttributes: HostAttributesCallback, host: ICustomAttributeConstructor|IFoveaHostConstructor): void {
 	addHostAttributesForHost(host, hostAttributes);
 }

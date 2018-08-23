@@ -1,14 +1,12 @@
-import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common";
 import {setAttributeNameForPropName} from "../../prop/prop-name-to-attribute-name/set-attribute-name-for-prop-name/set-attribute-name-for-prop-name";
 import {PropertyToAttributeTuple} from "./property-to-attribute-tuple";
 
 /**
  * Maps the properties of an IFoveaHost to their attribute counterparts.
- * @param {IFoveaHostConstructor|ICustomAttributeConstructor} _host
  * @param {[string , string][]} tuples
  * @private
  */
-export function __mapPropertiesToAttributes (_host: IFoveaHostConstructor|ICustomAttributeConstructor, ...tuples: PropertyToAttributeTuple[]): void {
+export function ___mapPropertiesToAttributes (...tuples: PropertyToAttributeTuple[]): void {
 	tuples.forEach(tuple => {
 
 		// If the tuple is just a string, the attribute name will be identical to the property name

@@ -15,14 +15,13 @@ export class PropertiesToAttributesMapper implements IPropertiesToAttributesMapp
 	}
 
 	/**
-	 * Extracts all properties that should be observed or set on the host and delegates them to the fovea-lib helper '__mapPropertiesToAttributes'
+	 * Extracts all properties that should be observed or set on the host and delegates them to the fovea-lib helper '___mapPropertiesToAttributes'
 	 * @param {ClassDeclaration | ClassExpression} classDeclaration
 	 * @param {IPlacement} insertPlacement
 	 * @param {IFoveaCompilerOptions} compilerOptions
 	 * @param {ICompilationContext} context
 	 */
 	public map ({mark, insertPlacement, compilerOptions, context}: IPropertiesToAttributesMapOptions): void {
-		const {className} = mark;
 
 		// Take all props that has a "@prop" decorator
 		const observedProps = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.configuration.preCompile.propDecoratorName, mark.classDeclaration);
@@ -52,7 +51,7 @@ export class PropertiesToAttributesMapper implements IPropertiesToAttributesMapp
 		if (tuples.length > 0) {
 			if (!compilerOptions.dryRun) {
 				context.container.appendAtPlacement(
-					`\n${this.libUser.use("mapPropertiesToAttributes", compilerOptions, context)}(<any>${className}, ${tuples.join(", ")})`,
+					`\n${this.libUser.use("mapPropertiesToAttributes", compilerOptions, context)}(${tuples.join(", ")})`,
 					insertPlacement
 				);
 			}

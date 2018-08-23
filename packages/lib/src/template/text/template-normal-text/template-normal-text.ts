@@ -15,11 +15,7 @@ export class TemplateNormalText extends TemplateBase implements ITemplateNormalT
 
 	/**
 	 * Constructs a new Text node
-	 * @param {TemplateElement} base
-	 * @param {Node} owner
-	 * @param {IFoveaHost} host
-	 * @param {ShadowRoot} root
-	 * @param {ITemplateBase|null} previousSibling
+	 * @param {ITemplateConstructOptions} options
 	 * @returns {ITemplateNormalTextResult}
 	 */
 	public construct ({owner, host, root, previousSibling}: ITemplateConstructOptions): ITemplateNormalTextResult {

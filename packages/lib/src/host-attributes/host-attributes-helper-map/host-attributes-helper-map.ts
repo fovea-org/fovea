@@ -119,12 +119,12 @@ function addRefForHost (host: IFoveaHost|ICustomAttribute, ref: Ref): IObserver 
 }
 
 export const hostAttributesHelperMap: IHostAttributesHelperMap = {
-	__addAttributes: addAttributesForHost,
-	__addAttribute: addAttributeForHost,
-	__addProperties: addPropertiesForHost,
-	__addProperty: addPropertyForHost,
-	__addRef: addRefForHost,
-	__addListeners: addListenersForHost,
-	__addListener: addListenerForHost,
-	__addCustomAttribute: addCustomAttributeForHost
+	___addAttributes: addAttributesForHost,
+	___addAttribute: addAttributeForHost,
+	___addProperties: addPropertiesForHost,
+	___addProperty: addPropertyForHost,
+	___addRef: addRefForHost,
+	___addListeners: addListenersForHost,
+	___addListener: addListenerForHost,
+	___addCustomAttribute: addCustomAttributeForHost
 };

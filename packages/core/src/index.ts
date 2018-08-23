@@ -1,4 +1,3 @@
-export {IHostAttributeValues} from "./decorator/host-attributes";
 export {IEmitBaseOptions, IVisibilityObserverBaseOptions, IHostListenerBaseOptions, IMutationObserverBaseOptions} from "@fovea/common";
 export {onChange} from "./decorator/on-change";
 export {selector} from "./decorator/selector";

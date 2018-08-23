@@ -9,7 +9,7 @@ import {ICustomAttributeConstructor, IEmitBaseOptions, IFoveaHostConstructor} fr
  * @param {Partial<IEventEmitterOptions>} options
  * @private
  */
-export function __registerEmitter (host: IFoveaHostConstructor|ICustomAttributeConstructor, prop: string, isStatic: boolean, options?: Partial<IEmitBaseOptions>): void {
+export function ___registerEmitter (host: IFoveaHostConstructor|ICustomAttributeConstructor, prop: string, isStatic: boolean, options?: Partial<IEmitBaseOptions>): void {
 	const name = options == null || options.name == null ? `${prop}-changed` : options.name;
 	const target = options == null || options.target == null ? undefined : options.target;
 	addEventEmittersForHost(host, {name, prop: {name: prop, isStatic}, target});

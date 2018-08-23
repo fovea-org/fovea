@@ -6,6 +6,7 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {PropertyDeclaration} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract properties annotated with a @setOnHost decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -14,16 +15,25 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @setOnHost decorator and delegates it to the fovea-lib helper '__registerSetOnHost'.
+	 * Gets a Regular Expression that matches the name of @setOnHost decorators
+	 * @returns {RegExp}
+	 */
+	private get decoratorNameRegex (): RegExp {
+		return new RegExp(`^${this.configuration.preCompile.setOnHostDecoratorName}`);
+	}
+
+	/**
+	 * Extracts all properties decorated with a @setOnHost decorator and delegates it to the fovea-lib helper '___registerSetOnHost'.
 	 * @param {ISetOnHostExtractorExtractOptions} options
 	 */
 	public extract (options: ISetOnHostExtractorExtractOptions): void {
-		const {mark, insertPlacement, compilerOptions, context} = options;
-		const {className, classDeclaration} = mark;
+		const {mark, compilerOptions, context} = options;
+		const {classDeclaration} = mark;
 
 		// Take all props that has a "@setOnHost" decorator
 		const setOnHostInstanceProperties = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.configuration.preCompile.setOnHostDecoratorName, classDeclaration);
@@ -32,30 +42,54 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 		// Take all props
 		const allProps = [...setOnHostInstanceProperties, ...setOnHostStaticProperties];
 
-		// For each prop, generate a call to '__registerProp' and remove the '@prop' decorator
+		// Store all calls to 'registerSetOnHost' here
+		const registerSetOnHostCalls: string[] = [];
+
+		// For each prop, generate a call to '___registerProp' and remove the '@prop' decorator
 		allProps.forEach(setOnHostProperty => {
 
-			// If we're on a dry run, return before mutating the SourceFile
-			if (compilerOptions.dryRun) return;
+			// Take all decorators for the method
+			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, setOnHostProperty);
+			decorators.forEach(decorator => {
+				// If we're on a dry run, return before mutating the SourceFile
+				if (compilerOptions.dryRun) return;
 
-			// Create the CallExpression
-			context.container.appendAtPlacement(
-				`\n${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, <any>${className});`,
-				insertPlacement
+				registerSetOnHostCalls.push(`${this.libUser.use("registerSetOnHost", compilerOptions, context)}("${this.codeAnalyzer.propertyNameService.getName(setOnHostProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(setOnHostProperty)}, this);`);
+
+				// Remove the @setOnHost decorator from it
+				context.container.remove(decorator.pos, decorator.end);
+
+				// Make sure that it has a @prop decorator
+				this.assertHasPropDecorator(setOnHostProperty, context);
+			});
+		});
+
+		// If there is at least 1 host prop, add the prototype method
+		if (registerSetOnHostCalls.length > 0) {
+
+			const body = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerSetOnHostCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerSetOnHostPropsMethodName} != null) super.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();` +
+					`\n		${registerSetOnHostCalls.join("\n		")}`
 			);
 
-			// Remove the @setOnHost decorator from it
-			const decorator = this.codeAnalyzer.propertyService.getDecorator(this.configuration.preCompile.setOnHostDecoratorName, setOnHostProperty);
-			if (decorator != null) {
-				context.container.remove(decorator.pos, decorator.end);
-			}
+			if (!compilerOptions.dryRun) {
 
-			// Make sure that it has a @prop decorator
-			this.assertHasPropDecorator(setOnHostProperty, context);
-		});
-		// Set 'hasHostProps' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerSetOnHostPropsMethodName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
+			}
+		}
+
+		// Set 'hasHostProps' to true if there were any 'registerSetOnHost' instructions, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasHostProps(context.container.file, statsForFile.hasHostProps || allProps.length > 0);
+		this.stats.setHasHostProps(context.container.file, statsForFile.hasHostProps || registerSetOnHostCalls.length > 0);
 	}
 
 	/**

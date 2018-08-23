@@ -10,7 +10,7 @@ import {addChangeObserversForHost} from "../../change-observer/change-observers-
  * @param {boolean} [whenAllAreInitialized=false]
  * @private
  */
-export function __registerChangeObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, props: string|string[], whenAllAreInitialized: boolean = false): void {
+export function ___registerChangeObserver (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, props: string|string[], whenAllAreInitialized: boolean = false): void {
 	const propNames = Array.isArray(props) ? props : [props];
 
 	// Add the ChangeObserver

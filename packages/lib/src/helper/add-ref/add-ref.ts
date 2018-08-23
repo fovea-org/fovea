@@ -7,6 +7,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {Ref} ref
  * @private
  */
-export function __addRef (child: TemplateElement, ref: Ref): void {
+export function ___addRef (child: TemplateElement, ref: Ref): void {
 	child.addRef(ref);
 }

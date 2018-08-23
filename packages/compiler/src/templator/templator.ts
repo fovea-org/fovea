@@ -13,10 +13,11 @@ import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IRegisterResult} from "./i-register-result";
 import {IHashUtil} from "../util/hash-util/i-hash-util";
 import {IFoveaStyles} from "@fovea/style";
-import {IUseItem} from "@fovea/common";
+import {IUseItem, LibHelperName} from "@fovea/common";
 import {ITemplatorUseOptions} from "./i-templator-use-options";
 import {ITemplatorRegisterOptions} from "./i-templator-register-options";
 import {containsOnlyWhitespace, isEmpty} from "@wessberg/stringutil";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that generates template instructions to a Fovea component
@@ -31,7 +32,8 @@ export class Templator implements ITemplator {
 							 private readonly moduleUtil: IModuleUtil,
 							 private readonly hashUtil: IHashUtil,
 							 private readonly foveaDOM: IFoveaDOM,
-							 private readonly foveaStyles: IFoveaStyles) {
+							 private readonly foveaStyles: IFoveaStyles,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -43,6 +45,13 @@ export class Templator implements ITemplator {
 		await this.generate(
 			options,
 			this.configuration.preCompile.templateSrcDecoratorName,
+			this.configuration.postCompile.useTemplatesMethodName,
+			this.configuration.postCompile.connectTemplatesMethodName,
+			this.configuration.postCompile.disposeTemplatesMethodName,
+			this.configuration.postCompile.destroyTemplatesMethodName,
+			"connectTemplates",
+			"disposeTemplates",
+			"destroyTemplates",
 			this.configuration.preCompile.templateName,
 			this.registerTemplate
 		);
@@ -57,6 +66,13 @@ export class Templator implements ITemplator {
 		await this.generate(
 			options,
 			this.configuration.preCompile.styleSrcDecoratorName,
+			this.configuration.postCompile.useCSSMethodName,
+			this.configuration.postCompile.connectCSSMethodName,
+			this.configuration.postCompile.disposeCSSMethodName,
+			null,
+			"connectCSS",
+			"disposeCSS",
+			null,
 			this.configuration.preCompile.stylesName,
 			this.registerStyles
 		);
@@ -151,6 +167,9 @@ export class Templator implements ITemplator {
 		// Initialize the array of generated hashes
 		const generatedHashes: IUseItem[] = [];
 
+		// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+		const statsForFile = this.stats.getStatsForFile(context.container.file);
+
 		try {
 			// Generate style instructions for the class
 			const {instanceCSS, staticCSS} = await this.foveaStyles.generate({
@@ -160,6 +179,10 @@ export class Templator implements ITemplator {
 				postCSSPlugins: compilerOptions.postcss == null || compilerOptions.postcss.plugins == null ? undefined : compilerOptions.postcss.plugins,
 				pluginConfigurationHook: compilerOptions.postcss == null || compilerOptions.postcss.hook == null ? undefined : compilerOptions.postcss.hook
 			});
+
+			// Resolve all imports of the file and mark them as dependencies
+			const {paths} = await this.foveaStyles.takeImportPaths({file: resolvedPath, template: content});
+			this.stats.setFileDependencies(context.container.file, [...paths, ...statsForFile.fileDependencies]);
 
 			hasInstanceCSS = instanceCSS != null && !isEmpty(instanceCSS) && !containsOnlyWhitespace(instanceCSS);
 			hasStaticCSS = staticCSS != null && !isEmpty(staticCSS) && !containsOnlyWhitespace(staticCSS);
@@ -178,7 +201,7 @@ export class Templator implements ITemplator {
 				generatedHashes.push(...templateResult.generatedHashes);
 			}
 
-			// For the static styles, generate call to '__registerStaticCSS' with the styles unless it has them already or unless they are empty!
+			// For the static styles, generate call to '___registerStaticCSS' with the styles unless it has them already or unless they are empty!
 			if (hasStaticCSS) {
 				// Generate a hash
 				const hash = this.generateStylesHash(resolvedPath);
@@ -198,8 +221,6 @@ export class Templator implements ITemplator {
 			this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_CSS, formattedErrorMessage: ex.toString()});
 		}
 
-		// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
-		const statsForFile = this.stats.getStatsForFile(context.container.file);
 		this.stats.setHasStaticCSS(context.container.file, hasStaticCSS || statsForFile.hasStaticCSS);
 
 		if (!compilerOptions.dryRun && shouldExport) {
@@ -244,86 +265,149 @@ export class Templator implements ITemplator {
 	 * Generates instructions to use all of the provided hashes
 	 * @param {ITemplatorUseOptions} options
 	 * @param {IUseItem[]} items
+	 * @returns {string}
 	 */
-	public use (options: ITemplatorUseOptions, items: IUseItem[]): void {
-		const {compilerOptions, context, insertPlacement, mark} = options;
+	public use (options: ITemplatorUseOptions, items: IUseItem[]): string {
+		const {compilerOptions, context} = options;
 
-		// Generate call to '__useStaticTemplate' referencing the hash for the file
-		if (!compilerOptions.dryRun) {
-			// @ts-ignore
-			const expression = `\n${this.libUser.use("use", compilerOptions, context)}(<any>${mark.className}, ${JSON.stringify(items)});`;
-			insertPlacement != null
-				? context.container.appendAtPlacement(expression, insertPlacement)
-				: context.container.prepend(expression);
-		}
+		// Generate the 'use' instruction
+		return `${this.libUser.use("use", compilerOptions, context)}(this, ${JSON.stringify(items)});`;
 	}
 
 	/**
 	 * Generates instructions to use either templates or styles from the path given as an argument
 	 * @param {ITemplatorUseOptions} options
 	 * @param {string} resolvedPath
+	 * @returns {string}
 	 */
-	public useForeign (options: ITemplatorUseOptions, resolvedPath: string): void {
-		const {compilerOptions, context, insertPlacement, mark} = options;
+	public useForeign (options: ITemplatorUseOptions, resolvedPath: string): string {
+		const {compilerOptions, context} = options;
 		const scopeName = this.generateExportScopeName(resolvedPath);
-
-		// Generate call to '__useStaticTemplate' referencing the hash for the file
-		if (!compilerOptions.dryRun) {
-			// @ts-ignore
-			const expression = `\n${this.libUser.use("use", compilerOptions, context)}(<any>${mark.className}, ${scopeName});`;
-			insertPlacement != null
-				? context.container.appendAtPlacement(expression, insertPlacement)
-				: context.container.prepend(expression);
-		}
 
 		const isSamePath = resolvedPath === context.container.file;
 
 		// If we're not using a template or some styles from the same SourceFile, check if it already imports it and if not, add an import
 		if (!isSamePath) {
-			// Add an import for the file containing that resolved path - EVEN in a dry run! Otherwise, the files won't be added to the bundler
-			context.container.prepend(`import "${resolvedPath}";\n`);
 
-			// And then otherwise, if we are not in a dry run, add one more for the specific module we want to import (Yup, that's how Rollup works)
+			// Take the existing stats for the file. Another component inside of it may already have been registered and added stats for it
+			const statsForFile = this.stats.getStatsForFile(context.container.file);
+			this.stats.setFileDependencies(context.container.file, [resolvedPath, ...statsForFile.fileDependencies]);
+
+			// Import the module we want to use
 			if (!compilerOptions.dryRun) {
 				context.container.prepend(`\n// @ts-ignore\nimport {${scopeName}} from "${resolvedPath}";\n`);
 			}
 		}
+
+		// Return the 'use' instruction
+		return `${this.libUser.use("use", compilerOptions, context)}(this, ${scopeName});`;
 	}
 
 	/**
 	 * Generates either template or style instructions, depending on the provided arguments
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {string} srcDecoratorName
+	 * @param {string} staticUseMethodName
+	 * @param {string} connectMethodName
+	 * @param {string} disposeMethodName
+	 * @param {string|null} destroyMethodName
+	 * @param {LibHelperName} connectHelperName
+	 * @param {LibHelperName} disposeHelperName
+	 * @param {LibHelperName|null} destroyHelperName
 	 * @param {string} propertyName
 	 * @param {RegisterMethod} registerMethod
 	 * @returns {Promise<void>}
 	 */
-	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
+	private async generate (options: ITemplatorGenerateOptions, srcDecoratorName: string, staticUseMethodName: string, connectMethodName: string, disposeMethodName: string, destroyMethodName: string|null, connectHelperName: LibHelperName, disposeHelperName: LibHelperName, destroyHelperName: LibHelperName|null, propertyName: string, registerMethod: RegisterMethod): Promise<void> {
 		const {mark, compilerOptions, context} = options;
 
 		// First, check if the class is annotated with a [template|style]Src decorator
-		const decorator = this.codeAnalyzer.classService.getDecorator(new RegExp(`${srcDecoratorName}`), mark.classDeclaration);
-		if (decorator != null) {
+		const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(new RegExp(`^${srcDecoratorName}`), mark.classDeclaration);
 
+		// Store all calls to 'use' here
+		const useCalls: string[] = [];
+
+		decorators.forEach(decorator => {
 			// Generate template or style contents from the decorator
-			this.generateFromDecorator(options, decorator);
+			useCalls.push(...this.generateFromDecorator(options, decorator));
 
 			// Remove the decorator. We are done with it
 			if (!compilerOptions.dryRun) {
 				context.container.remove(decorator.pos, decorator.end);
 			}
-		}
+		});
 
 		// Also try to find the '[template|styles]' property on the class declaration
 		const property = this.codeAnalyzer.classService.getMemberWithName(propertyName, mark.classDeclaration);
 
-		// If it *has* a [template|styles] property/method/accessor
+		// If it has a [template|styles] property/method/accessor
 		if (property != null) {
-			await this.generateFromProperty(options, property, registerMethod);
+			useCalls.push(...(await this.generateFromProperty(options, property, registerMethod)));
 
-			// Remove the user-provided 'template' property from the class. We're done with it!
+			// Remove the user-provided '[template|styles]' property from the class. We're done with it!
 			if (!compilerOptions.dryRun) {
 				context.container.remove(property.pos, property.end);
+			}
+		}
+
+		// If there is at least 1 'use' instruction, add the relevant methods
+		if (useCalls.length > 0) {
+
+			if (!compilerOptions.dryRun) {
+
+				const useBody = (
+					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+						? `\n		${useCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
+						`\n		${useCalls.join("\n		")}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
+				);
+
+				const disposeBody = (
+					`\n		${this.libUser.use(disposeHelperName, compilerOptions, context)}(this);`
+				);
+
+				// Create the "use" method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected static ${staticUseMethodName} (): void {` +
+					`${useBody}` +
+					`\n	}`
+				);
+
+				// Create the "connectTemplates|connectCSS" method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${connectMethodName} (): void {` +
+					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the "disposeTemplates|disposeCSS" method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${disposeMethodName} (): void {` +
+					`${disposeBody}` +
+					`\n	}`
+				);
+
+				if (destroyHelperName != null && destroyMethodName != null) {
+					const destroyBody = (
+						`\n		${this.libUser.use(destroyHelperName, compilerOptions, context)}(this);`
+					);
+
+					// Create the "destroy" method
+					context.container.appendLeft(
+						mark.classDeclaration.members.end,
+						`\n	protected ${destroyMethodName} (): void {` +
+						`${destroyBody}` +
+						`\n	}`
+					);
+				}
 			}
 		}
 	}
@@ -377,19 +461,20 @@ export class Templator implements ITemplator {
 	 * Generates a template from a '@templateSrc("<url>") decorator on the component prototype
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {Decorator} decorator
-	 * @returns {void}
+	 * @returns {string[]}
 	 */
-	private generateFromDecorator (options: ITemplatorGenerateOptions, decorator: Decorator): void {
+	private generateFromDecorator (options: ITemplatorGenerateOptions, decorator: Decorator): string[] {
 		// Take the path from the decorator
 		const resolvedPaths = this.takeResolvedPathsFromDecorator(options, decorator);
 
 		// If we retrieved a path from it, generate instructions to use the template from that path
 		if (resolvedPaths != null) {
-			resolvedPaths.forEach(resolvedPath => {
+			return resolvedPaths.map(resolvedPath => {
 				// Generate an instruction to use whatever contents will be generated
-				this.useForeign(options, resolvedPath);
+				return this.useForeign(options, resolvedPath);
 			});
 		}
+		return [];
 	}
 
 	/**
@@ -425,19 +510,19 @@ export class Templator implements ITemplator {
 	 * @param {ITemplatorGenerateOptions} options
 	 * @param {ClassElement} property
 	 * @param {RegisterMethod} registerMethod
-	 * @returns {Promise<void>}
+	 * @returns {Promise<string[]>}
 	 */
-	private async generateFromProperty (options: ITemplatorGenerateOptions, property: ClassElement, registerMethod: RegisterMethod): Promise<void> {
+	private async generateFromProperty (options: ITemplatorGenerateOptions, property: ClassElement, registerMethod: RegisterMethod): Promise<string[]> {
 		const template = this.takeContentsOfClassElement(property);
 
 		// If there are no initialized contents of the template or styles,
-		if (template == null || template.length < 1) return;
+		if (template == null || template.length < 1) return [];
 
 		// Generate the instructions
 		const result = <IRegisterResult> await registerMethod.call(this, options, template, options.context.container.file);
 
 		// Generate instructions to actually use the templates or styles.
-		this.use(options, result.generatedHashes);
+		return [this.use(options, result.generatedHashes)];
 	}
 
 	/**

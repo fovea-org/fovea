@@ -8,6 +8,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {ExpressionChain} handler
  * @private
  */
-export function __addListener (element: TemplateElement, name: string, handler: ExpressionChain): void {
+export function ___addListener (element: TemplateElement, name: string, handler: ExpressionChain): void {
 	element.addListener(name, handler);
 }

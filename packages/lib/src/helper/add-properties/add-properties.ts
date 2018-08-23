@@ -1,4 +1,4 @@
-import {__addProperty} from "../add-property/add-property";
+import {___addProperty} from "../add-property/add-property";
 import {ExpressionChain} from "@fovea/common";
 import {TemplateElement} from "../../template/element/template-element/template-element";
 
@@ -8,6 +8,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {TemplateElement} element
  * @param {...[string, ExpressionChain]} properties
  */
-export function __addProperties (element: TemplateElement, ...properties: [string, ExpressionChain][]): void {
-	properties.forEach(([path, value]) => __addProperty(element, path, value));
+export function ___addProperties (element: TemplateElement, ...properties: [string, ExpressionChain][]): void {
+	properties.forEach(([path, value]) => ___addProperty(element, path, value));
 }

@@ -11,6 +11,6 @@ import {ITemplateMultiElementOptions} from "../../../template/element/template-m
  * @param {() => TemplateElement} templateElement
  * @returns {ITemplateMultiElement}
  */
-export function __createMultiElementNS (qualifiedName: string, options: ITemplateMultiElementOptions, templateElement: () => TemplateElement): ITemplateMultiElement {
+export function ___createMultiElementNS (qualifiedName: string, options: ITemplateMultiElementOptions, templateElement: () => TemplateElement): ITemplateMultiElement {
 	return new TemplateMultiElement(options, templateElement, qualifiedName, SVG_NAMESPACE_NAME);
 }

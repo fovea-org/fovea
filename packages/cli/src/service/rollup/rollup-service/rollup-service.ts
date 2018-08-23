@@ -23,13 +23,34 @@ import {builtinModules} from "module";
 export class RollupService implements IRollupService {
 
 	/**
+	 * A handler for events triggered by Rollup
+	 * @param ex
+	 * @param {OutputOptions} output
+	 * @param {ISubscriber<IRollupServiceGenerateObserverPayload>} observer
+	 * @returns {Promise<void>}
+	 */
+	private async eventHandler (ex: any, output: OutputOptions, observer: ISubscriber<IRollupServiceGenerateObserverPayload>): Promise<void> {
+		const {code, result, error} = ex;
+		switch (code) {
+			case "START":
+				return await this.didStartBundling(observer);
+			case "ERROR":
+				return observer.onError({data: error, fatal: false});
+			case "FATAL":
+				return observer.onError({data: error, fatal: true});
+			case "BUNDLE_END":
+				return await this.didEndBundling(result, output, observer);
+		}
+	}
+
+	/**
 	 * Generates a bundle with Rollup
 	 * @param {IRollupServiceGenerateOptions} options
 	 * @returns {Promise<IObserver>}
 	 */
 	public async generate (options: IRollupServiceGenerateOptions): Promise<IObserver> {
 		const {output, input, observer, context, bundleExternals = false, packageJson, cache, plugins = []} = options;
-		const rollupOptions: RollupDirOptions = {
+		let rollupOptions: RollupDirOptions|null = {
 			input,
 			plugins: [
 				...this.getDefaultPrePlugins(options),
@@ -52,34 +73,37 @@ export class RollupService implements IRollupService {
 		// If watch mode should be active
 		if (options.watch != null && options.watch) {
 			process.env.ROLLUP_WATCH = "true";
-			const watcher: Watcher = watch([{
+			let watcher: Watcher|null = watch([{
 				...rollupOptions,
 				output
 			}]);
 
-			const eventHandler = async (ex: any) => {
-				const {code, result, error} = ex;
-				switch (code) {
-					case "START":
-						return await this.didStartBundling(observer);
-					case "ERROR":
-						return observer.onError({data: error, fatal: false});
-					case "FATAL":
-						return observer.onError({data: error, fatal: true});
-					case "BUNDLE_END":
-						return await this.didEndBundling(result, output, observer);
-				}
-			};
+			let evHandler: any|null = async (ex: any) => this.eventHandler(ex, output, observer);
 
 			// Listen for Rollup events
-			watcher.on("event", eventHandler);
+			watcher.on("event", evHandler);
 
 			// Return a hook to stop listening for Rollup events
 			return {
 				unobserved: false,
 				unobserve () {
 					this.unobserved = true;
-					watcher.off("event", eventHandler);
+					if (watcher != null) {
+						watcher.off("event", evHandler);
+
+						// Rollup extends the Chokidar watcher with a "close" command.
+						if ("close" in watcher) {
+							(<any>watcher).close();
+						}
+
+						// Otherwise, if for some reason it wasn't found, manually call 'removeAllListeners'
+						else {
+							watcher.removeAllListeners();
+						}
+						watcher = null;
+						rollupOptions = null;
+						evHandler = null;
+					}
 				}
 			};
 		}

@@ -16,11 +16,7 @@ export class TemplateExpressionText extends TemplateBase implements ITemplateExp
 
 	/**
 	 * Constructs a new TemplateExpressionText
-	 * @param {ShadowRoot} root
-	 * @param {IFoveaHost} host
-	 * @param {ITemplateVariables} templateVariables
-	 * @param {Node} owner
-	 * @param {ITemplateBase|null} previousSibling
+	 * @param {ITemplateConstructOptions} options
 	 * @returns {ITemplateExpressionTextResult}
 	 */
 	public construct ({root, host, templateVariables, owner, previousSibling}: ITemplateConstructOptions): ITemplateExpressionTextResult {

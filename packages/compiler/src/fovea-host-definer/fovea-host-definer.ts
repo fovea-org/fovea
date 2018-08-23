@@ -67,7 +67,7 @@ export class FoveaHostDefiner implements IFoveaHostDefiner {
 
 			// Add a instruction to define the element or Custom Attribute immediately after the ClassDeclaration
 			context.container.appendAtPlacement(
-				`\n${this.libUser.use(mark.kind === FoveaHostKind.HOST ? "registerElement" : "registerCustomAttribute", compilerOptions, context)}("${selector}", <any>${className});`,
+				`\n${this.libUser.use(mark.kind === FoveaHostKind.HOST ? "registerElement" : "registerCustomAttribute", compilerOptions, context)}("${selector}", ${className});`,
 				insertPlacement
 			);
 		}

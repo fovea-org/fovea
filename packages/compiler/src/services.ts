@@ -25,8 +25,6 @@ import {IPropertiesToAttributesMapper} from "./properties-to-attributes-mapper/i
 import {PropertiesToAttributesMapper} from "./properties-to-attributes-mapper/properties-to-attributes-mapper";
 import {IFoveaCompilerBase} from "./fovea-compiler/i-fovea-compiler-base";
 import {ITypescriptASTUtil, TypescriptASTUtil} from "@wessberg/typescript-ast-util";
-import {IParentMerger} from "./parent-merger/i-parent-merger";
-import {ParentMerger} from "./parent-merger/parent-merger";
 import {IEmitExtractor} from "./emit-extractor/i-emit-extractor";
 import {EmitExtractor} from "./emit-extractor/emit-extractor";
 import {IHostListenerExtractor} from "./host-listener-extractor/i-host-listener-extractor";
@@ -71,7 +69,6 @@ DIContainer.registerSingleton<IChildListObserverExtractor, ChildListObserverExtr
 DIContainer.registerSingleton<IHostAttributesExtractor, HostAttributesExtractor>();
 DIContainer.registerSingleton<IEmitExtractor, EmitExtractor>();
 DIContainer.registerSingleton<ISetOnHostExtractor, SetOnHostExtractor>();
-DIContainer.registerSingleton<IParentMerger, ParentMerger>();
 DIContainer.registerSingleton<IPropertiesToAttributesMapper, PropertiesToAttributesMapper>();
 DIContainer.registerSingleton<IFoveaHostDefiner, FoveaHostDefiner>();
 DIContainer.registerSingleton<ILibUser, LibUser>();

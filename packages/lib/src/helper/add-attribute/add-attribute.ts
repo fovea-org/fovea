@@ -9,6 +9,6 @@ import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-
  * @param {ExpressionChain|IExpressionChainDict} [value]
  * @private
  */
-export function __addAttribute (element: TemplateElement, key: string, value?: ExpressionChain|IExpressionChainDict): void {
+export function ___addAttribute (element: TemplateElement, key: string, value?: ExpressionChain|IExpressionChainDict): void {
 	element.addAttribute(key, value);
 }

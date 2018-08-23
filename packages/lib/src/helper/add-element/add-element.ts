@@ -6,6 +6,6 @@ import {TemplateElement} from "../../template/element/template-element/template-
  * @param {TemplateNode} element
  * @param {TemplateElement} addTo
  */
-export function __addElement (element: TemplateNode, addTo: TemplateElement): void {
+export function ___addElement (element: TemplateNode, addTo: TemplateElement): void {
 	addTo.appendChild(element);
 }

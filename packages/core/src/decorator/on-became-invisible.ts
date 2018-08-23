@@ -1,5 +1,5 @@
-import {ICustomAttribute, ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
 import {IVisibilityObserverBaseOptions} from "@fovea/common";
+import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
  * Marks a MethodDeclaration as a callback for when the host element becomes invisible.
@@ -7,6 +7,6 @@ import {IVisibilityObserverBaseOptions} from "@fovea/common";
  * @returns {Function}
  */
 export function onBecameInvisible (options?: Partial<IVisibilityObserverBaseOptions>) {
-	return function <T extends (HTMLElement|typeof HTMLElement|ICustomAttribute|ICustomAttributeConstructor)> (target: T, name: string): void {
+	return function <T extends InstanceType<HostDecoratorTarget>> (target: T, name: string): void {
 	};
 }

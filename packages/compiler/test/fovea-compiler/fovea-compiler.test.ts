@@ -99,11 +99,11 @@ test("Will include Custom Elements that import stuff from Fovea, even if they ma
 	t.true(result.statsForFile.componentNames.length > 0);
 });
 
-test("Will not generate a call to '__registerElement' if 'customElements.define' is manually called from within the SourceFile", async t => {
+test("Will not generate a call to '___registerElement' if 'customElements.define' is manually called from within the SourceFile", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-4.ts");
 	const result = await work(path, {printCode: false});
 
-	t.true(result.hasChanged && !result.code.includes("__registerElement"));
+	t.true(result.hasChanged && !result.code.includes("___registerElement"));
 });
 
 test("Will dash-case selector names for custom attributes", async t => {
@@ -141,7 +141,7 @@ test("Will automatically add dependencies for a component when a @dependsOn deco
 	t.true(result.hasChanged && result.code.includes(`__dependsOn(<any>FooComponent)`));
 });
 
-test("Will remove a @dependsOn decorator and convert it into a call to the __dependsOn helper from @fovea/lib", async t => {
+test("Will remove a @dependsOn decorator and convert it into a call to the ___dependsOn helper from @fovea/lib", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-7.ts");
 	const result = await work(path, {printCode: false});
 
@@ -174,7 +174,7 @@ test("Will correctly register host attributes", async t => {
 	// @ts-ignore
 	const result = await work(path, {printCode: true});
 
-	t.true(result.hasChanged && result.code.includes("__registerHostAttributes"));
+	t.true(result.hasChanged && result.code.includes("___registerHostAttributes"));
 });
 
 test("Can handle multiple @listener() annotations for the same methods", async t => {
@@ -188,7 +188,7 @@ test("Can handle multiple @listener() annotations for the same methods", async t
 test.only("Will correctly register attribute change observers", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-13.ts");
 	// @ts-ignore
-	const result = await work(path, {printCode: true});
+	const result = await work(path, {printCode: true, printDiagnostics: true});
 
-	t.true(result.hasChanged && result.code.includes("__registerAttributeChangeObserver"));
+	t.true(result.hasChanged && result.code.includes("___registerAttributeChangeObserver"));
 });

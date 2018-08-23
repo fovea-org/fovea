@@ -8,7 +8,7 @@ import {addPropsForHost} from "../../prop/props-for-host/add-props-for-host/add-
  * @param {boolean} isStatic
  * @param {IFoveaHostConstructor|ICustomAttributeConstructor} host
  */
-export function __registerProp (name: string, type: IType, isStatic: boolean, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
+export function ___registerProp (name: string, type: IType, isStatic: boolean, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
 	// Add the prop to the set of props for the host
 	addPropsForHost(host, {name, type, isStatic});
 }

@@ -10,6 +10,6 @@ import {TemplateElement} from "../../../template/element/template-element/templa
  * @param {() => TemplateElement} templateElement
  * @returns {ITemplateConditionalElement}
  */
-export function __createConditionalElement (selector: string, condition: ExpressionChain, templateElement: () => TemplateElement): ITemplateConditionalElement {
+export function ___createConditionalElement (selector: string, condition: ExpressionChain, templateElement: () => TemplateElement): ITemplateConditionalElement {
 	return new TemplateConditionalElement(condition, templateElement, selector, null);
 }

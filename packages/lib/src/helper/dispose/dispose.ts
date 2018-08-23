@@ -1,5 +1,4 @@
 import {ICustomAttribute, IFoveaHost} from "@fovea/common";
-import {UPGRADED_HOSTS} from "../../host/upgraded-hosts/upgraded-hosts";
 import {disposeOrDestroyShared} from "./dispose-or-destroy-shared";
 
 /**
@@ -7,11 +6,7 @@ import {disposeOrDestroyShared} from "./dispose-or-destroy-shared";
  * @param {IFoveaHost|ICustomAttribute} host
  * @private
  */
-export function __dispose (host: IFoveaHost|ICustomAttribute): void {
+export function ___dispose (host: IFoveaHost|ICustomAttribute): void {
 	disposeOrDestroyShared(host);
-
-	// Take all TemplateResults for the host and dispose them.
-	if (UPGRADED_HOSTS.has(host)) {
-		UPGRADED_HOSTS.popAll(host, disposable => disposable.dispose());
-	}
+	if (host.___disposeTemplates != null) host.___disposeTemplates();
 }

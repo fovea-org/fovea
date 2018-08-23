@@ -1,5 +1,5 @@
-import {ICustomAttribute, ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
 import {IHostListenerBaseOptions} from "@fovea/common";
+import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
  * Registers a method as an event listener for the given event(s) and option(s)
@@ -8,6 +8,6 @@ import {IHostListenerBaseOptions} from "@fovea/common";
  * @returns {Function}
  */
 export function listener (events: string|string[], options?: Partial<IHostListenerBaseOptions>) {
-	return function <T extends (HTMLElement|typeof HTMLElement|ICustomAttribute|ICustomAttributeConstructor)> (target: T, name: string): void {
+	return function <T extends InstanceType<HostDecoratorTarget>> (target: T, name: string): void {
 	};
 }

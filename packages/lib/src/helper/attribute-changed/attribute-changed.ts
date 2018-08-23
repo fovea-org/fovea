@@ -13,7 +13,7 @@ import {coerceValue} from "../../observe/expression-chain/coercion/coerce-value"
  * @param {string|null} newValue
  * @private
  */
-export function __attributeChanged (host: IFoveaHost, attributeName: string, _oldValue: string|null, newValue: string|null): void {
+export function ___attributeChanged (host: IFoveaHost, attributeName: string, _oldValue: string|null, newValue: string|null): void {
 
 	// Start with getting the expected attribute value and see if it is identical to the new value
 	const expectedAttributeValue = getExpectedAttributeValue(host, attributeName);

@@ -1,11 +1,10 @@
 /*tslint:disable*/
+import {prop, styleSrc, templateSrc} from "@fovea/core";
+
 // @ts-ignore
-import {templateSrc, styleSrc, prop, setOnHost, selector, emit, hostListener, onChange, onBecameVisible, onBecameInvisible, onChildrenAdded} from "@fovea/core";
-// @ts-ignore
-import {MyBaseComponent} from "./demo-component-2";
 
 @styleSrc([
-	"./demo-component-1.scss",
+	"./demo-component-1.scss"
 ])
 @templateSrc("./demo-component-1.html")
 class FooBar extends HTMLElement {

@@ -1,5 +1,5 @@
 import {IHostAttributesExtractor} from "./i-host-attributes-extractor";
-import {IFoveaDOM, IHostAttributeValues} from "@fovea/dom";
+import {IFoveaDOM} from "@fovea/dom";
 import {IHostAttributesExtractOptions} from "./i-host-attributes-extract-options";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
@@ -8,7 +8,8 @@ import {IFoveaStats} from "../stats/i-fovea-stats";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 import {IConfiguration} from "../configuration/i-configuration";
-import {Json, libHelperName} from "@fovea/common";
+import {Json, libHelperName, IHostAttributeValues} from "@fovea/common";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that generates host attributes instructions to a Fovea component
@@ -20,7 +21,8 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 							 private readonly diagnostics: IFoveaDiagnostics,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
 							 private readonly libUser: ILibUser,
-							 private readonly foveaDOM: IFoveaDOM) {
+							 private readonly foveaDOM: IFoveaDOM,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -39,7 +41,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 	public extract (options: IHostAttributesExtractOptions): void {
 		const {mark, compilerOptions, context} = options;
 
-		// First, check if the class is annotated with a [template|style]Src decorator
+		// First, check if the class is annotated with a @hostAttributes decorator
 		const decorator = this.codeAnalyzer.classService.getDecorator(this.decoratorNameRegex, mark.classDeclaration);
 		if (decorator == null) return;
 		// Generate template or style contents from the decorator
@@ -52,12 +54,12 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 	}
 
 	/**
-	 * Generates a template from a '@templateSrc("<url>") decorator on the component prototype
+	 * Generates a template from a '@hostAttributes decorator on the component
 	 * @param {IHostAttributesExtractOptions} options
 	 * @param {Decorator} decorator
 	 * @returns {void}
 	 */
-	private generateFromDecorator ({context, compilerOptions, mark, insertPlacement}: IHostAttributesExtractOptions, decorator: Decorator): void {
+	private generateFromDecorator ({context, compilerOptions, mark}: IHostAttributesExtractOptions, decorator: Decorator): void {
 		const addInvalidDecoratorDiagnostic = () => this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.INVALID_HOST_ATTRIBUTES_DECORATOR_USAGE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 		const addOnlyLiteralValuesSupportedHereDiagnostic = () => this.diagnostics.addDiagnostic(context.container.file, {kind: FoveaDiagnosticKind.ONLY_LITERAL_VALUES_SUPPORTED_HERE, hostName: mark.className, hostKind: mark.kind, decoratorContent: this.codeAnalyzer.decoratorService.takeDecoratorExpression(decorator)});
 
@@ -116,12 +118,49 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				this.stats.setReferencedCustomSelectors(context.container.file, [...existingReferencedCustomSelectors, ...referencedCustomSelectors]);
 			}
 
-			// Call the fovea-lib helper method '__registerHostAttributes' with the template instructions and the Component prototype to map them to.
 			if (!compilerOptions.dryRun) {
-				const expression = `\n${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {${instructions.split("\n").map(line => `	${line}`).join("\n")}\n}, <any>${mark.className});`;
-				insertPlacement != null
-					? context.container.appendAtPlacement(expression, insertPlacement)
-					: context.container.prepend(expression);
+
+				const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, this);`;
+
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+						? `\n		${expression}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
+						`\n		${expression}`
+				);
+
+				const connectBody = (
+					`\n		${this.libUser.use("connectHostAttributes", compilerOptions, context)}(this);`
+				);
+
+				const disposeBody = (
+					`\n		${this.libUser.use("disposeHostAttributes", compilerOptions, context)}(this);`
+				);
+
+				// Create the register method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerHostAttributesMethodName} (): void {` +
+					`${registerBody}` +
+					`\n	}`
+				);
+
+				// Create the connect method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.connectHostAttributesMethodName} (): void {` +
+					`${connectBody}` +
+					`\n	}`
+				);
+
+				// Create the dispose method
+				context.container.appendLeft(
+					mark.classDeclaration.members.end,
+					`\n	protected ${this.configuration.postCompile.disposeHostAttributesMethodName} (): void {` +
+					`${disposeBody}` +
+					`\n	}`
+				);
 			}
 		}
 

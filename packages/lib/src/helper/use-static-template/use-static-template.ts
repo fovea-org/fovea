@@ -7,6 +7,6 @@ import {useStaticTemplateForHost} from "../../template/static-template/use-stati
  * @param {IFoveaHostConstructor | ICustomAttributeConstructor} host
  * @private
  */
-export function __useStaticTemplate (hash: string, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
+export function ___useStaticTemplate (hash: string, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
 	useStaticTemplateForHost(host, hash);
 }

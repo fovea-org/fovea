@@ -42,12 +42,7 @@ export class TemplateMultiElement extends TemplateElementBase implements ITempla
 
 	/**
 	 * Constructs a new multi element
-	 * @param {ITemplateConstructOptions} base
-	 * @param {ShadowRoot} root
-	 * @param {Node} owner
-	 * @param {ITemplateVariables} templateVariables
-	 * @param {IFoveaHost} host
-	 * @param {ITemplateBase|null} previousSibling
+	 * @param {ITemplateMultiElementConstructOptions} options
 	 * @returns {ITemplateMultiElementResult}
 	 */
 	public construct ({base, root, owner, templateVariables, host, previousSibling}: ITemplateMultiElementConstructOptions): ITemplateMultiElementResult {

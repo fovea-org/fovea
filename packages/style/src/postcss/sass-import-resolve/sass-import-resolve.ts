@@ -3,8 +3,14 @@ import {basename, dirname, join} from "path";
 import {ISassImportResolveOptions} from "./i-sass-import-resolve-options";
 import {ISassImportResolveResult} from "./i-sass-import-resolve-result";
 
-// sass resolve cache
-const cache: { [key: string]: ISassImportResolveResult|false } = {};
+let cache: { [key: string]: ISassImportResolveResult|false } = {};
+
+/**
+ * Clears the cache
+ */
+export function clearImportResolveCache (): void {
+	cache = {};
+}
 
 /**
  * Helps with resolving the absolute path of a Sass file

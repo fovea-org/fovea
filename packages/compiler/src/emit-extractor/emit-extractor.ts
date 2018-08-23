@@ -6,6 +6,7 @@ import {ILibUser} from "../lib-user/i-lib-user";
 import {isCallExpression, PropertyDeclaration} from "typescript";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
+import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 
 /**
  * A class that can extract properties annotated with a @emit decorator from a Component prototype and invoke the helpers in fovea-lib
@@ -14,7 +15,8 @@ export class EmitExtractor implements IEmitExtractor {
 	constructor (private readonly configuration: IConfiguration,
 							 private readonly stats: IFoveaStats,
 							 private readonly codeAnalyzer: ICodeAnalyzer,
-							 private readonly libUser: ILibUser) {
+							 private readonly libUser: ILibUser,
+							 private readonly foveaHostUtil: IFoveaHostUtil) {
 	}
 
 	/**
@@ -26,13 +28,13 @@ export class EmitExtractor implements IEmitExtractor {
 	}
 
 	/**
-	 * Extracts all properties decorated with a @emit decorator and delegates it to the fovea-lib helper '__registerEmitter'.
+	 * Extracts all properties decorated with a @emit decorator and delegates it to the fovea-lib helper '___registerEmitter'.
 	 * @param {IEmitExtractorExtractOptions} options
 	 */
 	public extract (options: IEmitExtractorExtractOptions): void {
-		const {mark, insertPlacement, context, compilerOptions} = options;
+		const {mark, context, compilerOptions} = options;
 
-		const {className} = mark;
+		const {classDeclaration} = mark;
 
 		// Take all props that has a "@emit" decorator
 		const emitInstanceProperties = this.codeAnalyzer.classService.getPropertiesWithDecorator(this.decoratorNameRegex, mark.classDeclaration);
@@ -41,38 +43,56 @@ export class EmitExtractor implements IEmitExtractor {
 		// Take all props
 		const allProps = [...emitInstanceProperties, ...emitStaticProperties];
 
-		// For each prop, generate a call to '__registerEmitter' and remove the '@emit' decorator
-		const results = allProps.map(emitProperty => {
+		// Store all calls to 'registerEmitter' here
+		const registerEmitterCalls: string[] = [];
+
+		// For each prop, generate a call to '___registerEmitter' and remove the '@emit' decorator
+		allProps.forEach(emitProperty => {
 			// Take the decorator
 			const decorators = this.codeAnalyzer.decoratorService.getDecoratorsWithExpression(this.decoratorNameRegex, emitProperty);
-			const decoratorResults = decorators.map(decorator => {
+			decorators.forEach(decorator => {
 				// If we're on a dry run, return true before performing the SourceFile mutations
-				if (compilerOptions.dryRun) return true;
+				if (compilerOptions.dryRun) return;
 
 				// The emit contents will either be empty if @emit() takes no arguments or isn't a CallExpression, or it will be the contents of the first provided argument to it
 				const emitContents = !isCallExpression(decorator.expression) || decorator.expression.arguments.length === 0 ? "" : `, ${this.codeAnalyzer.printer.print(decorator.expression.arguments[0])}`;
 
-				// Create the CallExpression
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("registerEmitter", compilerOptions, context)}(<any>${className}, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`,
-					insertPlacement
-				);
+				registerEmitterCalls.push(`${this.libUser.use("registerEmitter", compilerOptions, context)}(this, "${this.codeAnalyzer.propertyNameService.getName(emitProperty.name)}", ${this.codeAnalyzer.modifierService.isStatic(emitProperty)}${emitContents});`);
 
 				// Remove the @emit decorator from it
 				context.container.remove(decorator.pos, decorator.end);
 
 				// Make sure that it has a @prop decorator
 				this.assertHasPropDecorator(emitProperty, context);
-
-				// Return true
-				return true;
 			});
-			return decoratorResults.some(result => result);
 		});
 
-		// Set 'hasEventEmitters' to true if there were any results and any of them were 'true', or if another host within the file already has a truthy value for it
+		// If there is at least 1 event emitter, add the prototype method
+		if (registerEmitterCalls.length > 0) {
+
+			if (!compilerOptions.dryRun) {
+
+				const registerBody = (
+					this.foveaHostUtil.isBaseComponent(classDeclaration)
+						? `\n		${registerEmitterCalls.join("\n		")}`
+						: `\n		// ts-ignore` +
+						`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
+						`\n		${registerEmitterCalls.join("\n		")}`
+				);
+
+				// Create the static method
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
+					`${registerBody}` +
+					`\n	}`
+				);
+			}
+		}
+
+		// Set 'hasEventEmitters' to true if there were any results, or if another host within the file already has a truthy value for it
 		const statsForFile = this.stats.getStatsForFile(context.container.file);
-		this.stats.setHasEventEmitters(context.container.file, statsForFile.hasEventEmitters || results.some(result => result));
+		this.stats.setHasEventEmitters(context.container.file, statsForFile.hasEventEmitters || registerEmitterCalls.length > 0);
 	}
 
 	/**

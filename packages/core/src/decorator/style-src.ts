@@ -1,4 +1,4 @@
-import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribute";
+import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
  * Provides one or more paths to read styles from for a Fovea component
@@ -7,5 +7,6 @@ import {ICustomAttributeConstructor} from "../custom-attribute/i-custom-attribut
  * @returns {(target: T) => void}
  */
 export function styleSrc (src: string|string[]) {
-	return function <T extends typeof HTMLElement|ICustomAttributeConstructor> (target: T): void {};
+	return function <T extends HostDecoratorTarget> (target: T): void {
+	};
 }

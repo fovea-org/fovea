@@ -1,6 +1,6 @@
 import {ICustomAttributeConstructor, IFoveaHostConstructor, IUseItem} from "@fovea/common";
-import {__useStaticCSS} from "../use-static-css/use-static-css";
-import {__useStaticTemplate} from "../use-static-template/use-static-template";
+import {___useStaticCSS} from "../use-static-css/use-static-css";
+import {___useStaticTemplate} from "../use-static-template/use-static-template";
 
 /**
  * Registers a host for using the items it receives
@@ -8,13 +8,13 @@ import {__useStaticTemplate} from "../use-static-template/use-static-template";
  * @param {IUseItem[]} items
  * @private
  */
-export function __use (host: IFoveaHostConstructor|ICustomAttributeConstructor, items: IUseItem[]): void {
+export function ___use (host: IFoveaHostConstructor|ICustomAttributeConstructor, items: IUseItem[]): void {
 	items.forEach(([kind, hash]) => {
 		switch (kind) {
 			case "styles":
-				return __useStaticCSS(hash, host);
+				return ___useStaticCSS(hash, host);
 			case "template":
-				return __useStaticTemplate(hash, host);
+				return ___useStaticTemplate(hash, host);
 		}
 	});
 }

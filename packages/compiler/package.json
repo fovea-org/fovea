@@ -46,7 +46,7 @@
 		"@fovea/dom": "^1.0.123",
 		"@fovea/lib": "^1.0.123",
 		"@fovea/style": "^1.0.123",
-		"@types/node": "^10.7.0",
+		"@types/node": "^10.9.0",
 		"@wessberg/codeanalyzer": "^1.0.138",
 		"@wessberg/di": "^1.1.0",
 		"@wessberg/moduleutil": "0.0.24",
@@ -59,7 +59,7 @@
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-di": "^1.0.86",
-		"@wessberg/rollup-plugin-ts": "0.0.35",
+		"@wessberg/rollup-plugin-ts": "0.0.36",
 		"ava": "^0.25.0",
 		"rollup": "^0.64.1"
 	},

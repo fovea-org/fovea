@@ -7,6 +7,6 @@ import {useStaticCSSForHost} from "../../css/static-css/use-static-css-for-host"
  * @param {IFoveaHostConstructor | ICustomAttributeConstructor} host
  * @private
  */
-export function __useStaticCSS (hash: string, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
+export function ___useStaticCSS (hash: string, host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
 	useStaticCSSForHost(host, hash);
 }

@@ -1,11 +1,4 @@
 import {ICustomAttribute, IFoveaHost} from "@fovea/common";
-import {unbindPropsForHost} from "../../prop/props-for-host/unbind-props-for-host/unbind-props-for-host";
-import {unbindHostListeners} from "../../listener/host-listener/unbind-host-listeners";
-import {unbindVisibilityObservers} from "../../visibility/unbind-visibility-observers";
-import {unbindStaticCSS} from "../../css/static-css/unbind-static-css";
-import {unbindChildListObservers} from "../../dom-mutation/child-list-observers-for-host/unbind-child-list-observers";
-import {unbindAttributeChangeObservers} from "../../dom-mutation/attribute-change-observers-for-host/unbind-attribute-change-observers";
-import {unbindHostAttributesForHost} from "../../host-attributes/unbind-host-attributes-for-host/unbind-host-attributes-for-host";
 
 /**
  * Shared logic for when a host is disposed or destroyed
@@ -13,11 +6,11 @@ import {unbindHostAttributesForHost} from "../../host-attributes/unbind-host-att
  * @private
  */
 export function disposeOrDestroyShared (host: IFoveaHost|ICustomAttribute): void {
-	unbindPropsForHost(host);
-	unbindHostListeners(host);
-	unbindVisibilityObservers(host);
-	unbindStaticCSS(host);
-	unbindChildListObservers(host);
-	unbindAttributeChangeObservers(host);
-	unbindHostAttributesForHost(host);
+	if (host.___disposeProps != null) host.___disposeProps();
+	if (host.___disposeListeners != null) host.___disposeListeners();
+	if (host.___disposeVisibilityObservers != null) host.___disposeVisibilityObservers();
+	if (host.___disposeCSS != null) host.___disposeCSS();
+	if (host.___disposeChildListObservers != null) host.___disposeChildListObservers();
+	if (host.___disposeAttributeChangeObservers != null) host.___disposeAttributeChangeObservers();
+	if (host.___disposeHostAttributes != null) host.___disposeHostAttributes();
 }
