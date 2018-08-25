@@ -44,10 +44,10 @@
 		"@fovea/common": "^1.0.124",
 		"@fovea/postcss-fovea-parser": "^1.0.124",
 		"@types/deep-extend": "^0.4.31",
-		"@types/node": "^10.9.0",
+		"@types/node": "^10.9.2",
 		"@types/node-sass": "^3.10.32",
 		"@wessberg/di": "^1.1.0",
-		"cssnano": "^4.0.5",
+		"cssnano": "^4.1.0",
 		"deep-extend": "^0.6.0",
 		"node-sass": "^4.9.3",
 		"postcss": "^7.0.2",
@@ -57,9 +57,9 @@
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-di": "^1.0.86",
-		"@wessberg/rollup-plugin-ts": "0.0.36",
+		"@wessberg/rollup-plugin-ts": "0.0.37",
 		"ava": "^0.25.0",
-		"rollup": "^0.64.1"
+		"rollup": "^0.65.0"
 	},
 	"publishConfig": {
 		"access": "public"
