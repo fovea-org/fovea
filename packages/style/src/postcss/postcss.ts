@@ -72,7 +72,8 @@ export class PostCSS implements IPostCSS {
 	 */
 	private preparePostCSSProcessor (options: IPostCSSProcessOptions): void {
 		// Spin up a new processor
-		this.postCSSProcessor = postcss(this.mergeUserProvidedPluginsWithDefaults(options));
+		const mergedPlugins = this.mergeUserProvidedPluginsWithDefaults(options);
+		this.postCSSProcessor = postcss(mergedPlugins);
 	}
 
 	/**
