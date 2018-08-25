@@ -95,7 +95,7 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 			// Always return null if nothing changed
 			if (!fileResult.hasChanged) return;
 
-			// Finally, return the changed code as well as the sourcemap
+			// Finally, return the changed code, the sourcemap (if any), as well as the file dependencies
 			return {
 				code: fileResult.code,
 				map: fileResult.map,
