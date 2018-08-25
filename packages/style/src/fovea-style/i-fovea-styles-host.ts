@@ -9,5 +9,4 @@ export interface IFoveaStylesHost {
 	generate (options: IFoveaStylesOptions): Promise<IFoveaStylesResult>;
 	takeVariables (options: IFoveaStylesTakeVariablesOptions): Promise<IFoveaStylesTakeVariablesResult>;
 	takeImportPaths (options: IFoveaStylesTakeImportPathsOptions): Promise<IFoveaStylesTakeImportPathsResult>;
-	clearImportResolveCache (): void;
 }

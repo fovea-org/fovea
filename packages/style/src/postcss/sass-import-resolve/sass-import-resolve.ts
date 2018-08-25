@@ -3,15 +3,6 @@ import {basename, dirname, join} from "path";
 import {ISassImportResolveOptions} from "./i-sass-import-resolve-options";
 import {ISassImportResolveResult} from "./i-sass-import-resolve-result";
 
-let cache: { [key: string]: ISassImportResolveResult|false } = {};
-
-/**
- * Clears the cache
- */
-export function clearImportResolveCache (): void {
-	cache = {};
-}
-
 /**
  * Helps with resolving the absolute path of a Sass file
  * @param {string} id
@@ -100,15 +91,6 @@ export function sassImportResolve (id: string, rawOptions: Partial<ISassImportRe
 	}
 }
 
-/**
- * Gets the identifier to use within the cache
- * @param file
- * @param options
- */
-function getCacheIdentifier (file: string, options: ISassImportResolveOptions): string {
-	return `[${file}] - ${JSON.stringify(options)}`;
-}
-
 /* Additional tooling
 /* ========================================================================== */
 
@@ -119,9 +101,6 @@ function getCacheIdentifier (file: string, options: ISassImportResolveOptions): 
  * @returns {ISassImportResolveResult|false}
  */
 function matchFile (file: string, options: ISassImportResolveOptions): ISassImportResolveResult|false {
-	const cacheIdentifier = getCacheIdentifier(file, options);
-	const cached = cache[cacheIdentifier];
-	if (cached != null) return cached;
 
 	let returnValue: ISassImportResolveResult|false = false;
 
@@ -153,8 +132,6 @@ function matchFile (file: string, options: ISassImportResolveOptions): ISassImpo
 			returnValue = false;
 		}
 	}
-
-	cache[cacheIdentifier] = returnValue;
 	return returnValue;
 }
 

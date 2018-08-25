@@ -48,9 +48,6 @@ export class StylesParserService implements IStylesParserService {
 		const watcher = this.watchService.watch(foveaCliConfig.style.directory, {persistent: watch}, async () => {
 			subscriber.onStart();
 
-			// Clear the import resolve cache
-			this.foveaStyles.clearImportResolveCache();
-
 			// Take all variables
 			themeVariables = await this.foveaStyles.takeVariables({
 				file: themeStylesPath,

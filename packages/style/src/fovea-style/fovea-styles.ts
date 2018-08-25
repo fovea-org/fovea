@@ -43,11 +43,4 @@ export class FoveaStyles implements IFoveaStyles {
 	public async takeImportPaths (options: IFoveaStylesTakeImportPathsOptions): Promise<IFoveaStylesTakeImportPathsResult> {
 		throw new Error(options.toString());
 	}
-
-	/**
-	 * This is a noop. The constructor returns the proper implementation of IFoveaStyles
-	 */
-	public clearImportResolveCache (): void {
-		throw new Error();
-	}
 }

@@ -12,7 +12,7 @@ import {postCSSTakeVariablesPreparePlugin} from "../postcss/postcss-take-variabl
 import {IFoveaStylesTakeImportPathsOptions} from "./i-fovea-styles-take-import-paths-options";
 import {IFoveaStylesTakeImportPathsResult} from "./i-fovea-styles-take-import-paths-result";
 import {IFoveaStylesBaseOptions} from "./i-fovea-styles-base-options";
-import {clearImportResolveCache, sassImportResolve} from "../postcss/sass-import-resolve/sass-import-resolve";
+import {sassImportResolve} from "../postcss/sass-import-resolve/sass-import-resolve";
 import {postCSSFoveaCSSSyntax, postCSSFoveaSCSSSyntax} from "@fovea/postcss-fovea-parser";
 
 /**
@@ -20,13 +20,6 @@ import {postCSSFoveaCSSSyntax, postCSSFoveaSCSSSyntax} from "@fovea/postcss-fove
  */
 export class FoveaStylesHost implements IFoveaStylesHost {
 	constructor (private readonly postCSS: IPostCSS) {
-	}
-
-	/**
-	 * Clears the import resolve cache such that no cached contents will be used for imports
-	 */
-	public clearImportResolveCache (): void {
-		clearImportResolveCache();
 	}
 
 	/**
