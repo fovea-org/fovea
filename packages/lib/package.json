@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/lib",
-	"version": "1.0.124",
+	"version": "1.0.125",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
@@ -38,7 +38,7 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.124",
+		"@fovea/common": "^1.0.125",
 		"@wessberg/stringutil": "^1.0.17"
 	},
 	"devDependencies": {
