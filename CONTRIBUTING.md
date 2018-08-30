@@ -1,5 +1,5 @@
 You are more than welcome to contribute to `fovea` in any way you please, including:
-	
+
 - Updating documentation.
 - Fixing spelling and grammar
 - Adding tests
