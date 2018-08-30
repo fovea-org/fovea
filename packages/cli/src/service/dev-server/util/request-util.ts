@@ -38,7 +38,7 @@ export function getRequestFromIncomingHeaders (headers: IncomingHttpHeaders): Re
 		acceptLanguage: headers["accept-language"] == null
 			? undefined
 			: splitStringifiedListHeader(headers["accept-language"]!),
-		userAgent: <string> headers["user-agent"]!,
+		userAgent: headers["user-agent"]!,
 		url: new URL(<string> headers[":path"], `${headers[":scheme"]}://${headers[":authority"]}`),
 		cachedChecksum: headers["if-none-match"]
 	};
