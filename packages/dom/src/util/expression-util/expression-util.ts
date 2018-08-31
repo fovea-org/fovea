@@ -7,9 +7,6 @@ import {RawExpressionBindable} from "../../expression/raw-expression-bindable/ra
 import {IContext} from "../context-util/i-context";
 import {PICKED_GLOBAL_KEYS} from "../global-keys/global-keys";
 
-// tslint:disable:cognitive-complexity
-// tslint:disable:no-big-function
-
 /**
  * A utility class for working with expressions
  */

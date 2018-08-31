@@ -14,8 +14,6 @@ import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
 import {IConfiguration} from "../configuration/i-configuration";
 import {IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
 
-// tslint:disable:cognitive-complexity
-
 /**
  * A class that will make sure that all components that another component uses as part of its
  * template is actually imported by it

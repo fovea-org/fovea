@@ -15,8 +15,6 @@ import {kebabCase} from "@wessberg/stringutil";
 import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
 import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName, LibHelperName} from "@fovea/common";
 
-// tslint:disable:cognitive-complexity
-
 /**
  * A class that can extend the prototype of an IFoveaHost
  */

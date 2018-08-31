@@ -7,8 +7,6 @@ import {ENTITY_MAP} from "./entity-map";
 import {LEGACY_MAP} from "./legacy-map";
 import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END, Json} from "@fovea/common";
 
-// tslint:disable:cognitive-complexity
-
 /**
  * A Tokenizer for the HTML Parser
  */
