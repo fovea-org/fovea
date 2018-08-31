@@ -7,6 +7,8 @@ import {ENTITY_MAP} from "./entity-map";
 import {LEGACY_MAP} from "./legacy-map";
 import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END, Json} from "@fovea/common";
 
+// tslint:disable:cognitive-complexity
+
 /**
  * A Tokenizer for the HTML Parser
  */
@@ -73,7 +75,7 @@ export class Tokenizer implements ITokenizer {
 	 * @type {number}
 	 * @private
 	 */
-	private bufferOffset: number = 0; //chars removed from _buffer
+	private bufferOffset: number = 0; // Chars removed from _buffer
 
 	/**
 	 * The base state
@@ -590,17 +592,23 @@ export class Tokenizer implements ITokenizer {
 	 */
 	private _stateBeforeCloseingTagName (char: string): void {
 		if (isWhitespace(char)) {
+			return;
 		}
+
 		else if (char === ">") {
 			this.state = TEXT;
-		} else if (this.special !== SPECIAL_NONE) {
+		}
+
+		else if (this.special !== SPECIAL_NONE) {
 			if (char === "s" || char === "S") {
 				this.state = BEFORE_SPECIAL_END;
 			} else {
 				this.state = TEXT;
 				this.index--;
 			}
-		} else {
+		}
+
+		else {
 			this.state = IN_CLOSING_TAG_NAME;
 			this.sectionStart = this.index;
 		}
@@ -624,7 +632,7 @@ export class Tokenizer implements ITokenizer {
 	 * @private
 	 */
 	private _stateAfterCloseingTagName (char: string): void {
-		//skip everything until ">"
+		// Skip everything until ">"
 		if (char === ">") {
 			this.state = TEXT;
 			this.sectionStart = this.index + 1;
@@ -713,7 +721,7 @@ export class Tokenizer implements ITokenizer {
 		} else if (!isWhitespace(char)) {
 			this.state = IN_ATTRIBUTE_VALUE_NQ;
 			this.sectionStart = this.index;
-			this.index--; //reconsume token
+			this.index--; // reconsume token
 		}
 	}
 
@@ -723,16 +731,7 @@ export class Tokenizer implements ITokenizer {
 	 * @private
 	 */
 	private _stateInAttributeValueDoubleQuotes (char: string): void {
-		if (char === "\"") {
-			this._emitToken("onattribdata");
-			this.consumer.onattribend();
-			this.state = BEFORE_ATTRIBUTE_NAME;
-		} else if (this.decodeEntities && char === "&") {
-			this._emitToken("onattribdata");
-			this.baseState = this.state;
-			this.state = BEFORE_ENTITY;
-			this.sectionStart = this.index;
-		}
+		this._stateInAttributeValueQuotes(char, `"`);
 	}
 
 	/**
@@ -741,7 +740,17 @@ export class Tokenizer implements ITokenizer {
 	 * @private
 	 */
 	private _stateInAttributeValueSingleQuotes (char: string): void {
-		if (char === "'") {
+		this._stateInAttributeValueQuotes(char, "'");
+	}
+
+	/**
+	 * Invoked when at quotes of an attribute value
+	 * @param {string} char
+	 * @param {string} quoteChar
+	 * @private
+	 */
+	private _stateInAttributeValueQuotes (char: string, quoteChar: "\""|"'"): void {
+		if (char === quoteChar) {
 			this._emitToken("onattribdata");
 			this.consumer.onattribend();
 			this.state = BEFORE_ATTRIBUTE_NAME;
@@ -852,7 +861,7 @@ export class Tokenizer implements ITokenizer {
 	 */
 	private _stateAfterComment2 (char: string): void {
 		if (char === ">") {
-			//remove 2 trailing chars
+			// remove 2 trailing chars
 			this.consumer.oncomment(this.buffer.substring(this.sectionStart, this.index - 2));
 			this.state = TEXT;
 			this.sectionStart = this.index + 1;
@@ -893,14 +902,14 @@ export class Tokenizer implements ITokenizer {
 	 */
 	private _stateAfterCdata2 (char: string): void {
 		if (char === ">") {
-			//remove 2 trailing chars
+			// remove 2 trailing chars
 			this.consumer.oncdata(this.buffer.substring(this.sectionStart, this.index - 2));
 			this.state = TEXT;
 			this.sectionStart = this.index + 1;
 		} else if (char !== "]") {
 			this.state = IN_CDATA;
 		}
-		//else: stay in AFTER_CDATA_2 (`]]]>`)
+		// else: stay in AFTER_CDATA_2 (`]]]>`)
 	}
 
 	/**
@@ -915,7 +924,7 @@ export class Tokenizer implements ITokenizer {
 			this.state = BEFORE_STYLE_1;
 		} else {
 			this.state = IN_TAG_NAME;
-			this.index--; //consume the token again
+			this.index--; // consume the token again
 		}
 	}
 
@@ -943,7 +952,7 @@ export class Tokenizer implements ITokenizer {
 			this.special = SPECIAL_SCRIPT;
 		}
 		this.state = IN_TAG_NAME;
-		this.index--; //consume the token again
+		this.index--; // consume the token again
 	}
 
 	/**
@@ -957,7 +966,7 @@ export class Tokenizer implements ITokenizer {
 			this.special = SPECIAL_NONE;
 			this.state = IN_CLOSING_TAG_NAME;
 			this.sectionStart = this.index - SCRIPT_LENGTH;
-			this.index--; //reconsume the token
+			this.index--; // reconsume the token
 		}
 		else this.state = TEXT;
 	}
@@ -972,7 +981,7 @@ export class Tokenizer implements ITokenizer {
 			this.special = SPECIAL_STYLE;
 		}
 		this.state = IN_TAG_NAME;
-		this.index--; //consume the token again
+		this.index--; // consume the token again
 	}
 
 	/**
@@ -986,7 +995,7 @@ export class Tokenizer implements ITokenizer {
 			this.special = SPECIAL_NONE;
 			this.state = IN_CLOSING_TAG_NAME;
 			this.sectionStart = this.index - MINUS_OFFSET;
-			this.index--; //reconsume the token
+			this.index--; // reconsume the token
 		}
 		else this.state = TEXT;
 	}
@@ -996,7 +1005,7 @@ export class Tokenizer implements ITokenizer {
 	 * @private
 	 */
 	private _parseNamedEntityStrict (): void {
-		//offset = 1
+		// offset = 1
 		if (this.sectionStart + 1 < this.index) {
 			const entity = this.buffer.substring(this.sectionStart + 1, this.index);
 			const map = this.xmlMode ? XML_MAP : ENTITY_MAP;
@@ -1048,15 +1057,18 @@ export class Tokenizer implements ITokenizer {
 			}
 			this.state = this.baseState;
 		} else if ((char < "a" || char > "z") && (char < "A" || char > "Z") && (char < "0" || char > "9")) {
-			if (this.xmlMode) {
+
+			if (this.xmlMode || this.sectionStart + 1 === this.index) {
+				// Do nothing
 			}
-			else if (this.sectionStart + 1 === this.index) {
-			}
+
 			else if (this.baseState !== TEXT) {
 				if (char !== "=") {
 					this._parseNamedEntityStrict();
 				}
-			} else {
+			}
+
+			else {
 				this._parseLegacyEntity();
 			}
 
@@ -1075,7 +1087,7 @@ export class Tokenizer implements ITokenizer {
 		const sectionStart = this.sectionStart + offset;
 
 		if (sectionStart !== this.index) {
-			//parse entity
+			// parse entity
 			const entity = this.buffer.substring(sectionStart, this.index);
 			const parsed = parseInt(entity, base);
 
@@ -1147,12 +1159,12 @@ export class Tokenizer implements ITokenizer {
 				this.bufferOffset += this.index;
 				this.index = 0;
 			} else if (this.sectionStart === this.index) {
-				//the section just started
+				// the section just started
 				this.buffer = "";
 				this.bufferOffset += this.index;
 				this.index = 0;
 			} else {
-				//remove everything unnecessary
+				// remove everything unnecessary
 				this.buffer = this.buffer.substr(this.sectionStart);
 				this.index -= this.sectionStart;
 				this.bufferOffset += this.sectionStart;
@@ -1167,7 +1179,7 @@ export class Tokenizer implements ITokenizer {
 	 * @private
 	 */
 	private _finish (): void {
-		//if there is remaining data, emit it in a reasonable way
+		// if there is remaining data, emit it in a reasonable way
 		if (this.sectionStart < this.index) {
 			this._handleTrailingData();
 		}
@@ -1221,8 +1233,8 @@ export class Tokenizer implements ITokenizer {
 		) {
 			this.consumer.ontext(data);
 		}
-		//else, ignore remaining data
-		//TODO add a way to remove current tag
+		// else, ignore remaining data
+		// TODO add a way to remove current tag
 	}
 
 	/**
@@ -1316,7 +1328,7 @@ export class Tokenizer implements ITokenizer {
 				this.state = NEXT_STATE;
 			} else {
 				this.state = IN_TAG_NAME;
-				this.index--; //consume the token again
+				this.index--; // consume the token again
 			}
 		};
 	}

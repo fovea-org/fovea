@@ -10,6 +10,8 @@ import {addRef} from "../../ref/add-ref/add-ref";
 import {observeListener} from "../../listener/observe-listener/observe-listener";
 import {IDestroyable} from "../../destroyable/i-destroyable";
 
+// tslint:disable:no-identical-functions
+
 /**
  * Adds the given ExpressionChain or IExpressionChainDict to the given host as an attribute
  * @param {IFoveaHost | ICustomAttribute} host

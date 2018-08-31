@@ -190,26 +190,14 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				hostAttributes[this.codeAnalyzer.propertyNameService.getName(property.name)] = this.takeExpressionValue(property.initializer, invalidHostAttributesDecoratorUsageCtor, onlyLiteralValuesSupportedHereCtor);
 			}
 
-			else if (isShorthandPropertyAssignment(property)) {
-				// Shorthand's are not supported currently since we only handle literal values
+			else if (isShorthandPropertyAssignment(property) || isSpreadAssignment(property)) {
+				// Shorthand's and Spread assignments are not supported currently since we only handle literal values
 				onlyLiteralValuesSupportedHereCtor();
 				throw new Error();
 			}
 
-			else if (isSpreadAssignment(property)) {
-				// Spread assignments are not supported currently since we only handle literal values
-				onlyLiteralValuesSupportedHereCtor();
-				throw new Error();
-			}
-
-			else if (isMethodDeclaration(property)) {
-				// It doesn't make sense to add method declarations to @hostAttributes
-				invalidHostAttributesDecoratorUsageCtor();
-				throw new Error();
-			}
-
-			else if (isAccessor(property)) {
-				// It doesn't make sense to add method accessors to @hostAttributes
+			else if (isMethodDeclaration(property) || isAccessor(property)) {
+				// It doesn't make sense to add method declarations or method accessors to @hostAttributes
 				invalidHostAttributesDecoratorUsageCtor();
 				throw new Error();
 			}

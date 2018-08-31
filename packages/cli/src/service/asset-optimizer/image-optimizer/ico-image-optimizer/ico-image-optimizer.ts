@@ -26,12 +26,11 @@ export class IcoImageOptimizer implements IIcoImageOptimizer {
 	 * @returns {Promise<OptimizerResult>}
 	 */
 	private async qualifyOptimization (options: IImageOptimizerOptions): Promise<OptimizerResult> {
-		switch (options.outputFormat) {
-			case ImageFormatKind.ICO:
-				return {optimized: true, buffer: await this.runOptimizer(options)};
-			default:
-				return {optimized: false};
+		if (options.outputFormat === ImageFormatKind.ICO) {
+			return {optimized: true, buffer: await this.runOptimizer(options)};
 		}
+
+		return {optimized: false};
 	}
 
 	/**

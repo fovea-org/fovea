@@ -7,7 +7,7 @@ import {RouteGuard} from "./route-guard";
 // tslint:disable:no-any
 export declare type RouteInstanceConstructor = new (...args: any[]) => IRouterTarget;
 export declare type AsyncImportRoute = Promise<{ default: RouteInstanceConstructor }|RouteInstanceConstructor>;
-export declare type RouteComponent = RouteInstanceConstructor|AsyncImportRoute|(() => AsyncImportRoute)|(() => AsyncImportRoute);
+export declare type RouteComponent = RouteInstanceConstructor|AsyncImportRoute|(() => AsyncImportRoute);
 
 export interface IRouteBase {
 	name?: string;

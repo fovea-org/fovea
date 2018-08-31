@@ -15,6 +15,7 @@ import {ILoggerService} from "../../logger/i-logger-service";
 import {IGetFilepathWithEncodingResult} from "../i-get-filepath-with-encoding-result";
 import {Buffer} from "buffer";
 import {LIVE_RELOAD_INJECTION} from "../live-reload/injection";
+import {ContentType} from "../content-type/content-type";
 
 /**
  * A handler that can handle requests
@@ -44,7 +45,7 @@ export class RequestHandler implements IRequestHandler {
 				return {
 					body: `Only GET requests are supported for the Development Server`,
 					statusCode: constants.HTTP_STATUS_INTERNAL_SERVER_ERROR,
-					contentType: "text/plain"
+					contentType: ContentType.TEXT_PLAIN
 				};
 		}
 	}
@@ -65,7 +66,7 @@ export class RequestHandler implements IRequestHandler {
 			response = {
 				body: `No resource exists at '${options.request.url.pathname}'`,
 				statusCode: constants.HTTP_STATUS_NOT_FOUND,
-				contentType: "text/plain"
+				contentType: ContentType.TEXT_PLAIN
 			};
 		}
 
@@ -103,7 +104,7 @@ export class RequestHandler implements IRequestHandler {
 	 * @param options
 	 */
 	private async loadIndex (options: RequestHandlerOptions): Promise<LoadedResource|undefined> {
-		let normalizedPath = "/";
+		let normalizedPath;
 
 		// Try to resolve the path from the hook
 		const requestIndexResult = options.onRequestIndex(options.request.userAgent, options.serverOptions.root);
@@ -283,7 +284,7 @@ export class RequestHandler implements IRequestHandler {
 		if (assumedFileType != null) return assumedFileType;
 
 		// Otherwise, fall back to text/plain
-		return "text/plain";
+		return ContentType.TEXT_PLAIN;
 	}
 
 }

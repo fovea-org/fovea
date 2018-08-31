@@ -12,8 +12,9 @@ import {addRef} from "../../../../ref/add-ref/add-ref";
 import {observeListener} from "../../../../listener/observe-listener/observe-listener";
 import {IDestroyable} from "../../../../destroyable/i-destroyable";
 
-// tslint:disable:no-unused-expression
 // tslint:disable:no-any
+
+// tslint:disable:no-unused-expression
 
 /**
  * A class that reflects an instance of a TemplateNormalElement

@@ -15,7 +15,8 @@ export function getRootForNode (node: Node|ICustomAttribute): Element|ShadowRoot
 
 	// If the root is still undefined, throw an exception
 	if (root == null) {
-		throw new ReferenceError(`Internal Error: A ShadowRoot could not be retrieved for a ${isICustomAttribute(node) ? `Custom Attribute` : `node with tagName: ${node.nodeName}`}`);
+		const nodeDescription = isICustomAttribute(node) ? `Custom Attribute` : `node with tagName: ${node.nodeName}`;
+		throw new ReferenceError(`Internal Error: A ShadowRoot could not be retrieved for a ${nodeDescription}`);
 	}
 
 	return root;

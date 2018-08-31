@@ -4,6 +4,10 @@ import {SCSSToken, SCSSTokenKind} from "./scss-token";
 import {ISCSSTokenizerInput} from "./i-scss-tokenizer-input";
 import {EXPRESSION_QUALIFIER_BRACKET_START, EXPRESSION_QUALIFIER_DOLLAR_SIGN_START, EXPRESSION_QUALIFIER_END} from "@fovea/common";
 
+// tslint:disable:no-big-function
+// tslint:disable:cognitive-complexity
+// tslint:disable:no-ignored-return
+
 const SINGLE_QUOTE = "\'".charCodeAt(0);
 const DOUBLE_QUOTE = "\"".charCodeAt(0);
 const BACKSLASH = "\\".charCodeAt(0);

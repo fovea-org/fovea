@@ -2,7 +2,7 @@ let i = 0;
 let j = 0;
 
 export const TEXT = i++;
-export const BEFORE_TAG_NAME = i++; //after <
+export const BEFORE_TAG_NAME = i++; // after <
 export const IN_TAG_NAME = i++;
 export const IN_SELF_CLOSING_TAG = i++;
 export const BEFORE_CLOSING_TAG_NAME = i++;
@@ -43,34 +43,34 @@ export const AFTER_CDATA_1 = i++; // ]
 export const AFTER_CDATA_2 = i++; // ]
 
 // special tags
-export const BEFORE_SPECIAL = i++; //S
-export const BEFORE_SPECIAL_END = i++;   //S
+export const BEFORE_SPECIAL = i++; // S
+export const BEFORE_SPECIAL_END = i++;   // S
 
-export const BEFORE_SCRIPT_1 = i++; //C
-export const BEFORE_SCRIPT_2 = i++; //R
-export const BEFORE_SCRIPT_3 = i++; //I
-export const BEFORE_SCRIPT_4 = i++; //P
-export const BEFORE_SCRIPT_5 = i++; //T
-export const AFTER_SCRIPT_1 = i++; //C
-export const AFTER_SCRIPT_2 = i++; //R
-export const AFTER_SCRIPT_3 = i++; //I
-export const AFTER_SCRIPT_4 = i++; //P
-export const AFTER_SCRIPT_5 = i++; //T
+export const BEFORE_SCRIPT_1 = i++; // C
+export const BEFORE_SCRIPT_2 = i++; // R
+export const BEFORE_SCRIPT_3 = i++; // I
+export const BEFORE_SCRIPT_4 = i++; // P
+export const BEFORE_SCRIPT_5 = i++; // T
+export const AFTER_SCRIPT_1 = i++; // C
+export const AFTER_SCRIPT_2 = i++; // R
+export const AFTER_SCRIPT_3 = i++; // I
+export const AFTER_SCRIPT_4 = i++; // P
+export const AFTER_SCRIPT_5 = i++; // T
 
-export const BEFORE_STYLE_1 = i++; //T
-export const BEFORE_STYLE_2 = i++; //Y
-export const BEFORE_STYLE_3 = i++; //L
-export const BEFORE_STYLE_4 = i++; //E
-export const AFTER_STYLE_1 = i++; //T
-export const AFTER_STYLE_2 = i++; //Y
-export const AFTER_STYLE_3 = i++; //L
-export const AFTER_STYLE_4 = i++; //E
+export const BEFORE_STYLE_1 = i++; // T
+export const BEFORE_STYLE_2 = i++; // Y
+export const BEFORE_STYLE_3 = i++; // L
+export const BEFORE_STYLE_4 = i++; // E
+export const AFTER_STYLE_1 = i++; // T
+export const AFTER_STYLE_2 = i++; // Y
+export const AFTER_STYLE_3 = i++; // L
+export const AFTER_STYLE_4 = i++; // E
 
-export const BEFORE_ENTITY = i++; //&
-export const BEFORE_NUMERIC_ENTITY = i++; //#
+export const BEFORE_ENTITY = i++; // &
+export const BEFORE_NUMERIC_ENTITY = i++; // #
 export const IN_NAMED_ENTITY = i++;
 export const IN_NUMERIC_ENTITY = i++;
-export const IN_HEX_ENTITY = i++; //X
+export const IN_HEX_ENTITY = i++; // X
 
 export const SPECIAL_NONE = j++;
 export const SPECIAL_SCRIPT = j++;

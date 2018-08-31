@@ -166,17 +166,11 @@ export function patch (): void {
 	};
 
 	Element.prototype.insertAdjacentHTML = function (where: InsertPosition, html: string): void {
-		const wasConnected = isConnected(<Node>this);
+		const wasConnected = isConnected(this);
 		originalInsertAdjacentHtml.call(this, where, html);
 
 		if (wasConnected) {
-			setTimeout(() => {
-				// Fire CONNECTED events on all current children of the node
-				walkDeepDescendantElements(this, currentNode => {
-					if (currentNode === this) return;
-					fireEvent(ConnectionEventKind.CONNECTED, currentNode);
-				});
-			}, 0);
+			fireConnectedEvent.call(this);
 		}
 	};
 
@@ -191,6 +185,18 @@ export function patch (): void {
 	SVGElement.prototype.insertAdjacentElement = function (position: InsertPosition, insertedElement: Element): Element|null {
 		return work(insertedElement, <Function> originalSVGElementInsertAdjacentElement.bind(this, position, insertedElement));
 	};
+
+	/**
+	 * Fires a 'CONNECTED' event. Must be bound to a value for 'this'
+	 */
+	function fireConnectedEvent (this: Node): void {
+		setTimeout(() => {
+			walkDeepDescendantElements(this, currentNode => {
+				if (currentNode === this) return;
+				fireEvent(ConnectionEventKind.CONNECTED, currentNode);
+			});
+		}, 0);
+	}
 
 	/**
 	 * Patches innerHTML for the given Node
@@ -217,12 +223,7 @@ export function patch (): void {
 
 				// Now, Fire CONNECTED events on all current children of the node
 				if (wasConnected) {
-					setTimeout(() => {
-						walkDeepDescendantElements(this, currentNode => {
-							if (currentNode === this) return;
-							fireEvent(ConnectionEventKind.CONNECTED, currentNode);
-						});
-					}, 0);
+					fireConnectedEvent.call(this);
 				}
 				return htmlString;
 			}

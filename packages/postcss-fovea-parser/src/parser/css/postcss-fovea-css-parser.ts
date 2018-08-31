@@ -89,7 +89,6 @@ export class PostCSSFoveaCSSParser extends Parser implements IPostCSSFoveaParser
 		} else {
 			const match = text.match(/^(\s*)([^]*[^\s])(\s*)$/);
 			if (match != null) {
-				node.text = match[2];
 				node.text = `$\{${match[2]}}`;
 				node.raws.left = match[1];
 				node.raws.right = match[3];

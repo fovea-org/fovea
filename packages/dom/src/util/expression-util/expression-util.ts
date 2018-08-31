@@ -7,6 +7,9 @@ import {RawExpressionBindable} from "../../expression/raw-expression-bindable/ra
 import {IContext} from "../context-util/i-context";
 import {PICKED_GLOBAL_KEYS} from "../global-keys/global-keys";
 
+// tslint:disable:cognitive-complexity
+// tslint:disable:no-big-function
+
 /**
  * A utility class for working with expressions
  */
@@ -208,7 +211,7 @@ export class ExpressionUtil implements IExpressionUtil {
 				);
 			}
 
-			else if (isLiteralExpression(statement)) {
+			else if (isLiteralExpression(statement) || isNoSubstitutionTemplateLiteral(statement) || isTemplateHead(statement) || isTemplateMiddle(statement) || isTemplateTail(statement)) {
 				result.push(
 					this.wrapExpression(statement.text)
 				);
@@ -295,7 +298,7 @@ export class ExpressionUtil implements IExpressionUtil {
 				);
 			}
 
-			else if (isArrayBindingPattern(statement)) {
+			else if (isArrayBindingPattern(statement) || isArrayLiteralExpression(statement)) {
 				result.push(
 					this.wrapExpression("["),
 					...this.generateExpressionContent(statement.elements, originalContent, environment, metadata, statement, ","),
@@ -482,26 +485,6 @@ export class ExpressionUtil implements IExpressionUtil {
 					...this.generateExpressionContent(statement.expression, originalContent, environment, metadata, statement),
 					this.wrapExpression("}"),
 					...this.generateExpressionContent(statement.literal, originalContent, environment, metadata, statement)
-				);
-			}
-
-			else if (isNoSubstitutionTemplateLiteral(statement)) {
-				result.push(
-					this.wrapExpression(statement.text)
-				);
-			}
-
-			else if (isTemplateHead(statement) || isTemplateMiddle(statement) || isTemplateTail(statement)) {
-				result.push(
-					this.wrapExpression(statement.text)
-				);
-			}
-
-			else if (isArrayLiteralExpression(statement)) {
-				result.push(
-					this.wrapExpression("["),
-					...this.generateExpressionContent(statement.elements, originalContent, environment, metadata, statement, ","),
-					this.wrapExpression("]")
 				);
 			}
 

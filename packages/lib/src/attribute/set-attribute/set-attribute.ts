@@ -6,8 +6,9 @@ import {isHTMLElement} from "../../element/is-html-element";
 import {NonReadonly} from "../../non-readonly/non-readonly";
 import {kebabCase} from "@wessberg/stringutil";
 
-// tslint:disable:no-any
 // tslint:disable:strict-boolean-expressions
+
+// tslint:disable:no-any
 
 /**
  * Updates the given value on the given element as an attribute
@@ -45,7 +46,8 @@ export function setAttribute (host: IFoveaHost|ICustomAttribute, element: Elemen
 						const replacement = `${kebabCasedProperty}: ${value};`;
 
 						// Take the existing value of the attribute (or otherwise fallback to the empty string) and remove the style property from it
-						const styleAttributeValue: string = (element.getAttribute("style") || "").replace(regexp, "");
+						const rawStyleAttributeValue = element.getAttribute("style");
+						const styleAttributeValue: string = (rawStyleAttributeValue == null ? "" : rawStyleAttributeValue).replace(regexp, "");
 
 						// Set the attribute. If the style property should be removed, use the existing value. Otherwise, prepend the replacement
 						element.setAttribute("style", shouldRemoveAttribute

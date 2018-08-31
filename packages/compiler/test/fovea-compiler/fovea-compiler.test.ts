@@ -6,6 +6,8 @@ import {readFileSync} from "fs";
 import {FoveaCompilerCompileResult} from "../../src/fovea-compiler/i-fovea-compiler-compile-result";
 import {allIndexesOf} from "@wessberg/stringutil";
 
+// tslint:disable:no-identical-functions
+
 interface IPrintOptions {
 	printCode: boolean;
 	printStats: boolean;

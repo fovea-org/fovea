@@ -4,6 +4,7 @@ import {NormalizeFunction} from "../normalize/normalize-function";
 import deepExtend from "deep-extend";
 
 // tslint:disable:no-magic-numbers
+
 // tslint:disable:no-any
 
 /**
@@ -54,7 +55,7 @@ export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig>
 				{
 					tag: "latest",
 					directory: `${config.distFolderName}`,
-					browserslist: <string[]><any>`browsersWithSupportForFeatures("es6-module", "shadowdomv1", "custom-elementsv1")`,
+					browserslist: <string[]><any>`browsersWithSupportForFeatures("es6-module", "es6-module-dynamic-import", "shadowdomv1", "custom-elementsv1")`,
 					match: <(userAgent: string) => boolean><any>`function (userAgent: string) {return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);}`,
 					serve: {host: "localhost", port: 8000},
 					disable: false

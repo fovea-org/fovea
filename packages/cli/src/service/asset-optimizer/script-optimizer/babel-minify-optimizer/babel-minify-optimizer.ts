@@ -29,13 +29,12 @@ export class BabelMinifyOptimizer implements IBabelMinifyOptimizer {
 	 * @returns {Promise<OptimizerResult>}
 	 */
 	private async qualifyOptimization (options: IScriptOptimizerOptions): Promise<OptimizerResult> {
-		switch (options.outputFormat) {
-			case ScriptFormatKind.JAVASCRIPT:
-				// Only pass supported formats through the optimizer
-				return {optimized: true, buffer: await this.runOptimizer(options)};
-			default:
-				return {optimized: false};
+		if (options.outputFormat === ScriptFormatKind.JAVASCRIPT) {
+			// Only pass supported formats through the optimizer
+			return {optimized: true, buffer: await this.runOptimizer(options)};
 		}
+
+		return {optimized: false};
 	}
 
 	/**

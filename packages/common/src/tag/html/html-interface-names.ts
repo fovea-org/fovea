@@ -32,7 +32,6 @@ export declare type HtmlInterfaceName =
 	"HTMLIFrameElement"|
 	"HTMLImageElement"|
 	"HTMLInputElement"|
-	"HTMLModElement"|
 	"HTMLUnknownElement"|
 	"HTMLLabelElement"|
 	"HTMLLegendElement"|
@@ -44,7 +43,6 @@ export declare type HtmlInterfaceName =
 	"HTMLMenuElement"|
 	"HTMLMetaElement"|
 	"HTMLMeterElement"|
-	"HTMLUnknownElement"|
 	"HTMLObjectElement"|
 	"HTMLOListElement"|
 	"HTMLOptGroupElement"|
@@ -53,9 +51,7 @@ export declare type HtmlInterfaceName =
 	"HTMLParagraphElement"|
 	"HTMLParamElement"|
 	"HTMLPictureElement"|
-	"HTMLPreElement"|
 	"HTMLProgressElement"|
-	"HTMLQuoteElement"|
 	"HTMLScriptElement"|
 	"HTMLSelectElement"|
 	"HTMLSourceElement"|
@@ -66,17 +62,14 @@ export declare type HtmlInterfaceName =
 	"HTMLTableDataCellElement"|
 	"HTMLTemplateElement"|
 	"HTMLTextAreaElement"|
-	"HTMLTableSectionElement"|
 	"HTMLTableHeaderCellElement"|
-	"HTMLTableSectionElement"|
 	"HTMLTimeElement"|
 	"HTMLTitleElement"|
 	"HTMLTableRowElement"|
 	"HTMLTrackElement"|
 	"HTMLUListElement"|
 	"HTMLVideoElement"|
-	"MSHTMLWebViewElement"|
-	"HTMLPreElement";
+	"MSHTMLWebViewElement";
 
 /**
  * An array of all known HTMLInterface names

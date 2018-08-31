@@ -33,7 +33,30 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute, context: IContext): string {
+	public addAttribute (element: NodeUuid|FoveaDOMAstElement, attribute: IFoveaDOMAstAttribute, context: IContext): string {
+		return this.addAttributeOrCustomAttribute(element, attribute, context, "addAttribute");
+	}
+
+	/**
+	 * Adds a Custom Attribute to an element.
+	 * @param {NodeUuid | FoveaDOMAstElement} element
+	 * @param {IFoveaDOMAstCustomAttribute} customAttribute
+	 * @param {IContext} context
+	 * @returns {string}
+	 */
+	public addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, customAttribute: IFoveaDOMAstCustomAttribute, context: IContext): string {
+		return this.addAttributeOrCustomAttribute(element, customAttribute, context, "addCustomAttribute");
+	}
+
+	/**
+	 * Adds an attribute to an element.
+	 * @param {NodeUuid | FoveaDOMAstElement} element
+	 * @param {IFoveaDOMAstAttribute} attribute
+	 * @param {IContext} context
+	 * @param {"addAttribute"|"addCustomAttribute"} helperName
+	 * @returns {string}
+	 */
+	private addAttributeOrCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext, helperName: "addAttribute"|"addCustomAttribute"): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// If the key is in camelCase or PascalCase, update it to kebab-case, unless it is an SVG element which may receive case-sensitive attribute keys.
@@ -41,25 +64,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
 		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
-		return this.format(`${this.useHelper(node, "addAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
-	}
-
-	/**
-	 * Adds a Custom Attribute to an element.
-	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {IFoveaDOMAstCustomAttribute} attribute
-	 * @param {IContext} context
-	 * @returns {string}
-	 */
-	public addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext): string {
-		const {nodeUuid, node} = this.getNodeDict(element);
-
-		// If the key is in camelCase or PascalCase, update it to kebab-case.
-		const normalizedName = node.type !== "svg" && (isInCamelCase(name) || isInPascalCase(name)) ? kebabCase(name) : name;
-
-		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
-		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
-		return this.format(`${this.useHelper(node, "addCustomAttribute")}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
+		return this.format(`${this.useHelper(node, helperName)}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
 	}
 
 	/**

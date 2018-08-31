@@ -239,38 +239,6 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 			nodes: [cssCustomPropertyDeclaration]
 		})));
 	}
-
-	/*// If a reference to a variable is contained within the value, replace it with the primitive value of whatever it references
-	if (containsVariableReference(node.value)) {
-
-		// Take all the matches for variables
-		const matches = node.value.match(variableReferenceRegex);
-
-		// If it has some
-		if (matches != null) {
-			newValue = node.value.replace(variableReferenceRegex, match => variables[match]);
-		}
-	}
-
-	// If this is a SCSS file and the property is a SCSS variable, convert it into a CSS custom property to have it survive the first step of SCSS compilation
-	if (isScss && isScssVariable(node.prop)) {
-		newProp = SCSS_VARIABLE_REWRITE_PREFIX + node.prop.slice(scssVariablePrefix.length);
-	}
-
-	if (newProp != null || newValue != null) {
-		const newDeclaration = decl({prop: newProp != null ? newProp : node.prop, value: newValue != null ? newValue : node.value});
-
-		// Define a new node
-		const newNode = rule({
-			selector: ":host",
-			nodes: [newDeclaration]
-		});
-
-		// Add the node to the array of nodes to remove
-		removeNodes.push(node);
-		// Add the new node to the array of root nodes
-		newRootNodes.push(newNode);
-	}*/
 }
 
 /**

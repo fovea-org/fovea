@@ -142,13 +142,12 @@ export class SvgoImageOptimizer implements ISvgoImageOptimizer {
 	 */
 	private async qualifyOptimization (options: IImageOptimizerOptions): Promise<OptimizerResult> {
 
-		switch (options.outputFormat) {
-			case ImageFormatKind.SVG:
-				// Only pass supported formats through the encoder
-				return {optimized: true, buffer: await this.runOptimizer(options)};
-			default:
-				return {optimized: false};
+		if (options.outputFormat === ImageFormatKind.SVG) {
+			// Only pass supported formats through the encoder
+			return {optimized: true, buffer: await this.runOptimizer(options)};
 		}
+
+		return {optimized: false};
 	}
 
 	/**

@@ -23,7 +23,9 @@ const ATTRIBUTE_OBSERVER_OPTIONS: MutationObserverInit = {attributes: true, attr
  */
 function onMutationChanges (changes: MutationRecord[], observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition = () => true): void {
 	changes.forEach(change => {
+
 		switch (observer.kind) {
+
 			case DOMMutationObserverKind.ATTRIBUTE_CHANGED:
 				// Test the condition
 				if (!callbackCondition()) return;
@@ -33,9 +35,7 @@ function onMutationChanges (changes: MutationRecord[], observer: DOMMutationObse
 					oldValue: change.oldValue
 				});
 				break;
-		}
 
-		switch (observer.kind) {
 			case DOMMutationObserverKind.CHILDREN_ADDED:
 				if (change.addedNodes.length > 0) {
 					// Test the condition

@@ -82,7 +82,6 @@ export function sassImportResolve (id: string, rawOptions: Partial<ISassImportRe
 
 	// otherwise, if `base` does not end with `.css`
 	else if (!endsWithCssExtension(base)) {
-		// throw `"File to import not found or unreadable"`
 		throw new Error("File to import not found or unreadable");
 	}
 

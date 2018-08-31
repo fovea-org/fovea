@@ -66,7 +66,7 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 */
 	public hasValue (key: K, value: V): boolean {
 		if (!this.has(key)) return false;
-		const collection = this.get(key)!;
+		const collection = this.get(key);
 		return collection.has(value);
 	}
 
@@ -79,7 +79,7 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 */
 	public findValue<S extends V> (key: K, callback: (value: V, index: number, collection: C) => boolean): S|undefined {
 		if (!this.has(key)) return undefined;
-		const collection = this.get(key)!;
+		const collection = this.get(key);
 		return <S|undefined> [...collection].find((value, index) => callback(value, index, collection));
 	}
 
@@ -103,7 +103,7 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 */
 	public mapValue<U> (key: K, callback: (value: V, index: number, collection: C) => U): U[] {
 		if (!this.has(key)) return [];
-		const collection = this.get(key)!;
+		const collection = this.get(key);
 		return [...collection].map((value, index) => callback(value, index, collection));
 	}
 
@@ -116,7 +116,7 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 */
 	public filterValues (key: K, callback: (value: V, index: number, collection: C) => boolean): V[] {
 		if (!this.has(key)) return [];
-		const collection = this.get(key)!;
+		const collection = this.get(key);
 		return [...collection].filter((value, index) => callback(value, index, collection));
 	}
 

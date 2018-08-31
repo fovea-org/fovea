@@ -316,7 +316,7 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 		this.getDiagnosticsForFile(file).push(
 			this.finalizeDiagnostic({
 				kind, file, degree: FoveaDiagnosticDegree.ERROR,
-				description: `You have annotated the method '${this.paintFunction(methodName)}' on the ${this.stringifyHostKind(hostKind)} '${this.paintHost(hostName)}' with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but you haven't invoked it. You must invoke it, optionally passing an object of arguments!`
+				description: `You have annotated the method '${this.paintFunction(methodName)}' on the ${this.stringifyHostKind(hostKind)} '${this.paintHost(hostName)}' with the decorator: '${this.paintDecorator(`@${decoratorContent}`)}', but you haven't invoked it. In order to track child elements, you must invoke it, optionally passing an object of arguments!`
 			}));
 	}
 

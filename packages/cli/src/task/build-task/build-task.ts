@@ -59,6 +59,10 @@ import {buildEnvironment} from "../../build-environment/build-environment";
 
 // tslint:disable:no-any
 
+// tslint:disable:prefer-immediate-return
+
+// tslint:disable:no-identical-functions
+
 /**
  * A task used for building a Fovea project
  */
@@ -611,7 +615,7 @@ export class BuildTask implements IBuildTask {
 		};
 
 		// Whether or not to use ES-modules depend on the given browserslist. If none is given, ES modules *will* be used. Otherwise, it will fall back to SystemJS for browsers without support
-		const moduleKind: ModuleFormat = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "es6-module") ? "es" : "system";
+		const moduleKind: ModuleFormat = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "es6-module", "es6-module-dynamic-import") ? "es" : "system";
 		// Whether or not to transpile async functions
 		const asyncFunctionKind: FeatureKind = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "async-functions") ? "native" : "polyfill";
 

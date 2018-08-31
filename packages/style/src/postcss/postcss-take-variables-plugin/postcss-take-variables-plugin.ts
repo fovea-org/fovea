@@ -87,10 +87,10 @@ function visitDeclaration (node: Declaration, {variables}: IPostcssTakeVariables
 
 /**
  * Normalizes the options provided to the plugin
- * @param {Partial<IPostcssTakeVariablesPluginOptions>} options
+ * @param {Partial<IPostcssTakeVariablesPluginOptions>} _context
  * @returns {IPostcssTakeVariablesPluginContext}
  */
-function normalizeContext ({}: Partial<IPostcssTakeVariablesPluginContext> = {}): IPostcssTakeVariablesPluginContext {
+function normalizeContext (_context: Partial<IPostcssTakeVariablesPluginContext> = {}): IPostcssTakeVariablesPluginContext {
 	return {
 		variables: {}
 	};

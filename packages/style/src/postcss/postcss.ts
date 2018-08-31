@@ -24,13 +24,7 @@ export class PostCSS implements IPostCSS {
 	 * @returns {PluginConfigurationHook}
 	 */
 	private get defaultPluginOptionsHook (): PluginConfigurationHook {
-		return (pluginName) => {
-			switch (pluginName) {
-
-				default:
-					return null;
-			}
-		};
+		return (_pluginName) => null;
 	}
 
 	/**
@@ -39,16 +33,16 @@ export class PostCSS implements IPostCSS {
 	 */
 	private get forcedPluginOptionsHook (): PluginConfigurationHook {
 		return (pluginName) => {
-			switch (pluginName) {
 
-				case "cssnano":
-					return {
-						autoprefixer: false,
-						discardDuplicates: false
-					};
+			if (pluginName === "cssnano") {
+				return {
+					autoprefixer: false,
+					discardDuplicates: false
+				};
+			}
 
-				default:
-					return null;
+			else {
+				return null;
 			}
 		};
 	}
