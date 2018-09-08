@@ -20,6 +20,7 @@ import {IDOMElementHandlerCreateBaseOptions} from "./i-dom-element-handler-creat
 import {IRawExpressionChainBindableDict} from "../../../expression/i-raw-expression-chain-bindable-dict/i-raw-expression-chain-bindable-dict";
 import {camelCase, isInCamelCase, isInPascalCase, kebabCase} from "@wessberg/stringutil";
 import {IContext} from "../../../util/context-util/i-context";
+import {isRequiredPropertyOnBuiltInElement} from "../../built-in-elements-required-properties-map/is-required-property-on-built-in-element";
 
 /**
  * An abstract class that handles Elements.
@@ -46,25 +47,6 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 */
 	public addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, customAttribute: IFoveaDOMAstCustomAttribute, context: IContext): string {
 		return this.addAttributeOrCustomAttribute(element, customAttribute, context, "addCustomAttribute");
-	}
-
-	/**
-	 * Adds an attribute to an element.
-	 * @param {NodeUuid | FoveaDOMAstElement} element
-	 * @param {IFoveaDOMAstAttribute} attribute
-	 * @param {IContext} context
-	 * @param {"addAttribute"|"addCustomAttribute"} helperName
-	 * @returns {string}
-	 */
-	private addAttributeOrCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext, helperName: "addAttribute"|"addCustomAttribute"): string {
-		const {nodeUuid, node} = this.getNodeDict(element);
-
-		// If the key is in camelCase or PascalCase, update it to kebab-case, unless it is an SVG element which may receive case-sensitive attribute keys.
-		const normalizedName = node.type !== "svg" && (isInCamelCase(name) || isInPascalCase(name)) ? kebabCase(name) : name;
-
-		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
-		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
-		return this.format(`${this.useHelper(node, helperName)}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
 	}
 
 	/**
@@ -311,12 +293,38 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @returns {PropertyPosition}
 	 */
 	protected getPropertyPosition (element: FoveaDOMAstElement, context: IContext, key: string): PropertyPosition {
-		if (
-			context.mode === "hostAttributes" || (isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(key)) || !isFoveaDOMAstCustomElement(element)) {
+		if (context.mode === "hostAttributes") return "attribute";
+
+		else if (!isFoveaDOMAstCustomElement(element) && isRequiredPropertyOnBuiltInElement(element.name, key)) {
+			return "property";
+		}
+
+		else if (
+			(isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(key)) || !isFoveaDOMAstCustomElement(element)) {
 			return "attribute";
 		}
+
 		// Otherwise, set it as a property
 		return "property";
+	}
+
+	/**
+	 * Adds an attribute to an element.
+	 * @param {NodeUuid | FoveaDOMAstElement} element
+	 * @param {IFoveaDOMAstAttribute} attribute
+	 * @param {IContext} context
+	 * @param {"addAttribute"|"addCustomAttribute"} helperName
+	 * @returns {string}
+	 */
+	private addAttributeOrCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext, helperName: "addAttribute"|"addCustomAttribute"): string {
+		const {nodeUuid, node} = this.getNodeDict(element);
+
+		// If the key is in camelCase or PascalCase, update it to kebab-case, unless it is an SVG element which may receive case-sensitive attribute keys.
+		const normalizedName = node.type !== "svg" && (isInCamelCase(name) || isInPascalCase(name)) ? kebabCase(name) : name;
+
+		// Prepare the 'value' argument. Make sure it is undefined if no value (or the empty string) is given as argument value
+		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
+		return this.format(`${this.useHelper(node, helperName)}(${nodeUuid}, ${this.quote(normalizedName)}${valueArgument})`, context);
 	}
 
 	/**
