@@ -47,7 +47,6 @@ export class DOMTemplator implements IDOMTemplator {
 			switch (root.type) {
 				case "native":
 				case "custom":
-				case "svg":
 					if (isInCamelCase(root.name) || isInPascalCase(root.name)) {
 						root.name = kebabCase(root.name);
 					}
