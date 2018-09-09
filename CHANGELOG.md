@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.128"></a>
+## [1.0.128](https://github.com/fovea-org/fovea/compare/v1.0.127...v1.0.128) (2018-09-09)
+
+
+### Bug Fixes
+
+* Fixed a bug where the 'value' property would always be set as attributes rather than as properties for <textarea> elements ([72d63a4](https://github.com/fovea-org/fovea/commit/72d63a4))
+* Made the 'dir' property forced as an attribute for custom elements ([659e54c](https://github.com/fovea-org/fovea/commit/659e54c))
+
+
+### Features
+
+* Made the default host name in serve configs use the identifier provided as app name when using fovea create. This fixes [#23](https://github.com/fovea-org/fovea/issues/23) ([d52d7bd](https://github.com/fovea-org/fovea/commit/d52d7bd))
+
+
+
+
+
 <a name="1.0.127"></a>
 ## [1.0.127](https://github.com/fovea-org/fovea/compare/v1.0.126...v1.0.127) (2018-08-31)
 
