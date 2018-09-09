@@ -1,4 +1,4 @@
-import {IFoveaCliConfig, IFoveaCliConfigMinusOutput, IFoveaCliOutputConfig} from "./i-fovea-cli-config";
+import {IFoveaCliConfig, IFoveaCliConfigMinusOutput, IFoveaCliConfigWithAppName, IFoveaCliOutputConfig} from "./i-fovea-cli-config";
 import stringifyObject from "stringify-object";
 import {NormalizeFunction} from "../normalize/normalize-function";
 import deepExtend from "deep-extend";
@@ -13,7 +13,7 @@ import deepExtend from "deep-extend";
  * @param {Partial<IFoveaCliConfig>} options
  * @returns {Promise<IStringifiableConfig<IFoveaCliConfig>>}
  */
-export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig> = async ({config, options}) => {
+export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>> = async ({config, options}) => {
 	const configMinusOutputs: IFoveaCliConfigMinusOutput = {
 		packageManager: "npm",
 		polyfills: ["es", "custom-event", "web-components", "mutation-observer", "intersection-observer", "proxy", "class-list"],
@@ -48,6 +48,9 @@ export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig>
 		exclude: []
 	};
 
+	// Define a host name to use for serving the app
+	const host = options.appName != null ? `${options.appName}.test` : "localhost";
+
 	return {
 		config: {
 			...deepExtend(configMinusOutputs, options),
@@ -57,7 +60,7 @@ export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig>
 					directory: `${config.distFolderName}`,
 					browserslist: <string[]><any>`browsersWithSupportForFeatures("es6-module", "es6-module-dynamic-import", "shadowdomv1", "custom-elementsv1")`,
 					match: <(userAgent: string) => boolean><any>`function (userAgent: string) {return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);}`,
-					serve: {host: "localhost", port: 8000},
+					serve: {host, port: 8000},
 					disable: false
 				},
 				{
@@ -65,15 +68,15 @@ export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig>
 					directory: `${config.distFolderName}`,
 					browserslist: <string[]><any>`browsersWithSupportForFeatures("es6-class")`,
 					match: <(userAgent: string) => boolean><any>`function (userAgent: string) {return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);}`,
-					serve: {host: "localhost", port: 8000},
-					disable: "watch"
+					serve: {host, port: 8000},
+					disable: false
 				},
 				{
 					tag: "legacy",
 					directory: `${config.distFolderName}`,
 					browserslist: <string[]><any>`browsersWithoutSupportForFeatures("es6-class")`,
 					match: <(userAgent: string) => boolean><any>`function (userAgent: string) {return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);}`,
-					serve: {host: "localhost", port: 8000},
+					serve: {host, port: 8000},
 					disable: "watch"
 				}
 			]

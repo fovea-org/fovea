@@ -270,7 +270,12 @@ export class CreateTask implements ICreateTask {
 	 */
 	private async createFoveaCliConfig (options: ICreateTaskExecuteOptions): Promise<void> {
 		this.logger.verbose(`Creating a ${chalk.magenta(`${this.config.foveaCliConfigName}.${this.config.defaultScriptExtension}`)} file...`);
-		await this.writeTemplateFiles(await this.foveaCliConfigGenerator.generate({options: {packageManager: options.yarn ? "yarn" : "npm"}}), options);
+		await this.writeTemplateFiles(await this.foveaCliConfigGenerator.generate({
+			options: {
+				packageManager: options.yarn ? "yarn" : "npm",
+				appName: options.folder
+			}
+		}), options);
 	}
 
 	/**

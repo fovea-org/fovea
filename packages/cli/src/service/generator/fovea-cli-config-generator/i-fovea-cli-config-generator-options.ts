@@ -1,5 +1,5 @@
-import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
+import {IFoveaCliConfigWithAppName} from "../../../fovea-cli-config/i-fovea-cli-config";
 
 export interface IFoveaCliConfigGeneratorOptions {
-	options: Partial<IFoveaCliConfig>;
+	options: Partial<IFoveaCliConfigWithAppName>;
 }

@@ -75,3 +75,8 @@ export interface IFoveaCliConfigMinusOutput {
 export interface IFoveaCliConfig extends IFoveaCliConfigMinusOutput {
 	output: FoveaCliOutputConfigs;
 }
+
+export interface IFoveaCliConfigWithAppName extends IFoveaCliConfig {
+	output: FoveaCliOutputConfigs;
+	appName: string;
+}

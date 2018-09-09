@@ -5,7 +5,7 @@ import {IFoveaCliConfigGeneratorOptions} from "./i-fovea-cli-config-generator-op
 import {IFormatter} from "../../../formatter/i-formatter";
 import {IBuildConfig} from "../../../build-config/i-build-config";
 import {NormalizeFunction} from "../../../normalize/normalize-function";
-import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
+import {IFoveaCliConfig, IFoveaCliConfigWithAppName} from "../../../fovea-cli-config/i-fovea-cli-config";
 
 /**
  * A class that helps with generating the fovea-cli config file
@@ -14,7 +14,7 @@ export class FoveaCliConfigGenerator extends Generator implements IFoveaCliConfi
 
 	constructor (private readonly config: IBuildConfig,
 							 private readonly formatter: IFormatter,
-							 private readonly normalizeFunction: NormalizeFunction<IFoveaCliConfig>) {
+							 private readonly normalizeFunction: NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>) {
 		super();
 	}
 

@@ -1,6 +1,6 @@
 import {IConfigParserService} from "./i-config-parser-service";
 import {IConfigParserServiceOptions} from "./i-config-parser-service-options";
-import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
+import {IFoveaCliConfig, IFoveaCliConfigWithAppName} from "../../../fovea-cli-config/i-fovea-cli-config";
 import {IBuildConfig} from "../../../build-config/i-build-config";
 import {NormalizeFunction} from "../../../normalize/normalize-function";
 import {IRollupService} from "../../rollup/rollup-service/i-rollup-service";
@@ -16,7 +16,7 @@ export class ConfigParserService implements IConfigParserService {
 
 	constructor (private readonly config: IBuildConfig,
 							 private readonly rollupService: IRollupService,
-							 private readonly normalizeFunction: NormalizeFunction<IFoveaCliConfig>,
+							 private readonly normalizeFunction: NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>,
 							 private readonly watchService: IWatchService) {
 	}
 
