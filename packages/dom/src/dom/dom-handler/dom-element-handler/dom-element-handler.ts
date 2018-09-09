@@ -227,7 +227,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		const forEachCustomAttribute = element.customAttributes.find(customAttribute => customAttribute.name === FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER);
 
 		// Take the selector for the element
-		const selector = this.quote(element.name.toLowerCase());
+		const selector = this.quote(element.name);
 
 		// If it has a *foreach custom attribute
 		if (forEachCustomAttribute != null) {
