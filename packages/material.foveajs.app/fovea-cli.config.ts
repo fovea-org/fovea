@@ -2,6 +2,12 @@
 import {IFoveaCliConfig} from "@fovea/cli";
 import {browsersWithoutSupportForFeatures, browsersWithSupportForFeatures, matchBrowserslistOnUserAgent} from "@wessberg/browserslist-generator";
 
+// The host name to serve from
+const host = "material.foveajs.test";
+// The port to serve on
+const port = 8000;
+
+
 /**
  * This is the configuration for the Fovea CLI. These options will be used by the underlying build tools
  */
@@ -52,7 +58,7 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host: "material.foveajs.test", port: 8000},
+			serve: {host, port},
 			disable: false
 		},
 		{
@@ -62,7 +68,7 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host: "material.foveajs.test", port: 8000},
+			serve: {host, port},
 			disable: "watch"
 		},
 		{
@@ -72,7 +78,7 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host: "material.foveajs.test", port: 8000},
+			serve: {host, port},
 			disable: "watch"
 		}
 	]
