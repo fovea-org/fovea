@@ -139,24 +139,22 @@ export class DependencyImporter implements IDependencyImporter {
 		}
 
 		// Otherwise, if the file is not imported at all, add a new import declaration
-		else if (existingImports.length === 0) {
-			if (importIfNeeded) {
-				// Import only the path if the component isn't exported at all
-				if (!compilerOptions.dryRun) {
-					const beginning = `import `;
-					const ending = `"${this.pathUtil.clearExtension(match.file)}";`;
-					context.container.prepend(
-						`${beginning}${
-							match.isDefaultExport
-								? `${match.hostName} from `
-								: match.isNamedExport
-								? `{${match.hostName}} from `
-								: ""
-							}${ending}\n`
-					);
-				}
-				return match.hostName;
+		else if (existingImports.length === 0 && importIfNeeded) {
+			// Import only the path if the component isn't exported at all
+			if (!compilerOptions.dryRun) {
+				const beginning = `import `;
+				const ending = `"${this.pathUtil.clearExtension(match.file)}";`;
+				context.container.prepend(
+					`${beginning}${
+						match.isDefaultExport
+							? `${match.hostName} from `
+							: match.isNamedExport
+							? `{${match.hostName}} from `
+							: ""
+						}${ending}\n`
+				);
 			}
+			return match.hostName;
 		}
 
 		for (const existingImport of existingImports) {

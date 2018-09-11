@@ -22,7 +22,7 @@ export declare type FoveaDOMAstKind = "native"|"svg"|"custom"|"text"|"template";
 export interface IFoveaDOMAstNode {
 	type: FoveaDOMAstKind;
 	isRootNode: boolean;
-	parentNode: FoveaDOMAstNode|undefined;
+	parentNode?: FoveaDOMAstNode;
 	stringify (onlyInnerContent?: boolean): string;
 	toString (): string;
 }

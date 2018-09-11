@@ -76,50 +76,47 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		});
 
 		// If there is at least 1 attribute change observer, add the prototype method
-		if (registerAttributeChangeObserverCalls.length > 0) {
+		if (registerAttributeChangeObserverCalls.length > 0 && !compilerOptions.dryRun) {
 
-			if (!compilerOptions.dryRun) {
+			const registerBody = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
+					`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
+			);
 
-				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(classDeclaration)
-						? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
-						`\n		${registerAttributeChangeObserverCalls.join("\n		")}`
-				);
+			const connectBody = (
+				`\n		${this.libUser.use("connectAttributeChangeObservers", compilerOptions, context)}(this);`
+			);
 
-				const connectBody = (
-					`\n		${this.libUser.use("connectAttributeChangeObservers", compilerOptions, context)}(this);`
-				);
+			const disposeBody = (
+				`\n		${this.libUser.use("disposeAttributeChangeObservers", compilerOptions, context)}(this);`
+			);
 
-				const disposeBody = (
-					`\n		${this.libUser.use("disposeAttributeChangeObservers", compilerOptions, context)}(this);`
-				);
+			// Create the register method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
+				`${registerBody}` +
+				`\n	}`
+			);
 
-				// Create the register method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
-					`${registerBody}` +
-					`\n	}`
-				);
+			// Create the connect method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
+				`${connectBody}` +
+				`\n	}`
+			);
 
-				// Create the connect method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
-					`${connectBody}` +
-					`\n	}`
-				);
-
-				// Create the dispose method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
-					`${disposeBody}` +
-					`\n	}`
-				);
-			}
+			// Create the dispose method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
+				`${disposeBody}` +
+				`\n	}`
+			);
 		}
 
 		// Set 'hasAttributeChangeObservers' to true if there were any results, or if another host within the file already has a truthy value for it

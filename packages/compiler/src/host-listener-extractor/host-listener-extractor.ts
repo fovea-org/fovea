@@ -78,50 +78,46 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 		});
 
 		// If there is at least 1 host listener, add the prototype method
-		if (registerListenerCalls.length > 0) {
+		if (registerListenerCalls.length > 0 && !compilerOptions.dryRun) {
+			const registerBody = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerListenerCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerListenersMethodName} != null) super.${this.configuration.postCompile.registerListenersMethodName}();` +
+					`\n		${registerListenerCalls.join("\n		")}`
+			);
 
-			if (!compilerOptions.dryRun) {
+			const connectBody = (
+				`\n		${this.libUser.use("connectListeners", compilerOptions, context)}(this);`
+			);
 
-				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(classDeclaration)
-						? `\n		${registerListenerCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${this.configuration.postCompile.registerListenersMethodName} != null) super.${this.configuration.postCompile.registerListenersMethodName}();` +
-						`\n		${registerListenerCalls.join("\n		")}`
-				);
+			const disposeBody = (
+				`\n		${this.libUser.use("disposeListeners", compilerOptions, context)}(this);`
+			);
 
-				const connectBody = (
-					`\n		${this.libUser.use("connectListeners", compilerOptions, context)}(this);`
-				);
+			// Create the register method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static ${this.configuration.postCompile.registerListenersMethodName} (): void {` +
+				`${registerBody}` +
+				`\n	}`
+			);
 
-				const disposeBody = (
-					`\n		${this.libUser.use("disposeListeners", compilerOptions, context)}(this);`
-				);
+			// Create the connect method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.connectListenersMethodName} (): void {` +
+				`${connectBody}` +
+				`\n	}`
+			);
 
-				// Create the register method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerListenersMethodName} (): void {` +
-					`${registerBody}` +
-					`\n	}`
-				);
-
-				// Create the connect method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.connectListenersMethodName} (): void {` +
-					`${connectBody}` +
-					`\n	}`
-				);
-
-				// Create the dispose method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
-					`${disposeBody}` +
-					`\n	}`
-				);
-			}
+			// Create the dispose method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
+				`${disposeBody}` +
+				`\n	}`
+			);
 		}
 
 		// Set 'hasHostListeners' to true if there were any '___registerListener' instructions, or if another host within the file already has a truthy value for it

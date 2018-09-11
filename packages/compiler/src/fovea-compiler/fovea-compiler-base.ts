@@ -352,13 +352,10 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			// Define the options that will be provided to underlying services
 			const options = {mark, insertPlacement, compilerOptions, context};
 
-			if (kind === FoveaHostKind.CUSTOM_ATTRIBUTE) {
-
+			if (kind === FoveaHostKind.CUSTOM_ATTRIBUTE && !compilerOptions.dryRun) {
 				// Remove the '@customAttribute' decorator that annotates the class
-				if (!compilerOptions.dryRun) {
-					const decorator = this.codeAnalyzer.classService.getDecorator(this.configuration.preCompile.customAttributeDecoratorName, classDeclaration)!;
-					context.container.remove(decorator.pos, decorator.end);
-				}
+				const decorator = this.codeAnalyzer.classService.getDecorator(this.configuration.preCompile.customAttributeDecoratorName, classDeclaration)!;
+				context.container.remove(decorator.pos, decorator.end);
 			}
 
 			// Add a call to define the component as a Custom Element

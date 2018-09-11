@@ -18,7 +18,7 @@ export interface IFoveaHostMarkerMarkIncludeResult extends IFoveaHostMarkerMarkR
 export interface IFoveaHostMarkerMarkExcludeResult extends IFoveaHostMarkerMarkResult {
 	include: false;
 	isPrecompiled: boolean;
-	className: string|undefined;
+	className?: string;
 }
 
 export declare type FoveaHostMarkerMarkResult = IFoveaHostMarkerMarkIncludeResult|IFoveaHostMarkerMarkExcludeResult;

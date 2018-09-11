@@ -14,8 +14,9 @@
     "@wessberg/browserslist-generator": "^0.0.44",
     "@wessberg/color": "^0.0.2",
     "@wessberg/scaffold": "1.0.4",
-    "npm-check-updates": "^2.14.2",
+    "tslib": "^1.9.3",
     "tslint": "^5.11.0",
+    "tslint-sonarts": "^1.8.0",
     "typescript": "^3.0.3"
   },
   "dependencies": {
@@ -24,8 +25,7 @@
     "@fovea/router": "^1.0.130",
     "@types/node": "^10.9.4",
     "@types/workbox-sw": "^3.2.0",
-    "idb-keyval": "^3.1.0",
-    "tslib": "^1.9.3"
+    "idb-keyval": "^3.1.0"
   },
   "name": "@fovea/material.foveajs.app",
   "description": "The source code for the official website for @fovea/material with demos and documentation",

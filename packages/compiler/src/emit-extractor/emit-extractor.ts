@@ -68,26 +68,23 @@ export class EmitExtractor implements IEmitExtractor {
 		});
 
 		// If there is at least 1 event emitter, add the prototype method
-		if (registerEmitterCalls.length > 0) {
+		if (registerEmitterCalls.length > 0 && !compilerOptions.dryRun) {
 
-			if (!compilerOptions.dryRun) {
+			const registerBody = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerEmitterCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
+					`\n		${registerEmitterCalls.join("\n		")}`
+			);
 
-				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(classDeclaration)
-						? `\n		${registerEmitterCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
-						`\n		${registerEmitterCalls.join("\n		")}`
-				);
-
-				// Create the static method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
-					`${registerBody}` +
-					`\n	}`
-				);
-			}
+			// Create the static method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
+				`${registerBody}` +
+				`\n	}`
+			);
 		}
 
 		// Set 'hasEventEmitters' to true if there were any results, or if another host within the file already has a truthy value for it

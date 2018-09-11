@@ -351,63 +351,60 @@ export class Templator implements ITemplator {
 		}
 
 		// If there is at least 1 'use' instruction, add the relevant methods
-		if (useCalls.length > 0) {
+		if (useCalls.length > 0 && !compilerOptions.dryRun) {
 
-			if (!compilerOptions.dryRun) {
+			const useBody = (
+				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+					? `\n		${useCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
+					`\n		${useCalls.join("\n		")}`
+			);
 
-				const useBody = (
-					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
-						? `\n		${useCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
-						`\n		${useCalls.join("\n		")}`
+			const connectBody = (
+				`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
+			);
+
+			const disposeBody = (
+				`\n		${this.libUser.use(disposeHelperName, compilerOptions, context)}(this);`
+			);
+
+			// Create the "use" method
+			context.container.appendLeft(
+				mark.classDeclaration.members.end,
+				`\n	protected static ${staticUseMethodName} (): void {` +
+				`${useBody}` +
+				`\n	}`
+			);
+
+			// Create the "connectTemplates|connectCSS" method
+			context.container.appendLeft(
+				mark.classDeclaration.members.end,
+				`\n	protected ${connectMethodName} (): void {` +
+				`${connectBody}` +
+				`\n	}`
+			);
+
+			// Create the "disposeTemplates|disposeCSS" method
+			context.container.appendLeft(
+				mark.classDeclaration.members.end,
+				`\n	protected ${disposeMethodName} (): void {` +
+				`${disposeBody}` +
+				`\n	}`
+			);
+
+			if (destroyHelperName != null && destroyMethodName != null) {
+				const destroyBody = (
+					`\n		${this.libUser.use(destroyHelperName, compilerOptions, context)}(this);`
 				);
 
-				const connectBody = (
-					`\n		${this.libUser.use(connectHelperName, compilerOptions, context)}(this);`
-				);
-
-				const disposeBody = (
-					`\n		${this.libUser.use(disposeHelperName, compilerOptions, context)}(this);`
-				);
-
-				// Create the "use" method
+				// Create the "destroy" method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
-					`\n	protected static ${staticUseMethodName} (): void {` +
-					`${useBody}` +
+					`\n	protected ${destroyMethodName} (): void {` +
+					`${destroyBody}` +
 					`\n	}`
 				);
-
-				// Create the "connectTemplates|connectCSS" method
-				context.container.appendLeft(
-					mark.classDeclaration.members.end,
-					`\n	protected ${connectMethodName} (): void {` +
-					`${connectBody}` +
-					`\n	}`
-				);
-
-				// Create the "disposeTemplates|disposeCSS" method
-				context.container.appendLeft(
-					mark.classDeclaration.members.end,
-					`\n	protected ${disposeMethodName} (): void {` +
-					`${disposeBody}` +
-					`\n	}`
-				);
-
-				if (destroyHelperName != null && destroyMethodName != null) {
-					const destroyBody = (
-						`\n		${this.libUser.use(destroyHelperName, compilerOptions, context)}(this);`
-					);
-
-					// Create the "destroy" method
-					context.container.appendLeft(
-						mark.classDeclaration.members.end,
-						`\n	protected ${destroyMethodName} (): void {` +
-						`${destroyBody}` +
-						`\n	}`
-					);
-				}
 			}
 		}
 	}

@@ -48,13 +48,11 @@ export class PropertiesToAttributesMapper implements IPropertiesToAttributesMapp
 		});
 
 		// Only generate the CallExpression if there is at least one property to map and we're not on a dry run
-		if (tuples.length > 0) {
-			if (!compilerOptions.dryRun) {
-				context.container.appendAtPlacement(
-					`\n${this.libUser.use("mapPropertiesToAttributes", compilerOptions, context)}(${tuples.join(", ")})`,
-					insertPlacement
-				);
-			}
+		if (tuples.length > 0 && !compilerOptions.dryRun) {
+			context.container.appendAtPlacement(
+				`\n${this.libUser.use("mapPropertiesToAttributes", compilerOptions, context)}(${tuples.join(", ")})`,
+				insertPlacement
+			);
 		}
 	}
 

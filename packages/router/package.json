@@ -50,8 +50,14 @@
 	"devDependencies": {
 		"@fovea/rollup-plugin-fovea": "^1.0.130",
 		"@wessberg/rollup-plugin-ts": "0.0.40",
+		"rollup-plugin-babel-minify": "^6.0.0",
+		"rollup-plugin-node-resolve": "^3.4.0",
 		"@wessberg/scaffold": "1.0.4",
-		"rollup": "^0.65.2"
+		"rollup": "^0.65.2",
+		"tslib": "^1.9.3",
+		"typescript": "^3.0.3",
+		"tslint": "^5.11.0",
+		"tslint-sonarts": "^1.8.0"
 	},
 	"scaffold": {
 		"patreonUserId": "11315442",

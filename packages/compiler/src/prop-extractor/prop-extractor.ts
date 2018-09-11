@@ -72,50 +72,47 @@ export class PropExtractor implements IPropExtractor {
 		});
 
 		// If there is at least 1 prop, add the prototype method
-		if (registerPropCalls.length > 0) {
+		if (registerPropCalls.length > 0 && !compilerOptions.dryRun) {
 
-			if (!compilerOptions.dryRun) {
+			const registerBody = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerPropCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
+					`\n		${registerPropCalls.join("\n		")}`
+			);
 
-				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(classDeclaration)
-						? `\n		${registerPropCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
-						`\n		${registerPropCalls.join("\n		")}`
-				);
+			const connectBody = (
+				`\n		${this.libUser.use("connectProps", compilerOptions, context)}(this);`
+			);
 
-				const connectBody = (
-					`\n		${this.libUser.use("connectProps", compilerOptions, context)}(this);`
-				);
+			const disposeBody = (
+				`\n		${this.libUser.use("disposeProps", compilerOptions, context)}(this);`
+			);
 
-				const disposeBody = (
-					`\n		${this.libUser.use("disposeProps", compilerOptions, context)}(this);`
-				);
+			// Create the 'register' method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
+				`${registerBody}` +
+				`\n	}`
+			);
 
-				// Create the 'register' method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
-					`${registerBody}` +
-					`\n	}`
-				);
+			// Create the 'connect' method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
+				`${connectBody}` +
+				`\n	}`
+			);
 
-				// Create the 'connect' method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
-					`${connectBody}` +
-					`\n	}`
-				);
-
-				// Create the 'dispose' method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
-					`${disposeBody}` +
-					`\n	}`
-				);
-			}
+			// Create the 'dispose' method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
+				`${disposeBody}` +
+				`\n	}`
+			);
 		}
 
 		// Set 'hasProps' if there were at least 1 prop, or if another host within the file already has a truthy value for it

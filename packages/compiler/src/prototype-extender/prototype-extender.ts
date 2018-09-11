@@ -178,22 +178,19 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// If the class doesn't implement a attributeChangedCallback
 		if (attributeChangedCallback == null) {
 			// Don't proceed if the parent is a component since the method will be inherited if that is the case
-			if (!parentIsComponent) {
+			if (!parentIsComponent && !compilerOptions.dryRun) {
 
-				if (!compilerOptions.dryRun) {
+				const bodyExtension = extension(nameArg, oldValueArg, newValueArg);
+				const body = (
+					`\n		${bodyExtension}`
+				);
 
-					const bodyExtension = extension(nameArg, oldValueArg, newValueArg);
-					const body = (
-						`\n		${bodyExtension}`
-					);
-
-					context.container.appendLeft(
-						classDeclaration.members.end,
-						`\n	public ${this.configuration.attributeChangedCallbackName} (${nameArgWithType()}, ${oldValueArgWithType()}, ${newValueArgWithType()}): void {` +
-						`${body}` +
-						`\n	}`
-					);
-				}
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	public ${this.configuration.attributeChangedCallbackName} (${nameArgWithType()}, ${oldValueArgWithType()}, ${newValueArgWithType()}): void {` +
+					`${body}` +
+					`\n	}`
+				);
 			}
 		}
 
@@ -202,17 +199,11 @@ export class PrototypeExtender implements IPrototypeExtender {
 			const superExpression = <null|(ExpressionStatement&{ expression: CallExpression&{ expression: PropertyAccessExpression } })> this.getSuperExpression(attributeChangedCallback, this.configuration.attributeChangedCallbackName);
 
 			// If it has a 'super.attributeChangedCallback' call, make sure that it passes arguments to its' parent
-			if (superExpression != null) {
-
-				// If it doesn't pass on any arguments rewrite it such that it does.
-				if (superExpression.expression.arguments.length < 1) {
-					if (!compilerOptions.dryRun) {
-						context.container.overwrite(
-							superExpression.pos, superExpression.end,
-							`super.${this.configuration.attributeChangedCallbackName}(...arguments);`
-						);
-					}
-				}
+			if (superExpression != null && superExpression.expression.arguments.length < 1 && !compilerOptions.dryRun) {
+				context.container.overwrite(
+					superExpression.pos, superExpression.end,
+					`super.${this.configuration.attributeChangedCallbackName}(...arguments);`
+				);
 			}
 
 			// If there is a super.attributeChangedCallback() expression and the parent is a component, we don't have to do anything else since the logic will be inherited from the parent
@@ -326,30 +317,22 @@ export class PrototypeExtender implements IPrototypeExtender {
 			const superExpression = <(ExpressionStatement&{ expression: CallExpression&{ expression: SuperExpression } })|null> this.getSuperExpression(constructor);
 
 			// If it has a 'super()' call, make sure that it passes arguments to its' parent
-			if (superExpression != null) {
-
-				// If it doesn't pass on any arguments rewrite it such that it does.
-				if (superExpression.expression.arguments.length < 1) {
-					if (!compilerOptions.dryRun) {
-						context.container.overwrite(
-							superExpression.pos, superExpression.end,
-							`\n	// @ts-ignore\n	super(...arguments);`
-						);
-					}
-				}
+			if (superExpression != null && superExpression.expression.arguments.length < 1 && !compilerOptions.dryRun) {
+				context.container.overwrite(
+					superExpression.pos, superExpression.end,
+					`\n	// @ts-ignore\n	super(...arguments);`
+				);
 			}
 
 			// If there is a super() expression and the parent is a component, we don't have to do anything else since the logic will be inherited from the parent
 			if (parentIsComponent && superExpression != null) return;
 
 			// Make sure that it adds the extension unless the parent is a component (in which case it will be inherited from it)
-			if (constructor.body != null) {
-				if (!compilerOptions.dryRun) {
-					context.container.appendRight(
-						superExpression != null ? superExpression.end : constructor.body.statements.pos,
-						extension(extensionName())
-					);
-				}
+			if (constructor.body != null && !compilerOptions.dryRun) {
+				context.container.appendRight(
+					superExpression != null ? superExpression.end : constructor.body.statements.pos,
+					extension(extensionName())
+				);
 			}
 		}
 	}
@@ -375,15 +358,13 @@ export class PrototypeExtender implements IPrototypeExtender {
 		if (connectedCallback == null) {
 
 			// Don't proceed if the parent is a component since it will simply be inherited from it
-			if (!parentIsComponent) {
-				if (!compilerOptions.dryRun) {
-					context.container.appendLeft(
-						classDeclaration.members.end,
-						`\n	public ${this.configuration.connectedCallbackName} (): void {` +
-						`${body}` +
-						`\n	}`
-					);
-				}
+			if (!parentIsComponent && !compilerOptions.dryRun) {
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	public ${this.configuration.connectedCallbackName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
 			}
 		}
 
@@ -458,16 +439,13 @@ export class PrototypeExtender implements IPrototypeExtender {
 		if (disconnectedCallback == null) {
 
 			// Don't proceed if the parent is a component since it will be inherited if that is the case
-			if (!parentIsComponent) {
-
-				if (!compilerOptions.dryRun) {
-					context.container.appendLeft(
-						classDeclaration.members.end,
-						`\n	public ${this.configuration.disconnectedCallbackName} (): void {` +
-						`${body}` +
-						`\n	}`
-					);
-				}
+			if (!parentIsComponent && !compilerOptions.dryRun) {
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	public ${this.configuration.disconnectedCallbackName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
 			}
 		}
 
@@ -511,16 +489,13 @@ export class PrototypeExtender implements IPrototypeExtender {
 		if (destroyedCallback == null) {
 
 			// Don't proceed if the parent is a component since it will be inherited if that is the case
-			if (!parentIsComponent) {
-
-				if (!compilerOptions.dryRun) {
-					context.container.appendLeft(
-						classDeclaration.members.end,
-						`\n	public ${this.configuration.destroyedCallbackName} (): void {` +
-						`${body}` +
-						`\n	}`
-					);
-				}
+			if (!parentIsComponent && !compilerOptions.dryRun) {
+				context.container.appendLeft(
+					classDeclaration.members.end,
+					`\n	public ${this.configuration.destroyedCallbackName} (): void {` +
+					`${body}` +
+					`\n	}`
+				);
 			}
 		}
 

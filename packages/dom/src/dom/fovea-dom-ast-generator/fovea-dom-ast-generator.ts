@@ -173,11 +173,9 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 		// If the node is a simply textContent, remove whitespace from it and return the result
 		if (!shouldSkipFilteringForNode && !this.nodeIsIDOMAstNodeRaw(node)) return this.removeUnneededWhitespace(node);
 
-		if (this.nodeIsIDOMAstNodeRaw(node)) {
+		if (this.nodeIsIDOMAstNodeRaw(node) && node.content != null) {
 			// Otherwise, do the same thing with the nodes' content, if it has some
-			if (node.content != null) {
-				node.content = this.filterRawAst(node.content, shouldSkipFilteringForNode);
-			}
+			node.content = this.filterRawAst(node.content, shouldSkipFilteringForNode);
 		}
 
 		// Fall back to simply returning the node

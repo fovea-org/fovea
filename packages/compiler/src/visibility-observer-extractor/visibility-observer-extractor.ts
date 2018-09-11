@@ -90,50 +90,46 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 		});
 
 		// If there is at least 1 visibility observer, add the prototype method
-		if (registerVisibilityObserverCalls.length > 0) {
+		if (registerVisibilityObserverCalls.length > 0 && !compilerOptions.dryRun) {
+			const registerBody = (
+				this.foveaHostUtil.isBaseComponent(classDeclaration)
+					? `\n		${registerVisibilityObserverCalls.join("\n		")}`
+					: `\n		// ts-ignore` +
+					`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
+					`\n		${registerVisibilityObserverCalls.join("\n		")}`
+			);
 
-			if (!compilerOptions.dryRun) {
+			const connectBody = (
+				`\n		${this.libUser.use("connectVisibilityObservers", compilerOptions, context)}(this);`
+			);
 
-				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(classDeclaration)
-						? `\n		${registerVisibilityObserverCalls.join("\n		")}`
-						: `\n		// ts-ignore` +
-						`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
-						`\n		${registerVisibilityObserverCalls.join("\n		")}`
-				);
+			const disposeBody = (
+				`\n		${this.libUser.use("disposeVisibilityObservers", compilerOptions, context)}(this);`
+			);
 
-				const connectBody = (
-					`\n		${this.libUser.use("connectVisibilityObservers", compilerOptions, context)}(this);`
-				);
+			// Create the register method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected static ${this.configuration.postCompile.registerVisibilityObserversMethodName} (): void {` +
+				`${registerBody}` +
+				`\n	}`
+			);
 
-				const disposeBody = (
-					`\n		${this.libUser.use("disposeVisibilityObservers", compilerOptions, context)}(this);`
-				);
+			// Create the 'connect' method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
+				`${connectBody}` +
+				`\n	}`
+			);
 
-				// Create the register method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerVisibilityObserversMethodName} (): void {` +
-					`${registerBody}` +
-					`\n	}`
-				);
-
-				// Create the 'connect' method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
-					`${connectBody}` +
-					`\n	}`
-				);
-
-				// Create the 'dispose' method
-				context.container.appendLeft(
-					classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
-					`${disposeBody}` +
-					`\n	}`
-				);
-			}
+			// Create the 'dispose' method
+			context.container.appendLeft(
+				classDeclaration.members.end,
+				`\n	protected ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
+				`${disposeBody}` +
+				`\n	}`
+			);
 		}
 
 		// Set 'hasVisibilityObservers' to true if there were any results, or if another host within the file already has a truthy value for it
