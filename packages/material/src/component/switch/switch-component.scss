@@ -47,6 +47,7 @@ $trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
 	color: var(--color-primary, #{$color-primary});
 	width: $trackContainerWidth;
 	height: $trackContainerHeight;
+	margin-bottom: 2px;
 }
 
 ::slotted(input),

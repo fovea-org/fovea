@@ -141,6 +141,7 @@ $range-height: 2px;
 }
 
 #value-indicator {
+	@include caption();
 	top: 3px;
 	color: var(--color-white, #{color(white)});
 	text-align: center;
