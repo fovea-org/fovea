@@ -51,12 +51,11 @@ By design, Fovea let's you write as little as possible, and fills out the gaps f
 
 Here's another example of a component that does a little more:
 
+<!-- prettier-ignore -->
 ```typescript
 @selector("clickey-thingey")
 class MyComponent extends HTMLElement {
-  @prop
-  @setOnHost
-  clickAmount: number = 0;
+  @prop @setOnHost clickAmount: number = 0;
 
   template = `
 		<button on-click="${this.clickAmount++}">

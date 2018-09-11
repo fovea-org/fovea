@@ -255,12 +255,12 @@ The lifecycle hooks are:
 The `Params` that is matched by a Route will be provided to the component through the navigation lifecycle hook `onNavigateTo` (see [Navigation lifecycle hooks](#navigation-lifecycle-hooks)).
 For example, to store a reference to one or more of the given `Params` inside a component as `@prop`s, and to react to changes, the following code example will work:
 
+<!-- prettier-ignore -->
 ```typescript
 import {prop, onChange} from "@fovea/core";
 import {IRouteInstanceNavigateToOptions} from "@fovea/router";
 class ProfileComponent extends HTMLElement {
-  @prop
-  userId: number;
+  @prop userId: number;
 
   public async onNavigateTo({params}: IRouteInstanceNavigateToOptions): Promise<void> {
     this.userId = params.userId;
