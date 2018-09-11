@@ -1,0 +1,42 @@
+<!--suppress HtmlFormInputWithoutLabel -->
+<h4>Slider</h4>
+
+<p>
+	Sliders let users select from a range of values by moving the slider thumb.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Continuous slider">
+	<slider-component></slider-component>
+</showcase-component>
+
+<showcase-component caption="Discrete slider">
+	<slider-component discrete></slider-component>
+</showcase-component>
+
+<showcase-component caption="Discrete slider with tick marks">
+	<slider-component discrete tick step="20"></slider-component>
+</showcase-component>
+
+<showcase-component caption="Disabled Sliders">
+	<slider-component disabled></slider-component>
+	<slider-component discrete tick disabled step="10"></slider-component>
+</showcase-component>
+
+<showcase-component caption="Read-only Sliders">
+	<slider-component readonly></slider-component>
+	<slider-component discrete tick readonly step="10"></slider-component>
+</showcase-component>
+
+
+<showcase-component caption="Supports HTML5 validation inside <form> elements">
+	<form onsubmit="event.preventDefault()">
+		<slider-component required></slider-component>
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

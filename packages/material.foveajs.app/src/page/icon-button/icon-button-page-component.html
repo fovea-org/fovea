@@ -1,0 +1,36 @@
+<h4>IconButton</h4>
+
+<p>
+	Icons are appropriate for buttons that allow a user to take actions or make a selection, such as adding or removing a star to an item.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Toggleable Icon Buttons">
+	<icon-button-component icon="alarm" toggledIcon="alarm-fill" toggleable></icon-button-component>
+	<icon-button-component icon="bell" toggledIcon="bell-fill" toggleable style="color: var(--color-primary)"></icon-button-component>
+	<icon-button-component icon="heart" toggledIcon="heart-fill" toggleable style="color: var(--color-accent)"></icon-button-component>
+</showcase-component>
+
+<showcase-component caption="Standard Icon Buttons">
+	<icon-button-component icon="alarm"></icon-button-component>
+	<icon-button-component icon="bell" style="color: var(--color-primary)"></icon-button-component>
+	<icon-button-component icon="heart" style="color: var(--color-accent)"></icon-button-component>
+</showcase-component>
+
+<showcase-component caption="Disabled Icon Buttons">
+	<icon-button-component icon="alarm" disabled></icon-button-component>
+	<icon-button-component icon="bell" disabled style="color: var(--color-primary)"></icon-button-component>
+	<icon-button-component icon="heart" disabled style="color: var(--color-accent)"></icon-button-component>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<p>You can use the <code>icon-button-component</code> as a custom element wherever you want.</p>
+<p>If provide the <code>toggleable</code> attribute, the <code>icon-button-component</code> will toggle the <code>toggled</code> state interchangeably for each time it is clicked</p>
+
+<code *highlight="language: html">
+	<icon-button-component icon="heart" toggledIcon="heart-fill" toggleable></icon-button-component>
+</code>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

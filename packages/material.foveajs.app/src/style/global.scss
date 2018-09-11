@@ -1,0 +1,19 @@
+@import "./theme";
+
+// This file should contain the global styles that will appear in your index.html file
+* {
+	@include typographyBase();
+	@include reset();
+}
+
+body {
+	margin: 0;
+	background: var(--color-background);
+	overflow: hidden;
+	position: fixed;
+	height: 100%;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}

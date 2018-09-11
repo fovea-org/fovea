@@ -1,0 +1,29 @@
+@import "../../style/base";
+
+:host {
+	@include page();
+	@include scrollableY();
+
+	& > .highlight {
+		box-shadow: var(--elevation-6);
+	}
+}
+
+p + p {
+	margin-top: var(--size-4);
+}
+
+h5 {
+	@include hr();
+}
+
+.highlight {
+	margin: var(--default-margin) 0;
+}
+
+form {
+	width: 100%;
+	button {
+		display: flex !important;
+	}
+}

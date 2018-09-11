@@ -1,0 +1,761 @@
+<!--suppress HtmlFormInputWithoutLabel -->
+<h4>Text Field</h4>
+
+<p>
+	Text fields allow users to input, edit, and select text.
+	Text fields typically reside in forms but can appear in other places, like dialog boxes and search.
+</p>
+
+<h5>Demos</h5>
+
+<p>
+	All Text Fields support for <code>ltr</code> (left-to-right) and <code>rtl</code> (right-to-left) directions.
+</p>
+<div>
+	<label>
+		<radio-button-component $ltrRadioButton checked name="direction"></radio-button-component>
+		Use <code>ltr</code>
+	</label>
+	<label>
+		<radio-button-component $rtlRadioButton name="direction"></radio-button-component>
+		Use <code>rtl</code>
+	</label>
+</div>
+
+<h6>Single-Line Text Fields</h6>
+
+<p>
+	In single-line fields, as the cursor reaches the right field edge, text longer than the input line automatically scrolls left.
+</p>
+<p>
+	Single-line fields are not suitable for collecting long responses. For those, use a multi-line text field or text area instead.
+</p>
+
+<showcase-component caption="Normal Single-Line Text Fields">
+	<single-line-text-field-component
+		label="Standard"
+		helper="Helper text"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		type="number"
+		label="Enter some digits"
+		helper="This input only accepts numbers"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter some text"
+		helper="This input has a max length"
+		maxlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter some text"
+		helper="This input has a min length"
+		minlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter some text"
+		helper="This input has a min and a max length"
+		minlength="10"
+		maxlength="20"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter something"
+		helper="This input has a leading icon"
+		leadingIcon="calendar"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter something"
+		helper="This input has a trailing icon"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Enter something"
+		helper="This input has both a leading and a trailing icon"
+		leadingIcon="calendar"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		type="password"
+		label="Password field"
+		helper="This input only hides your input"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		type="url"
+		label="Enter an URL"
+		leadingIcon="link"
+		helper="This input's helper text is different when the input is invalid"
+		invalidText="You must write a valid URL!"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		type="email"
+		label="Enter an email"
+		trailingIcon="error"
+		trailingIconVisibility="invalid"
+		helper="This input will only display the trailing icon when the input is invalid"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		helper="Input without label"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		label="Input without helper"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+</showcase-component>
+
+<showcase-component caption="Filled Single-Line Text Fields">
+	<single-line-text-field-component
+		filled
+		label="Standard"
+		helper="Helper text"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter some text"
+		helper="This input has a max length"
+		maxlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter some text"
+		helper="This input has a min length"
+		minlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter some text"
+		helper="This input has a min and a max length"
+		minlength="10"
+		maxlength="20"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter something"
+		helper="This input has a leading icon"
+		leadingIcon="calendar"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter something"
+		helper="This input has a trailing icon"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Enter something"
+		helper="This input has both a leading and a trailing icon"
+		leadingIcon="calendar"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		type="url"
+		label="Enter an URL"
+		leadingIcon="link"
+		helper="This input's helper text is different when the input is invalid"
+		invalidText="You must write a valid URL!"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		type="email"
+		label="Enter an email"
+		trailingIcon="error"
+		trailingIconVisibility="invalid"
+		helper="This input will only display the trailing icon when the input is invalid"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		helper="Input without label"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		filled
+		label="Input without helper"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+</showcase-component>
+
+<showcase-component caption="Outlined Single-Line Text Fields">
+	<single-line-text-field-component
+		outlined
+		label="Enter something"
+		helper="Helper text"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter some text"
+		helper="This input has a max length"
+		maxlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter some text"
+		helper="This input has a min length"
+		minlength="10"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter some text"
+		helper="This input has a min and a max length"
+		minlength="10"
+		maxlength="20"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter something"
+		helper="This input has a leading icon"
+		leadingIcon="calendar"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter something"
+		helper="This input has a trailing icon"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Enter something"
+		helper="This input has both a leading and a trailing icon"
+		leadingIcon="calendar"
+		trailingIcon="search"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="This is an incredibly long label"
+		helper="Long labels will be truncated"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		type="url"
+		label="Enter an URL"
+		leadingIcon="link"
+		helper="This input's helper text is different when the input is invalid"
+		invalidText="You must write a valid URL!"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		type="email"
+		label="Enter an email"
+		trailingIcon="error"
+		trailingIconVisibility="invalid"
+		helper="This input will only display the trailing icon when the input is invalid"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		helper="Input without label"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		outlined
+		label="Input without helper"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+</showcase-component>
+
+<showcase-component caption="Disabled Single-Line Text Fields">
+	<single-line-text-field-component
+		disabled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		leadingIcon="person-fill"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		disabled
+		filled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		leadingIcon="person-fill"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		disabled
+		outlined
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		leadingIcon="person-fill"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+</showcase-component>
+
+<showcase-component caption="Read-only Single-Line Text Fields">
+	<single-line-text-field-component
+		readonly
+		value="18"
+		label="Age"
+		helper="Enter your age"
+		dir="${direction}"
+	></single-line-text-field-component>
+</showcase-component>
+
+<showcase-component caption="Single-Line Text Fields inside <form> elements with HTML5 validation">
+	<form onsubmit="event.preventDefault()">
+		<single-line-text-field-component
+			outlined
+			type="email"
+			label="Email"
+			helper="Write an email"
+			name="foo"
+			required
+			dir="${direction}"
+		></single-line-text-field-component>
+
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage of Single-Line Text Fields</h5>
+
+<p>
+	Simply use the <code>single-line-text-field-component</code> element.
+</p>
+<p>
+	For example, here's a very simple <code>filled</code> text field:
+</p>
+
+<code *highlight="language: html">
+	<single-line-text-field-component
+		filled
+		label="Firstname"
+		helper="Enter your firstname"
+	></single-line-text-field-component>
+</code>
+
+<showcase-component>
+	<single-line-text-field-component
+		filled
+		label="Firstname"
+		helper="Enter your firstname"
+		dir="${direction}"
+	></single-line-text-field-component>
+</showcase-component>
+
+<p>
+	Here's a more complex example of a text field that accepts e-mail addresses with HTML5 validation and displays a trailing icon when the input is invalid.
+</p>
+
+<code *highlight="language: html">
+	<single-line-text-field-component
+		type="email"
+		label="Enter an email"
+		trailingIcon="error"
+		trailingIconVisibility="invalid"
+		helper="This input will only display the trailing icon when the input is invalid"
+	></single-line-text-field-component>
+</code>
+
+<showcase-component>
+	<single-line-text-field-component
+		type="email"
+		label="Enter an email"
+		trailingIcon="error"
+		trailingIconVisibility="invalid"
+		helper="This input will only display the trailing icon when the input is invalid"
+		dir="${direction}"
+	></single-line-text-field-component>
+</showcase-component>
+
+<p>
+	The <code>minlength</code> and <code>maxlength</code> properties will display a character counter:
+</p>
+
+<code *highlight="language: html">
+<single-line-text-field-component maxlength="20" label="Enter something"></single-line-text-field-component>
+<single-line-text-field-component minlength="10" label="Enter something"></single-line-text-field-component>
+<single-line-text-field-component minlength="10" maxlength="20" label="Enter something"></single-line-text-field-component>
+</code>
+
+<showcase-component>
+	<single-line-text-field-component
+		maxlength="20"
+		label="Enter something"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		minlength="10"
+		label="Enter something"
+		dir="${direction}"
+	></single-line-text-field-component>
+
+	<single-line-text-field-component
+		minlength="10"
+		maxlength="20"
+		label="Enter something"
+		dir="${direction}"
+	></single-line-text-field-component>
+</showcase-component>
+
+<p>
+	Single-Line Text Fields can be <code>filled</code> or <code>outlined</code>:
+</p>
+
+<code *highlight="language: html">
+<single-line-text-field-component filled helper="This input is filled" label="Enter something"></single-line-text-field-component>
+	<single-line-text-field-component outlined helper="This input is outlined" label="Enter something"></single-line-text-field-component>
+</code>
+
+<showcase-component>
+	<single-line-text-field-component
+		filled
+		helper="This input is filled"
+		label="Enter something"
+		dir="${direction}"
+	></single-line-text-field-component>
+	<single-line-text-field-component
+		outlined
+		helper="This input is outlined"
+		label="Enter something"
+		dir="${direction}"
+	></single-line-text-field-component>
+</showcase-component>
+
+<api-reference-component tableHead="API Reference" data="${singleLineTextFieldApiReferenceData}"></api-reference-component>
+
+<h6>Multi-Line Text Fields</h6>
+
+<p>
+	Multi-line text fields show all user input at once. Overflow text causes the text field to expand (shifting screen elements downward), and text wraps onto a new line.
+</p>
+<p>
+	These fields initially appear as single-line fields, which is useful for compact layouts that need to be able to accomodate large amounts of text.
+</p>
+
+<showcase-component caption="Normal Multi-Line Text Fields">
+	<multi-line-text-field-component
+		label="whatever"
+		helper="Write a story"
+		dir="${direction}"
+	></multi-line-text-field-component>
+</showcase-component>
+
+<showcase-component caption="Filled Multi-Line Text Fields">
+	<multi-line-text-field-component
+		filled
+		label="whatever"
+		helper="Write a story"
+		dir="${direction}"
+	></multi-line-text-field-component>
+</showcase-component>
+
+<showcase-component caption="Outlined Multi-Line Text Fields">
+	<multi-line-text-field-component
+		outlined
+		label="whatever"
+		helper="Write a story"
+		dir="${direction}"
+	></multi-line-text-field-component>
+</showcase-component>
+
+<showcase-component caption="Disabled Multi-Line Text Fields">
+	<multi-line-text-field-component
+		disabled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></multi-line-text-field-component>
+
+	<multi-line-text-field-component
+		disabled
+		filled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></multi-line-text-field-component>
+
+	<multi-line-text-field-component
+		disabled
+		outlined
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></multi-line-text-field-component>
+
+</showcase-component>
+
+<showcase-component caption="Read-only Multi-Line Text Fields">
+	<multi-line-text-field-component
+		readonly
+		value="18"
+		label="Age"
+		helper="Enter your age"
+		dir="${direction}"
+	></multi-line-text-field-component>
+</showcase-component>
+
+<showcase-component caption="Multi-Line Text Fields inside <form> elements with HTML5 validation">
+	<form onsubmit="event.preventDefault()">
+		<multi-line-text-field-component
+			filled
+			label="Story"
+			helper="Write something"
+			minlength="30"
+			name="bar"
+			required
+			dir="${direction}"
+		></multi-line-text-field-component>
+
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage of Multi-Line Text Fields</h5>
+
+<p>
+	Simply use the <code>multi-line-text-field-component</code> element.
+</p>
+<p>
+	For example, here's a very simple <code>filled</code> text field:
+</p>
+
+<code *highlight="language: html">
+	<multi-line-text-field-component
+		filled
+		label="Bio"
+		helper="Enter your Bio"
+	></multi-line-text-field-component>
+</code>
+
+<showcase-component>
+	<multi-line-text-field-component
+		filled
+		label="Bio"
+		helper="Enter your Bio"
+		dir="${direction}"
+	></multi-line-text-field-component>
+</showcase-component>
+
+<api-reference-component tableHead="API Reference" data="${multiLineTextFieldApiReferenceData}"></api-reference-component>
+
+<h6>Textareas</h6>
+
+<p>
+	Text areas are taller than text fields and wrap overflow text onto a new line. They are a fixed height and scroll vertically when the cursor reaches the bottom of the field.
+</p>
+<p>
+	The large initial size indicates that longer responses are possible and encouraged.
+</p>
+<p>
+	These should be used instead of multi-line fields on the web. Ensure the height of a text area fits within mobile screen sizes.
+</p>
+
+<showcase-component caption="Normal Textareas">
+	<textarea-component
+		label="Enter your story"
+		helper="Write a story"
+		value="This is my prefilled story"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		helper="Textarea without label"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		label="Textarea without helper"
+		dir="${direction}"
+	></textarea-component>
+
+</showcase-component>
+
+<showcase-component caption="Filled Textareas">
+	<textarea-component
+		filled
+		label="Enter your story"
+		helper="Write a story"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		filled
+		helper="Textarea without label"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		filled
+		label="Textarea without helper"
+		dir="${direction}"
+	></textarea-component>
+
+</showcase-component>
+
+<showcase-component caption="Outlined Textareas">
+	<textarea-component
+		outlined
+		label="Enter your story"
+		helper="Write a story"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		outlined
+		helper="Textarea without label"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		outlined
+		label="Textarea without helper"
+		dir="${direction}"
+	></textarea-component>
+
+</showcase-component>
+
+<showcase-component caption="Disabled Textareas">
+	<textarea-component
+		disabled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		disabled
+		filled
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></textarea-component>
+
+	<textarea-component
+		disabled
+		outlined
+		value="John Doe"
+		label="Name"
+		helper="Enter your name"
+		dir="${direction}"
+	></textarea-component>
+
+</showcase-component>
+
+<showcase-component caption="Read-only Textareas">
+	<textarea-component
+		readonly
+		value="18"
+		label="Age"
+		helper="Enter your age"
+		dir="${direction}"
+	></textarea-component>
+</showcase-component>
+
+<showcase-component caption="Textareas inside <form> elements with HTML5 validation">
+	<form onsubmit="event.preventDefault()">
+		<textarea-component
+			filled
+			label="Story"
+			helper="Write Something"
+			minlength="30"
+			name="baz"
+			required
+			dir="${direction}"
+		></textarea-component>
+
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage of Textareas</h5>
+
+<p>
+	Simply use the <code>textarea-component</code> element.
+</p>
+<p>
+	For example, here's a very simple <code>outlined</code> textarea:
+</p>
+
+<code *highlight="language: html">
+	<textarea-component
+		outlined
+		label="Bio"
+		helper="Enter your Bio"
+	></textarea-component>
+</code>
+
+<showcase-component>
+	<textarea-component
+		outlined
+		label="Bio"
+		helper="Enter your Bio"
+		dir="${direction}"
+	></textarea-component>
+</showcase-component>
+
+<api-reference-component tableHead="API Reference" data="${textareaApiReferenceData}"></api-reference-component>

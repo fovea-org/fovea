@@ -8,7 +8,7 @@ import packageJSON from "./package.json";
 
 export default [
 	...baseConfigs("FoveaMaterial")
-		.map(({config, isFlat}) => ({
+		.map(({config, isFlat}, _, configs) => ({
 			...config,
 			external: isFlat ? [] : [
 				...config.external,
@@ -20,15 +20,20 @@ export default [
 				// Flatten and export the base .scss files to allow others to reuse the scss variables
 				{
 					name: "flattenBaseSass",
-					async ongenerate (opts) {
+					async buildEnd (opts) {
 						const styleDir = join(process.cwd(), "src/style");
 
 						const bundler = new Bundler(undefined, styleDir);
 						// Relative file path to project directory path.
 						const result = await bundler.Bundle("./base.scss");
-						const outputDir = dirname(opts.file);
-						sync(outputDir);
-						writeFileSync(join(outputDir, "index.scss"), result.bundledContent);
+						const outputDirs = new Set(
+							[].concat.apply([], configs.map(({config: currentConfig}) => currentConfig.output))
+								.map(output => join(dirname(output.file), "../"))
+						);
+						outputDirs.forEach(outputDir => {
+							sync(outputDir);
+							writeFileSync(join(outputDir, "index.scss"), result.bundledContent);
+						});
 					}
 				},
 				...config.plugins

@@ -225,8 +225,8 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 		});
 	}
 
-	// If this is a SCSS file and the property is a SCSS variable, keep it, but also add a CSS custom property that references it (otherwise it will be removed during compilation)
-	else if (isScss && isScssVariable(node.prop)) {
+	// If this is a SCSS file and the property is a SCSS variable, and it is located within the root (e.g. not nested inside something else), keep it, but also add a CSS custom property that references it (otherwise it will be removed during compilation)
+	else if (isScss && isScssVariable(node.prop) && node.parent.type === "root") {
 		// Make sure to give the custom property a name that we know to be temporarily renamed
 		const cssCustomPropertyName = SCSS_VARIABLE_REWRITE_PREFIX + node.prop.slice(scssVariablePrefix.length);
 
@@ -289,11 +289,11 @@ function containsVariableReference (value: string): boolean {
  * @returns {string}
  */
 function replaceVariableReferences (value: string, variables: {[key: string]: string}): string {
-	return value
+	return `#{'${value
 		.replace(variableReferenceRegexGlobal, match => {
 			const variableMatch = variables[match];
 			return variableMatch != null ? containsVariableReference(variableMatch) ? replaceVariableReferences(variableMatch, variables) : variableMatch : match;
-		});
+		})}'}`;
 }
 
 /**

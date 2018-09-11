@@ -1,0 +1,39 @@
+<h4>Ripple</h4>
+
+<p>
+	Ripples are visual representations used to communicate the status of a component or interactive element.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="The squares all have different ripple colors. (Default: currentColor)">
+	<div class="square" *ripple="color: var(--color-primary)"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-accent)"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-yellow)"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-black-60)"><small>Click here</small></div>
+</showcase-component>
+
+<showcase-component caption="The Ripple will always transform from the origin of the center of those squares. (Default: currentColor)">
+	<div class="square" *ripple="color: var(--color-primary); center: true"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-accent); center: true"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-yellow); center: true"><small>Click here</small></div>
+	<div class="square" *ripple="color: var(--color-black-60); center: true"><small>Click here</small></div>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<p>You can annotate any element with the <code>*ripple</code> Custom Attribute:</p>
+
+<code *highlight="language: html">
+	<div *ripple></div>
+</code>
+
+<p>
+	The color of the Ripple will be inherited from the current color value of the element that has the <code>*ripple</code>. You can optionally provide a different color with the <code>color</code> property:
+</p>
+
+<code *highlight="language: html">
+	<div *ripple="color: red"></div>
+</code>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

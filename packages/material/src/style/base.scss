@@ -177,24 +177,6 @@ $caption-line-height: 20px;
 	transform: translate3d(0,0,0);
 }
 
-@mixin scrollableY {
-	-webkit-overflow-scrolling: touch;
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-
-@mixin scrollableXY {
-	-webkit-overflow-scrolling: touch;
-	overflow-x: scroll;
-	overflow-y: scroll;
-}
-
-@mixin scrollableX {
-	-webkit-overflow-scrolling: touch;
-	overflow-x: scroll;
-	overflow-y: hidden;
-}
-
 @mixin hr {
 	border-bottom: 1px solid var(--color-black-20, #{color(black, 20)});
 }

@@ -1,0 +1,58 @@
+@import "../../style/base";
+
+.table {
+	@include scrollableXY();
+	margin-top: var(--size-6);
+	border-collapse: collapse;
+	white-space: nowrap;
+	display: block;
+	table-layout: fixed;
+
+	thead {
+		@include headline6();
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 0;
+		height: 64px;
+		margin: 0;
+	}
+
+	tr,
+	tr td {
+		height: 48px;
+	}
+
+	tr {
+		@include hr();
+	}
+
+	tr:first-of-type {
+		& td {
+			@include caption();
+			color: var(--color-black-70);
+
+			&:not(:first-of-type) {
+				padding: 0 var(--default-margin);
+			}
+
+			&:first-of-type {
+				padding: 0 var(--default-margin) 0 0;
+			}
+		}
+	}
+
+	tr:not(:first-of-type) {
+		& td {
+			@include body2();
+
+			&:not(:first-of-type) {
+				padding: 0 var(--default-margin);
+			}
+
+			&:first-of-type {
+				padding: 0 var(--default-margin) 0 0;
+			}
+		}
+	}
+}

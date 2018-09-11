@@ -1,0 +1,15 @@
+@import "../../style/base";
+
+.square {
+	--square-size: 100px;
+	user-select: none;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	width: var(--square-size);
+	height: var(--square-size);
+	border: 1px solid var(--color-black-20);
+	contain: strict;
+}

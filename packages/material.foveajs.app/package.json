@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "generate:readme": "scaffold readme --blacklist intro,install,license,backers,maintainers,contributing",
+    "build": "fovea build",
+    "start": "fovea build --serve --watch",
+    "watch": "fovea build --watch",
+    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+    "update": "ncu -ua && npm update && npm install"
+  },
+  "devDependencies": {
+    "@fovea/cli": "^1.0.129",
+    "@wessberg/browserslist-generator": "^0.0.44",
+    "@wessberg/color": "^0.0.2",
+    "npm-check-updates": "^2.14.2",
+    "@wessberg/scaffold": "1.0.3",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "@fovea/core": "^1.0.129",
+    "@fovea/material": "^1.0.129",
+    "@fovea/router": "^1.0.129",
+    "@types/node": "^10.9.4",
+    "@types/workbox-sw": "^3.2.0",
+    "idb-keyval": "^3.1.0",
+    "tslib": "^1.9.3"
+  },
+  "name": "@fovea/material.foveajs.app",
+  "description": "The source code for the official website for @fovea/material with demos and documentation",
+  "version": "1.0.129"
+}

@@ -48,20 +48,24 @@ export class StylesParserService implements IStylesParserService {
 		const watcher = this.watchService.watch(foveaCliConfig.style.directory, {persistent: watch}, async () => {
 			subscriber.onStart();
 
-			// Take all variables
-			themeVariables = await this.foveaStyles.takeVariables({
-				file: themeStylesPath,
-				template: (await this.fileLoader.load(themeStylesPath)).toString()
-			});
+			try {
+				// Take all variables
+				themeVariables = await this.foveaStyles.takeVariables({
+					file: themeStylesPath,
+					template: (await this.fileLoader.load(themeStylesPath)).toString()
+				});
 
-			// Take all variables
-			globalStyles = (await this.foveaStyles.generate({
-				file: globalStylesPath,
-				template: (await this.fileLoader.load(globalStylesPath)).toString(),
-				production, postCSSPlugins
-			})).staticCSS;
+				// Take all variables
+				globalStyles = (await this.foveaStyles.generate({
+					file: globalStylesPath,
+					template: (await this.fileLoader.load(globalStylesPath)).toString(),
+					production, postCSSPlugins
+				})).staticCSS;
 
-			subscriber.onEnd({themeVariables, globalStyles});
+				subscriber.onEnd({themeVariables, globalStyles});
+			} catch (ex) {
+				subscriber.onError({data: ex, fatal: true});
+			}
 		});
 
 		// Return the observer

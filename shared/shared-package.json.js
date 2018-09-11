@@ -25,4 +25,16 @@ export default {
 	contributors: packageJSON.contributors,
 	engines: packageJSON.engines,
 	license: packageJSON.license,
+	scaffold: {
+		patreonUserId: "11315442",
+		contributorMeta: {
+			"Frederik Wessberg": {
+				imageUrl: "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",
+				role: "Lead Developer",
+				twitterHandle: "FredWessberg",
+				isCocEnforcer: true
+			}
+		},
+		backers: []
+	}
 };

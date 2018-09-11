@@ -1,0 +1,55 @@
+@import "../../node_modules/@fovea/material/dist/index";
+
+h1 {
+	@include headline1();
+}
+
+h2 {
+	@include headline2();
+}
+
+h3 {
+	@include headline3();
+}
+
+h4 {
+	@include headline4();
+}
+
+h5 {
+	@include headline5();
+}
+
+h6 {
+	@include headline6();
+}
+
+p {
+	@include body1();
+}
+
+small {
+	@include caption();
+	color: var(--color-black-60);
+}
+
+label {
+	@include body1();
+}
+
+a {
+	text-decoration: none;
+}
+
+code {
+	@include code();
+}
+
+a,
+a:visited {
+	color: var(--color-primary);
+}
+
+* {
+	@include reset();
+}

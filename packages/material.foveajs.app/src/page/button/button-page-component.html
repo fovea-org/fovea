@@ -1,0 +1,59 @@
+<h4>Button</h4>
+
+<p>
+	Buttons communicate an action a user can take. They are typically placed throughout your UI, in places like dialogs, forms, cards, and toolbars.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Standard Buttons">
+	<button *button>Button</button>
+	<button *button="contained: true">Button</button>
+	<button *button="outlined: true">Button</button>
+</showcase-component>
+
+<showcase-component caption="Standard Buttons with Icons">
+	<button *button>
+		<icon-component icon="check"></icon-component>
+		Button
+	</button>
+	<button *button="contained: true">
+		<icon-component icon="check"></icon-component>
+		Button
+	</button>
+	<button *button="outlined: true">
+		Button
+		<icon-component icon="check"></icon-component>
+	</button>
+</showcase-component>
+
+<showcase-component caption="Disabled Buttons">
+	<button *button disabled>Button</button>
+	<button *button="contained: true" disabled>Button</button>
+	<button *button="outlined: true;" disabled>Button</button>
+</showcase-component>
+
+<showcase-component caption="Disabled Buttons with icons">
+	<button *button disabled>
+		<icon-component icon="check"></icon-component>
+		Button
+	</button>
+	<button *button="contained: true;" disabled>
+		<icon-component icon="check"></icon-component>
+		Button
+	</button>
+	<button *button="outlined: true;" disabled>
+		<icon-component icon="check"></icon-component>
+		Button
+	</button>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<p>You can annotate any element with the <code>*button</code> Custom Attribute, but it is intended to be used with <code>button</code> or <code>a</code> elements:</p>
+
+<code *highlight="language: html">
+	<button *button>Button</button>
+</code>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

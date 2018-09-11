@@ -1,0 +1,8 @@
+<aside id="navbar">
+	<div id="navbar_content">
+		<a *foreach="${routes}" href="${item.name}" *routerLink *button>${item.name}</a>
+	</div>
+</aside>
+
+<!-- Matched routes will be injected here -->
+<RouterOutlet />

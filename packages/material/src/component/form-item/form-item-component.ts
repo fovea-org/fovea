@@ -3,7 +3,7 @@ import {listener, prop, setOnHost} from "@fovea/core";
 /**
  * This Custom Element represents a FormItem.
  */
-export class FormItemComponent extends HTMLElement {
+export abstract class FormItemComponent extends HTMLElement {
 
 	/**
 	 * Holds true if the FormItem should be disabled

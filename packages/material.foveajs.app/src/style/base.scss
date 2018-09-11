@@ -1,0 +1,36 @@
+@import "../../node_modules/@fovea/material/dist/index";
+
+// These variables will have their values replaced on build-time
+$NODE_ENV: null;
+$NPM_PACKAGE_NAME: null;
+$NPM_PACKAGE_VERSION: null;
+$WATCH: null;
+$TAG: null;
+$HASH: null;
+
+@mixin scrollableY {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+@mixin scrollableXY {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+@mixin scrollableX {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+	overflow-y: hidden;
+}
+
+@mixin page {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: var(--default-margin);
+}

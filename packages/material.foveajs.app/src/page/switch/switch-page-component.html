@@ -1,0 +1,63 @@
+<!--suppress HtmlFormInputWithoutLabel -->
+<h4>Switch</h4>
+
+<p>
+	Switches communicate an action a user can take. They are typically placed throughout your UI, in places like dialogs, forms, cards, and toolbars.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Standard Switches">
+	<switch-component></switch-component>
+	<switch-component style="color: var(--color-accent)" checked title="demo"></switch-component>
+</showcase-component>
+
+<showcase-component caption="Switches with labels">
+	<label>
+		<switch-component></switch-component>
+		Option
+	</label>
+	<label>
+		<switch-component checked></switch-component>
+		Option
+	</label>
+</showcase-component>
+
+<showcase-component caption="Disabled Switches">
+	<switch-component disabled></switch-component>
+	<switch-component disabled checked></switch-component>
+</showcase-component>
+
+<showcase-component caption="Read-only Switches">
+	<switch-component readonly></switch-component>
+	<switch-component readonly checked></switch-component>
+</showcase-component>
+
+<showcase-component caption="Supports HTML5 validation inside <form> elements">
+	<form onsubmit="event.preventDefault()">
+		<label>
+			<switch-component name="foo" required></switch-component>
+			Accept A
+		</label>
+		<label>
+			<switch-component name="bar" required></switch-component>
+			Accept B
+		</label>
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<p>
+	You can use the <code>switch-component</code> like you would use a regular <code>checkbox</code>:
+</p>
+
+<code *highlight="language: html">
+<!-- This Switch is unchecked/untoggled -->
+<switch-component></switch-component>
+<!-- This Switch is checked/toggled -->
+<switch-component checked></switch-component>
+</code>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

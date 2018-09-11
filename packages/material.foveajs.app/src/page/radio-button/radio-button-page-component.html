@@ -1,0 +1,68 @@
+<!--suppress HtmlFormInputWithoutLabel -->
+<h4>Radio Button</h4>
+
+<p>
+	Buttons communicate an action a user can take. They are typically placed throughout your UI, in places like dialogs, forms, cards, and toolbars.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Standard Radio Button">
+	<radio-button-component name="test1"></radio-button-component>
+	<radio-button-component name="test1" checked></radio-button-component>
+</showcase-component>
+
+<showcase-component caption="Radio Buttons with labels">
+	<label>
+		<radio-button-component name="test2"></radio-button-component>
+		Option
+	</label>
+	<label>
+		<radio-button-component name="test2" checked></radio-button-component>
+		Option
+	</label>
+</showcase-component>
+
+<showcase-component caption="Disabled Radio Buttons">
+	<radio-button-component name="test3" disabled></radio-button-component>
+	<radio-button-component name="test3" disabled checked></radio-button-component>
+	<radio-button-component name="test3" indeterminate disabled></radio-button-component>
+	<radio-button-component name="test3" indeterminate disabled checked></radio-button-component>
+</showcase-component>
+
+<showcase-component caption="Read-only Radio Buttons">
+	<radio-button-component name="test4" readonly></radio-button-component>
+	<radio-button-component name="test4" readonly checked></radio-button-component>
+</showcase-component>
+
+
+<showcase-component caption="Supports HTML5 validation inside <form> elements">
+	<form onsubmit="event.preventDefault()">
+		<label>
+			<radio-button-component name="test5" required></radio-button-component>
+			Accept A
+		</label>
+		<label>
+			<radio-button-component name="test5" required></radio-button-component>
+			Accept B
+		</label>
+		<button *button>Submit</button>
+	</form>
+</showcase-component>
+
+<h5>Usage</h5>
+
+<p>
+	You can use the <code>radio-button-component</code> like you would use a regular <code>input</code> element with <code>type="radio"</code>:
+</p>
+<p>
+	Note that <code>radio-button-component</code>s with the same value for the <code>name</code> property are part of the same <em>group</em>. Only one Radio Button within a group can be checked at a time.
+</p>
+
+<code *highlight="language: html">
+<radio-button-component name="favorite-color">Red</radio-button-component>
+<!-- This radio button is checked -->
+<radio-button-component name="favorite-color" checked>Blue</radio-button-component>
+</code>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

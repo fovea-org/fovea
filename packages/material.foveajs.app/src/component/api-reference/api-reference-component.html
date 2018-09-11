@@ -1,0 +1,29 @@
+<table *table *if="${data != null}">
+	<thead>${tableHead}</thead>
+	<tr>
+		<td>Prop</td>
+		<td>Type</td>
+		<td>Default value</td>
+		<td>Description</td>
+		<td>Usage</td>
+	</tr>
+	<tr *foreach="${data}">
+		<td class="code">
+			${item.prop}
+		</td>
+		<td class="code">
+			${item.type}
+		</td>
+		<td class="code${item.defaultValue == null ? ' missing' : ''}">
+			${item.defaultValue == null ? 'none' : typeof item.defaultValue !== 'string' ? item.defaultValue : '"' + item.defaultValue + '"'}
+		</td>
+		<td>
+			${item.description}
+		</td>
+		<td>
+			<div *highlight="language: html">
+				${item.usage}
+			</div>
+		</td>
+	</tr>
+</table>

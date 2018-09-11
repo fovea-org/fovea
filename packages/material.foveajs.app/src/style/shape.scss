@@ -1,0 +1,10 @@
+@import "../../node_modules/@fovea/material/dist/index";
+
+:root {
+	--rounding-1: #{rounding(1)};
+	--rounding-2: #{rounding(2)};
+	--rounding-3: #{rounding(3)};
+	--rounding-4: #{rounding(4)};
+
+	--default-rounding: #{$default-rounding};
+}

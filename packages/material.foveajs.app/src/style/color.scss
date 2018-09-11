@@ -1,0 +1,124 @@
+@import "../../node_modules/@fovea/material/dist/index";
+
+:root {
+	--rgb-black: #{map-get($rgb-map, black)};
+	--rgb-white: #{map-get($rgb-map, white)};
+	--rgb-red: #{map-get($rgb-map, red)};
+	--rgb-pink: #{map-get($rgb-map, pink)};
+	--rgb-purple: #{map-get($rgb-map, purple)};
+	--rgb-green: #{map-get($rgb-map, green)};
+	--rgb-yellow: #{map-get($rgb-map, yellow)};
+	--rgb-blue: #{map-get($rgb-map, blue)};
+	--rgb-orange: #{map-get($rgb-map, orange)};
+
+	--color-black-04: rgba(var(--rgb-black), 0.04);
+	--color-black-05: rgba(var(--rgb-black), 0.05);
+	--color-black-10: rgba(var(--rgb-black), 0.1);
+	--color-black-12: rgba(var(--rgb-black), 0.12);
+	--color-black-20: rgba(var(--rgb-black), 0.2);
+	--color-black-30: rgba(var(--rgb-black), 0.3);
+	--color-black-40: rgba(var(--rgb-black), 0.4);
+	--color-black-50: rgba(var(--rgb-black), 0.5);
+	--color-black-60: rgba(var(--rgb-black), 0.6);
+	--color-black-70: rgba(var(--rgb-black), 0.7);
+	--color-black-80: rgba(var(--rgb-black), 0.8);
+	--color-black-90: rgba(var(--rgb-black), 0.9);
+	--color-black: rgb(var(--rgb-black));
+
+	--color-white-10: rgba(var(--rgb-white), 0.1);
+	--color-white-20: rgba(var(--rgb-white), 0.2);
+	--color-white-30: rgba(var(--rgb-white), 0.3);
+	--color-white-40: rgba(var(--rgb-white), 0.4);
+	--color-white-50: rgba(var(--rgb-white), 0.5);
+	--color-white-60: rgba(var(--rgb-white), 0.6);
+	--color-white-70: rgba(var(--rgb-white), 0.7);
+	--color-white-80: rgba(var(--rgb-white), 0.8);
+	--color-white-90: rgba(var(--rgb-white), 0.9);
+	--color-white: rgb(var(--rgb-white));
+
+	--color-red-10: rgba(var(--rgb-red), 0.1);
+	--color-red-20: rgba(var(--rgb-red), 0.2);
+	--color-red-30: rgba(var(--rgb-red), 0.3);
+	--color-red-40: rgba(var(--rgb-red), 0.4);
+	--color-red-50: rgba(var(--rgb-red), 0.5);
+	--color-red-60: rgba(var(--rgb-red), 0.6);
+	--color-red-70: rgba(var(--rgb-red), 0.7);
+	--color-red-80: rgba(var(--rgb-red), 0.8);
+	--color-red-90: rgba(var(--rgb-red), 0.9);
+	--color-red: rgb(var(--rgb-red));
+
+	--color-pink-10: rgba(var(--rgb-pink), 0.1);
+	--color-pink-20: rgba(var(--rgb-pink), 0.2);
+	--color-pink-30: rgba(var(--rgb-pink), 0.3);
+	--color-pink-40: rgba(var(--rgb-pink), 0.4);
+	--color-pink-50: rgba(var(--rgb-pink), 0.5);
+	--color-pink-60: rgba(var(--rgb-pink), 0.6);
+	--color-pink-70: rgba(var(--rgb-pink), 0.7);
+	--color-pink-80: rgba(var(--rgb-pink), 0.8);
+	--color-pink-90: rgba(var(--rgb-pink), 0.9);
+	--color-pink: rgb(var(--rgb-pink));
+
+	--color-purple-10: rgba(var(--rgb-purple), 0.1);
+	--color-purple-20: rgba(var(--rgb-purple), 0.2);
+	--color-purple-30: rgba(var(--rgb-purple), 0.3);
+	--color-purple-40: rgba(var(--rgb-purple), 0.4);
+	--color-purple-50: rgba(var(--rgb-purple), 0.5);
+	--color-purple-60: rgba(var(--rgb-purple), 0.6);
+	--color-purple-70: rgba(var(--rgb-purple), 0.7);
+	--color-purple-80: rgba(var(--rgb-purple), 0.8);
+	--color-purple-90: rgba(var(--rgb-purple), 0.9);
+	--color-purple: rgb(var(--rgb-purple));
+
+	--color-green-10: rgba(var(--rgb-green), 0.1);
+	--color-green-20: rgba(var(--rgb-green), 0.2);
+	--color-green-30: rgba(var(--rgb-green), 0.3);
+	--color-green-40: rgba(var(--rgb-green), 0.4);
+	--color-green-50: rgba(var(--rgb-green), 0.5);
+	--color-green-60: rgba(var(--rgb-green), 0.6);
+	--color-green-70: rgba(var(--rgb-green), 0.7);
+	--color-green-80: rgba(var(--rgb-green), 0.8);
+	--color-green-90: rgba(var(--rgb-green), 0.9);
+	--color-green: rgb(var(--rgb-green));
+
+	--color-yellow-10: rgba(var(--rgb-yellow), 0.1);
+	--color-yellow-20: rgba(var(--rgb-yellow), 0.2);
+	--color-yellow-30: rgba(var(--rgb-yellow), 0.3);
+	--color-yellow-40: rgba(var(--rgb-yellow), 0.4);
+	--color-yellow-50: rgba(var(--rgb-yellow), 0.5);
+	--color-yellow-60: rgba(var(--rgb-yellow), 0.6);
+	--color-yellow-70: rgba(var(--rgb-yellow), 0.7);
+	--color-yellow-80: rgba(var(--rgb-yellow), 0.8);
+	--color-yellow-90: rgba(var(--rgb-yellow), 0.9);
+	--color-yellow: rgb(var(--rgb-yellow));
+
+	--color-blue-10: rgba(var(--rgb-blue), 0.1);
+	--color-blue-20: rgba(var(--rgb-blue), 0.2);
+	--color-blue-30: rgba(var(--rgb-blue), 0.3);
+	--color-blue-40: rgba(var(--rgb-blue), 0.4);
+	--color-blue-50: rgba(var(--rgb-blue), 0.5);
+	--color-blue-60: rgba(var(--rgb-blue), 0.6);
+	--color-blue-70: rgba(var(--rgb-blue), 0.7);
+	--color-blue-80: rgba(var(--rgb-blue), 0.8);
+	--color-blue-90: rgba(var(--rgb-blue), 0.9);
+	--color-blue: rgb(var(--rgb-blue));
+
+	--color-orange-10: rgba(var(--rgb-orange), 0.1);
+	--color-orange-20: rgba(var(--rgb-orange), 0.2);
+	--color-orange-30: rgba(var(--rgb-orange), 0.3);
+	--color-orange-40: rgba(var(--rgb-orange), 0.4);
+	--color-orange-50: rgba(var(--rgb-orange), 0.5);
+	--color-orange-60: rgba(var(--rgb-orange), 0.6);
+	--color-orange-70: rgba(var(--rgb-orange), 0.7);
+	--color-orange-80: rgba(var(--rgb-orange), 0.8);
+	--color-orange-90: rgba(var(--rgb-orange), 0.9);
+	--color-orange: rgb(var(--rgb-orange));
+
+	// Primary and accent colors for the app
+	--color-primary: var(--color-blue);
+	--color-accent: var(--color-pink);
+	--color-background: rgba(var(--rgb-black), 0.01);
+	--color-typography: var(--color-black-80);
+	--color-disabled: var(--color-black-30);
+	--color-disabled-hex: #a7a5a5;
+	--color-overlay: var(--color-black-04);
+}

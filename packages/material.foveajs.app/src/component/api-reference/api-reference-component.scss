@@ -1,0 +1,13 @@
+@import "../../style/base";
+
+.code {
+	@include code();
+}
+
+.highlight {
+	margin: var(--default-margin) 0;
+}
+
+.missing {
+	opacity: .5;
+}

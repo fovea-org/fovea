@@ -1,0 +1,32 @@
+@import "../../style/base";
+
+:host, article, footer {
+	display: flex;
+}
+
+:host {
+	flex-direction: column;
+	background: var(--color-black-05);
+	margin: var(--default-margin) 0;
+	border-radius: var(--default-rounding);
+	contain: content;
+}
+
+article, footer {
+	flex-direction: row;
+	justify-content: center;
+}
+
+article {
+	align-content: space-between;
+	flex-wrap: wrap;
+}
+
+::slotted(*) {
+	margin: var(--default-margin) !important;
+}
+
+footer {
+	background: var(--color-black-05);
+	padding: var(--size-2);
+}
