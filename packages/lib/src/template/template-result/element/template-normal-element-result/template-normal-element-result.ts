@@ -112,9 +112,7 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			this.detach(this.lastNode);
 
 			if ("destroyedCallback" in this.lastNode) {
-				if ("destroyedCallback" in this.lastNode) {
-					(<any>this).lastNode.destroyedCallback();
-				}
+				(<any>this).lastNode.destroyedCallback();
 			}
 			this.lastNode = null;
 		}

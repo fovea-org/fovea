@@ -124,11 +124,9 @@ export function onConnected (node: Node, callback: DOMConnectionCallback, {nextT
 		return false;
 	};
 
-	if (!nextTime) {
-		if (!handler()) {
-			// Wait a tick and check again.
-			setTimeout(() => handler());
-		}
+	if (!nextTime && !handler()) {
+		// Wait a tick and check again.
+		setTimeout(() => handler());
 	}
 
 	const eventHandler = () => {
@@ -170,11 +168,9 @@ export function onDisconnected (node: Node, callback: DOMConnectionCallback, {ne
 		return false;
 	};
 
-	if (!nextTime) {
-		if (!handler()) {
-			// Wait a tick and check again.
-			setTimeout(() => handler());
-		}
+	if (!nextTime && !handler()) {
+		// Wait a tick and check again.
+		setTimeout(() => handler());
 	}
 
 	const eventHandler = () => {

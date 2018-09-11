@@ -53,12 +53,13 @@ By design, Fovea let's you write as little as possible, and fills out the gaps f
 ```typescript
 @selector("clickey-thingey")
 class MyComponent extends HTMLElement {
-  @prop
-  @setOnHost
-  clickAmount: number = 0;
-  template = `<button on-click="${this.clickAmount++}">I've been clicked ${
-    this.clickAmount
-  } ${this.clickAmount === 1 ? "time" : "times"}!</button>`;
+  @prop @setOnHost clickAmount: number = 0;
+  
+  template = `
+  <button on-click="${this.clickAmount++}">
+		I've been clicked ${this.clickAmount} ${this.clickAmount === 1 ? "time" : "times"}!
+	</button>`;
+  
   @onChange("clickAmount")
   onClickAmountChanged() {
     if (this.clickAmount >= 10) {

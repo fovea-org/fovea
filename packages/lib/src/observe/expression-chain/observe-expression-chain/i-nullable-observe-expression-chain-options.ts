@@ -4,7 +4,7 @@ import {ITemplateVariables} from "../../../template/template-variables/i-templat
 
 export interface INullableObserveExpressionChainOptions<T> {
 	host: IFoveaHost|ICustomAttribute;
-	expressions: ExpressionChain|undefined;
+	expressions?: ExpressionChain;
 	templateVariables?: ITemplateVariables;
 	onChange: ExpressionChainObserverCallback<T>;
 	coerceTo: IType;

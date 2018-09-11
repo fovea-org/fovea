@@ -5,7 +5,7 @@ export interface IListenOptions {
 	name: string;
 	handler: Function;
 	on: EventTarget;
-	rawOn: string|EventTarget|undefined;
+	rawOn?: string|EventTarget;
 	host: IFoveaHost|ICustomAttribute;
 	once?: boolean;
 }
