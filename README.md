@@ -48,18 +48,21 @@ By design, Fovea let's you write as little as possible, and fills out the gaps f
 - The template is compiled into a sequence of blazing fast, secure instructions and attached the Shadow root
 - The styles are run through PostCSS and compiled with SASS if applicable, and attached to the Shadow root
   But you can manually invoke `customElements.define(...)` if you want, or provide a different selector name. Fovea won't get in your way.
-  Here's another example of a component that does a little more:
+
+Here's another example of a component that does a little more:
 
 ```typescript
 @selector("clickey-thingey")
 class MyComponent extends HTMLElement {
-  @prop @setOnHost clickAmount: number = 0;
-  
+  @prop
+  @setOnHost
+  clickAmount: number = 0;
+
   template = `
-  <button on-click="${this.clickAmount++}">
+		<button on-click="${this.clickAmount++}">
 		I've been clicked ${this.clickAmount} ${this.clickAmount === 1 ? "time" : "times"}!
-	</button>`;
-  
+		</button>`;
+
   @onChange("clickAmount")
   onClickAmountChanged() {
     if (this.clickAmount >= 10) {
@@ -75,8 +78,9 @@ This example is a bit more involved, but showcase some of the strongest parts of
 - You can use complex Expressions inside your templates for everything that goes into the `${...}` parts. We call them _Live Expressions_, because they react immediately to changes to the `prop`s that are used within them. You can use _all_ Javascript language features within those.
 - You can automatically sync your `props` with host attributes. Fovea takes care of mapping the names between them. In this example, the `prop` `clickAmount` will be set on the host element as the attribute `click-amount` and update each time the value changes. It also works the other way around - when the attributes change, the `prop` is updated - and coerced into the data type that it is declared with.
 - You can react to changes to your props with the `@onChange` decorator.
-  Best of all, you don't pay any cost for the features that you don't use. For example, if you never use the `@onChange` decorator, Fovea won't ship the related logic.
-  Naturally, Fovea components can do **so** much more, so instead we'll refer you to the [full examples section].
+
+Best of all, you don't pay any cost for the features that you don't use. For example, if you never use the `@onChange` decorator, Fovea won't ship the related logic.
+Naturally, Fovea components can do **so** much more, so instead we'll refer you to the [full examples section].
 
 ## Contributing
 
@@ -107,7 +111,8 @@ Polymer is built on the same core principles, but it doesn't need a compilation 
 
 **No**. The reason why Fovea is so fast and so small is because it knows everything there is to know about your code before any browser ever gets involved. That enables Fovea to cool things such as convert your templates into assembly-like instructions, as well as use the data types of your props for things like coercion.
 Fovea is, and always will be, a compile-time tool.
-[React]: https://reactjs.org/
-[Stencil]: https://stenciljs.com/
-[Polymer]: https://www.polymer-project.org/
+
+[react]: https://reactjs.org/
+[stencil]: https://stenciljs.com/
+[polymer]: https://www.polymer-project.org/
 [lit-html]: https://polymer.github.io/lit-html/

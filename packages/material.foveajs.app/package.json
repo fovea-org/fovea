@@ -14,7 +14,7 @@
     "@wessberg/browserslist-generator": "^0.0.44",
     "@wessberg/color": "^0.0.2",
     "npm-check-updates": "^2.14.2",
-    "@wessberg/scaffold": "1.0.3",
+    "@wessberg/scaffold": "1.0.4",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   },

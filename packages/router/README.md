@@ -105,6 +105,7 @@ const profileRoute = {
 The `:userId` part is dynamic. For example, `/profile/1` matches the route, and so does `/profile/2`.
 The dynamic parts are called `Params`, and these are provided to the matched components so that they can
 use them, for example to fetch user data from an API.
+
 Here's a few examples of patterns and paths that matches them as well as the `Params` that will be provided to the matched components:
 
 <!-- prettier-ignore -->
@@ -133,15 +134,15 @@ For example, consider this markup
 <h1>John Doe's Profile</h1>
 <hr>
 <nav>
-<ol>
-<li><a href="profile.posts" *router-link="params: ${params}">Posts</a> </li>
-<li><a href="profile.comments" *router-link="params: ${params}">Comments</a></li>
-<li><a href="profile.likes" *router-link="params: ${params}">Likes</a></li>
-</ol>
+	<ol>
+		<li><a href="profile.posts" *router-link="params: ${params}">Posts</a> </li>
+		<li><a href="profile.comments" *router-link="params: ${params}">Comments</a></li>
+		<li><a href="profile.likes" *router-link="params: ${params}">Likes</a></li>
+	</ol>
 </nav>
 <article>
-Content goes here
-<router-outlet></router-outlet>
+	Content goes here
+	<router-outlet></router-outlet>
 </article>
 ```
 
@@ -260,9 +261,11 @@ import {IRouteInstanceNavigateToOptions} from "@fovea/router";
 class ProfileComponent extends HTMLElement {
   @prop
   userId: number;
+
   public async onNavigateTo({params}: IRouteInstanceNavigateToOptions): Promise<void> {
     this.userId = params.userId;
   }
+
   @onChange("userId")
   async onUserIdChanged(): Promise<void> {
     // Do some stuff with the new userId
@@ -275,6 +278,7 @@ class ProfileComponent extends HTMLElement {
 Guards are functions or methods that checks if a route can be navigated to. This is useful, for example to restrict routes from access from unauthenticated users.
 A guard may return a `boolean`, indicating whether or not to _allow_ navigation to the associated route, or it may return another `route` to redirect to.
 A guard receives two arguments: The new `state`, and the current `state` (if any).
+
 For example:
 
 ```typescript
@@ -320,6 +324,7 @@ const routes = [
 Guards are automatically combined. For a navigation attempt to pass, _all_ guards must return true.
 This means that even though one of your guards will accept navigation to the route, it can still be rejected if another one fails.
 For nested routes, the chain of guards are tested from parent to child.
+
 For example, of the route with the path `/foo/bar` is a child of the route with path `/foo`, navigation to `/foo/bar` will be rejected if navigation
 to `/foo` is rejected.
 

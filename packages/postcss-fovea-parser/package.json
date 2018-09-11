@@ -42,7 +42,7 @@
 		"build": "npm run rollup"
 	},
 	"devDependencies": {
-		"@wessberg/scaffold": "^1.0.3"
+		"@wessberg/scaffold": "^1.0.4"
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.129",
