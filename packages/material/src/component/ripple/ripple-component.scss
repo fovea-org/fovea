@@ -1,0 +1,38 @@
+@import "../../style/base";
+
+[data-ripple] {
+	--transition-duration-fade: 120ms;
+	--transition-duration-translate: 260ms;
+	--transition-timing-function: cubic-bezier(.23,.14,.75,.82);
+	--max-opacity: .3;
+
+	position: absolute;
+	contain: strict;
+	will-change: transform, opacity;
+	pointer-events: none;
+	z-index: 9999999999999999999;
+	user-select: none;
+	display: block;
+	border-radius: 50%;
+	color: currentColor;
+	transform: scale(0) translateZ(0);
+	backface-visibility: hidden;
+	opacity: 0;
+	transition:
+		transform var(--transition-duration-translate) var(--transition-timing-function),
+		opacity var(--transition-duration-fade) var(--transition-timing-function);
+
+	&.fade-in,
+	&.fade-out {
+		transform: scale(1) translateZ(0);
+	}
+
+	&.fade-in {
+		--transition-duration-fade: 150ms;
+		opacity: var(--max-opacity);
+	}
+
+	&.fade-out {
+		--transition-duration-fade: 250ms;
+	}
+}

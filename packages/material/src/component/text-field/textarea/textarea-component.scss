@@ -1,0 +1,44 @@
+@import "../../../style/base";
+@import "../base/textarea-base-component";
+
+:host([resize="none"]) {
+	::slotted(textarea) {
+		resize: none;
+	}
+}
+
+:host([resize="both"]) {
+	::slotted(textarea) {
+		resize: both;
+	}
+}
+
+:host([resize="vertical"]) {
+	::slotted(textarea) {
+		resize: vertical;
+	}
+}
+
+:host([resize="horizontal"]) {
+	::slotted(textarea) {
+		resize: horizontal;
+	}
+}
+
+::slotted(textarea) {
+	margin: var(--size-6, #{size(6)}) 0 var(--size-4, #{size(4)}) 0;
+	overflow: auto;
+}
+
+:host(:not([outlined])) {
+	::slotted(textarea) {
+		padding-top: 0 !important;
+	}
+}
+
+:host([outlined]) {
+
+	::slotted(textarea) {
+		margin-top: var(--size-4, #{size(4)});
+	}
+}

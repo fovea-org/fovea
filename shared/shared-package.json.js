@@ -1,17 +1,21 @@
+import packageJSON from "../package.json";
 export const FORMAT_NODE = "cjs";
 export const FORMAT_MODULE = "esm";
-import packageJSON from "../package.json";
+export const FORMAT_IMMEDIATELY_INVOKED_FUNCTION = "iife";
+export const FORMAT_FLAT_MODULE = "fesm";
+
+export const formatOutputPath = (format, ext = ".js") =>  `./dist/${format}/index${ext}`;
 
 /**
  * These fields are shared among all package.json files across the project
  */
 export default {
-	main: `./dist/${FORMAT_NODE}/index.js`,
-	module: `./dist/${FORMAT_MODULE}/index.js`,
-	browser: `./dist/${FORMAT_MODULE}/index.js`,
-	types: `./dist/${FORMAT_MODULE}/index.d.ts`,
-	typings: `./dist/${FORMAT_MODULE}/index.d.ts`,
-	es2015: `./dist/${FORMAT_MODULE}/index.js`,
+	main: formatOutputPath(FORMAT_NODE),
+	module: formatOutputPath(FORMAT_MODULE),
+	browser: formatOutputPath(FORMAT_MODULE),
+	types: formatOutputPath(FORMAT_MODULE, ".d.ts"),
+	typings: formatOutputPath(FORMAT_MODULE, ".d.ts"),
+	es2015: formatOutputPath(FORMAT_MODULE),
 	files: [
 		"dist/**/*.*",
 		"bin/*"

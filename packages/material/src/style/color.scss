@@ -1,0 +1,29 @@
+$rgb-map: (
+	black: '0,0,0',
+	white: '255, 255, 255',
+	red: '221, 44, 0',
+	pink: '255, 83, 112',
+	purple: '199, 146, 234',
+	green: '86, 207, 119',
+	yellow: '227, 186, 76',
+	blue: '130, 177, 255',
+	orange: '255, 160, 0'
+);
+
+@function color ($color, $alpha:null) {
+	@if ($alpha and $alpha != 100) {
+		@return #{'rgba(#{map-get($rgb-map, $color)}, #{$alpha / 100})'};
+	}
+
+	@else {
+		@return #{'rgb(#{map-get($rgb-map, $color)})'};
+	}
+}
+
+// Primary and accent colors for the app
+$color-primary: color(blue);
+$color-accent: color(pink);
+$color-typography: color(black, 80);
+$color-disabled: color(black, 30);
+$color-disabled-hex: #a7a5a5;
+$color-overlay: color(black, 04);

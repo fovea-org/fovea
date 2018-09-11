@@ -1,0 +1,38 @@
+@import "../../style/base";
+
+:host {
+	@include reset();
+	contain: content;
+	overflow: hidden;
+	color: currentColor;
+	padding: var(--default-padding, #{$default-padding});
+	border-radius: 50%;
+	cursor: pointer;
+
+	& * {
+		color: inherit;
+	}
+
+	/* This rule targets Safari specifically and fixes an issue with overflow hidden + border-radius in combination */
+	//noinspection CssUnknownProperty
+	@supports (-webkit-text-zoom: initial) {
+		//noinspection CssInvalidPropertyValue
+		-webkit-mask-image: -webkit-radial-gradient(white, black);
+	}
+}
+
+@media (pointer: fine) {
+	:host(:hover) {
+		background: var(--color-overlay, #{$color-overlay});
+	}
+}
+
+:host([disabled]) {
+	pointer-events: none;
+	color: var(--color-disabled, #{$color-disabled}) !important;
+}
+
+:host(:focus),
+:host(:active) {
+	outline: none;
+}

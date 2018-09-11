@@ -28,19 +28,23 @@ export class ManifestJsonParserService implements IManifestJsonParserService {
 		// Watch for changes to the manifest.json.ts file and compile it when it changes
 		const watcher = this.watchService.watch(Object.values(paths), {persistent: watch}, async () => {
 			subscriber.onStart();
-			const {result, cache: newCache} = (await this.rollupService.generateWithResult<(config: IResource) => IManifestJson>({
-				additionalEnvironmentVariables,
-				root,
-				tsconfig,
-				cache,
-				packageJson,
-				input: paths
-			}));
+			try {
+				const {result, cache: newCache} = (await this.rollupService.generateWithResult<(config: IResource) => IManifestJson>({
+					additionalEnvironmentVariables,
+					root,
+					tsconfig,
+					cache,
+					packageJson,
+					input: paths
+				}));
 
-			subscriber.onEnd({
-				result: result(resource),
-				cache: newCache
-			});
+				subscriber.onEnd({
+					result: result(resource),
+					cache: newCache
+				});
+			} catch (ex) {
+				subscriber.onError({data: ex, fatal: true});
+			}
 		});
 
 		// Return the observer

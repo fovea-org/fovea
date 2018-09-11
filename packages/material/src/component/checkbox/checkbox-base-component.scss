@@ -1,0 +1,6 @@
+@import "../../style/base";
+
+:host {
+	--transition-duration: #{$duration-selection-control};
+	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+}

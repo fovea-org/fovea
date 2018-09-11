@@ -1,0 +1,572 @@
+@import "../../../style/base";
+
+$outlined-border-correction: 3px;
+$minimum-horizontal-inset: 16px;
+
+:host {
+	@include hardwareAccelerated();
+
+	// Public CSS properties
+	--transition-duration: 150ms;
+	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	--color: var(--color-primary, #{$color-primary});
+	--color-input: var(--color-typography, #{$color-typography});
+	--color-fill: var(--color-black-05, #{color(black, 05)});
+	--color-invalid: var(--color-red, #{color(red)});
+	--color-disabled: var(--color-black-30, #{color(black, 30)});
+
+	// Private CSS properties
+
+	// This will position the label in the middle of the minimum input height
+	--label-y-top: calc((var(--min-input-height) / 2) - (#{$body1-line-height} / 2));
+
+	// The relative transform value for the label when the input is focused or has a value
+	--label-y-transform-base: calc((var(--label-y-top) + var(--text-baseline-padding) - var(--top-content-inset) - var(--top-text-inset) - var(--label-top-padding)) * -1);
+
+	// The text baseline is skewed just a little bit
+	--text-baseline-padding: var(--size-1, #{size(1)});
+	--input-baseline-padding: var(--size-2, #{size(2)});
+
+	// The minimum height of the input/textarea
+	--min-input-height: 56px;
+
+	// The size of the horizontal ruler
+	--hr-size: 1px;
+
+	--label-top-padding: 0px;
+	--top-content-inset: 0px;
+	--left-content-inset: 0px;
+	--right-content-inset: 0px;
+	--top-text-inset: 0px;
+	--left-input-label-inset: 0px;
+	--right-input-label-inset: 0px;
+	--left-helper-inset: 0px;
+	--right-helper-inset: 0px;
+	--label-y-transform-focused: var(--label-y-transform-base);
+	--label-x-transform-focused: 0px;
+
+	color: var(--color);
+	caret-color: var(--color);
+	position: relative;
+	user-select: none;
+	overflow: hidden;
+	vertical-align: middle;
+	margin-bottom: 1px;
+}
+
+:host([disabled]) {
+	pointer-events: none;
+}
+
+// The first ruler never changes color value (unless hovered).
+:host {
+	--ruler-1-color: var(--color-black-30, #{color(black, 30)});
+}
+
+// Unless the input is invalid or disabled, the helper text always stay the same color
+:host(:not([invalid]):not([disabled])) {
+	--helper-color: var(--color-black-60, #{color(black, 60)});
+}
+
+:host([invalid]) {
+	--helper-color: var(--color-invalid);
+}
+
+:host([disabled]) {
+	--helper-color: var(--color-disabled);
+}
+
+// The "fill" color will never change, no matter the state (even when disabled)
+:host([filled]) {
+	--container-color: var(--color-fill);
+}
+
+// No matter if the input is invalid or not, the container will always preserve the same outlined color until it is focused (with the exception of :hover)
+:host(:not([focused]):not([disabled])[outlined]) {
+	--container-color: var(--color-black-40, #{color(black, 40)});
+}
+
+:host(:not([disabled])[focused][invalid][outlined]) {
+	--container-color: var(--color-invalid);
+}
+
+:host(:not([filled])[disabled]) {
+	--container-color: var(--color-disabled);
+}
+
+:host(:not([focused]):not([disabled]):not([invalid])) {
+	--input-color: var(--color-input);
+	--label-color: var(--color-black-60, #{color(black, 60)});
+	--ruler-2-color: var(--color-black-30, #{color(black, 30)});
+	--caret-color: inherit;
+}
+
+:host(:not([focused]):not([disabled])[invalid]) {
+	--input-color: var(--color-input);
+	--label-color: var(--color-invalid);
+	--ruler-2-color: var(--color-black-30, #{color(black, 30)});
+	--caret-color: var(--color-invalid);
+}
+
+:host(:not([invalid]):not([disabled])[focused]) {
+	--input-color: var(--color-input);
+	--label-color: inherit;
+	--ruler-2-color: inherit;
+	--caret-color: inherit;
+}
+
+:host(:not([disabled])[focused][invalid]) {
+	--input-color: var(--color-input);
+	--label-color: var(--color-invalid);
+	--ruler-2-color: var(--color-invalid);
+	--caret-color: var(--color-invalid);
+}
+
+:host([disabled]) {
+	--input-color: var(--color-disabled);
+	--label-color: var(--color-disabled);
+	--ruler-2-color: var(--color-disabled);
+	--caret-color: var(--color-disabled);
+}
+
+// Add hover styles for devices with a mouse pointer
+@media (pointer: fine) {
+
+	:host(:not([disabled]):not([focused]):hover) {
+		--ruler-1-color: var(--color-black-50, #{color(black, 50)});
+	}
+
+	:host(:not([disabled]):not([focused])[outlined]:hover) {
+		--container-color: var(--color-black-50, #{color(black, 50)});
+	}
+}
+
+@include hostNotRtl('[leading-icon]') {
+	--left-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+}
+
+@include hostRtl('[leading-icon]') {
+	--right-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+}
+
+@include hostNotRtl('[trailing-icon]') {
+	--right-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+}
+
+@include hostRtl('[trailing-icon]') {
+	--left-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+}
+
+:host([filled]) {
+	--label-top-padding: 4px;
+}
+
+:host([outlined]) {
+	--label-y-transform-focused: calc(var(--label-y-transform-base) - #{$outlined-border-correction});
+}
+
+@include hostNotRtl('[leading-icon][outlined]') {
+	--label-x-transform-focused: calc((var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset}) * -1);
+}
+
+@include hostRtl('[leading-icon][outlined]') {
+	--label-x-transform-focused: calc((var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset}));
+}
+
+:host([filled]),
+:host([outlined]) {
+	--left-content-inset: #{$minimum-horizontal-inset};
+	--right-content-inset: #{$minimum-horizontal-inset};
+}
+
+:host,
+::slotted(input),
+::slotted(textarea),
+#container,
+hr {
+	width: 100%;
+}
+
+:host,
+::slotted(input),
+::slotted(textarea),
+::slotted(label),
+hr {
+	@include reset();
+}
+
+// Transform the label when the input is focused or has a value
+:host([has-value]),
+:host([focused]) {
+	::slotted(label) {
+		transform: translate3d(var(--label-x-transform-focused), var(--label-y-transform-focused), 0) scale(.75) !important;
+	}
+}
+
+::slotted(input),
+::slotted(textarea),
+#helper {
+	display: block;
+}
+
+#input-footer {
+	display: flex;
+	flex-direction: row;
+	align-content: space-between;
+	position: relative;
+}
+
+@include hostNotRtl {
+	#input-footer {
+		& > * + * {
+			margin-left: var(--size-2, #{size(2)});
+		}
+	}
+}
+
+@include hostRtl {
+	#input-footer {
+		& > * + * {
+			margin-right: var(--size-2, #{size(2)});
+		}
+	}
+}
+
+:host(:not([helper]):not([error-text])) #helper,
+:host(:not([helper]):not([invalid])[error-text]) #helper {
+	display: none;
+}
+
+:host([label][outlined]) ::slotted(input),
+:host([label]) ::slotted(textarea),
+#input-footer > * {
+	padding-top: var(--text-baseline-padding) !important;
+}
+
+:host([label]:not([outlined])) ::slotted(input) {
+	padding-top: var(--input-baseline-padding) !important;
+}
+
+::slotted(input),
+::slotted(textarea),
+#container {
+	min-height: var(--min-input-height);
+}
+
+::slotted(input),
+::slotted(textarea) {
+	-webkit-overflow-scrolling: touch;
+
+	position: relative;
+	color: var(--input-color) !important;
+	caret-color: var(--caret-color);
+	appearance: none;
+	border: none;
+	background: transparent;
+	z-index: 1;
+}
+
+::slotted(label) {
+	position: absolute;
+	color: var(--label-color) !important;
+	top: var(--label-y-top) !important;
+	transform: translate3d(0, 0, 0);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: calc(100% - var(--left-content-inset) - var(--left-input-label-inset) - var(--right-content-inset) - var(--right-input-label-inset));
+}
+
+@include hostNotRtl {
+	::slotted(label) {
+		transform-origin: left;
+	}
+}
+
+@include hostRtl {
+	::slotted(label) {
+		transform-origin: right;
+	}
+}
+
+#helper {
+	@include caption();
+	position: relative;
+	width: 100%;
+	transform: translate3d(0,0,0) scaleY(1);
+}
+
+#container {
+	display: none;
+	position: absolute;
+	top: 0;
+	z-index: -1;
+}
+
+// When the host should be filled, the --container-color should be used as a background
+:host([filled]) {
+	#container {
+		background-color: var(--container-color);
+	}
+}
+
+// When the host should be outlined, the --container-color should be used as a stroke color
+:host([outlined]) {
+	#container {
+		color: var(--container-color);
+	}
+
+	#outline-rect {
+		stroke: currentColor;
+	}
+}
+
+:host([filled]) {
+	#container {
+		border-radius: var(--default-rounding, #{$default-rounding}) var(--default-rounding, #{$default-rounding}) 0 0;
+		overflow: hidden;
+
+		&::before {
+			display: none;
+			opacity: 0;
+			pointer-events: none;
+			content: "";
+			background-color: black;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	svg {
+		display: none;
+	}
+}
+
+:host(:not([disabled])[filled][focused]) {
+	#container {
+		&::before {
+			display: block;
+			opacity: .08;
+		}
+	}
+}
+
+:host([outlined]) {
+
+	#container {
+
+		svg {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			height: 100%;
+			width: 100%;
+		}
+	}
+
+	#mask {
+		display: block;
+	}
+
+	#outline-rect {
+		stroke-width: 1;
+
+		// These two won't work in Firefox, IE, and Edge, but they will be the most responsive
+		width: calc(100% - #{$outlined-border-correction * 2}) !important;
+		height: calc(100% - #{$outlined-border-correction * 2}) !important;
+
+		fill: none;
+		vector-effect: non-scaling-stroke;
+		transition: stroke var(--transition-duration) var(--transition-timing-function);
+	}
+}
+
+::slotted(input),
+::slotted(textarea),
+::slotted(label) {
+	@include body1();
+}
+
+:host,
+::slotted(label) {
+	display: inline-block;
+}
+
+@include hostNotRtl {
+	::slotted(input),
+	::slotted(textarea),
+	::slotted(label) {
+		left: calc(var(--left-content-inset) + var(--left-input-label-inset));
+	}
+
+	#input-footer {
+		left: calc(var(--left-content-inset) + var(--left-helper-inset));
+	}
+}
+
+@include hostRtl {
+	::slotted(input),
+	::slotted(textarea),
+	::slotted(label) {
+		right: calc(var(--right-content-inset) + var(--right-input-label-inset));
+	}
+
+	#input-footer {
+		right: calc(var(--right-content-inset) + var(--right-helper-inset));
+	}
+}
+
+::slotted(input),
+::slotted(textarea) {
+	width: calc(100% - var(--left-content-inset) - var(--left-input-label-inset) - var(--right-content-inset) - var(--right-input-label-inset));
+}
+
+#input-footer {
+	width: calc(100% - var(--left-content-inset) - var(--left-helper-inset) - var(--right-content-inset));
+
+	& > * {
+		color: var(--helper-color);
+		transition: color var(--transition-duration) var(--transition-timing-function);
+	}
+}
+
+::slotted(label),
+hr {
+	transition: transform var(--transition-duration) var(--transition-timing-function),
+	color var(--transition-duration) var(--transition-timing-function) !important;
+}
+
+hr {
+	@include hr();
+	position: relative;
+	height: var(--hr-size);
+	border: none;
+	outline: none;
+	color: var(--ruler-1-color);
+	background-color: currentColor;
+	margin: 0;
+	padding: 0;
+
+	&.focused {
+		color: var(--ruler-2-color);
+		transform-origin: bottom;
+		transform: translate3d(0, 0, 0) scale3d(0, 0, 1);
+	}
+}
+
+/**
+ * Preferably, we would use only use transforms, but SVG masks can not be transformed in Firefox, IE, and Edge.
+ * Use different timing functions, depending on whether or not the input is focused
+ */
+:host([outlined][focused]) {
+	#outline-mask-rect {
+		transition: transform calc(var(--transition-duration) / 2) var(--timing-function-deceleration-curve, #{$timing-function-deceleration-curve});
+	}
+}
+
+:host([outlined]:not([focused])) {
+	#outline-mask-rect {
+		transition: transform calc(var(--transition-duration) / 2) var(--transition-timing-function);
+	}
+}
+
+@include hostRtl('[outlined]') {
+	#container {
+		transform: scaleX(-1);
+	}
+}
+
+:host([outlined][focused]) {
+	#outline-rect {
+		stroke-width: 2;
+	}
+}
+
+:host(:not([readonly])[focused]) {
+
+	hr.focused {
+		transform: translate3d(0, 0, 0) scale3d(1, 2, 1);
+	}
+}
+
+:host(:not([label])) {
+	::slotted(label) {
+		display: none !important;
+	}
+}
+
+:host([filled]),
+:host([outlined]) {
+	#container {
+		display: block;
+	}
+}
+
+:host(::-moz-focus-inner),
+::slotted(input::-moz-focus-inner),
+::slotted(textarea::-moz-focus-inner) {
+	border: 0;
+}
+
+::slotted(input:-webkit-autofill),
+::slotted(textarea:-webkit-autofill) {
+	-webkit-transition-delay: 99999s;
+}
+
+:host(:focus),
+:host(:active),
+::slotted(input:focus),
+::slotted(input:active),
+::slotted(textarea:focus),
+::slotted(textarea:active) {
+	outline: none;
+}
+
+// In Firefox, required fields will have a red glow. We'd like this to be disabled
+::slotted(input:required),
+::slotted(textarea:required) {
+	box-shadow: none;
+}
+
+@mixin willChangeSelectors () {
+	::slotted(label),
+	hr.focused,
+	#input-footer > * {
+		will-change: transform, color;
+	}
+
+	#outline-rect {
+		will-change: stroke;
+	}
+
+	#outline-mask-rect {
+		will-change: transform;
+	}
+}
+
+:host([focused]) {
+	@include willChangeSelectors();
+}
+
+@media (pointer: fine) {
+
+	:host(:not([disabled]):not([readonly]):not([focused])[filled]:hover) {
+		#container {
+			&::before {
+				display: block;
+				opacity: .04;
+			}
+		}
+	}
+
+	:host(:not([disabled]):not([readonly]):hover) {
+		@include willChangeSelectors();
+	}
+}

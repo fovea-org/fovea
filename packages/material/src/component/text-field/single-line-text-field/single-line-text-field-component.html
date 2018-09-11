@@ -1,0 +1,19 @@
+<icon-component id="leading-icon" *if="${leadingIcon != null}" icon="${leadingIcon}"></icon-component>
+<input
+	$formItem
+	id="${inputId}"
+	type="${type}"
+	required="${required}"
+	disabled="${disabled}"
+	readonly="${readonly}"
+	name="${name}"
+	value="${value}"
+	pattern="${pattern}"
+	autocomplete="${autocomplete}"
+	minlength="${minlength}"
+	maxlength="${maxlength}"
+	min="${min}"
+	max="${max}"
+	tabindex="${readonly || disabled ? '-1' : '0'}"
+/>
+<icon-component id="trailing-icon" *if="${trailingIcon != null}" icon="${trailingIcon}"></icon-component>

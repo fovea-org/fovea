@@ -1,0 +1,179 @@
+@import "../../style/base";
+@import "../checkbox/checkbox-base-component";
+
+$container-size: 40px;
+$size: 20px;
+$inner-circle-size: 10px;
+
+:host,
+::slotted(input),
+#inner,
+#outer-1,
+#outer-2 {
+	@include reset();
+	contain: strict;
+}
+
+:host,
+::slotted(input) {
+	cursor: pointer;
+}
+
+:host {
+	color: var(--color-primary, #{$color-primary});
+	@include hardwareAccelerated();
+
+	position: relative;
+	user-select: none;
+	width: $container-size;
+	height: $container-size;
+	overflow: hidden;
+	vertical-align: middle;
+	margin-bottom: 1px;
+}
+
+:host,
+::slotted(input),
+#inner,
+#outer-1,
+#outer-2 {
+	display: inline-block;
+}
+
+::slotted(input),
+#inner,
+#outer-1,
+#outer-2 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+}
+
+::slotted(input) {
+	width: $size;
+	height: $size;
+	appearance: none;
+	border: none;
+	background: transparent;
+}
+
+:host,
+#inner,
+#outer-1,
+#outer-2 {
+	border-radius: 50%;
+}
+
+#outer-1,
+#outer-2 {
+	width: $size;
+	height: $size;
+}
+
+#inner {
+	width: $inner-circle-size;
+	height: $inner-circle-size;
+}
+
+#outer-1,
+#outer-2 {
+	color: inherit;
+	border: 2px solid;
+	transition: opacity var(--transition-duration) var(--transition-timing-function);
+}
+
+#outer-1 {
+	opacity: 1;
+	border-color: var(--color-black-50, #{color(black, 50)});
+}
+
+#outer-2 {
+	opacity: 0;
+	border-color: currentColor;
+}
+
+#inner {
+	opacity: 0;
+	transform: scale(0) translate3d(0,0,0);
+	background-color: currentColor;
+	transition:
+		transform var(--transition-duration) var(--transition-timing-function),
+		opacity var(--transition-duration) var(--transition-timing-function);
+}
+
+:host([checked]) {
+	& #outer-1 {
+		opacity: 0;
+	}
+
+	& #outer-2 {
+		opacity: 1;
+	}
+
+	& #inner {
+		opacity: 1;
+		transform: scale(1) translate3d(0,0,0);
+	}
+}
+
+:host([disabled]),
+:host([readonly]) {
+	pointer-events: none;
+	cursor: default;
+}
+
+:host([disabled]) {
+	#inner {
+		background-color: var(--color-disabled, #{$color-disabled});
+	}
+
+	& #outer-1 {
+		border-color: var(--color-disabled, #{$color-disabled});
+		opacity: 1;
+	}
+
+	& #outer-2 {
+		opacity: 0;
+	}
+}
+
+:host(::-moz-focus-inner),
+::slotted(input::-moz-focus-inner) {
+	border: 0;
+}
+
+// In Firefox, required fields will have a red glow. We'd like this to be disabled
+::slotted(input:required) {
+	box-shadow: none;
+}
+
+:host(:focus),
+:host(:active),
+::slotted(input:focus),
+::slotted(input:active) {
+	outline: none;
+}
+
+@media (pointer: fine) {
+	:host(:not([disabled]):hover) {
+		background: var(--color-overlay, #{$color-overlay});
+	}
+
+	:host(:not([disabled]):hover),
+	:host(:not([readonly]):hover) {
+		#outer {
+
+			&::before,
+			&::after {
+				will-change: opacity;
+			}
+		}
+
+		#inner {
+			will-change: transform, opacity;
+		}
+	}
+}

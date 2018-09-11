@@ -1,0 +1,8 @@
+// This file contains font variables
+@import "./size";
+
+@function rounding ($multiplier: 1) {
+	@return $grid-size * $multiplier;
+}
+
+$default-rounding: rounding();

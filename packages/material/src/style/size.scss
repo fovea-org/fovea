@@ -1,0 +1,9 @@
+$grid-size: 4px;
+$icon-size: 24px;
+
+@function size ($multiplier: 1) {
+	@return $grid-size * $multiplier;
+}
+
+$default-padding: size(4);
+$default-margin: size(5);

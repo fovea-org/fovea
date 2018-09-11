@@ -1,0 +1,47 @@
+<slot></slot>
+<input
+	$formItem
+	id="input"
+	type="range"
+	required="${required}"
+	disabled="${disabled}"
+	checked="${checked}"
+	readonly="${readonly}"
+	step="${step}"
+	min="${min}"
+	max="${max}"
+	name="${name}"
+	value="${value}"
+	tabindex="${readonly || disabled ? '-1' : '0'}"
+	style="touch-action: none"
+/>
+<div id="container">
+	<!-- The full range -->
+	<div $range id="range" aria-hidden="true"></div>
+	<!-- The selected range -->
+	<div $selectedRange id="selected-range" aria-hidden="true" style="transform: translate3d(0,0,0) scaleX(${value / max})"></div>
+
+	<!-- The pin to show when 'discrete' is true -->
+	<div *if="${discrete}" id="pin" aria-hidden="true" style="left: ${(value / max) * 100}%">
+		<svg id="oval" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 113 127">
+			<path fill-rule="evenodd" d="M57 127c7 0 56-39 56-70A56 56 0 1 0 0 57c0 31 49 70 57 70z"/>
+		</svg>
+		<small id="value-indicator">
+			${value}
+		</small>
+	</div>
+
+	<!-- The thumb to display on top of the range -->
+	<div $thumb id="thumb" aria-hidden="true" *ripple="center: true" style="left: ${(value / max) * 100}%"></div>
+
+	<!-- An SVG for drawing the ticks on the range -->
+	<svg *if="${tick}" id="tick-container" xmlns="http://www.w3.org/2000/svg">
+		<defs>
+			<pattern id="${patternId}" x="0" y="0" width="${step}%" height="100%" >
+				<circle cx="1" cy="1" r="1" />
+			</pattern>
+		</defs>
+		<rect x="0" y="0" width="100%" height="100%" style="fill: url(#${patternId});" />
+	</svg>
+
+</div>

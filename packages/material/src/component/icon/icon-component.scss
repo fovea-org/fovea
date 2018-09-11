@@ -1,0 +1,22 @@
+@import "../../style/base";
+
+:host {
+	@include reset();
+	@include hardwareAccelerated();
+	@include typographyBase();
+	--size: var(--icon-size, #{$icon-size});
+
+	user-select: none;
+	display: inline-block;
+	width: var(--size);
+	height: var(--size);
+	overflow: hidden;
+	contain: size layout style;
+	vertical-align: middle;
+	position: relative;
+}
+
+svg {
+	color: currentColor;
+	fill: currentColor;
+}

@@ -1,0 +1,170 @@
+@import "../../style/base";
+@import "../checkbox/checkbox-base-component";
+
+$thumbContainerSize: 48px;
+$thumbSize: 20px;
+$trackHeight: 14px;
+$trackWidth: 34px;
+$trackContainerWidth: $trackWidth + $thumbContainerSize - ($thumbSize / 2);
+$trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
+
+:host,
+::slotted(input) {
+	cursor: pointer;
+}
+
+:host([disabled]),
+:host([readonly]) {
+	cursor: default;
+}
+
+:host([disabled]),
+::slotted(input) {
+	pointer-events: none;
+}
+
+:host,
+::slotted(input),
+#thumb,
+#thumb::before,
+#track {
+	@include reset();
+}
+
+#thumb::before,
+#track {
+	background-color: currentColor;
+}
+
+:host {
+	@include hardwareAccelerated();
+
+	display: inline-block;
+	position: relative;
+	user-select: none;
+	overflow: hidden;
+	vertical-align: middle;
+	color: var(--color-primary, #{$color-primary});
+	width: $trackContainerWidth;
+	height: $trackContainerHeight;
+}
+
+::slotted(input),
+#track,
+#thumb,
+#thumb::before {
+	display: inline-block;
+	position: absolute;
+}
+
+::slotted(input),
+#track,
+#thumb::before {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+}
+
+#track,
+#thumb::before {
+	transition:
+		// For Chrome and friends
+		color var(--transition-duration) var(--transition-timing-function),
+		// For Safari
+		background-color var(--transition-duration) var(--transition-timing-function);
+}
+
+#track {
+	width: $trackWidth;
+	height: $trackHeight;
+	border-radius: 7px;
+	opacity: .7;
+}
+
+#thumb,
+#thumb::before {
+	border-radius: 50%;
+}
+
+#thumb {
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	margin: auto 0;
+	height: $thumbContainerSize;
+	width: $thumbContainerSize;
+	transition: transform var(--transition-duration) var(--transition-timing-function);
+
+	&::before {
+		content: "";
+		height: $thumbSize;
+		width: $thumbSize;
+		box-shadow: var(--elevation-2, #{elevation(2)});
+	}
+}
+
+::slotted(input) {
+	width: $trackWidth;
+	height: $trackHeight;
+	appearance: none;
+	border: none;
+	background: transparent;
+}
+
+:host(:not([checked])) {
+	& #track,
+	& #thumb {
+		color: var(--color-black-50, #{color(black, 50)});
+	}
+
+	& #thumb::before {
+		color: var(--color-white, #{color(white)});
+	}
+
+	& #thumb {
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+:host([checked]) {
+	& #track,
+	& #thumb,
+	& #thumb::before {
+		color: inherit;
+	}
+
+	& #thumb {
+		transform: translate3d($trackWidth - ($thumbSize / 2), 0, 0);
+	}
+}
+
+:host([disabled]) {
+	& #track {
+		color: var(--color-disabled, #{$color-disabled}) !important;
+	}
+
+	& #thumb,
+	& #thumb::before {
+		color: var(--color-disabled-hex, #{$color-disabled-hex}) !important;
+	}
+}
+
+:host(:focus),
+:host(:active),
+::slotted(input:focus),
+::slotted(input:active){
+	outline: none;
+}
+
+:host(::-moz-focus-inner),
+::slotted(input::-moz-focus-inner) {
+	border: 0;
+}
+
+// In Firefox, required fields will have a red glow. We'd like this to be disabled
+::slotted(input:required) {
+	box-shadow: none;
+}

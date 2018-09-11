@@ -71,9 +71,15 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 			}
 
 			if (diagnostics != null) {
+				const diags = diagnostics();
 				// Invoke the 'onDiagnostics' callback with the diagnostics
 				if (inputFoveaOptions.onDiagnostics != null) {
-					inputFoveaOptions.onDiagnostics(diagnostics());
+					inputFoveaOptions.onDiagnostics(diags);
+				}
+
+				// Otherwise print them unless there are none
+				else if (diags.length > 0) {
+					console.log(diags.toString());
 				}
 			}
 		},

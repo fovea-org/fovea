@@ -1,0 +1,236 @@
+@import "../../style/base";
+
+$thumbContainerSize: 42px;
+$pinSize: 30px;
+$thumbSize: 12px;
+$range-height: 2px;
+
+:host,
+::slotted(input),
+#range,
+#selected-range,
+#thumb,
+#pin,
+#thumb::after,
+#tick-container {
+	@include reset();
+	contain: strict;
+}
+
+::slotted(input),
+#container {
+	width: calc(100% - #{$thumbContainerSize});
+}
+
+:host,
+::slotted(input),
+#container {
+	cursor: pointer;
+	height: $thumbContainerSize + ($pinSize * 2);
+}
+
+:host {
+	color: var(--color-primary, #{$color-primary});
+	--transition-duration: 150ms;
+	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	@include hardwareAccelerated();
+
+	width: 100%;
+	position: relative;
+	user-select: none;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+#thumb,
+#pin,
+#tick-container {
+	overflow: visible;
+}
+
+:host,
+::slotted(input),
+#range,
+#selected-range,
+#thumb,
+#pin,
+#thumb::after,
+#tick-container {
+	display: inline-block;
+}
+
+::slotted(input),
+#range,
+#selected-range,
+#container,
+#tick-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+}
+
+::slotted(input) {
+	appearance: none;
+	border: none;
+	background: transparent;
+	z-index: 1;
+	opacity: 0;
+}
+
+#tick-container {
+	color: inherit;
+	width: 100%;
+
+	circle {
+		color: inherit;
+		stroke: none;
+		fill: currentColor;
+	}
+
+	rect {
+		position: relative;
+	}
+}
+
+#selected-range,
+#thumb {
+	transform-origin: left;
+}
+
+#thumb,
+#pin,
+#pin #oval,
+#value-indicator,
+#thumb::after {
+	border-radius: 50%;
+	// Mark it as important to overrule the "relative" inline style
+	position: absolute !important;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+#thumb,
+#pin {
+	right: auto;
+	z-index: 0;
+	pointer-events: none;
+}
+
+#pin {
+	width: $pinSize;
+	height: $pinSize;
+	transition: transform var(--transition-duration) var(--transition-timing-function);
+	transform: translate3d(-($pinSize / 2), -$pinSize, 0) scale(0);
+	transform-origin: bottom;
+}
+
+:host([adjusting]) #pin {
+	transform: translate3d(-($pinSize / 2), -($pinSize - 3), 0) scale(1);
+}
+
+#oval {
+	& path {
+		fill: currentColor;
+	}
+}
+
+#value-indicator {
+	top: 3px;
+	color: var(--color-white, #{color(white)});
+	text-align: center;
+}
+
+#thumb {
+	width: $thumbContainerSize;
+	height: $thumbContainerSize;
+	transform: translate3d(-($thumbContainerSize / 2), 0, 0);
+
+	&::after {
+		content: "";
+		width: $thumbSize;
+		height: $thumbSize;
+		transition: transform var(--transition-duration) var(--transition-timing-function);
+	}
+}
+
+:host([adjusting]) {
+	& #selected-range {
+		will-change: transform;
+	}
+
+	& #pin {
+		will-change: left, transform;
+	}
+	& #thumb {
+		will-change: left;
+		&::after {
+			will-change: transform;
+			transform: translate3d(0, 0, 0) scale(1.5);
+		}
+	}
+}
+
+#range,
+#selected-range,
+#thumb,
+#pin,
+#thumb::after {
+	color: inherit;
+}
+
+#range,
+#selected-range,
+#thumb::after {
+	background-color: currentColor;
+}
+
+#range,
+#selected-range,
+#tick-container {
+	height: 2px;
+}
+
+#range {
+	opacity: .3;
+}
+
+:host([disabled]),
+:host([readonly]) {
+	pointer-events: none;
+}
+
+:host([disabled]) {
+
+	& #range,
+	& #selected-range {
+		color: var(--color-disabled, #{$color-disabled});
+	}
+
+	& #thumb,
+	& #tick-container {
+		color: var(--color-disabled-hex, #{$color-disabled-hex});
+	}
+}
+
+:host(::-moz-focus-inner),
+::slotted(input::-moz-focus-inner) {
+	border: 0;
+}
+
+// In Firefox, required fields will have a red glow. We'd like this to be disabled
+::slotted(input:required) {
+	box-shadow: none;
+}
+
+:host(:focus),
+:host(:active),
+::slotted(input:focus),
+::slotted(input:active) {
+	outline: none;
+}

@@ -1,0 +1,21 @@
+<slot></slot>
+<!--suppress XmlInvalidId -->
+<label $labelItem for="${inputId}">${label}</label>
+<hr *if="${!outlined}"/>
+<hr *if="${!outlined}" class="focused"/>
+<footer $inputFooter id="input-footer">
+	<small $helperItem id="helper">${invalid && invalidText != null ? invalidText : helper}</small>
+	<small *if="${minlength != null || maxlength != null}">${minlength != null ? minlength + '/' + (value == null ? 0 : value.length) + (maxlength != null ? '/' + maxlength : '') : (value == null ? 0 : value.length) + '/' + maxlength}</small>
+</footer>
+
+<div id="container" *if="${outlined || filled}">
+	<svg *if="${outlined}" preserveAspectRatio="none" viewBox="${outlineViewBox}" xmlns="http://www.w3.org/2000/svg">
+
+		<mask id="${maskId}">
+			<rect id="outline-mask-rect-fill" x="0" y="0" width="100%" height="100%" fill="white" />
+			<rect id="outline-mask-rect" style="transform-origin: ${outlineCutoffStart}%" x="${outlineCutoffStart}" y="0" width="${outlineCutoffWidth}" height="10" fill="black" transform="scale(${focused || hasValue ? '1 1' : '0 1'})"/>
+		</mask>
+
+		<rect id="outline-rect" width="${rectWidth}" height="${rectHeight}" x="${outlineLeft}" y="${outlineTop}" rx="${outlineRadius}" ry="${outlineRadius}" mask="url(#${maskId})" />
+	</svg>
+</div>

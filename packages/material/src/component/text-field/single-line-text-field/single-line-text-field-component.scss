@@ -1,0 +1,135 @@
+@import "../../../style/base";
+@import "../base/text-field-base-component";
+@import "./single-line-text-field-component-keyframes";
+
+:host(:not([type="color"])) {
+	// This will position the label in the middle of the minimum input height
+	--icon-y-top: calc((var(--min-input-height) / 2) - (var(--icon-size, #{$icon-size}) / 2));
+}
+
+:host([type="color"]) {
+
+	// This will position the label in the middle of the minimum input height
+	--icon-y-top: calc(var(--size-4, #{size(4)}) + (var(--min-input-height) / 2) - (var(--icon-size, #{$icon-size}) / 2));
+
+	::slotted(input) {
+		margin: var(--size-4, #{size(4)}) 0 var(--size-1, #{size(1)}) 0 !important;
+	}
+}
+
+#leading-icon,
+#trailing-icon {
+	@include reset();
+	position: absolute;
+	color: var(--helper-color);
+	top: calc(var(--top-content-inset) + var(--icon-y-top));
+	opacity: 1;
+	transition: opacity var(--transition-duration) var(--transition-timing-function), color var(--transition-duration) var(--transition-timing-function);
+}
+
+@include hostNotRtl(
+		'[leading-icon][invalid][leading-icon-visibility="valid"]',
+		'[leading-icon][leading-icon-visibility="invalid"]:not([invalid])'
+) {
+	--left-input-label-inset: 0px;
+}
+
+@include hostRtl(
+		'[leading-icon][invalid][leading-icon-visibility="valid"]',
+		'[leading-icon][leading-icon-visibility="invalid"]:not([invalid])'
+) {
+	--right-input-label-inset: 0px;
+}
+
+:host([leading-icon][invalid][leading-icon-visibility="valid"]),
+:host([leading-icon][leading-icon-visibility="invalid"]:not([invalid])) {
+
+	#leading-icon {
+		display: none;
+	}
+}
+
+// Allow the label to be transformed all the way to the left inset if the leading icon is invisible
+:host([leading-icon][outlined][invalid][leading-icon-visibility="valid"]),
+:host([leading-icon][outlined][leading-icon-visibility="invalid"]:not([invalid])) {
+	--label-x-transform-focused: 0px;
+}
+
+// Don't take up unnecessary trailing white space under states in which the trailing icon will be hidden
+:host([trailing-icon][invalid][trailing-icon-visibility="valid"]),
+:host([trailing-icon][trailing-icon-visibility="invalid"]:not([invalid])) {
+
+	#trailing-icon {
+		opacity: 0;
+	}
+}
+
+@include hostNotRtl(
+		'[trailing-icon][invalid][trailing-icon-visibility="valid"]',
+		'[trailing-icon][trailing-icon-visibility="invalid"]:not([invalid])'
+) {
+	--right-input-label-inset: #{$minimum-horizontal-inset};
+}
+
+@include hostRtl(
+		'[trailing-icon][invalid][trailing-icon-visibility="valid"]',
+		'[trailing-icon][trailing-icon-visibility="invalid"]:not([invalid])'
+) {
+	--left-input-label-inset: #{$minimum-horizontal-inset};
+}
+
+@include hostNotRtl {
+	#leading-icon {
+		left: var(--left-content-inset);
+	}
+
+	#trailing-icon {
+		right: var(--right-content-inset);
+	}
+}
+
+// Flip the absolute positioning values for rtl-layouts
+@include hostRtl {
+	#leading-icon {
+		right: var(--right-content-inset);
+	}
+
+	#trailing-icon {
+		left: var(--left-content-inset);
+	}
+}
+
+:host([type="color"]),
+:host([type="date"]),
+:host([type="datetime-local"]),
+:host([type="time"]),
+:host([type="month"]),
+:host([type="week"]) {
+	::slotted(label) {
+		transform: translate3d(var(--label-x-transform-focused), var(--label-y-transform-focused), 0) scale(.75) !important;
+	}
+}
+
+:host([replacing-helper-text]) {
+	#helper {
+		animation: replaceHelperText var(--transition-duration) var(--transition-timing-function);
+	}
+}
+
+@mixin extraWillChangeSelectors () {
+	#leading-icon,
+	#trailing-icon {
+		will-change: transform, color;
+	}
+}
+
+:host([focused]) {
+	@include extraWillChangeSelectors();
+}
+
+@media (pointer: fine) {
+
+	:host(:not([disabled]):hover) {
+		@include extraWillChangeSelectors();
+	}
+}

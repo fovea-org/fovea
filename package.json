@@ -21,7 +21,7 @@
 	},
 	"license": "MIT",
 	"scripts": {
-		"generate:readme": "scaffold readme --blacklist \\`fovea\\`,description,usage",
+		"generate:readme": "scaffold readme --blacklist \\`fovea\\`,description,usage && lerna run generate:readme",
 		"generate:license": "scaffold license",
 		"generate:contributing": "scaffold contributing",
 		"generate:coc": "scaffold coc",
@@ -55,10 +55,12 @@
 		"npm-check-updates": "^2.14.2",
 		"nsp": "^3.2.1",
 		"rollup": "^0.65.2",
+		"rollup-plugin-commonjs": "^9.1.6",
+		"rollup-plugin-node-resolve": "^3.4.0",
 		"ts-node": "^7.0.1",
 		"tslib": "^1.9.3",
 		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.7.0",
+		"tslint-sonarts": "^1.8.0",
 		"typescript": "^3.0.3"
 	},
 	"dependencies": {

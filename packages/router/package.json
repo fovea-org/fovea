@@ -39,6 +39,7 @@
 	},
 	"dependencies": {
 		"@fovea/core": "^1.0.129",
+		"@fovea/lib": "^1.0.129",
 		"@wessberg/marshaller": "^3.0.9",
 		"path-parser": "^4.2.0"
 	},

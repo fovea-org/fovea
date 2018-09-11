@@ -27,19 +27,23 @@ export class IndexHtmlParserService implements IIndexHtmlParserService {
 		// Watch for changes to the index.html.ts file and compile it when it changes
 		const watcher = this.watchService.watch(Object.values(paths), {persistent: watch}, async () => {
 			subscriber.onStart();
-			const {result, cache: newCache} = (await this.rollupService.generateWithResult<(options: IIndexHtmlOptions) => string>({
-				additionalEnvironmentVariables,
-				root,
-				cache,
-				tsconfig,
-				packageJson,
-				input: paths
-			}));
+			try {
+				const {result, cache: newCache} = (await this.rollupService.generateWithResult<(options: IIndexHtmlOptions) => string>({
+					additionalEnvironmentVariables,
+					root,
+					cache,
+					tsconfig,
+					packageJson,
+					input: paths
+				}));
 
-			subscriber.onEnd({
-				result: result({resource, globalStyles, polyfillContent, polyfillUrl}),
-				cache: newCache
-			});
+				subscriber.onEnd({
+					result: result({resource, globalStyles, polyfillContent, polyfillUrl}),
+					cache: newCache
+				});
+			} catch (ex) {
+				subscriber.onError({data: ex, fatal: true});
+			}
 		});
 
 		// Return an observer

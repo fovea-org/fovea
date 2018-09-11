@@ -1,0 +1,209 @@
+@import "../../style/base";
+@import "./checkbox-base-component";
+
+$container-size: 48px;
+$size: 18px;
+
+:host,
+::slotted(input),
+#checkbox,
+#checkbox::before,
+#checkbox::after,
+#stroke {
+	@include reset();
+	contain: strict;
+}
+
+:host,
+::slotted(input) {
+	cursor: pointer;
+}
+
+:host {
+	color: var(--color-primary, #{$color-primary});
+	@include hardwareAccelerated();
+
+	position: relative;
+	user-select: none;
+	border-radius: 50%;
+	width: $container-size;
+	height: $container-size;
+	overflow: hidden;
+	vertical-align: middle;
+	margin-bottom: 1px;
+}
+
+:host,
+::slotted(input),
+#checkbox,
+#checkbox::before,
+#checkbox::after,
+#stroke {
+	display: inline-block;
+}
+
+::slotted(input),
+#checkbox,
+#checkbox::before,
+#checkbox::after,
+#stroke {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+}
+
+::slotted(input) {
+	width: $size;
+	height: $size;
+	appearance: none;
+	border: none;
+	background: transparent;
+}
+
+#checkbox,
+#checkbox::before,
+#checkbox::after {
+	width: $size;
+	height: $size;
+	border-radius: 2px;
+}
+
+#checkbox {
+	color: inherit;
+
+	&::before,
+	&::after {
+		content: "";
+		transition:
+			opacity var(--transition-duration) var(--transition-timing-function);
+	}
+
+	&::before {
+		border: 2px solid var(--color-black-50, color(black, 50));
+		opacity: 1;
+	}
+
+	&::after {
+		opacity: 0;
+		background-color: currentColor;
+	}
+}
+
+#stroke {
+	width: $size - 4;
+	transition:
+		opacity var(--transition-duration) var(--transition-timing-function);
+
+	& path {
+		transform: translate3d(0,0,0) rotate(0deg);
+		transform-origin: center;
+		stroke: var(--color-white, #{color(white)});
+		stroke-width: 3px;
+		stroke-dasharray: 30;
+		transition:
+			transform calc(var(--transition-duration) * 2) var(--transition-timing-function),
+			stroke-dashoffset calc(var(--transition-duration) * 2) var(--transition-timing-function)
+	}
+}
+
+:host(:not([indeterminate])) {
+	& #stroke {
+		opacity: 0;
+		& path {
+			//noinspection CssInvalidPropertyValue
+			stroke-dashoffset: 30;
+		}
+	}
+}
+
+:host(:not([indeterminate])[checked]) {
+	& #stroke {
+		& path {
+			stroke-dashoffset: 0;
+		}
+	}
+}
+
+:host([indeterminate]) {
+	& #stroke {
+		& path {
+			transform: translate3d(-1.5px,-1.5px,-1.5px) rotate(45deg);
+			//noinspection CssInvalidPropertyValue
+			stroke-dashoffset: 50.9;
+		}
+	}
+}
+
+:host([checked]) #checkbox,
+:host([indeterminate]) #checkbox {
+
+	&::before {
+		opacity: 0;
+	}
+
+	&::after {
+		opacity: 1;
+	}
+}
+
+:host([checked]) #stroke,
+:host([indeterminate]) #stroke {
+	opacity: 1;
+}
+
+:host([disabled]),
+:host([readonly]) {
+	pointer-events: none;
+	cursor: default;
+}
+
+:host([disabled]:not([checked])) #checkbox {
+	&::before {
+		border-color: var(--color-disabled, #{$color-disabled});
+	}
+}
+
+:host([disabled][checked]) #checkbox,
+:host([disabled][indeterminate]) #checkbox {
+	&::after {
+		background-color: var(--color-disabled, #{$color-disabled});
+	}
+}
+
+:host(::-moz-focus-inner),
+::slotted(input::-moz-focus-inner) {
+	border: 0;
+}
+
+// In Firefox, required fields will have a red glow. We'd like this to be disabled
+::slotted(input:required) {
+	box-shadow: none;
+}
+
+:host(:focus),
+:host(:active),
+::slotted(input:focus),
+::slotted(input:active) {
+	outline: none;
+}
+
+@media (pointer: fine) {
+	:host(:not([disabled]):hover) {
+		background: var(--color-overlay, #{$color-overlay});
+	}
+
+	:host(:not([disabled]):hover),
+	:host(:not([readonly]):hover) {
+		#checkbox,
+		#stroke {
+			will-change: opacity;
+		}
+
+		#stroke path {
+			will-change: transform, stroke-dashoffset;
+		}
+	}
+}

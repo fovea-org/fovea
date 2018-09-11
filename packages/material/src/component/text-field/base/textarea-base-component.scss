@@ -1,0 +1,15 @@
+@import "../../../style/base";
+@import "./text-field-base-component";
+
+:host {
+	--computed-input-footer-height: 0px;
+}
+
+::slotted(textarea) {
+	display: block;
+	position: relative;
+}
+
+#container {
+	height: calc(100% - var(--computed-input-footer-height) - (var(--hr-size) * 2));
+}

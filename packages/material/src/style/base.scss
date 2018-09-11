@@ -1,0 +1,269 @@
+@import "./color";
+@import "./elevation";
+@import "./font";
+@import "./shape";
+@import "./size";
+@import "./timing-function";
+@import "./duration";
+
+$body1-line-height: 24px;
+$caption-line-height: 20px;
+
+@mixin typographyBase {
+	font-family: var(--font-family, #{$font-family});
+	color: var(--color-typography, #{color(black, 80)});
+	text-rendering: optimizeSpeed;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin headline1 {
+	@include typographyBase();
+	font-size: 96px;
+	line-height: 96px;
+	letter-spacing: -1.5px;
+	font-weight: var(--font-weight-light, #{$font-weight-light});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-8, #{size(8)}) 0;
+	padding: 0;
+}
+
+@mixin headline2 {
+	@include typographyBase();
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.5px;
+	font-weight: var(--font-weight-light, #{$font-weight-light});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-7, #{size(7)}) 0;
+	padding: 0;
+}
+
+@mixin headline3 {
+	@include typographyBase();
+	font-size: 48px;
+	line-height: 50px;
+	letter-spacing: 0;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-6, #{size(6)}) 0;
+	padding: 0;
+}
+
+@mixin headline4 {
+	@include typographyBase();
+	font-size: 34px;
+	line-height: 40px;
+	letter-spacing: .25px;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-5, #{size(5)}) 0;
+	padding: 0;
+}
+
+@mixin headline5 {
+	@include typographyBase();
+	font-size: 24px;
+	line-height: 38px;
+	letter-spacing: 0;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-4, #{size(4)}) 0;
+	padding: 0;
+}
+
+@mixin headline6 {
+	@include typographyBase();
+	font-size: 20px;
+	line-height: 32px;
+	letter-spacing: .15px;
+	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: var(--size-4, #{size(4)}) 0;
+	padding: 0;
+}
+
+@mixin subtitle1 {
+	@include typographyBase();
+	font-size: 16px;
+	line-height: 28px;
+	letter-spacing: .15px;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin subtitle2 {
+	@include typographyBase();
+	font-size: 14px;
+	line-height: 22px;
+	letter-spacing: .1px;
+	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin body1 {
+	@include typographyBase();
+	font-size: 16px;
+	line-height: $body1-line-height;
+	letter-spacing: .5px;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin body2 {
+	@include typographyBase();
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: .45px;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin caption {
+	@include typographyBase();
+	font-size: 12px;
+	line-height: $caption-line-height;
+	letter-spacing: .4px;
+	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	text-decoration: inherit;
+	text-transform: inherit;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin button {
+	@include typographyBase();
+	font-size: 14px;
+	line-height: 36px;
+	letter-spacing: .75px;
+	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	text-decoration: none;
+	text-transform: uppercase;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin overline {
+	@include typographyBase();
+	font-size: 12px;
+	line-height: 32px;
+	letter-spacing: 1.5px;
+	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	text-decoration: none;
+	text-transform: uppercase;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin hardwareAccelerated {
+	transform: translate3d(0,0,0);
+}
+
+@mixin scrollableY {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+@mixin scrollableXY {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+@mixin scrollableX {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+	overflow-y: hidden;
+}
+
+@mixin hr {
+	border-bottom: 1px solid var(--color-black-20, #{color(black, 20)});
+}
+
+//noinspection CssOverwrittenProperties
+@mixin reset {
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: transparent;
+	box-sizing: border-box;
+}
+
+@mixin code {
+	font-family: var(--font-family-mono, #{$font-family-mono}) !important;
+}
+
+@mixin hostRtl ($selectorArgs...) {
+
+	@if length($selectorArgs) == 0 {
+		// For browsers that support the ':dir' pseudo class
+		:host(:dir(rtl)#{$selectorArgs}) {
+			@content;
+		}
+
+		// For those that don't
+		:host([dir="rtl"]#{$selectorArgs}) {
+			@content;
+		}
+	}
+
+	@else {
+		@each $currentSelector in $selectorArgs {
+			// For browsers that support the ':dir' pseudo class
+			:host(:dir(rtl)#{$currentSelector}) {
+				@content;
+			}
+
+			// For those that don't
+			:host([dir="rtl"]#{$currentSelector}) {
+				@content;
+			}
+		}
+	}
+}
+
+@mixin hostNotRtl ($selectorArgs...) {
+
+	@if length($selectorArgs) == 0 {
+		// For browsers that support the ':dir' pseudo class
+		:host(:not(:dir(rtl))#{$selectorArgs}) {
+			@content;
+		}
+
+		// For those that don't
+		:host(:not([dir="rtl"])#{$selectorArgs}) {
+			@content;
+		}
+	}
+
+	@else {
+		@each $currentSelector in $selectorArgs {
+			// For browsers that support the ':dir' pseudo class
+			:host(:not(:dir(rtl))#{$currentSelector}) {
+				@content;
+			}
+
+			// For those that don't
+			:host(:not([dir="rtl"])#{$currentSelector}) {
+				@content;
+			}
+		}
+	}
+}

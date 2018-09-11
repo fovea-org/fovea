@@ -1,0 +1,28 @@
+@import "../../../style/base";
+@import "../base/textarea-base-component";
+
+::slotted(textarea) {
+	resize: none !important;
+
+	margin: calc(var(--top-content-inset) + var(--label-y-top)) 0 calc(var(--top-content-inset) + var(--label-y-top)) 0;
+	min-height: calc(#{$body1-line-height} + var(--text-baseline-padding)) !important;
+	height: calc(#{$body1-line-height} + var(--text-baseline-padding));
+	overflow: auto;
+}
+
+::slotted(textarea::-webkit-scrollbar) {
+	display: none;
+}
+
+:host([focused]),
+:host([animating]){
+	::slotted(textarea) {
+		will-change: height;
+	}
+}
+
+:host([animating]) {
+	::slotted(textarea) {
+		transition: height var(--transition-duration) var(--transition-timing-function) !important;
+	}
+}
