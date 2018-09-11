@@ -33,7 +33,7 @@
 	},
 	"preferGlobal": true,
 	"name": "@fovea/cli",
-	"version": "1.0.129",
+	"version": "1.0.130",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -46,9 +46,9 @@
 		"@wessberg/scaffold": "1.0.4"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.129",
-		"@fovea/rollup-plugin-fovea": "^1.0.129",
-		"@fovea/style": "^1.0.129",
+		"@fovea/compiler": "^1.0.130",
+		"@fovea/rollup-plugin-fovea": "^1.0.130",
+		"@fovea/style": "^1.0.130",
 		"@types/chokidar": "^1.7.5",
 		"@types/deep-equal": "^1.0.1",
 		"@types/deep-extend": "^0.4.31",

@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/lib",
-	"version": "1.0.129",
+	"version": "1.0.130",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -39,7 +39,7 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.129",
+		"@fovea/common": "^1.0.130",
 		"@wessberg/stringutil": "^1.0.17"
 	},
 	"devDependencies": {
