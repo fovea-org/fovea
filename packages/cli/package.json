@@ -33,7 +33,7 @@
 	},
 	"preferGlobal": true,
 	"name": "@fovea/cli",
-	"version": "1.0.130",
+	"version": "1.0.131",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -50,9 +50,9 @@
 		"tslint-sonarts": "^1.8.0"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.130",
-		"@fovea/rollup-plugin-fovea": "^1.0.130",
-		"@fovea/style": "^1.0.130",
+		"@fovea/compiler": "^1.0.131",
+		"@fovea/rollup-plugin-fovea": "^1.0.131",
+		"@fovea/style": "^1.0.131",
 		"@types/chokidar": "^1.7.5",
 		"@types/deep-equal": "^1.0.1",
 		"@types/deep-extend": "^0.4.31",
@@ -105,8 +105,8 @@
 		"svgo": "^1.0.5",
 		"temp-dir": "^1.0.0",
 		"to-ico": "^1.1.5",
-		"ws": "^6.0.0",
-		"typescript": "^3.0.3"
+		"typescript": "^3.0.3",
+		"ws": "^6.0.0"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/style",
-	"version": "1.0.130",
+	"version": "1.0.131",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -42,8 +42,8 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.130",
-		"@fovea/postcss-fovea-parser": "^1.0.130",
+		"@fovea/common": "^1.0.131",
+		"@fovea/postcss-fovea-parser": "^1.0.131",
 		"@types/deep-extend": "^0.4.31",
 		"@types/node": "^10.9.4",
 		"@types/node-sass": "^3.10.32",
@@ -63,9 +63,9 @@
 		"ava": "^0.25.0",
 		"rollup": "^0.65.2",
 		"tslib": "^1.9.3",
-		"typescript": "^3.0.3",
 		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.8.0"
+		"tslint-sonarts": "^1.8.0",
+		"typescript": "^3.0.3"
 	},
 	"publishConfig": {
 		"access": "public"

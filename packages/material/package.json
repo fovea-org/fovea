@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/material",
-	"version": "1.0.130",
+	"version": "1.0.131",
 	"description": "Material Design Web Components built with Fovea",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -39,26 +39,26 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/core": "^1.0.130",
-		"@fovea/lib": "^1.0.130"
+		"@fovea/core": "^1.0.131",
+		"@fovea/lib": "^1.0.131"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"devDependencies": {
-		"@fovea/rollup-plugin-fovea": "^1.0.130",
+		"@fovea/rollup-plugin-fovea": "^1.0.131",
 		"@wessberg/rollup-plugin-ts": "0.0.40",
 		"@wessberg/scaffold": "1.0.4",
 		"mkdirp": "^0.5.1",
 		"rollup": "^0.65.2",
 		"rollup-plugin-babel-minify": "^6.0.0",
-		"rollup-plugin-node-resolve": "^3.4.0",
 		"rollup-plugin-commonjs": "^9.1.6",
+		"rollup-plugin-node-resolve": "^3.4.0",
 		"scss-bundle": "^2.4.0",
 		"tslib": "^1.9.3",
-		"typescript": "^3.0.3",
 		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.8.0"
+		"tslint-sonarts": "^1.8.0",
+		"typescript": "^3.0.3"
 	},
 	"scaffold": {
 		"patreonUserId": "11315442",
