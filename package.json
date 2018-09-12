@@ -37,7 +37,7 @@
 		"prebootstrap": "npm run codegen && npm run update",
 		"bootstrap": "lerna bootstrap --ignore-scripts",
 		"validate": "npm run lint && npm run test",
-		"finalize": "NODE_ENV=production npm run bootstrap && NODE_ENV=production npm run build && NODE_ENV=production npm run validate && npm run generate:all && git add . && (git commit -am 'Bumped version') || true",
+		"finalize": "NODE_ENV=production npm run bootstrap && NODE_ENV=production npm run build && NODE_ENV=production npm run validate && npm run generate:all && git add . && (git commit -am 'Bumped version' && git push) || true",
 		"publish:patch": "npm run finalize && NODE_ENV=production lerna publish patch --conventional-commits --yes",
 		"publish:minor": "npm run finalize && NODE_ENV=production lerna publish minor --conventional-commits --yes",
 		"publish:major": "npm run finalize && NODE_ENV=production lerna publish major --conventional-commits --yes",
