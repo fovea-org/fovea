@@ -19,6 +19,10 @@ export class IconComponent extends HTMLElement {
 	 */
 	@prop public icon: string|undefined;
 
+	/**
+	 * Gets the nearest root, whether it be a Shadow Root or the local DOM of the element itself
+	 * @returns {ShadowRoot | Element}
+	 */
 	private get root (): ShadowRoot|Element {
 		return this.shadowRoot != null ? this.shadowRoot : this;
 	}

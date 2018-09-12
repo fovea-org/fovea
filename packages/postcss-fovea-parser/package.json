@@ -48,7 +48,8 @@
 		"tslib": "^1.9.3",
 		"typescript": "^3.0.3",
 		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.8.0"
+		"tslint-sonarts": "^1.8.0",
+		"ava": "^0.25.0"
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.130",

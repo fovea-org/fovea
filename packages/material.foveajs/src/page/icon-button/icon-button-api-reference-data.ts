@@ -28,5 +28,5 @@ export const ICON_BUTTON_API_REFERENCE_DATA: IApiReferenceData[] = [
 		defaultValue: false,
 		description: "If true, the IconButtonComponent will be toggled by default",
 		usage: `<icon-button-component icon="heart" toggledIcon="heart-fill" toggleable toggled></icon-button-component>`
-	},
+	}
 ];

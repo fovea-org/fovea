@@ -9,6 +9,15 @@ import {Table} from "../table/table";
 @styleSrc(["../../style/shared.scss", "./api-reference-component.scss"])
 @dependsOn(Table)
 export class ApiReferenceComponent extends HTMLElement {
-	@prop tableHead: string = "API Reference";
-	@prop data: IApiReferenceData[]|undefined;
+
+	/**
+	 * The label for the head of the table
+	 * @type {string}
+	 */
+	@prop public tableHead: string = "API Reference";
+
+	/**
+	 * The data to display in the table
+	 */
+	@prop public data: IApiReferenceData[]|undefined;
 }

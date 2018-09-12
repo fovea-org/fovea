@@ -157,7 +157,6 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	 * @type {HTMLLabelElement}
 	 */
 	protected $labelItem: HTMLLabelElement;
-	protected $outlineMaskRectAnimation: SVGElement;
 
 	/**
 	 * A reference to the child input footer element

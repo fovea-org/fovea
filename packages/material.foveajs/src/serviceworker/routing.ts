@@ -37,7 +37,7 @@ workbox.routing.registerRoute(
 		return new Response(cacheEntry, {
 			headers: {
 				"Content-Type": "text/html",
-				"status": "200"
+				status: "200"
 			}
 		});
 	}, "POST"

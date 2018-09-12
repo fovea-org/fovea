@@ -153,11 +153,9 @@ export class BuildTask implements IBuildTask {
 					this.updateStatus(BuildStatusKind.HOLDING, error);
 
 					// Unobserve the project immediately if the error is fatal
-					if (error.fatal) {
-						if (observer != null) {
-							observer.unobserve();
-							observer = null;
-						}
+					if (error.fatal && observer != null) {
+						observer.unobserve();
+						observer = null;
 					}
 				},
 				onStart: () => {
@@ -168,11 +166,9 @@ export class BuildTask implements IBuildTask {
 					this.updateStatus(BuildStatusKind.BUILT);
 
 					// Unobserve the project immediately if not in watch mode
-					if (!buildTaskOptions.watch) {
-						if (observer != null) {
-							observer.unobserve();
-							observer = null;
-						}
+					if (!buildTaskOptions.watch && observer != null) {
+						observer.unobserve();
+						observer = null;
 					}
 				}
 			});
@@ -1130,11 +1126,9 @@ export class BuildTask implements IBuildTask {
 						}
 
 						subscriber.onEnd(result);
-						if (!shouldWatch) {
-							if (bundleObserver != null) {
-								bundleObserver.unobserve();
-								bundleObserver = null;
-							}
+						if (!shouldWatch && bundleObserver != null) {
+							bundleObserver.unobserve();
+							bundleObserver = null;
 						}
 					}
 				}

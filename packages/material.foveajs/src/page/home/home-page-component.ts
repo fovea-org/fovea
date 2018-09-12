@@ -2,7 +2,7 @@ import {styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
 
 /**
- * This component represents the App route of your application
+ * This component represents the Home route
  */
 @templateSrc("./home-page-component.html")
 @styleSrc([

@@ -7,7 +7,7 @@ import {customAttribute, hostAttributes, styleSrc} from "@fovea/core";
 @styleSrc(["../../style/shared.scss", "./table.scss"])
 @hostAttributes({
 	class: {
-		"table": true
+		table: true
 	}
 })
 export class Table {

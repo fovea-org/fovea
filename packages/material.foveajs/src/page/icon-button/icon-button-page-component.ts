@@ -11,7 +11,7 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 IconComponent.addIcons(ICON_HEART, ICON_HEART_FILL, ICON_ALARM, ICON_ALARM_FILL, ICON_BELL, ICON_BELL_FILL);
 
 /**
- * This component represents the IconButton route of your application
+ * This component represents the IconButton route
  */
 @templateSrc("./icon-button-page-component.html")
 @styleSrc([
@@ -21,5 +21,10 @@ IconComponent.addIcons(ICON_HEART, ICON_HEART_FILL, ICON_ALARM, ICON_ALARM_FILL,
 ])
 @dependsOn(IconButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class IconButtonPageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for IconButtonComponents to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = ICON_BUTTON_API_REFERENCE_DATA;
 }

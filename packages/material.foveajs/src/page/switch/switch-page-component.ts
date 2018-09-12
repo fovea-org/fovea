@@ -8,7 +8,7 @@ import {ApiReferenceComponent} from "../../component/api-reference/api-reference
 import {IApiReferenceData} from "../../component/api-reference/i-api-reference-data";
 
 /**
- * This component represents the Switch route of your application
+ * This component represents the Switch route
  */
 @templateSrc("./switch-page-component.html")
 @styleSrc([
@@ -18,5 +18,10 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 ])
 @dependsOn(SwitchComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class SwitchPageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for SwitchComponents to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = SWITCH_API_REFERENCE_DATA;
 }

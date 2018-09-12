@@ -8,7 +8,7 @@ import {ApiReferenceComponent} from "../../component/api-reference/api-reference
 import {IApiReferenceData} from "../../component/api-reference/i-api-reference-data";
 
 /**
- * This component represents the Ripple route of your application
+ * This component represents the Ripple route
  */
 @templateSrc("./ripple-page-component.html")
 @styleSrc([
@@ -18,5 +18,10 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 ])
 @dependsOn(RippleComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class RipplePageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for Ripples to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = RIPPLE_API_REFERENCE_DATA;
 }

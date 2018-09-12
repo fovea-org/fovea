@@ -8,7 +8,7 @@ import {ApiReferenceComponent} from "../../component/api-reference/api-reference
 import {IApiReferenceData} from "../../component/api-reference/i-api-reference-data";
 
 /**
- * This component represents the Slider route of your application
+ * This component represents the Slider route
  */
 @templateSrc("./slider-page-component.html")
 @styleSrc([
@@ -18,5 +18,10 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 ])
 @dependsOn(SliderComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class SliderPageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for SliderComponents to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = SLIDER_API_REFERENCE_DATA;
 }

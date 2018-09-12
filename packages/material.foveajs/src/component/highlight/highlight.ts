@@ -1,5 +1,8 @@
 import {customAttribute, hostAttributes, prop, setOnHost, styleSrc} from "@fovea/core";
 
+/**
+ * A Custom Attribute that can perform syntax highlighting of blocks of code
+ */
 @customAttribute
 @styleSrc("./highlight.scss")
 @hostAttributes({
@@ -11,24 +14,39 @@ import {customAttribute, hostAttributes, prop, setOnHost, styleSrc} from "@fovea
 	}
 })
 export class Highlight {
-	@prop @setOnHost language: "html"|"typescript"|"javascript"|"css"|"scss"|"sass"|"less";
-	@prop lineNumbers: boolean = false;
+	/**
+	 * The language to highlight
+	 */
+	@prop @setOnHost public language: "html"|"typescript"|"javascript"|"css"|"scss"|"sass"|"less";
 
-	constructor (private hostElement: HTMLElement) {
+	/**
+	 * Whether to display line numbers within the syntax highlighted code block
+	 * @type {boolean}
+	 */
+	@prop public lineNumbers: boolean = false;
+
+	constructor (private readonly hostElement: HTMLElement) {
 	}
 
-	connectedCallback () {
+	/**
+	 * Invoked when the parent element is connected
+	 */
+	protected connectedCallback () {
 		// noinspection JSIgnoredPromiseFromCall
 		this.refresh();
 	}
 
+	/**
+	 * Requests syntax highlighting from the Web Service Photon
+	 * @returns {Promise<void>}
+	 */
 	private async refresh (): Promise<void> {
 		const originalInnerHTML = this.hostElement.innerHTML;
 
 		const response = await fetch("https://api.photon.sh/snippets", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token ee3ed483513db413a04d9ffdcff030fa",
+				Authorization: "Token ee3ed483513db413a04d9ffdcff030fa",
 				"Content-Type": "text/html"
 			},
 			body: `<code class="language-${this.language}" data-line-numbers="${this.lineNumbers}">${originalInnerHTML}</code>`

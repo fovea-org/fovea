@@ -17,16 +17,64 @@ import {Ripple} from "./ripple";
 	}
 })
 export class RippleComponent {
+	/**
+	 * If true, the Ripple will always transform from the origin of the center of the target element
+	 * @type {boolean}
+	 */
 	@prop public center: boolean = false;
+
+	/**
+	 * The Ripple will use the provided color as its background color
+	 * @type {string}
+	 */
 	@prop public color: string = "currentColor";
+
+	/**
+	 * If true, the Ripple will be disabled
+	 * @type {boolean}
+	 */
 	@prop public disabled: boolean = false;
 
+	/**
+	 * Holds true if the pointer is currently down
+	 * @type {boolean}
+	 */
 	private pointerDown: boolean = false;
+
+	/**
+	 * The last seen coordinates from a pointerdown event
+	 * @type {null}
+	 */
 	private lastCoordinates: IRippleCoordinates|null = null;
+
+	/**
+	 * The last constructed Ripple
+	 * @type {null}
+	 */
 	private lastRipple: Ripple|null = null;
+
+	/**
+	 * The timestamp of the last pointerdown event
+	 * @type {null}
+	 */
 	private pointerDownTime: number|null = null;
+
+	/**
+	 * Whether or not a pointerup followed the pointerdown in quick succession
+	 * @type {boolean}
+	 */
 	private didClick: boolean = false;
+
+	/**
+	 * If true, a pointer is currently down on the host element
+	 * @type {boolean}
+	 */
 	private hasPointerSequence: boolean = false;
+
+	/**
+	 * A bound reference to the 'onPointerLeave' method
+	 * @type {any}
+	 */
 	private readonly boundOnPointerLeave = this.onPointerLeave.bind(this);
 
 	constructor (private readonly target: HTMLElement) {

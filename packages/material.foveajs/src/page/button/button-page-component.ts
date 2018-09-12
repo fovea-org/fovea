@@ -11,7 +11,7 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 IconComponent.addIcons(ICON_CHECK);
 
 /**
- * This component represents the Button route of your application
+ * This component represents the Button route
  */
 @templateSrc("./button-page-component.html")
 @styleSrc([
@@ -21,5 +21,10 @@ IconComponent.addIcons(ICON_CHECK);
 ])
 @dependsOn(Button, Highlight, ShowcaseComponent, ApiReferenceComponent, IconComponent)
 export default class ButtonPageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for Buttons to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = BUTTON_API_REFERENCE_DATA;
 }

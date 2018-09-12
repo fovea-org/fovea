@@ -3,6 +3,8 @@ import {TextareaBaseComponent} from "../base/textarea-base-component";
 import {wait} from "../../../util/async-util";
 import {getMsFromCSSDuration} from "../../../util/duration-util";
 
+// tslint:disable:no-any
+
 /**
  * This Custom Element represents a Multi-line Text Field.
  */
@@ -20,6 +22,9 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	 */
 	private lastRefreshHeightPromise: Promise<void>|undefined;
 
+	/**
+	 * A reference to any active timeout to reset overflow
+	 */
 	private overflowTimeout: number|undefined;
 
 	/**
@@ -34,17 +39,24 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	 */
 	@listener("resize", {on: window})
 	@listener(["input", "keyup", "resize"], {on: "$formItem"})
-	triggerRefreshHeight (): void {
+	protected triggerRefreshHeight (): void {
 		this.animating
 			? this.enqueueRefreshHeight()
 			: this.refreshHeight().then();
 		this.debounceResetOverflow();
 	}
 
+	/**
+	 * Resets overflow
+	 */
 	private resetOverflow (): void {
 		this.$formItem.style.overflowY = null;
 	}
 
+	/**
+	 * Resets overflow debounced such that it may only happen after the value defined by the
+	 * CSS Custom Property '--transition-duration'
+	 */
 	private debounceResetOverflow (): void {
 		if (this.overflowTimeout != null) {
 			clearTimeout(this.overflowTimeout);
@@ -76,7 +88,7 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	 * Invoked when a 'scroll' event is fired on the textarea
 	 */
 	@listener("scroll", {on: "$formItem"})
-	onScroll (): void {
+	protected onScroll (): void {
 		this.$formItem.scrollTo(0, 0);
 	}
 
@@ -124,12 +136,18 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 		}, getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration")));
 	}
 
+	/**
+	 * Hides overflow and forces recalculation
+	 */
 	private hideOverflow (): void {
 		// Set the overflow to 'hidden' to prevent the scrollbar from rendering whilst resizing
 		this.$formItem.style.overflowY = "hidden";
 		this.forceRecalculation();
 	}
 
+	/**
+	 * Forces recalculation of styles
+	 */
 	private forceRecalculation (): void {
 		this.$formItem.offsetHeight;
 		this.$formItem.offsetWidth;

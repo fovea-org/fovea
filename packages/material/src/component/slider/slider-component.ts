@@ -75,7 +75,7 @@ export class SliderComponent extends FormItemComponent {
 	 * A reference to the <div> element representing the thumb
 	 * @type {HTMLDivElement}
 	 */
-	private $thumb: HTMLDivElement;
+	private readonly $thumb: HTMLDivElement;
 
 	/**
 	 * Invoked when the value of the underlying input changes

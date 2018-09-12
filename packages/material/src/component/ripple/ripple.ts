@@ -39,21 +39,43 @@ export class Ripple {
 							 private readonly color: string) {
 	}
 
+	/**
+	 * Whether the Ripple should be disposed when done
+	 * @type {boolean}
+	 * @private
+	 */
 	private _disposeWhenDone: boolean = false;
 
+	/**
+	 * A getter for the '_disposeWhenDone' property
+	 * @returns {boolean}
+	 */
 	public get disposeWhenDone () {
 		return this._disposeWhenDone;
 	}
 
+	/**
+	 * A setter for the '_disposeWhenDone' property
+	 * @param {boolean} disposeWhenDone
+	 */
 	public set disposeWhenDone (disposeWhenDone: boolean) {
 		this._disposeWhenDone = disposeWhenDone;
 		if (!this.animating) this.rippleOut();
 	}
 
+	/**
+	 * Gets the nearest root, whether it is a Shadow Root or the local DOM of the target element
+	 * @returns {ShadowRoot | Element}
+	 */
 	private get root (): ShadowRoot|Element {
 		return this.target.shadowRoot != null ? this.target.shadowRoot : this.target;
 	}
 
+	/**
+	 * Sets the relevant styles on the ripple and renders it onto screen
+	 * @param {boolean} center
+	 * @param {IRippleCoordinates | null} coordinates
+	 */
 	public rippleIn (center: boolean, coordinates: IRippleCoordinates|null): void {
 		if (this.ripple == null) return;
 
@@ -79,6 +101,9 @@ export class Ripple {
 		}, this.maxDuration - this.FADE_IN_DURATION_NEGATIVE_OFFSET);
 	}
 
+	/**
+	 * Renders the ripple out and removes it from the DOM
+	 */
 	public rippleOut (): void {
 		if (this.ripple == null) return;
 		this.ripple.classList.replace("fade-in", "fade-out");

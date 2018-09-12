@@ -2,6 +2,7 @@
 	"extends": ["tslint-sonarts"],
 	"rules": {
 		"max-union-size": false,
+		"prefer-optional": false,
 		"no-nested-template-literals": false,
 		"no-small-switch": false,
 		"parameters-max-number": false,

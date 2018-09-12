@@ -16,6 +16,9 @@ export class AppComponent extends HTMLElement {
 	 */
 	@prop public routes: RouteInput[] = routes;
 
+	/**
+	 * Invoked when the component is connected
+	 */
 	protected connectedCallback () {
 		// noinspection JSIgnoredPromiseFromCall
 		Router.initialize({root: this, routes});

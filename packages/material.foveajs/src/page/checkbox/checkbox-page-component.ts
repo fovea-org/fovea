@@ -8,7 +8,7 @@ import {ApiReferenceComponent} from "../../component/api-reference/api-reference
 import {IApiReferenceData} from "../../component/api-reference/i-api-reference-data";
 
 /**
- * This component represents the Checkbox route of your application
+ * This component represents the Checkbox route
  */
 @templateSrc("./checkbox-page-component.html")
 @styleSrc([
@@ -18,5 +18,10 @@ import {IApiReferenceData} from "../../component/api-reference/i-api-reference-d
 ])
 @dependsOn(CheckboxComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class CheckboxPageComponent extends HTMLElement implements IRouterTarget {
+
+	/**
+	 * The API reference data for CheckboxComponents to render
+	 * @type {IApiReferenceData[]}
+	 */
 	@prop public apiReferenceData: IApiReferenceData[] = CHECKBOX_API_REFERENCE_DATA;
 }

@@ -6,5 +6,9 @@ import {prop, styleSrc, templateSrc} from "@fovea/core";
 @templateSrc("./showcase-component.html")
 @styleSrc(["../../style/shared.scss", "./showcase-component.scss"])
 export class ShowcaseComponent extends HTMLElement {
-	@prop caption: string|undefined;
+
+	/**
+	 * The caption to show, if any
+	 */
+	@prop public caption: string|undefined;
 }

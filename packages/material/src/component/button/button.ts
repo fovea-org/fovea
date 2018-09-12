@@ -29,7 +29,7 @@ export class Button {
 	 */
 	@prop @setOnHost public outlined: boolean = false;
 
-	constructor (private hostElement: HTMLElement) {
+	constructor (private readonly hostElement: HTMLElement) {
 		this.refresh();
 	}
 
@@ -48,7 +48,7 @@ export class Button {
 				const span = document.createElement("span");
 				const oldParent = node.parentNode;
 				if (oldParent != null) {
-					oldParent!.replaceChild(span, node);
+					oldParent.replaceChild(span, node);
 					span.appendChild(node);
 				}
 			}
