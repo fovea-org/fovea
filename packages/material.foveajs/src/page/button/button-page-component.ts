@@ -1,6 +1,6 @@
 import {dependsOn, prop, styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
-import {Button, IconComponent, ICON_CHECK} from "@fovea/material";
+import {ButtonComponent, IconComponent, ICON_CHECK} from "@fovea/material";
 import {BUTTON_API_REFERENCE_DATA} from "./button-api-reference-data";
 import {Highlight} from "../../component/highlight/highlight";
 import {ShowcaseComponent} from "../../component/showcase/showcase-component";
@@ -19,7 +19,7 @@ IconComponent.addIcons(ICON_CHECK);
 	"../shared/shared.scss",
 	"./button-page-component.scss"
 ])
-@dependsOn(Button, Highlight, ShowcaseComponent, ApiReferenceComponent, IconComponent)
+@dependsOn(ButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent, IconComponent)
 export default class ButtonPageComponent extends HTMLElement implements IRouterTarget {
 
 	/**

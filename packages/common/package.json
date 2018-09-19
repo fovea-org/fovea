@@ -35,8 +35,9 @@
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
 		"prerollup": "rm -r -f dist",
-		"rollup": "rollup -c rollup.config.js",
-		"build": "npm run rollup"
+		"rollup": "NODE_ENV=production rollup -c rollup.config.js",
+		"build": "npm run rollup",
+		"watch": "npm run rollup -- --watch"
 	},
 	"dependencies": {
 		"@wessberg/stringutil": "^1.0.17"

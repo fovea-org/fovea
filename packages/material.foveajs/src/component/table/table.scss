@@ -2,7 +2,7 @@
 
 .table {
 	@include scrollableXY();
-	margin-top: var(--size-6);
+	margin-top: size(6);
 	border-collapse: collapse;
 	white-space: nowrap;
 	display: block;
@@ -24,20 +24,20 @@
 	}
 
 	tr {
-		@include hr();
+		@include divider(bottom);
 	}
 
 	tr:first-of-type {
 		& td {
 			@include caption();
-			color: var(--color-black-70);
+			color: color(black, 70);
 
 			&:not(:first-of-type) {
-				padding: 0 var(--default-margin);
+				padding: 0 $default-margin;
 			}
 
 			&:first-of-type {
-				padding: 0 var(--default-margin) 0 0;
+				padding: 0 $default-margin 0 0;
 			}
 		}
 	}
@@ -47,11 +47,11 @@
 			@include body2();
 
 			&:not(:first-of-type) {
-				padding: 0 var(--default-margin);
+				padding: 0 $default-margin;
 			}
 
 			&:first-of-type {
-				padding: 0 var(--default-margin) 0 0;
+				padding: 0 $default-margin 0 0;
 			}
 		}
 	}

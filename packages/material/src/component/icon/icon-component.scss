@@ -4,7 +4,7 @@
 	@include reset();
 	@include hardwareAccelerated();
 	@include typographyBase();
-	--size: var(--icon-size, #{$icon-size});
+	--size: #{$icon-size};
 
 	user-select: none;
 	display: inline-block;

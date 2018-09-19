@@ -1,7 +1,7 @@
 import {dependsOn, listener, prop, styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
 import {MULTI_LINE_TEXT_FIELD_API_REFERENCE_DATA, SINGLE_LINE_TEXT_FIELD_API_REFERENCE_DATA, TEXTAREA_API_REFERENCE_DATA} from "./text-field-api-reference-data";
-import {SingleLineTextFieldComponent, MultiLineTextFieldComponent, TextareaComponent, IconComponent, RadioButtonComponent, ICON_CALENDAR, ICON_PERSON_FILL, ICON_SEARCH, ICON_LINK, ICON_ERROR} from "@fovea/material";
+import {SingleLineTextFieldComponent, MultiLineTextFieldComponent, ButtonComponent, TextareaComponent, IconComponent, RadioButtonComponent, ICON_CALENDAR, ICON_PERSON_FILL, ICON_SEARCH, ICON_LINK, ICON_ERROR} from "@fovea/material";
 import {IApiReferenceData} from "../../component/api-reference/i-api-reference-data";
 import {Highlight} from "../../component/highlight/highlight";
 import {ShowcaseComponent} from "../../component/showcase/showcase-component";
@@ -19,7 +19,7 @@ IconComponent.addIcons(ICON_CALENDAR, ICON_SEARCH, ICON_PERSON_FILL, ICON_LINK, 
 	"../shared/shared.scss",
 	"./text-field-page-component.scss"
 ])
-@dependsOn(RadioButtonComponent, SingleLineTextFieldComponent, IconComponent, MultiLineTextFieldComponent, TextareaComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
+@dependsOn(RadioButtonComponent, ButtonComponent, SingleLineTextFieldComponent, IconComponent, MultiLineTextFieldComponent, TextareaComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class TextFieldPageComponent extends HTMLElement implements IRouterTarget {
 
 	/**

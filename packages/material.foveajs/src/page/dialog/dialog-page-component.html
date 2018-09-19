@@ -1,0 +1,96 @@
+<h4>Dialog</h4>
+
+<p>
+	Dialogs inform users about a task and can contain critical information, require decisions, or involve multiple tasks.
+</p>
+
+<h5>Demos</h5>
+
+<showcase-component caption="Confirmation Dialogs">
+	<dialog-component $dialog1 style="margin: 0" onchange="${onDialogAction(1, event.detail)}">
+		<header>
+			Side-by-side buttons
+		</header>
+		<article>
+			When a dialog include action buttons, they will appear next to one another.
+		</article>
+		<footer>
+			<button-component dialog-action="cancel">Cancel</button-component>
+			<button-component dialog-action="confirm">Accept</button-component>
+		</footer>
+	</dialog-component>
+
+	<dialog-component $dialog2 style="margin: 0" onchange="${onDialogAction(2, event.detail)}">
+		<header>
+			Stacked full-width buttons
+		</header>
+		<article>
+			When the action buttons include longer button text, they will appear stacked. Confirming actions appear above dismissive actions.
+		</article>
+		<footer>
+			<button-component dialog-action="confirm">This is a long action</button-component>
+			<button-component dialog-action="cancel">Cancel</button-component>
+		</footer>
+	</dialog-component>
+
+	<dialog-component $dialog3 style="margin: 0" onchange="${onDialogAction(3, event.detail)}">
+		<article>
+			This dialog has no header
+		</article>
+		<footer>
+			<button-component dialog-action="confirm">ok</button-component>
+		</footer>
+	</dialog-component>
+
+	<button-component onclick="${$dialog1.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 1
+	</button-component>
+
+	<button-component onclick="${$dialog2.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 2
+	</button-component>
+
+	<button-component onclick="${$dialog3.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 3
+	</button-component>
+
+	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
+		<small>Dialog 1 action: ${dialog1Response == null ? '(none)' : dialog1Response}</small>
+		<small>Dialog 2 action: ${dialog2Response == null ? '(none)' : dialog2Response}</small>
+		<small>Dialog 3 action: ${dialog3Response == null ? '(none)' : dialog3Response}</small>
+	</footer>
+</showcase-component>
+
+<showcase-component caption="Scrolling Confirmation Dialogs">
+	<dialog-component $dialog4 style="margin: 0" onchange="${onDialogAction(4, event.detail)}">
+		<header>
+			Scrolling dialog
+		</header>
+		<article>
+			<ul>
+				<li *foreach="${listItems}">Item ${item}</li>
+			</ul>
+		</article>
+		<footer>
+			<button-component dialog-action="cancel">Cancel</button-component>
+			<button-component dialog-action="confirm">Accept</button-component>
+		</footer>
+	</dialog-component>
+
+	<button-component onclick="${$dialog4.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 4
+	</button-component>
+
+	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
+		<small>Dialog 4 action: ${dialog1Response == null ? '(none)' : dialog4Response}</small>
+	</footer>
+
+</showcase-component>
+
+<h5>Usage</h5>
+
+<api-reference-component data="${apiReferenceData}"></api-reference-component>

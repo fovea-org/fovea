@@ -4,16 +4,16 @@
 
 :host(:not([type="color"])) {
 	// This will position the label in the middle of the minimum input height
-	--icon-y-top: calc((var(--min-input-height) / 2) - (var(--icon-size, #{$icon-size}) / 2));
+	--icon-y-top: calc((var(--min-input-height) / 2) - (#{$icon-size} / 2));
 }
 
 :host([type="color"]) {
 
 	// This will position the label in the middle of the minimum input height
-	--icon-y-top: calc(var(--size-4, #{size(4)}) + (var(--min-input-height) / 2) - (var(--icon-size, #{$icon-size}) / 2));
+	--icon-y-top: calc(#{size(4)} + (var(--min-input-height) / 2) - (#{$icon-size} / 2));
 
 	::slotted(input) {
-		margin: var(--size-4, #{size(4)}) 0 var(--size-1, #{size(1)}) 0 !important;
+		margin: size(4) 0 size(1) 0 !important;
 	}
 }
 

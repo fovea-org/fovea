@@ -7,53 +7,55 @@
 <h5>Demos</h5>
 
 <showcase-component caption="Standard Buttons">
-	<button *button>Button</button>
-	<button *button="contained: true">Button</button>
-	<button *button="outlined: true">Button</button>
+	<button-component>Button</button-component>
+	<button-component contained>Button</button-component>
+	<button-component outlined>Button</button-component>
 </showcase-component>
 
 <showcase-component caption="Standard Buttons with Icons">
-	<button *button>
+	<button-component>
 		<icon-component icon="check"></icon-component>
 		Button
-	</button>
-	<button *button="contained: true">
+	</button-component>
+	<button-component contained>
 		<icon-component icon="check"></icon-component>
 		Button
-	</button>
-	<button *button="outlined: true">
+	</button-component>
+	<button-component outlined>
 		Button
 		<icon-component icon="check"></icon-component>
-	</button>
+	</button-component>
 </showcase-component>
 
 <showcase-component caption="Disabled Buttons">
-	<button *button disabled>Button</button>
-	<button *button="contained: true" disabled>Button</button>
-	<button *button="outlined: true;" disabled>Button</button>
+	<button-component disabled>Button</button-component>
+	<button-component contained disabled>Button</button-component>
+	<button-component outlined disabled>Button</button-component>
 </showcase-component>
 
 <showcase-component caption="Disabled Buttons with icons">
-	<button *button disabled>
+	<button-component disabled>
 		<icon-component icon="check"></icon-component>
 		Button
-	</button>
-	<button *button="contained: true;" disabled>
+	</button-component>
+	<button-component contained disabled>
 		<icon-component icon="check"></icon-component>
 		Button
-	</button>
-	<button *button="outlined: true;" disabled>
+	</button-component>
+	<button-component outlined disabled>
 		<icon-component icon="check"></icon-component>
 		Button
-	</button>
+	</button-component>
 </showcase-component>
 
 <h5>Usage</h5>
 
-<p>You can annotate any element with the <code>*button</code> Custom Attribute, but it is intended to be used with <code>button</code> or <code>a</code> elements:</p>
+<p>
+	You can use the <code>button-component</code> element, just like any other element:
+</p>
 
 <code *highlight="language: html">
-	<button *button>Button</button>
+	<button-component>Button</button-component>
 </code>
 
 <api-reference-component data="${apiReferenceData}"></api-reference-component>

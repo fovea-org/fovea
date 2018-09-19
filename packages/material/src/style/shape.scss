@@ -2,7 +2,7 @@
 @import "./size";
 
 @function rounding ($multiplier: 1) {
-	@return $grid-size * $multiplier;
+	@return #{'var(--rounding-#{$multiplier}, #{$grid-size * $multiplier})'};
 }
 
 $default-rounding: rounding();

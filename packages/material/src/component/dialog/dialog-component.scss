@@ -1,0 +1,195 @@
+@import "../../style/base";
+
+:host {
+	--color-scrim: #{color(black, 20)};
+	z-index: 9999999999;
+	position: fixed;
+	flex-direction: row;
+}
+
+@mixin header () {
+	::slotted([dialog-header]) {
+		@content
+	}
+}
+
+@mixin headerAndFooter () {
+	::slotted([dialog-header]),
+	::slotted([dialog-footer]) {
+		@content
+	}
+}
+
+@mixin footer () {
+	::slotted([dialog-footer]) {
+		@content
+	}
+}
+
+@mixin actionButton () {
+	::slotted([dialog-action]) {
+		@content
+	}
+}
+
+@mixin article () {
+	::slotted([dialog-article]) {
+		@content;
+	}
+}
+
+:host,
+#dialog-box {
+	align-content: center;
+	justify-content: center;
+}
+
+:host,
+#scrim {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 100%;
+}
+
+#scrim,
+#dialog-box {
+	transition: opacity var(--transition-duration) var(--transition-timing-function);
+}
+
+@include footer {
+	flex-direction: row;
+	display: flex;
+}
+
+:host,
+#dialog-box {
+	display: flex;
+}
+
+@include headerAndFooter {
+	flex-shrink: 0;
+}
+
+@include header {
+	@include headline6();
+	line-height: 16px;
+	padding: size(6);
+}
+
+@include article {
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+	overflow-y: scroll;
+	color: color(black, 60);
+}
+
+:host(:not([can-scroll])[has-header]) {
+	@include article {
+		padding: 0 size(6) size(7) size(6);
+	}
+}
+
+:host(:not([can-scroll]):not([has-header])) {
+	@include article {
+		padding: size(6) size(6) size(7) size(6);
+	}
+}
+
+:host([can-scroll]) {
+	@include article {
+		padding: 0 size(6);
+	}
+}
+
+@include footer {
+	align-self: flex-end;
+	padding: size(2) size(2) size(2) calc(100% - 270px);
+	justify-content: flex-end;
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+#scrim {
+	position: absolute;
+	background: var(--color-scrim);
+}
+
+:host(:not([scrim])) {
+	#scrim {
+		display: none;
+	}
+}
+
+#dialog-box {
+	flex-direction: column;
+	justify-items: center;
+	align-self: center;
+	background: color(white);
+	z-index: 1;
+	border-radius: $default-rounding;
+	box-shadow: elevation(24);
+	margin: size(6);
+	min-width: 250px;
+	max-width: 100%;
+	max-height: calc(100% - (#{size(6)} * 2));
+}
+
+:host([open]) {
+	--transition-duration: #{$duration-dialog-open};
+	--transition-timing-function: var(--timing-function-acceleration-curve, #{$timing-function-acceleration-curve});
+}
+
+:host([state="opening"]),
+:host([state="open"]) {
+	#scrim,
+	#dialog-box {
+		opacity: 1;
+	}
+}
+
+:host([state="closing"]),
+:host([state="closed"]) {
+	#scrim,
+	#dialog-box {
+		opacity: 0;
+	}
+}
+
+:host(:not([open])) {
+	--transition-duration: #{$duration-dialog-close};
+	--transition-timing-function: var(--timing-function-acceleration-curve, #{$timing-function-acceleration-curve});
+}
+
+:host([state="opening"]),
+:host([state="closing"]) {
+	#scrim,
+	#dialog-box {
+		will-change: opacity;
+	}
+}
+
+:host(:not([open])[state="closed"]) {
+	display: none;
+}
+
+:host([can-scroll]) {
+	@include header {
+		@include divider(bottom);
+	}
+
+	@include footer {
+		@include divider(top);
+	}
+}
+
+:host(::-moz-focus-inner) {
+	border: 0;
+}
+
+:host(:focus),
+:host(:active) {
+	outline: none;
+}

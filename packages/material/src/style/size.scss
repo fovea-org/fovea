@@ -1,8 +1,8 @@
 $grid-size: 4px;
-$icon-size: 24px;
+$icon-size: var(--icon-size, 24px);
 
 @function size ($multiplier: 1) {
-	@return $grid-size * $multiplier;
+	@return #{'var(--size-#{$multiplier}, #{$grid-size * $multiplier})'};
 }
 
 $default-padding: size(4);

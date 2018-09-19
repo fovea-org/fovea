@@ -6,10 +6,9 @@
 
 :host {
 	flex-direction: column;
-	background: var(--color-black-05);
-	margin: var(--default-margin) 0;
-	border-radius: var(--default-rounding);
-	contain: content;
+	background: color(black, 05);
+	margin: $default-margin 0;
+	border-radius: $default-rounding;
 }
 
 article, footer {
@@ -22,11 +21,11 @@ article {
 	flex-wrap: wrap;
 }
 
-::slotted(*) {
-	margin: var(--default-margin) !important;
+::slotted(*:not(dialog-component)) {
+	margin: $default-margin !important;
 }
 
 footer {
-	background: var(--color-black-05);
-	padding: var(--size-2);
+	background: color(black, 05);
+	padding: size(2);
 }

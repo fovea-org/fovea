@@ -134,7 +134,7 @@ export class SliderComponent extends FormItemComponent {
 	 */
 	@listener("keydown", {on: "$formItem"})
 	@listener("keydown")
-	protected onKeyUp (e: KeyboardEvent) {
+	protected onKeyDown (e: KeyboardEvent) {
 		// Stop propagation in order to avoid the event from being handled twice (bubbling up rom the form item to the host component)
 		e.stopPropagation();
 		switch (e.key) {

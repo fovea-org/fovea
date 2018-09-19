@@ -5,7 +5,7 @@
 	contain: content;
 	overflow: hidden;
 	color: currentColor;
-	padding: var(--default-padding, #{$default-padding});
+	padding: $default-padding;
 	border-radius: 50%;
 	cursor: pointer;
 
@@ -23,13 +23,13 @@
 
 @media (pointer: fine) {
 	:host(:hover) {
-		background: var(--color-overlay, #{$color-overlay});
+		background: $color-overlay;
 	}
 }
 
 :host([disabled]) {
 	pointer-events: none;
-	color: var(--color-disabled, #{$color-disabled}) !important;
+	color: $color-disabled !important;
 }
 
 :host(:focus),

@@ -30,7 +30,7 @@ $range-height: 2px;
 }
 
 :host {
-	color: var(--color-primary, #{$color-primary});
+	color: $color-primary;
 	--transition-duration: 150ms;
 	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
 	@include hardwareAccelerated();
@@ -143,7 +143,7 @@ $range-height: 2px;
 #value-indicator {
 	@include caption();
 	top: 3px;
-	color: var(--color-white, #{color(white)});
+	color: color(white);
 	text-align: center;
 }
 
@@ -210,12 +210,12 @@ $range-height: 2px;
 
 	& #range,
 	& #selected-range {
-		color: var(--color-disabled, #{$color-disabled});
+		color: $color-disabled;
 	}
 
 	& #thumb,
 	& #tick-container {
-		color: var(--color-disabled-hex, #{$color-disabled-hex});
+		color: $color-disabled-hex;
 	}
 }
 

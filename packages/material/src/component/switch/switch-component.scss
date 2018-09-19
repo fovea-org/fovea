@@ -44,7 +44,7 @@ $trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
 	user-select: none;
 	overflow: hidden;
 	vertical-align: middle;
-	color: var(--color-primary, #{$color-primary});
+	color: $color-primary;
 	width: $trackContainerWidth;
 	height: $trackContainerHeight;
 	margin-bottom: 2px;
@@ -103,7 +103,7 @@ $trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
 		content: "";
 		height: $thumbSize;
 		width: $thumbSize;
-		box-shadow: var(--elevation-2, #{elevation(2)});
+		box-shadow: elevation(2);
 	}
 }
 
@@ -118,11 +118,11 @@ $trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
 :host(:not([checked])) {
 	& #track,
 	& #thumb {
-		color: var(--color-black-50, #{color(black, 50)});
+		color: color(black, 50);
 	}
 
 	& #thumb::before {
-		color: var(--color-white, #{color(white)});
+		color: color(white);
 	}
 
 	& #thumb {
@@ -144,12 +144,12 @@ $trackContainerHeight: $trackHeight + $thumbContainerSize  - ($thumbSize / 2);
 
 :host([disabled]) {
 	& #track {
-		color: var(--color-disabled, #{$color-disabled}) !important;
+		color: $color-disabled !important;
 	}
 
 	& #thumb,
 	& #thumb::before {
-		color: var(--color-disabled-hex, #{$color-disabled-hex}) !important;
+		color: $color-disabled-hex !important;
 	}
 }
 

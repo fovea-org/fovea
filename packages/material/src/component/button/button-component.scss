@@ -1,0 +1,138 @@
+@import "../../style/base";
+
+:host {
+	@include reset();
+	@include button();
+	--transition-duration: #{$duration-complex};
+	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	color: $color-primary;
+	contain: content;
+	overflow: hidden;
+	min-width: 64px;
+	position: relative;
+	height: 36px;
+	line-height: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: $default-rounding;
+	user-select: none;
+	padding: 0 size(2);
+	white-space: nowrap;
+	-webkit-user-drag: none;
+
+	/* This rule targets Safari specifically and fixes an issue with overflow hidden + border-radius in combination */
+	//noinspection CssUnknownProperty
+	@supports (-webkit-text-zoom: initial) {
+		//noinspection CssInvalidPropertyValue
+		-webkit-mask-image: -webkit-radial-gradient(white, black);
+	}
+}
+
+// If a button is to be used within a dialog component, it should have a left margin of 2 times the grid baseline
+:host-context(dialog-component) {
+	margin-left: size(2);
+}
+
+:host,
+::slotted(button) {
+	cursor: pointer;
+}
+
+::slotted(button) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 100%;
+	appearance: none;
+	border: none;
+	background-image: none;
+	background: transparent;
+}
+
+:host(:not([contained])) {
+	background: none;
+
+	::slotted(*) {
+		color: currentColor;
+	}
+}
+
+:host([contained]),
+:host([outlined]) {
+	padding: 0 size(4);
+}
+
+:host([contained]) {
+	transition: box-shadow var(--transition-duration) var(--transition-timing-function);
+	box-shadow: elevation(2);
+	background: currentColor;
+
+	::slotted(*) {
+		color: color(white);
+	}
+
+	&::after {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		content: "";
+		background: rgba(255,255,255,.2);
+	}
+}
+
+@media (pointer: fine) {
+	:host([contained]:hover),
+	:host([contained]:focus-visible) {
+		box-shadow: elevation(4);
+
+		&::after {
+			display: block;
+		}
+	}
+
+	:host(:not([contained]):hover),
+	:host(:not([contained]):focus-visible) {
+		background: $color-overlay;
+	}
+}
+
+:host([outlined]) {
+	padding: 0 size(4);
+	border: 2px solid currentColor;
+}
+
+:host([disabled]) {
+	pointer-events: none;
+	color: $color-disabled !important;
+}
+
+:host([disabled][contained]) {
+	::slotted(*) {
+		color: color(white, 80) !important;
+	}
+}
+
+:host(:focus),
+:host(:active),
+::slotted(button:focus),
+::slotted(button:active) {
+	outline: none;
+}
+
+::slotted(*:nth-child(2):not(button)) {
+	margin-left: size(2) !important;
+}
+
+:host(::-moz-focus-inner),
+::slotted(button::-moz-focus-inner) {
+	border: 0;
+}

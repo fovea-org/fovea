@@ -89,7 +89,5 @@ $ambient-map: (
 );
 
 @function elevation($z-index) {
-	@return #{"#{map-get($umbra-map, $z-index)} #{rgba(black, $umbra-opacity)}"},
-	#{"#{map-get($penumbra-map, $z-index)} #{rgba(black, $penumbra-opacity)}"},
-	#{map-get($ambient-map, $z-index)} rgba(black, $ambient-opacity);
+	@return #{'var(--elevation-#{$z-index}, #{map-get($umbra-map, $z-index)} #{rgba(black, $umbra-opacity)}, #{map-get($penumbra-map, $z-index)} #{rgba(black, $penumbra-opacity)}, #{map-get($ambient-map, $z-index)} #{rgba(black, $ambient-opacity)})'};
 }

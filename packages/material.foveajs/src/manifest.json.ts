@@ -13,8 +13,8 @@ export default (resource: IResource) => ({
 	start_url: "/",
 	display: "standalone",
 	orientation: "portrait",
-	background_color: toHex(resource.style.themeVariables["--color-background"]),
-	theme_color: toHex(resource.style.themeVariables["--color-primary"]),
+	background_color: toHex(resource.style.themeVariables["$color-background"]),
+	theme_color: toHex(resource.style.themeVariables["$color-primary"]),
 	icons: Object.entries(resource.output.asset.appIcon).map(([size, path]) => ({
 		src: path,
 		type: "image/png",

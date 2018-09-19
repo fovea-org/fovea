@@ -5,20 +5,24 @@
 	@include scrollableY();
 
 	& > .highlight {
-		box-shadow: var(--elevation-6);
+		box-shadow: elevation(6);
+	}
+
+	& > h1, & > h2, & > h3, & > h4, & > h5, & > h6 {
+		margin: size(4) 0;
 	}
 }
 
 p + p {
-	margin-top: var(--size-4);
+	margin-top: size(4);
 }
 
 h5 {
-	@include hr();
+	@include divider(bottom);
 }
 
 .highlight {
-	margin: var(--default-margin) 0;
+	margin: $default-margin 0;
 }
 
 form {
@@ -26,4 +30,20 @@ form {
 	button {
 		display: flex !important;
 	}
+}
+
+.primary {
+	color: $color-primary;
+}
+
+.accent {
+	color: $color-accent;
+}
+
+.yellow {
+	color: color(yellow);
+}
+
+.black-60 {
+	color: color(black, 60);
 }

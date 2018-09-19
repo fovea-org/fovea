@@ -24,7 +24,7 @@ export default ({resource, globalStyles, polyfillContent}: IIndexHtmlOptions) =>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
 		<!-- The theme color for the app -->
-		<meta name="theme-color" content="${toHex(resource.style.themeVariables["--color-primary"])}">
+		<meta name="theme-color" content="${toHex(resource.style.themeVariables["$color-primary"])}">
 
 		<!-- The viewport meta tag -->
 		<meta name="viewport" content="initial-scale=1, minimum-scale = 1, maximum-scale=5, user-scalable=yes, width=device-width"/>

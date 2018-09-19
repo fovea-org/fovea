@@ -26,7 +26,7 @@
 }
 
 ::slotted(textarea) {
-	margin: var(--size-6, #{size(6)}) 0 var(--size-4, #{size(4)}) 0;
+	margin: size(6) 0 size(4) 0;
 	overflow: auto;
 }
 
@@ -39,6 +39,6 @@
 :host([outlined]) {
 
 	::slotted(textarea) {
-		margin-top: var(--size-4, #{size(4)});
+		margin-top: size(4);
 	}
 }

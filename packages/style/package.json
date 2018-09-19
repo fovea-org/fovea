@@ -35,11 +35,12 @@
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
 		"prerollup": "rm -r -f dist",
-		"rollup": "rollup -c rollup.config.js",
+		"rollup": "NODE_ENV=production rollup -c rollup.config.js",
 		"pretest": "rollup -c rollup.test.config.js",
 		"test": "ava",
 		"posttest": "rm -r -f compiled",
-		"build": "npm run rollup"
+		"build": "npm run rollup",
+		"watch": "npm run rollup -- --watch"
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.131",

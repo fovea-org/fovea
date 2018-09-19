@@ -2,6 +2,7 @@ import postcss, {AtRule, Declaration, Node, Result, Root, Rule, Transformer} fro
 import {IPostcssTakeVariablesPluginOptions} from "./i-postcss-take-variables-plugin-options";
 import {IPostcssTakeVariablesPluginContext} from "./i-postcss-take-variables-plugin-context";
 import {SCSS_TEMPORARY_PREFIX, SCSS_VARIABLE_REWRITE_PREFIX} from "../postcss-take-variables-prepare-plugin/postcss-take-variables-prepare-plugin";
+import {getMatchingOccurrenceOfClosingQualifier} from "@fovea/common";
 
 /**
  * The name of the PostCSS plugin
@@ -14,6 +15,12 @@ const name = "postcss-take-variables-plugin";
  * @type {RegExp}
  */
 const variableRegex = /^\$|^--/;
+
+/**
+ * A regular expression for matching usage of CSS Custom properties
+ * @type {RegExp}
+ */
+const cssCustomPropertyUsageRegex = /^var\(--[^,]*,([^)]*)\)/;
 
 /**
  * A Plugin that can take all variables (SCSS variables and CSS Custom variables) from the given CSS or SCSS
@@ -34,8 +41,30 @@ function initializer (options?: Partial<IPostcssTakeVariablesPluginOptions>): Tr
 		css.nodes.forEach(node => visit(node, normalizedOptions));
 
 		// Write the variables to the result as a warning (this will be our way of returning meaningful content)
+		replaceCSSCustomPropertiesWithDefaultValue(normalizedOptions.variables);
 		result.warn(JSON.stringify(normalizedOptions.variables));
 	};
+}
+
+/**
+ * Walks through all property values and detects if they use CSS Custom Properties. If so, it will replace them by their default values if they have any
+ * @param {object} variables
+ */
+function replaceCSSCustomPropertiesWithDefaultValue (variables: { [key: string]: string }): void {
+	Object.entries(variables).forEach(([key, value]) => {
+		const match = value.match(cssCustomPropertyUsageRegex);
+		if (match != null) {
+			const indexOfStart = value.indexOf("(");
+			const defaultValueIndexOfStart = value.indexOf(match[1]);
+			if (indexOfStart >= 0 && defaultValueIndexOfStart >= 0) {
+				const endIndex = getMatchingOccurrenceOfClosingQualifier(value, indexOfStart + 1, "(", ")");
+				if (endIndex >= 0) {
+					// Replace the property value with the default value for the CSS Custom Property
+					variables[key] = value.slice(defaultValueIndexOfStart, endIndex).trim();
+				}
+			}
+		}
+	});
 }
 
 /**

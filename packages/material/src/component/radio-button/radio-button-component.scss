@@ -20,7 +20,7 @@ $inner-circle-size: 10px;
 }
 
 :host {
-	color: var(--color-primary, #{$color-primary});
+	color: $color-primary;
 	@include hardwareAccelerated();
 
 	position: relative;
@@ -87,7 +87,7 @@ $inner-circle-size: 10px;
 
 #outer-1 {
 	opacity: 1;
-	border-color: var(--color-black-50, #{color(black, 50)});
+	border-color: color(black, 50);
 }
 
 #outer-2 {
@@ -127,11 +127,11 @@ $inner-circle-size: 10px;
 
 :host([disabled]) {
 	#inner {
-		background-color: var(--color-disabled, #{$color-disabled});
+		background-color: $color-disabled;
 	}
 
 	& #outer-1 {
-		border-color: var(--color-disabled, #{$color-disabled});
+		border-color: $color-disabled;
 		opacity: 1;
 	}
 
@@ -159,7 +159,7 @@ $inner-circle-size: 10px;
 
 @media (pointer: fine) {
 	:host(:not([disabled]):hover) {
-		background: var(--color-overlay, #{$color-overlay});
+		background: $color-overlay;
 	}
 
 	:host(:not([disabled]):hover),

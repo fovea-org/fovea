@@ -233,6 +233,7 @@ export class TemplateMultiElementResult<T, U extends Iterable<T> = T[]> extends 
 	 */
 	private onModelChanged (newValue: Optional<U>, change: Change<U>|undefined, host: IFoveaHost|ICustomAttribute, owner: Node, root: ShadowRoot|Element): void {
 		// If the new value hasn't been "proxified", do nothing. A new version will be incoming shortly that will be
+		// TODO: This means that ArrayLiterals won't be supported. E.g.: ${[1, 2, 3]} won't work since this won't be proxified
 		if (valueToProxy.get(<{}>newValue) == null || proxyToValue.get(<{}>newValue) == null) return;
 
 		// If the new value is null, destroy all children

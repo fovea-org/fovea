@@ -1,6 +1,6 @@
 <aside id="navbar">
 	<div id="navbar_content">
-		<a *foreach="${routes}" href="${item.name}" *routerLink *button>${item.name}</a>
+		<button-component *foreach="${routes}" href="${item.name}" *routerLink>${item.name}</button-component>
 	</div>
 </aside>
 

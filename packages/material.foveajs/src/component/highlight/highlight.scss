@@ -2,19 +2,19 @@
 
 .psh * {
 	@include body1();
-	font-family: var(--font-family-mono) !important;
-	color: var(--color-white-80);
+	font-family: $font-family-mono !important;
+	color: color(white, 80);
 }
 
 .psh {
 	@include scrollableXY();
 	contain: content;
-	background-color: var(--color-black-70);
+	background-color: color(black, 70);
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
-	padding: var(--default-padding);
-	border-radius: var(--default-rounding);
+	padding: $default-padding;
+	border-radius: $default-rounding;
 	direction: ltr;
 	text-align: left;
 	white-space: pre;
@@ -83,29 +83,29 @@
 }
 
 .psh .psh-caption {
-	padding: var(--size-3);
+	padding: size(3);
 	font-family: sans-serif;
-	font-size: var(--size-4);
+	font-size: size(4);
 }
 
 .psh .psh-caption, .psh .psh-filename {
 	background-color: #3C474C;
-	font-weight: var(--font-weight-medium);
-	line-height: var(--size-6);
+	font-weight: $font-weight-medium;
+	line-height: size(6);
 	word-break: break-all;
 	color: #B1B5B7
 }
 
 .psh .psh-filename {
-	padding: var(--size-1) var(--size-3);
+	padding: size(1) size(3);
 	font-family: monospace;
-	font-size: var(--size-3);
+	font-size: size(3);
 	text-align: center;
 }
 
 .psh .psh-request {
 	display: flex;
-	line-height: var(--size-6);
+	line-height: size(6);
 	font-family: monospace;
 	font-weight: 500;
 }
@@ -113,9 +113,9 @@
 .psh .psh-request .psh-request-method {
 	display: flex;
 	align-items: center;
-	padding: 0 var(--size-3);
+	padding: 0 size(3);
 	background-color: #8A999C;
-	font-size: var(--size-4);
+	font-size: size(4);
 	color: #FFFFFF;
 }
 
@@ -143,9 +143,9 @@
 	display: flex;
 	align-items: center;
 	width: 100%;
-	padding: var(--size-2) var(--size-3);
+	padding: size(2) size(3);
 	background-color: #58656A;
-	font-size: var(--size-3);
+	font-size: size(3);
 	word-break: break-all;
 	color: #B1B5B7;
 }
@@ -171,22 +171,22 @@
 }
 
 .psh .psh-add, .psh .psh-highlight, .psh .psh-remove {
-	margin: 0 -(var(size-5));
-	padding-left: var(--default-padding);
+	margin: 0;
+	padding-left: $default-padding;
 }
 
 .psh .psh-highlight {
-	border-left: var(--size-1) solid #DBA643;
+	border-left: size(1) solid #DBA643;
 	background-color: #454D4D;
 }
 
 .psh .psh-add {
-	border-left: var(--size-1) solid #42BD79;
+	border-left: size(1) solid #42BD79;
 	background-color: #3E4E50;
 }
 
 .psh .psh-remove {
-	border-left: var(--size-1) solid #DF435D;
+	border-left: size(1) solid #DF435D;
 	background-color: #45484F;
 }
 
@@ -329,7 +329,7 @@
 
 .psh .punctuation.definition.bold {
 	color: #FFE082;
-	font-weight: var(--font-weight-bold);
+	font-weight: $font-weight-bold;
 }
 
 .psh .punctuation.definition.italic {
@@ -420,7 +420,7 @@
 
 .psh .markup.bold {
 	color: #FFCB6B;
-	font-weight: var(--font-weight-bold);
+	font-weight: $font-weight-bold;
 }
 
 .psh .markup.changed {
@@ -546,7 +546,7 @@
 }
 
 .text {
-	color: var(--color-white-80);
+	color: color(white, 80);
 }
 
 .psh .html .meta.tag.doctype, .psh .jsx .meta.tag.doctype {

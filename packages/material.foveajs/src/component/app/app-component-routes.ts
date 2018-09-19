@@ -42,6 +42,11 @@ export const routes: RouteInput[] = [
 		component: async () => import("../../page/text-field/text-field-page-component")
 	},
 	{
+		path: "/dialog",
+		name: "dialog",
+		component: async () => import("../../page/dialog/dialog-page-component")
+	},
+	{
 		path: "/ripple",
 		name: "ripple",
 		component: async () => import("../../page/ripple/ripple-page-component")

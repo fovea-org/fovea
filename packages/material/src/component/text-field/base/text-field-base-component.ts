@@ -277,6 +277,7 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	@onChange(["helper", "errorMessage", "invalid"])
 	@listener("resize", {on: window})
 	protected refreshComputedInputFooterHeight (): void {
+		if (this.$inputFooter == null) return;
 		this.style.setProperty("--computed-input-footer-height", `${this.$inputFooter.offsetHeight}px`);
 	}
 

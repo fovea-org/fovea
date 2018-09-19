@@ -9,11 +9,11 @@ $minimum-horizontal-inset: 16px;
 	// Public CSS properties
 	--transition-duration: 150ms;
 	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
-	--color: var(--color-primary, #{$color-primary});
-	--color-input: var(--color-typography, #{$color-typography});
-	--color-fill: var(--color-black-05, #{color(black, 05)});
-	--color-invalid: var(--color-red, #{color(red)});
-	--color-disabled: var(--color-black-30, #{color(black, 30)});
+	--color: #{$color-primary};
+	--color-input: #{$color-typography};
+	--color-fill: #{color(black, 05)};
+	--color-invalid: #{color(red)};
+	--color-disabled: #{color(black, 30)};
 
 	// Private CSS properties
 
@@ -24,8 +24,8 @@ $minimum-horizontal-inset: 16px;
 	--label-y-transform-base: calc((var(--label-y-top) + var(--text-baseline-padding) - var(--top-content-inset) - var(--top-text-inset) - var(--label-top-padding)) * -1);
 
 	// The text baseline is skewed just a little bit
-	--text-baseline-padding: var(--size-1, #{size(1)});
-	--input-baseline-padding: var(--size-2, #{size(2)});
+	--text-baseline-padding: #{size(1)};
+	--input-baseline-padding: #{size(2)};
 
 	// The minimum height of the input/textarea
 	--min-input-height: 56px;
@@ -60,12 +60,12 @@ $minimum-horizontal-inset: 16px;
 
 // The first ruler never changes color value (unless hovered).
 :host {
-	--ruler-1-color: var(--color-black-30, #{color(black, 30)});
+	--ruler-1-color: #{color(black, 30)};
 }
 
 // Unless the input is invalid or disabled, the helper text always stay the same color
 :host(:not([invalid]):not([disabled])) {
-	--helper-color: var(--color-black-60, #{color(black, 60)});
+	--helper-color: #{color(black, 60)};
 }
 
 :host([invalid]) {
@@ -83,7 +83,7 @@ $minimum-horizontal-inset: 16px;
 
 // No matter if the input is invalid or not, the container will always preserve the same outlined color until it is focused (with the exception of :hover)
 :host(:not([focused]):not([disabled])[outlined]) {
-	--container-color: var(--color-black-40, #{color(black, 40)});
+	--container-color: #{color(black, 40)};
 }
 
 :host(:not([disabled])[focused][invalid][outlined]) {
@@ -96,15 +96,15 @@ $minimum-horizontal-inset: 16px;
 
 :host(:not([focused]):not([disabled]):not([invalid])) {
 	--input-color: var(--color-input);
-	--label-color: var(--color-black-60, #{color(black, 60)});
-	--ruler-2-color: var(--color-black-30, #{color(black, 30)});
+	--label-color: #{color(black, 60)};
+	--ruler-2-color: #{color(black, 30)};
 	--caret-color: inherit;
 }
 
 :host(:not([focused]):not([disabled])[invalid]) {
 	--input-color: var(--color-input);
 	--label-color: var(--color-invalid);
-	--ruler-2-color: var(--color-black-30, #{color(black, 30)});
+	--ruler-2-color: #{color(black, 30)};
 	--caret-color: var(--color-invalid);
 }
 
@@ -133,28 +133,28 @@ $minimum-horizontal-inset: 16px;
 @media (pointer: fine) {
 
 	:host(:not([disabled]):not([focused]):hover) {
-		--ruler-1-color: var(--color-black-50, #{color(black, 50)});
+		--ruler-1-color: #{color(black, 50)};
 	}
 
 	:host(:not([disabled]):not([focused])[outlined]:hover) {
-		--container-color: var(--color-black-50, #{color(black, 50)});
+		--container-color: #{color(black, 50)};
 	}
 }
 
 @include hostNotRtl('[leading-icon]') {
-	--left-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+	--left-input-label-inset: calc(#{$icon-size} + #{$minimum-horizontal-inset});
 }
 
 @include hostRtl('[leading-icon]') {
-	--right-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+	--right-input-label-inset: calc(#{$icon-size} + #{$minimum-horizontal-inset});
 }
 
 @include hostNotRtl('[trailing-icon]') {
-	--right-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+	--right-input-label-inset: calc(#{$icon-size} + #{$minimum-horizontal-inset});
 }
 
 @include hostRtl('[trailing-icon]') {
-	--left-input-label-inset: calc(var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset});
+	--left-input-label-inset: calc(#{$icon-size} + #{$minimum-horizontal-inset});
 }
 
 :host([filled]) {
@@ -166,11 +166,11 @@ $minimum-horizontal-inset: 16px;
 }
 
 @include hostNotRtl('[leading-icon][outlined]') {
-	--label-x-transform-focused: calc((var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset}) * -1);
+	--label-x-transform-focused: calc((#{$icon-size} + #{$minimum-horizontal-inset}) * -1);
 }
 
 @include hostRtl('[leading-icon][outlined]') {
-	--label-x-transform-focused: calc((var(--icon-size, #{$icon-size}) + #{$minimum-horizontal-inset}));
+	--label-x-transform-focused: calc((#{$icon-size} + #{$minimum-horizontal-inset}));
 }
 
 :host([filled]),
@@ -219,7 +219,7 @@ hr {
 @include hostNotRtl {
 	#input-footer {
 		& > * + * {
-			margin-left: var(--size-2, #{size(2)});
+			margin-left: size(2);
 		}
 	}
 }
@@ -227,7 +227,7 @@ hr {
 @include hostRtl {
 	#input-footer {
 		& > * + * {
-			margin-right: var(--size-2, #{size(2)});
+			margin-right: size(2);
 		}
 	}
 }
@@ -323,7 +323,7 @@ hr {
 
 :host([filled]) {
 	#container {
-		border-radius: var(--default-rounding, #{$default-rounding}) var(--default-rounding, #{$default-rounding}) 0 0;
+		border-radius: $default-rounding $default-rounding 0 0;
 		overflow: hidden;
 
 		&::before {
@@ -444,7 +444,6 @@ hr {
 }
 
 hr {
-	@include hr();
 	position: relative;
 	height: var(--hr-size);
 	border: none;

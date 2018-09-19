@@ -30,7 +30,7 @@ p {
 
 small {
 	@include caption();
-	color: var(--color-black-60);
+	color: color(black, 60);
 }
 
 label {
@@ -47,7 +47,7 @@ code {
 
 a,
 a:visited {
-	color: var(--color-primary);
+	color: $color-primary;
 }
 
 * {

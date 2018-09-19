@@ -9,12 +9,29 @@
 $body1-line-height: 24px;
 $caption-line-height: 20px;
 
+@mixin divider($position: bottom, $color: color(black, 12)) {
+	@if ($position == top) {
+		box-shadow: 0 -1px 0 0 #{$color};
+	} @else if ($position == right) {
+		box-shadow: 1px 0 0 0 #{$color};
+	} @else if ($position == bottom) {
+		box-shadow: 0 1px 0 0 #{$color};
+	} @else if ($position == left) {
+		box-shadow: -1px 0 0 0 #{$color};
+	} @else {
+		// All sides
+		box-shadow: 0 0 0 1px #{$color};
+	}
+}
+
 @mixin typographyBase {
-	font-family: var(--font-family, #{$font-family});
-	color: var(--color-typography, #{color(black, 80)});
+	font-family: $font-family;
+	color: $color-typography;
 	text-rendering: optimizeSpeed;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
+	margin: 0;
+	padding: 0;
 }
 
 @mixin headline1 {
@@ -22,11 +39,9 @@ $caption-line-height: 20px;
 	font-size: 96px;
 	line-height: 96px;
 	letter-spacing: -1.5px;
-	font-weight: var(--font-weight-light, #{$font-weight-light});
+	font-weight: $font-weight-light;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-8, #{size(8)}) 0;
-	padding: 0;
 }
 
 @mixin headline2 {
@@ -34,11 +49,9 @@ $caption-line-height: 20px;
 	font-size: 60px;
 	line-height: 60px;
 	letter-spacing: -0.5px;
-	font-weight: var(--font-weight-light, #{$font-weight-light});
+	font-weight: $font-weight-light;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-7, #{size(7)}) 0;
-	padding: 0;
 }
 
 @mixin headline3 {
@@ -46,11 +59,9 @@ $caption-line-height: 20px;
 	font-size: 48px;
 	line-height: 50px;
 	letter-spacing: 0;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-6, #{size(6)}) 0;
-	padding: 0;
 }
 
 @mixin headline4 {
@@ -58,11 +69,9 @@ $caption-line-height: 20px;
 	font-size: 34px;
 	line-height: 40px;
 	letter-spacing: .25px;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-5, #{size(5)}) 0;
-	padding: 0;
 }
 
 @mixin headline5 {
@@ -70,11 +79,9 @@ $caption-line-height: 20px;
 	font-size: 24px;
 	line-height: 38px;
 	letter-spacing: 0;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-4, #{size(4)}) 0;
-	padding: 0;
 }
 
 @mixin headline6 {
@@ -82,11 +89,9 @@ $caption-line-height: 20px;
 	font-size: 20px;
 	line-height: 32px;
 	letter-spacing: .15px;
-	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	font-weight: $font-weight-medium;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: var(--size-4, #{size(4)}) 0;
-	padding: 0;
 }
 
 @mixin subtitle1 {
@@ -94,11 +99,9 @@ $caption-line-height: 20px;
 	font-size: 16px;
 	line-height: 28px;
 	letter-spacing: .15px;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin subtitle2 {
@@ -106,11 +109,9 @@ $caption-line-height: 20px;
 	font-size: 14px;
 	line-height: 22px;
 	letter-spacing: .1px;
-	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	font-weight: $font-weight-medium;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin body1 {
@@ -118,11 +119,9 @@ $caption-line-height: 20px;
 	font-size: 16px;
 	line-height: $body1-line-height;
 	letter-spacing: .5px;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin body2 {
@@ -130,11 +129,9 @@ $caption-line-height: 20px;
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: .45px;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin caption {
@@ -142,11 +139,9 @@ $caption-line-height: 20px;
 	font-size: 12px;
 	line-height: $caption-line-height;
 	letter-spacing: .4px;
-	font-weight: var(--font-weight-regular, #{$font-weight-regular});
+	font-weight: $font-weight-regular;
 	text-decoration: inherit;
 	text-transform: inherit;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin button {
@@ -154,11 +149,9 @@ $caption-line-height: 20px;
 	font-size: 14px;
 	line-height: 36px;
 	letter-spacing: .75px;
-	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	font-weight: $font-weight-medium;
 	text-decoration: none;
 	text-transform: uppercase;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin overline {
@@ -166,33 +159,27 @@ $caption-line-height: 20px;
 	font-size: 12px;
 	line-height: 32px;
 	letter-spacing: 1.5px;
-	font-weight: var(--font-weight-medium, #{$font-weight-medium});
+	font-weight: $font-weight-medium;
 	text-decoration: none;
 	text-transform: uppercase;
-	margin: 0;
-	padding: 0;
 }
 
 @mixin hardwareAccelerated {
-	transform: translate3d(0,0,0);
-}
-
-@mixin hr {
-	border-bottom: 1px solid var(--color-black-20, #{color(black, 20)});
+	transform: translate3d(0, 0, 0);
 }
 
 //noinspection CssOverwrittenProperties
 @mixin reset {
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-webkit-tap-highlight-color: transparent;
 	box-sizing: border-box;
 }
 
 @mixin code {
-	font-family: var(--font-family-mono, #{$font-family-mono}) !important;
+	font-family: $font-family-mono !important;
 }
 
-@mixin hostRtl ($selectorArgs...) {
+@mixin hostRtl($selectorArgs...) {
 
 	@if length($selectorArgs) == 0 {
 		// For browsers that support the ':dir' pseudo class
@@ -204,9 +191,7 @@ $caption-line-height: 20px;
 		:host([dir="rtl"]#{$selectorArgs}) {
 			@content;
 		}
-	}
-
-	@else {
+	} @else {
 		@each $currentSelector in $selectorArgs {
 			// For browsers that support the ':dir' pseudo class
 			:host(:dir(rtl)#{$currentSelector}) {
@@ -221,7 +206,7 @@ $caption-line-height: 20px;
 	}
 }
 
-@mixin hostNotRtl ($selectorArgs...) {
+@mixin hostNotRtl($selectorArgs...) {
 
 	@if length($selectorArgs) == 0 {
 		// For browsers that support the ':dir' pseudo class
@@ -233,9 +218,7 @@ $caption-line-height: 20px;
 		:host(:not([dir="rtl"])#{$selectorArgs}) {
 			@content;
 		}
-	}
-
-	@else {
+	} @else {
 		@each $currentSelector in $selectorArgs {
 			// For browsers that support the ':dir' pseudo class
 			:host(:not(:dir(rtl))#{$currentSelector}) {

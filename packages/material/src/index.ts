@@ -1,5 +1,5 @@
 export * from "./icon-set/material-icons";
-export * from "./component/button/button";
+export * from "./component/button/button-component";
 export * from "./component/checkbox/checkbox-component";
 export * from "./component/icon/icon-component";
 export * from "./component/icon/i-icon";
@@ -11,3 +11,6 @@ export * from "./component/switch/switch-component";
 export * from "./component/text-field/single-line-text-field/single-line-text-field-component";
 export * from "./component/text-field/multi-line-text-field/multi-line-text-field-component";
 export * from "./component/text-field/textarea/textarea-component";
+export * from "./component/dialog/dialog-component";
+export * from "./component/dialog/i-open-dialog-options";
+export * from "./component/dialog/open-dialog";

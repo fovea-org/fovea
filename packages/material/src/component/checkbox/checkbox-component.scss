@@ -20,7 +20,7 @@ $size: 18px;
 }
 
 :host {
-	color: var(--color-primary, #{$color-primary});
+	color: $color-primary;
 	@include hardwareAccelerated();
 
 	position: relative;
@@ -82,7 +82,7 @@ $size: 18px;
 	}
 
 	&::before {
-		border: 2px solid var(--color-black-50, color(black, 50));
+		border: 2px solid color(black, 50);
 		opacity: 1;
 	}
 
@@ -100,7 +100,7 @@ $size: 18px;
 	& path {
 		transform: translate3d(0,0,0) rotate(0deg);
 		transform-origin: center;
-		stroke: var(--color-white, #{color(white)});
+		stroke: white;
 		stroke-width: 3px;
 		stroke-dasharray: 30;
 		transition:
@@ -162,14 +162,14 @@ $size: 18px;
 
 :host([disabled]:not([checked])) #checkbox {
 	&::before {
-		border-color: var(--color-disabled, #{$color-disabled});
+		border-color: $color-disabled;
 	}
 }
 
 :host([disabled][checked]) #checkbox,
 :host([disabled][indeterminate]) #checkbox {
 	&::after {
-		background-color: var(--color-disabled, #{$color-disabled});
+		background-color: $color-disabled;
 	}
 }
 
@@ -192,7 +192,7 @@ $size: 18px;
 
 @media (pointer: fine) {
 	:host(:not([disabled]):hover) {
-		background: var(--color-overlay, #{$color-overlay});
+		background: $color-overlay;
 	}
 
 	:host(:not([disabled]):hover),
