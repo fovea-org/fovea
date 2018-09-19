@@ -1,7 +1,7 @@
 import postcss, {AtRule, decl, Declaration, Node, Root, Rule, rule, Transformer} from "postcss";
 import {IPostcssTakeVariablesPreparePluginOptions} from "./i-postcss-take-variables-prepare-plugin-options";
 import {IPostcssTakeVariablesPreparePluginContext} from "./i-postcss-take-variables-prepare-plugin-context";
-import {containsVariableReference, cssCustomPropertyPrefix, cssCustomPropertyRegex, customPropertyRegex, replaceVariableReferences, SCSS_TEMPORARY_PREFIX, SCSS_VARIABLE_REWRITE_PREFIX, scssVariablePrefix, scssVariableRegex} from "../util";
+import {containsVariableReference, cssCustomPropertyPrefix, escapeValue, isCSSCustomProperty, isCustomProperty, isScssVariable, replaceVariableReferences, SCSS_TEMPORARY_PREFIX, SCSS_VARIABLE_REWRITE_PREFIX, scssVariablePrefix} from "../util";
 
 /**
  * The name of the PostCSS plugin
@@ -132,7 +132,7 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 	if (!isScss && containsVariableReference(node.value)) {
 		lazyWorkers.push(() => node.replaceWith(decl({
 			prop: node.prop,
-			value: replaceVariableReferences(node.value, variables)
+			value: replaceVariableReferences(node.prop, node.value, variables)
 		})));
 	}
 
@@ -143,7 +143,7 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 		// Make sure to add a cloned SCSS variable to the root
 		lazyWorkers.push(root => root.append(decl({
 			prop: scssPropName,
-			value: replaceVariableReferences(node.value, variables)
+			value: replaceVariableReferences(node.prop, node.value, variables)
 		})));
 
 		// Replace the node with one that simply references the SCSS prop
@@ -166,7 +166,7 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 			lazyWorkers.push(() => {
 				node.replaceWith(decl({
 					prop: node.prop,
-					value: replaceVariableReferences(node.value, variables)
+					value: replaceVariableReferences(node.prop, node.value, variables)
 				}));
 			});
 		}
@@ -197,40 +197,4 @@ function normalizeContext (options: Partial<IPostcssTakeVariablesPreparePluginCo
 		lazyWorkers: [],
 		...options
 	};
-}
-
-/**
- * Returns true if the given property is a SCSS variable declaration
- * @param {string} property
- * @returns {boolean}
- */
-function isScssVariable (property: string): boolean {
-	return scssVariableRegex.test(property);
-}
-
-/**
- * Returns true if the given property is a variable declaration
- * @param {string} property
- * @returns {boolean}
- */
-function isCustomProperty (property: string): boolean {
-	return customPropertyRegex.test(property);
-}
-
-/**
- * Escapes the given value
- * @param {string} value
- * @returns {string}
- */
-function escapeValue (value: string): string {
-	return `#{${value}}`;
-}
-
-/**
- * Returns true if the given property is a CSS Custom property
- * @param {string} property
- * @returns {boolean}
- */
-function isCSSCustomProperty (property: string): boolean {
-	return cssCustomPropertyRegex.test(property);
 }

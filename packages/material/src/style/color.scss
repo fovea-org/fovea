@@ -21,9 +21,9 @@ $rgb-map: (
 }
 
 // Primary and accent colors for the app
-$color-primary: color(purple);
-$color-accent: color(pink);
-$color-typography: color(black, 80);
-$color-disabled: color(black, 30);
+$color-primary: var(--color-primary, #{color(purple)});
+$color-accent: var(--color-accent, #{color(pink)});
+$color-typography: var(--color-typography, #{color(black, 80)});
+$color-disabled: var(--color-disabled, #{color(black, 30)});
 $color-disabled-hex: var(--color-disabled-hex, #a7a5a5);
-$color-overlay: color(black, 04);
+$color-overlay: var(--color-overlay, #{color(black, 04)});

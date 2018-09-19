@@ -1,4 +1,4 @@
-@import "../../node_modules/@fovea/material/dist/index";
+@import "~@fovea/material";
 
 :root {
 	--rgb-black: #{map_get($rgb-map, black)};
@@ -10,6 +10,9 @@
 	--rgb-yellow: #{map_get($rgb-map, yellow)};
 	--rgb-blue: #{map_get($rgb-map, blue)};
 	--rgb-orange: #{map_get($rgb-map, orange)};
+
+	--color-primary: rgb(var(--rgb-purple));
+	--color-accent: rgb(var(--rgb-pink));
 }
 
 $color-background: color(black, 0.01);

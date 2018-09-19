@@ -28,7 +28,7 @@ export default [
 						const result = await bundler.Bundle("./base.scss");
 						const outputDirs = new Set(
 							[].concat.apply([], configs.map(({config: currentConfig}) => currentConfig.output))
-								.map(output => join(dirname(output.file), "../"))
+								.map(output => join(dirname(output.file)))
 						);
 						outputDirs.forEach(outputDir => {
 							sync(outputDir);

@@ -1,7 +1,14 @@
 import {readFileSync, statSync} from "fs";
-import {basename, dirname, join} from "path";
+import {basename, dirname, extname, join} from "path";
 import {ISassImportResolveOptions} from "./i-sass-import-resolve-options";
 import {ISassImportResolveResult} from "./i-sass-import-resolve-result";
+import {sync} from "resolve";
+
+/**
+ * Resolvable file extensions
+ * @type {string[]}
+ */
+const EXTENSIONS: string[] = [".scss", ".sass", ".css"];
 
 /**
  * Helps with resolving the absolute path of a Sass file
@@ -10,6 +17,52 @@ import {ISassImportResolveResult} from "./i-sass-import-resolve-result";
  * @returns {ISassImportResolveResult|undefined}
  */
 export function sassImportResolve (id: string, rawOptions: Partial<ISassImportResolveOptions>): ISassImportResolveResult|undefined {
+	const options: ISassImportResolveOptions = {
+		cwd: process.cwd(),
+		readFile: false,
+		...rawOptions
+	};
+
+	const isLib = id.startsWith("~");
+
+	return isLib
+		? resolveLib(id.slice(1), options)
+		: resolveFile(id, options);
+}
+
+/**
+ * Resolves a sass file from node_modules
+ * @param {string} id
+ * @param {ISassImportResolveOptions} options
+ * @returns {ISassImportResolveResult}
+ */
+function resolveLib (id: string, options: ISassImportResolveOptions): ISassImportResolveResult {
+	try {
+		const response = sync(id, {
+			basedir: options.cwd,
+			extensions: [".scss", ".sass", ".css"],
+			pathFilter (_, path): string {
+				const ext = extname(path);
+				if (ext === "" || EXTENSIONS.some(EXT => ext === EXT)) return path;
+				return path.slice(0, path.lastIndexOf(ext));
+			}
+		});
+		return {
+			file: response,
+			contents: !options.readFile ? undefined : readFileSync(response).toString()
+		};
+	} catch (ex) {
+		throw new Error(`File: '${id}' to import not found or unreadable`);
+	}
+}
+
+/**
+ * Resolves a sass file relative to the given working directory
+ * @param {string} id
+ * @param {Partial<ISassImportResolveOptions>} rawOptions
+ * @returns {ISassImportResolveResult|undefined}
+ */
+export function resolveFile (id: string, rawOptions: Partial<ISassImportResolveOptions>): ISassImportResolveResult|undefined {
 	const options: ISassImportResolveOptions = {
 		cwd: process.cwd(),
 		readFile: false,
@@ -122,9 +175,11 @@ function matchFile (file: string, options: ISassImportResolveOptions): ISassImpo
 				returnValue = false;
 			}
 
-			returnValue = {
-				file
-			};
+			else {
+				returnValue = {
+					file
+				};
+			}
 		}
 
 		catch {

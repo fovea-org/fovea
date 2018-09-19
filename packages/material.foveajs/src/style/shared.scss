@@ -1,4 +1,4 @@
-@import "../../node_modules/@fovea/material/dist/index";
+@import "~@fovea/material";
 
 h1 {
 	@include headline1();

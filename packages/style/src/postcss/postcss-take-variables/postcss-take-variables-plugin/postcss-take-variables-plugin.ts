@@ -37,7 +37,6 @@ function initializer (options?: Partial<IPostcssTakeVariablesPluginOptions>): Tr
 		replaceCSSCustomPropertiesWithDefaultValue(normalizedOptions.variables);
 		revertEscapedStrings(normalizedOptions.variables);
 		result.warn(JSON.stringify(normalizedOptions.variables));
-		console.log(normalizedOptions.variables);
 	};
 }
 
@@ -45,10 +44,11 @@ function initializer (options?: Partial<IPostcssTakeVariablesPluginOptions>): Tr
  * Walks through all property values and detects if they use CSS Custom Properties. If so, it will replace them by their default values if they have any
  * @param {object} variables
  */
+// @ts-ignore
 function replaceCSSCustomPropertiesWithDefaultValue (variables: { [key: string]: string }): void {
 	Object.entries(variables).forEach(([key, value]) => {
 		if (containsVariableReference(value)) {
-			variables[key] = replaceVariableReferences(value, variables);
+			variables[key] = replaceVariableReferences(key, value, variables);
 		}
 	});
 }
@@ -57,6 +57,7 @@ function replaceCSSCustomPropertiesWithDefaultValue (variables: { [key: string]:
  * Walks through all property values and Un-escapes escaped string values
  * @param {object} variables
  */
+// @ts-ignore
 function revertEscapedStrings (variables: { [key: string]: string }): void {
 	const start = /^#{['"`]/;
 	const end = /'}$/;

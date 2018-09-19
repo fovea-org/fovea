@@ -1,8 +1,10 @@
-// This file contains font variables
 @import "./size";
 
+$rounding-size-default-value: $grid-size-default-value;
+$rounding-size: var(--rounding-size, #{$rounding-size-default-value});
+
 @function rounding ($multiplier: 1) {
-	@return #{'var(--rounding-#{$multiplier}, #{$grid-size * $multiplier})'};
+	@return #{'calc(#{$rounding-size} * #{$multiplier})'};
 }
 
 $default-rounding: rounding();

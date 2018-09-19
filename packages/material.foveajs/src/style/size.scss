@@ -1,0 +1,6 @@
+@import "~@fovea/material";
+
+:root {
+	--grid-size: #{$grid-size-default-value};
+	--icon-size: #{$icon-size-default-value};
+}
