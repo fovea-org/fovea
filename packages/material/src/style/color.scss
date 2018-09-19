@@ -12,11 +12,11 @@ $rgb-map: (
 
 @function color ($color, $alpha:null) {
 	@if ($alpha and $alpha != 100) {
-		@return #{'var(--color-#{$color}-#{$alpha}, rgba(#{map-get($rgb-map, $color)}, #{$alpha / 100}))'};
+		@return #{'rgba(var(--rgb-#{$color}, #{map-get($rgb-map, $color)}), #{$alpha / 100})'};
 	}
 
 	@else {
-		@return #{'var(--color-#{$color}-100, rgb(#{map-get($rgb-map, $color)}))'};
+		@return #{'rgb(var(--rgb-#{$color}, #{map-get($rgb-map, $color)}))'};
 	}
 }
 

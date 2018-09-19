@@ -5,10 +5,10 @@ import {IPostCSS} from "../postcss/i-postcss";
 import {postCSSFoveaPlugin} from "../postcss/postcss-fovea-plugin/postcss-fovea-plugin";
 import {IFoveaStylesTakeVariablesResult} from "./i-fovea-styles-take-variables-result";
 import {IFoveaStylesTakeVariablesOptions} from "./i-fovea-styles-take-variables-options";
-import {postCSSTakeVariablesPlugin} from "../postcss/postcss-take-variables-plugin/postcss-take-variables-plugin";
+import {postCSSTakeVariablesPlugin} from "../postcss/postcss-take-variables/postcss-take-variables-plugin/postcss-take-variables-plugin";
 // @ts-ignore
 import postCSSImport from "postcss-import";
-import {postCSSTakeVariablesPreparePlugin} from "../postcss/postcss-take-variables-prepare-plugin/postcss-take-variables-prepare-plugin";
+import {postCSSTakeVariablesPreparePlugin} from "../postcss/postcss-take-variables/postcss-take-variables-prepare-plugin/postcss-take-variables-prepare-plugin";
 import {IFoveaStylesTakeImportPathsOptions} from "./i-fovea-styles-take-import-paths-options";
 import {IFoveaStylesTakeImportPathsResult} from "./i-fovea-styles-take-import-paths-result";
 import {IFoveaStylesBaseOptions} from "./i-fovea-styles-base-options";

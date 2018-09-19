@@ -1,6 +1,7 @@
 import postcss, {AtRule, decl, Declaration, Node, Root, Rule, rule, Transformer} from "postcss";
 import {IPostcssTakeVariablesPreparePluginOptions} from "./i-postcss-take-variables-prepare-plugin-options";
 import {IPostcssTakeVariablesPreparePluginContext} from "./i-postcss-take-variables-prepare-plugin-context";
+import {containsVariableReference, cssCustomPropertyPrefix, cssCustomPropertyRegex, customPropertyRegex, replaceVariableReferences, SCSS_TEMPORARY_PREFIX, SCSS_VARIABLE_REWRITE_PREFIX, scssVariablePrefix, scssVariableRegex} from "../util";
 
 /**
  * The name of the PostCSS plugin
@@ -8,73 +9,6 @@ import {IPostcssTakeVariablesPreparePluginContext} from "./i-postcss-take-variab
  */
 const name = "postcss-take-variables-prepare-plugin";
 
-/**
- * The prefix to add to rewritten scss variables
- * @type {string}
- */
-export const SCSS_VARIABLE_REWRITE_PREFIX = "--__REWRITTEN_SCSS_VARIABLE__";
-
-/**
- * The prefix to add to temporary scss variables
- * @type {string}
- */
-export const SCSS_TEMPORARY_PREFIX = "__TEMPORARY_SCSS_VARIABLE__";
-
-/**
- * A Regular Expression to match SCSS variables
- * @type {RegExp}
- */
-const scssVariableRegex = /^\$\w+/;
-
-/**
- * A Regular Expression to match CSS variables
- * @type {RegExp}
- */
-// @ts-ignore
-const cssVariableRegexGlobal = /var\([^)]*\)/g;
-
-/**
- * A Regular Expression to match CSS variables
- * @type {RegExp}
- */
-// @ts-ignore
-const cssVariableRegex = /var\(([^)]*)\)/;
-//
-/**
- * The prefix for SCSS variables
- * @type {string}
- */
-const scssVariablePrefix = "$";
-//
-/**
- * The prefix for CSS Custom properties
- * @type {string}
- */
-const cssCustomPropertyPrefix = "--";
-
-/**
- * A Regular Expression to match CSS Custom Properties
- * @type {RegExp}
- */
-const cssCustomPropertyRegex = new RegExp(`^${cssCustomPropertyPrefix}`);
-
-/**
- * A Regular Expression to match SCSS variables and/or CSS custom properties
- * @type {RegExp}
- */
-const customPropertyRegex = /^\$|^--/;
-
-/**
- * A Regular Expression to match references to SCSS variables and/or CSS custom properties
- * @type {RegExp}
- */
-const variableReferenceRegex = /(\$[^{),;\s\t\n]+|var\([^)]*\))/;
-
-/**
- * A Regular Expression to match references to SCSS variables and/or CSS custom properties
- * @type {RegExp}
- */
-const variableReferenceRegexGlobal = /(\$[^{),;\s\t\n]+|var\([^)]*\))/g;
 
 /**
  * A Plugin that can take all variables (SCSS variables and CSS Custom variables) from the given CSS or SCSS
@@ -227,6 +161,16 @@ function visitDeclaration (node: Declaration, {isScss, lazyWorkers, variables}: 
 
 	// If this is a SCSS file and the property is a SCSS variable, and it is located within the root (e.g. not nested inside something else), keep it, but also add a CSS custom property that references it (otherwise it will be removed during compilation)
 	else if (isScss && isScssVariable(node.prop) && node.parent.type === "root") {
+
+		if (containsVariableReference(node.value)) {
+			lazyWorkers.push(() => {
+				node.replaceWith(decl({
+					prop: node.prop,
+					value: replaceVariableReferences(node.value, variables)
+				}));
+			});
+		}
+
 		// Make sure to give the custom property a name that we know to be temporarily renamed
 		const cssCustomPropertyName = SCSS_VARIABLE_REWRITE_PREFIX + node.prop.slice(scssVariablePrefix.length);
 
@@ -271,29 +215,6 @@ function isScssVariable (property: string): boolean {
  */
 function isCustomProperty (property: string): boolean {
 	return customPropertyRegex.test(property);
-}
-
-/**
- * Returns true if the given value contains one or more variable references
- * @param {string} value
- * @returns {boolean}
- */
-function containsVariableReference (value: string): boolean {
-	return variableReferenceRegex.test(value);
-}
-
-/**
- * Replaces all references to variables by the values of those variables
- * @param {string} value
- * @param {object} variables
- * @returns {string}
- */
-function replaceVariableReferences (value: string, variables: {[key: string]: string}): string {
-	return `#{'${value
-		.replace(variableReferenceRegexGlobal, match => {
-			const variableMatch = variables[match];
-			return variableMatch != null ? containsVariableReference(variableMatch) ? replaceVariableReferences(variableMatch, variables) : variableMatch : match;
-		})}'}`;
 }
 
 /**
