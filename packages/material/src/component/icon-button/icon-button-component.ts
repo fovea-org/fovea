@@ -3,6 +3,7 @@ import {RippleComponent} from "../ripple/ripple-component";
 import {IconComponent} from "../icon/icon-component";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {IS_TOUCH_DEVICE} from "../../util/device-util";
+import {FormItemComponent} from "../form-item/form-item-component";
 
 /**
  * This element represents an icon that acts as a Button
@@ -15,9 +16,11 @@ import {IS_TOUCH_DEVICE} from "../../util/device-util";
 @hostAttributes({
 	"*ripple": "center: true",
 	role: "button",
-	tabindex: 0
+	tabindex: "${disabled ? '-1' : '0'}",
+	name: "${name}",
+	value: "${value}"
 })
-export class IconButtonComponent extends HTMLElement {
+export class IconButtonComponent extends FormItemComponent {
 
 	/**
 	 * The selector for the icon to use. The icon must known by the IconComponent
@@ -42,12 +45,6 @@ export class IconButtonComponent extends HTMLElement {
 	 * @type {boolean}
 	 */
 	@prop @setOnHost public toggled: boolean = false;
-
-	/**
-	 * If true, the IconButtonComponent will be disabled
-	 * @type {boolean}
-	 */
-	@prop @setOnHost public disabled: boolean = false;
 
 	/**
 	 * Invoked when the icon button is clicked

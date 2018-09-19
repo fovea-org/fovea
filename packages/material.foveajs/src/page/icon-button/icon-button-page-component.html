@@ -24,6 +24,20 @@
 	<icon-button-component class="accent" icon="heart" disabled></icon-button-component>
 </showcase-component>
 
+<showcase-component caption="Can be used to submit <form> elements in place of regular <button> elements">
+	<form onsubmit="event.preventDefault()">
+		<label>
+			<checkbox-component name="icon-button-page-foo" required></checkbox-component>
+			Accept A
+		</label>
+		<label>
+			<checkbox-component name="icon-button-page-bar" required></checkbox-component>
+			Accept B
+		</label>
+		<icon-button-component icon="send"></icon-button-component>
+	</form>
+</showcase-component>
+
 <h5>Usage</h5>
 
 <p>You can use the <code>icon-button-component</code> as a custom element wherever you want.</p>

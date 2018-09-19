@@ -4,10 +4,11 @@
 	@include reset();
 	contain: content;
 	overflow: hidden;
-	color: currentColor;
+	color: $color-typography;
 	padding: $default-padding;
 	border-radius: 50%;
-	cursor: pointer;
+	display: inline-flex;
+	vertical-align: middle;
 
 	& * {
 		color: inherit;
@@ -19,6 +20,30 @@
 		//noinspection CssInvalidPropertyValue
 		-webkit-mask-image: -webkit-radial-gradient(white, black);
 	}
+}
+
+
+:host,
+::slotted(button) {
+	cursor: pointer;
+}
+
+::slotted(button) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 100%;
+	appearance: none;
+	border: none;
+	background-image: none;
+	background: transparent;
+}
+
+icon-component {
+	pointer-events: none;
 }
 
 @media (pointer: fine) {
@@ -33,6 +58,13 @@
 }
 
 :host(:focus),
-:host(:active) {
+:host(:active),
+::slotted(button:focus),
+::slotted(button:active) {
 	outline: none;
+}
+
+:host(::-moz-focus-inner),
+::slotted(button::-moz-focus-inner) {
+	border: 0;
 }

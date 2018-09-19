@@ -1,2 +1,11 @@
+<slot></slot>
+<button
+	$formItem
+	id="button"
+	disabled="${disabled}"
+	name="${name}"
+	value="${value}"
+	tabindex="-1"
+></button>
 <icon-component icon="${icon}" *if="${icon != null && (!toggleable || !toggled}"></icon-component>
 <icon-component icon="${toggledIcon}" *if="${toggledIcon != null && (toggleable && toggled)}"></icon-component>
