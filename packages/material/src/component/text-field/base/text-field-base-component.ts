@@ -1,5 +1,6 @@
 import {hostAttributes, listener, onChange, prop, setOnHost} from "@fovea/core";
 import {FormItemComponent} from "../../form-item/form-item-component";
+import {debounceUntilIdle} from "../../../util/debounce-util";
 
 /**
  * This Custom Element represents the base functionality of a Text Field.
@@ -170,6 +171,18 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	protected $formItem: HTMLInputElement|HTMLTextAreaElement;
 
 	/**
+	 * A reference to 'refreshOutline' bound to this
+	 * @type {Function}
+	 */
+	private boundRefreshOutline = this.refreshOutline.bind(this);
+
+	/**
+	 * A reference to 'refreshComputedInputFooterHeight' bound to this
+	 * @type {Function}
+	 */
+	private boundRefreshComputedInputFooterHeight = this.refreshComputedInputFooterHeight.bind(this);
+
+	/**
 	 * A getter for the 'minlength' property
 	 * @returns {number | undefined}
 	 */
@@ -226,23 +239,22 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	}
 
 	/**
-	 * Invoked when the Switch is attached to the DOM
-	 */
-	protected connectedCallback () {
-		super.connectedCallback();
-		this.appendChild(this.$labelItem);
-		setTimeout(() => {
-			this.refreshComputedInputFooterHeight();
-			this.refreshOutline();
-		});
-	}
-
-	/**
 	 * Invoked when an 'input' event is fired on the Text Field
 	 */
 	@listener("input", {on: "$formItem"})
 	public onInputChanged (): void {
 		this.value = this.$formItem.value;
+	}
+
+	/**
+	 * Invoked when the Switch is attached to the DOM
+	 */
+	protected connectedCallback () {
+		super.connectedCallback();
+		this.appendChild(this.$labelItem);
+
+		this.debounceRefreshComputedInputFooterHeight();
+		this.debounceRefreshOutline();
 	}
 
 	/**
@@ -272,20 +284,26 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	}
 
 	/**
-	 * Computes the height of the input footer and sets it as a CSS Custom Property
+	 * Debounces refreshing the computed input footer height
 	 */
 	@onChange(["helper", "errorMessage", "invalid"])
 	@listener("resize", {on: window})
-	protected refreshComputedInputFooterHeight (): void {
-		if (this.$inputFooter == null) return;
-		this.style.setProperty("--computed-input-footer-height", `${this.$inputFooter.offsetHeight}px`);
+	protected debounceRefreshComputedInputFooterHeight (): void {
+		debounceUntilIdle(this.boundRefreshComputedInputFooterHeight);
+	}
+
+	/**
+	 * Debounces refreshing the outline of the TextField
+	 */
+	@onChange(["label", "focused", "outlined", "filled", "invalid"])
+	@listener("resize", {on: window})
+	protected debounceRefreshOutline (): void {
+		debounceUntilIdle(this.boundRefreshOutline);
 	}
 
 	/**
 	 * Refreshes the outline of the text field
 	 */
-	@onChange(["label", "focused", "outlined", "filled", "invalid"])
-	@listener("resize", {on: window})
 	protected refreshOutline (): void {
 		if (!this.outlined) return;
 
@@ -295,11 +313,19 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 		const height = this.offsetHeight - normalizedHelperHeight;
 		if (width < 0 || height < 0) return;
 
-		const labelWidth = this.$labelItem.offsetWidth * 0.75;
+		const labelWidth = this.$labelItem == null ? 0 : (this.$labelItem.offsetWidth * 0.75);
 		this.outlineCutoffStart = this.outlineInset - this.outlineCutoffMargin;
 		this.outlineCutoffWidth = labelWidth === 0 ? 0 : labelWidth + (this.outlineCutoffMargin * 2);
 		this.outlineViewBox = `0 0 ${width} ${height}`;
 		this.rectWidth = Math.max(0, width - (this.outlineBorderCorrection * 2));
 		this.rectHeight = Math.max(0, height - (this.outlineBorderCorrection * 2));
+	}
+
+	/**
+	 * Computes the height of the input footer and sets it as a CSS Custom Property
+	 */
+	private refreshComputedInputFooterHeight (): void {
+		if (this.$inputFooter == null) return;
+		this.style.setProperty("--computed-input-footer-height", `${this.$inputFooter.offsetHeight}px`);
 	}
 }

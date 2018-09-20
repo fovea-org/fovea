@@ -2,6 +2,7 @@ import {listener, setOnHost, styleSrc, templateSrc} from "@fovea/core";
 import {TextareaBaseComponent} from "../base/textarea-base-component";
 import {wait} from "../../../util/async-util";
 import {getMsFromCSSDuration} from "../../../util/duration-util";
+import {debounce} from "../../../util/debounce-util";
 
 // tslint:disable:no-any
 
@@ -23,9 +24,10 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	private lastRefreshHeightPromise: Promise<void>|undefined;
 
 	/**
-	 * A reference to any active timeout to reset overflow
+	 * A reference to resetOverflow with a this-binding
+	 * @type {() => void}
 	 */
-	private overflowTimeout: number|undefined;
+	private boundResetOverflow = this.resetOverflow.bind(this);
 
 	/**
 	 * Holds true if the text field is currently animating
@@ -43,6 +45,7 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 		this.animating
 			? this.enqueueRefreshHeight()
 			: this.refreshHeight().then();
+
 		this.debounceResetOverflow();
 	}
 
@@ -58,14 +61,10 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	 * CSS Custom Property '--transition-duration'
 	 */
 	private debounceResetOverflow (): void {
-		if (this.overflowTimeout != null) {
-			clearTimeout(this.overflowTimeout);
-		}
-
-		this.overflowTimeout = <number><any> setTimeout(() => {
-			this.resetOverflow();
-			this.overflowTimeout = undefined;
-		}, getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration")));
+		debounce(
+			this.boundResetOverflow,
+			getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration"))
+		);
 	}
 
 	/**

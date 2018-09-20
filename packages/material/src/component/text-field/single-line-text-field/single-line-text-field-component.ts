@@ -2,6 +2,7 @@ import {dependsOn, hostAttributes, onChange, prop, setOnHost, styleSrc, template
 import {TextFieldBaseComponent} from "../base/text-field-base-component";
 import {IconComponent} from "../../icon/icon-component";
 import {getMsFromCSSDuration} from "../../../util/duration-util";
+import {debounce} from "../../../util/debounce-util";
 
 // tslint:disable:no-any
 
@@ -86,9 +87,9 @@ export class SingleLineTextFieldComponent extends TextFieldBaseComponent {
 	protected $formItem: HTMLInputElement;
 
 	/**
-	 * The timeout, if any, for an async task to toggle of 'replacingHelperText'
+	 * A reference to the toggleOffReplacingHelperText method with a this-binding
 	 */
-	private toggleOffReplacingHelperTextTimeout: number|undefined;
+	private boundToggleOffReplacingHelperText = this.toggleOffReplacingHelperText.bind(this);
 
 	/**
 	 * Updates the validity of the input
@@ -115,12 +116,16 @@ export class SingleLineTextFieldComponent extends TextFieldBaseComponent {
 	 * Debounces toggling off the 'replacingHelperText' prop
 	 */
 	private debounceToggleOffReplacingHelperText (): void {
-		if (this.toggleOffReplacingHelperTextTimeout != null) {
-			clearTimeout(this.toggleOffReplacingHelperTextTimeout);
-		}
-		this.toggleOffReplacingHelperTextTimeout = <number><any>setTimeout(
-			() => this.replacingHelperText = false,
+		debounce(
+			this.boundToggleOffReplacingHelperText,
 			getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration"))
 		);
+	}
+
+	/**
+	 * Toggles off the 'replacingHelperText' property
+	 */
+	private toggleOffReplacingHelperText (): void {
+		this.replacingHelperText = false;
 	}
 }

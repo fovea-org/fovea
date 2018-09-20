@@ -20,7 +20,9 @@ export default <Partial<IFoveaCliConfig>>{
 		"mutation-observer",
 		"intersection-observer",
 		"proxy",
-		"pointer-event"
+		"pointer-event",
+		"requestanimationframe",
+		"requestidlecallback"
 	],
 	entry: "src/main.ts",
 	style: {

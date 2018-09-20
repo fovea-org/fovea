@@ -3,6 +3,7 @@ import {getCSSPropertyValue} from "../../util/style-util";
 import {getMsFromCSSDuration} from "../../util/duration-util";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {DialogAction, DialogOpenState} from "./i-open-dialog-options";
+import {debounceUntilIdle} from "../../util/debounce-util";
 
 // tslint:disable:no-identical-functions
 
@@ -102,6 +103,12 @@ export class DialogComponent extends HTMLElement {
 	private slottedChildrenWithClickListeners: Set<HTMLElement> = new Set();
 
 	/**
+	 * A this-bound reference to the 'refresh' method
+	 * @type {Function}
+	 */
+	private boundRefresh = this.refresh.bind(this);
+
+	/**
 	 * An optional reference to the dialog article element
 	 * @type {HTMLElement?}
 	 */
@@ -159,6 +166,29 @@ export class DialogComponent extends HTMLElement {
 	@onChildrenAdded()
 	@onChildrenRemoved()
 	protected onSlottedChildrenChanged (): void {
+		debounceUntilIdle(this.boundRefresh);
+	}
+
+	/**
+	 * Invoked when a Keyboard key is pressed up
+	 * @param {KeyboardEvent} e
+	 */
+	@listener("keyup")
+	protected onKeyUp (e: KeyboardEvent) {
+		switch (e.key) {
+			case KeyboardUtil.ESCAPE:
+				if (!this.dismissable || !this.open) break;
+				this.dialogAction = "cancel";
+				if (this.autoClose) this.open = false;
+				break;
+		}
+	}
+
+	/**
+	 * Refreshes the dialog state based on the slotted children
+	 */
+	private refresh (): void {
+		if (this.$slot == null) return;
 		let hasHeader: boolean = false;
 		const slottedChildren = this.$slot.assignedNodes();
 
@@ -200,21 +230,6 @@ export class DialogComponent extends HTMLElement {
 		}
 
 		this.hasHeader = hasHeader;
-	}
-
-	/**
-	 * Invoked when a Keyboard key is pressed up
-	 * @param {KeyboardEvent} e
-	 */
-	@listener("keyup")
-	protected onKeyUp (e: KeyboardEvent) {
-		switch (e.key) {
-			case KeyboardUtil.ESCAPE:
-				if (!this.dismissable || !this.open) break;
-				this.dialogAction = "cancel";
-				if (this.autoClose) this.open = false;
-				break;
-		}
 	}
 
 	/**

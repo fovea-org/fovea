@@ -2,6 +2,7 @@ import {dependsOn, listener, onChildrenAdded, onChildrenRemoved, prop, setOnHost
 import {RippleComponent} from "../ripple/ripple-component";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {FormItemComponent} from "../form-item/form-item-component";
+import {debounceUntilNextAnimationFrame} from "../../util/debounce-util";
 
 /**
  * This Custom Attribute represents a Button
@@ -32,11 +33,17 @@ export class ButtonComponent extends FormItemComponent {
 	@prop @setOnHost public outlined: boolean = false;
 
 	/**
+	 * A this-bound reference to the 'refresh' method
+	 * @type {Function}
+	 */
+	private boundRefresh = this.refresh.bind(this);
+
+	/**
 	 * Invoked when the button is connected to the DOM
 	 */
 	protected connectedCallback (): void {
 		super.connectedCallback();
-		this.refresh();
+		this.refreshOnIdle();
 	}
 
 	/**
@@ -58,10 +65,17 @@ export class ButtonComponent extends FormItemComponent {
 
 	/**
 	 * Invoked when the children changes.
-	 * Ensures that all text children are wrapped in elements for styling purposes
+	 * Debounces a call to 'refresh'
 	 */
 	@onChildrenAdded()
 	@onChildrenRemoved()
+	private refreshOnIdle (): void {
+		debounceUntilNextAnimationFrame(this.boundRefresh);
+	}
+
+	/**
+	 * Ensures that all text children are wrapped in elements for styling purposes
+	 */
 	private refresh () {
 		const childNodes = this.childNodes;
 		const childNodesLength = childNodes.length;
