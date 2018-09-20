@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/core",
-	"version": "1.0.131",
+	"version": "1.0.132",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -48,7 +48,7 @@
 		"typescript": "^3.0.3"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.131"
+		"@fovea/common": "^1.0.132"
 	},
 	"publishConfig": {
 		"access": "public"

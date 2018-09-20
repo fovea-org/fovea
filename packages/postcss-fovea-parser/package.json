@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/postcss-fovea-parser",
-	"version": "1.0.131",
+	"version": "1.0.132",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -52,7 +52,7 @@
 		"typescript": "^3.0.3"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.131",
+		"@fovea/common": "^1.0.132",
 		"postcss": "^7.0.2",
 		"postcss-scss": "^2.0.0"
 	},

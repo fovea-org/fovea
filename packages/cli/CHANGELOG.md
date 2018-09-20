@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.132"></a>
+## [1.0.132](https://github.com/fovea-org/fovea/compare/v1.0.131...v1.0.132) (2018-09-20)
+
+
+### Bug Fixes
+
+* Fixed an issue where the CLI wouldn't generate a package.json that depended on [@fovea](https://github.com/fovea)/common. This would break hoisted dependencies in hoisted monorepos ([f4d21a0](https://github.com/fovea-org/fovea/commit/f4d21a0))
+* Fixed an issue where the CLI wouldn't generate a package.json that depended on [@fovea](https://github.com/fovea)/lib ([f4d7b90](https://github.com/fovea-org/fovea/commit/f4d7b90))
+
+
+### Features
+
+* Made transition durations and timing functions themeable in [@fovea](https://github.com/fovea)/material ([b32ed55](https://github.com/fovea-org/fovea/commit/b32ed55))
+
+
+
+
+
 <a name="1.0.131"></a>
 ## [1.0.131](https://github.com/fovea-org/fovea/compare/v1.0.130...v1.0.131) (2018-09-12)
 
