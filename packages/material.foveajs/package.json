@@ -22,6 +22,7 @@
   "dependencies": {
     "@fovea/core": "^1.0.131",
     "@fovea/lib": "^1.0.131",
+    "@fovea/common": "^1.0.131",
     "@fovea/material": "^1.0.131",
     "@fovea/router": "^1.0.131",
     "@types/node": "^10.10.1",
