@@ -1,4 +1,5 @@
 import {IFoveaHostConstructor} from "@fovea/common";
+import {log} from "../../log/log";
 
 /**
  * Registers an element
@@ -7,5 +8,9 @@ import {IFoveaHostConstructor} from "@fovea/common";
  * @private
  */
 export function ___registerElement (selector: string, host: IFoveaHostConstructor): void {
-	customElements.define(selector, host);
+	try {
+		customElements.define(selector, host);
+	} catch (ex) {
+		log(`The host '${host.name}' attempts to declare a Custom Element with the selector: '${selector}', but an error occurred:`, ex);
+	}
 }

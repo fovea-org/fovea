@@ -36,7 +36,8 @@
 		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
 		"prerollup": "rm -r -f dist",
 		"rollup": "rollup -c rollup.config.js",
-		"build": "npm run rollup"
+		"build": "npm run rollup",
+		"watch": "npm run rollup -- --watch"
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.131",

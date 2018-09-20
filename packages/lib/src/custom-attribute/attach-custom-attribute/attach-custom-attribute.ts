@@ -22,6 +22,15 @@ import {___destroy} from "../../helper/destroy/destroy";
  */
 export function attachCustomAttribute (host: IFoveaHost|ICustomAttribute, element: Element, name: string, value?: ExpressionChain|IExpressionChainDict, templateVariables?: ITemplateVariables): IObserver&IDestroyable {
 	const customAttribute = constructCustomAttribute(element, name);
+
+	// If no Custom Attribute could be constructed, return a noop
+	if (customAttribute == null) {
+		return {
+			destroy: () => {},
+			unobserve: () => {}
+		};
+	}
+
 	const normalizedValue = normalizeCustomAttributeExpressionValue(value);
 
 	let observers: IExpressionChainObserver[]|null = Object.entries(normalizedValue).map(([propertyName, chain]) => {
