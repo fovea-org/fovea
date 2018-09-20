@@ -1,5 +1,7 @@
 import {customAttribute, hostAttributes, prop, setOnHost, styleSrc} from "@fovea/core";
 
+declare function requestIdleCallback<T> (callback: T): number;
+
 /**
  * A Custom Attribute that can perform syntax highlighting of blocks of code
  */
@@ -41,25 +43,28 @@ export class Highlight {
 	 * @returns {Promise<void>}
 	 */
 	private async refresh (): Promise<void> {
-		const originalInnerHTML = this.hostElement.innerHTML;
+		const code = await this.getHighlightedCodeWhenIdle();
+		if (code != null) this.replaceWithHighlightedCodeWhenIdle(code);
+	}
 
-		const response = await fetch("https://api.photon.sh/snippets", {
-			method: "POST",
-			headers: {
-				Authorization: "Token ee3ed483513db413a04d9ffdcff030fa",
-				"Content-Type": "text/html"
-			},
-			body: `<code class="language-${this.language}" data-line-numbers="${this.lineNumbers}">${originalInnerHTML}</code>`
-		});
+	/**
+	 * Performs syntax highlighting of the code provided in the inner HTML.
+	 * Will do this when the main thread is idle and only resolve the Promise by then
+	 * @param {string} code
+	 * @returns {void}
+	 */
+	private replaceWithHighlightedCodeWhenIdle (code: string): void {
+		requestIdleCallback(() => this.replaceWithHighlightedCode(code));
+	}
 
-		if (response.status !== 200 || !response.ok) {
-			return;
-		}
-		const body = await response.text();
-
+	/**
+	 * Replaces the inner HTML of the code element with a syntax highlighted template
+	 * @returns {void}
+	 */
+	private replaceWithHighlightedCode (code: string): void {
 		// Create a template from the response text
 		const template = document.createElement("template");
-		template.innerHTML = body;
+		template.innerHTML = code;
 		const stampedTemplate = <DocumentFragment> template.content.cloneNode(true);
 		// Take the nested code element from it
 		const innerCodeElement = stampedTemplate.querySelector("code")!;
@@ -72,6 +77,39 @@ export class Highlight {
 		while (innerCodeElement.childNodes.length > 0) {
 			this.hostElement.appendChild(innerCodeElement.childNodes[0]);
 		}
+	}
+
+	/**
+	 * Performs syntax highlighting of the code provided in the inner HTML.
+	 * Will do this when the main thread is idle and only resolve the Promise by then
+	 * @returns {Promise<string?>}
+	 */
+	private async getHighlightedCodeWhenIdle (): Promise<string|undefined> {
+		return new Promise<string>(resolve => {
+			requestIdleCallback(async () => resolve(await this.getHighlightedCode()));
+		});
+	}
+
+	/**
+	 * Performs syntax highlighting of the code provided in the inner HTML.
+	 * @returns {Promise<string?>}
+	 */
+	private async getHighlightedCode (): Promise<string|undefined> {
+		const originalInnerHTML = this.hostElement.innerHTML;
+
+		const response = await fetch("https://api.photon.sh/snippets", {
+			method: "POST",
+			headers: {
+				Authorization: "Token ee3ed483513db413a04d9ffdcff030fa",
+				"Content-Type": "text/html"
+			},
+			body: `<code class="language-${this.language}" data-line-numbers="${this.lineNumbers}">${originalInnerHTML}</code>`
+		});
+
+		if (response.status !== 200 || !response.ok) {
+			return undefined;
+		}
+		return await response.text();
 	}
 
 }
