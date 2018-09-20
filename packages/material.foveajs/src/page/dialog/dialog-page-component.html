@@ -240,7 +240,11 @@ dialog.addEventListener("change", ({detail}) => {
 </p>
 
 <p>
-	To support this kind of behavior, <code>DialogComponent</code>s also have an imperative API provided by the <code>openDialog</code> function:
+	To support this kind of behavior, <code>DialogComponent</code>s also have an imperative API provided by the <code>openDialog</code> function.
+</p>
+
+<p>
+	This spawns a <code>DialogComponent</code> which will be removed from the DOM immediately after successfully closing. It will return a <code>Promise</code> that eventually resolves with an action provided by the user.
 </p>
 
 <code *highlight="language: typescript">
@@ -272,5 +276,3 @@ console.log(response);
 		<small>Selected action: ${imperativeDialogResponse == null ? '(none)' : imperativeDialogResponse}</small>
 	</footer>
 </showcase-component>
-
-<p>The <code>DialogComponent</code> will be removed from the DOM immediately after successfully closing</p>

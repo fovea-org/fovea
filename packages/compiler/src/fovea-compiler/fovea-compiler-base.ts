@@ -359,10 +359,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			}
 
 			// Add a call to define the component as a Custom Element
-			const defineResult = this.hostDefiner.define(options);
-
-			// If somehow the element could not be defined, return immediately
-			if (defineResult == null) continue;
+			this.hostDefiner.define(options);
 
 			// Prepare the template of the component
 			await this.templator.generateTemplates({...options, generateForStyles: false});

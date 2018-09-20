@@ -1,5 +1,9 @@
 @import "../../style/base.scss";
 
+$red-pink-color: #FF5370;
+$keyword: #FFA000;
+$identifier: #FFCB6B;
+
 .psh * {
 	@include body1();
 	font-family: $font-family-mono !important;
@@ -223,7 +227,7 @@
 }
 
 .psh .keyword, .psh .keyword.control {
-	color: #C792EA
+	color: $keyword;
 }
 
 .psh .keyword.control.elements {
@@ -239,7 +243,7 @@
 }
 
 .psh .keyword.other.unit {
-	color: #FFCB6B
+	color: $identifier;
 }
 
 .psh .storage {
@@ -267,7 +271,7 @@
 }
 
 .psh .constant.language.null {
-	color: #FF5370
+	color: $red-pink-color;
 }
 
 .psh .variable {
@@ -278,16 +282,32 @@
 	color: #EB434C
 }
 
+.psh .variable.parameter {
+	color: $red-pink-color;
+}
+
+.psh .variable.other.readwrite {
+	color: $red-pink-color;
+}
+
+.psh .variable.other.readwrite.alias {
+	color: $identifier;
+}
+
 .psh .variable.parameter.function {
 	color: #F78C6A
 }
 
 .psh .variable.language {
-	color: #FF5370
+	color: $red-pink-color;
+}
+
+.psh .object-literal.key {
+	color: $red-pink-color;
 }
 
 .psh .variable.variable.object {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .invalid.illegal {
@@ -304,7 +324,7 @@
 }
 
 .psh .string.regexp .source.ruby.embedded {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .string.other.link {
@@ -342,7 +362,7 @@
 }
 
 .psh .support.class {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .support.function, .psh .support.function.any-method {
@@ -350,7 +370,7 @@
 }
 
 .psh .support.type, .psh .support.variable.dom {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .entity.name.function {
@@ -370,7 +390,7 @@
 }
 
 .psh .entity.name.class, .psh .entity.name.type.class {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .entity.name.section {
@@ -382,7 +402,7 @@
 }
 
 .psh .entity.other.attribute-name {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .meta.class {
@@ -394,7 +414,7 @@
 }
 
 .psh .meta.link {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .meta.require {
@@ -419,7 +439,7 @@
 }
 
 .psh .markup.bold {
-	color: #FFCB6B;
+	color: $identifier;
 	font-weight: $font-weight-bold;
 }
 
@@ -449,7 +469,7 @@
 }
 
 .psh .markup.quote {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .markup.raw.inline {
@@ -515,7 +535,7 @@
 }
 
 .psh .source.gfm .markup.underline.link span.punctuation {
-	color: #FF5370
+	color: $red-pink-color;
 }
 
 .psh .source.gfm .markup.strike {
@@ -566,7 +586,7 @@
 }
 
 .psh .js.entity.name.type {
-	color: #FFCB6B
+	color: $identifier
 }
 
 .psh .js.variable.property {
@@ -666,11 +686,11 @@
 }
 
 .psh .python .variable.self {
-	color: #FF5370
+	color: $red-pink-color;
 }
 
 .psh .python .meta .punctuation.inheritance, .psh .python .meta .punctuation.section, .psh .python .variable.parameter {
-	color: #89DDF3
+	color: #89DDF3;
 }
 
 .psh .python .keyword.operator {

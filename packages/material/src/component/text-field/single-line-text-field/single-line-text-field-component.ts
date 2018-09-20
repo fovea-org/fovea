@@ -19,7 +19,7 @@ import {getMsFromCSSDuration} from "../../../util/duration-util";
 	role: "textbox"
 })
 @dependsOn(IconComponent)
-export abstract class SingleLineTextFieldComponent extends TextFieldBaseComponent {
+export class SingleLineTextFieldComponent extends TextFieldBaseComponent {
 
 	/**
 	 * The type of input

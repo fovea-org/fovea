@@ -29,15 +29,18 @@ export class FoveaHostDefiner implements IFoveaHostDefiner {
 
 	/**
 	 * Defines a Custom Element or a Custom Attribute by extracting a name for it and delegating it to a fovea-lib helper
-	 * @param {IFoveaHostMarkerMarkIncludeResult} mark
-	 * @param {IPlacement} insertPlacement
-	 * @param {IFoveaCompilerOptions} compilerOptions
-	 * @param {ICompilationContext} context
+	 * @param {IFoveaHostDefinerDefineOptions} options
 	 * @returns {IFoveaHostDefinerDefineResult}
 	 */
 	public define ({mark, insertPlacement, compilerOptions, context}: IFoveaHostDefinerDefineOptions): IFoveaHostDefinerDefineResult|undefined {
 		// Take the name of the class
 		const {className, sourceFile} = mark;
+
+		// Check if the class is abstract
+		const isAbstract = mark.classDeclaration.modifiers == null ? false : this.codeAnalyzer.modifierService.hasModifierWithName("abstract", mark.classDeclaration.modifiers);
+
+		// If the class is abstract, there's no point in defining it.
+		if (isAbstract) return undefined;
 
 		// Generate the selector for the element
 		const selector = this.generateSelectorName(mark, compilerOptions, context);
