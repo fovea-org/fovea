@@ -65,18 +65,21 @@
 </showcase-component>
 
 <showcase-component caption="Scrolling Confirmation Dialogs">
-	<dialog-component $dialog4 style="margin: 0" onchange="${onDialogAction(4, event.detail)}">
+	<dialog-component $dialog4 style="margin: 0; --height-dialog-box: 350px" onchange="${onDialogAction(4, event.detail)}">
 		<header>
 			Scrolling dialog
 		</header>
 		<article>
-			<ul>
-				<li *foreach="${listItems}">Item ${item}</li>
-			</ul>
+			<div *foreach="${listItems}">
+				<label>
+					<radio-button-component onchecked="${selectedScrollingDialogOption = selectedScrollingDialogOption === true ? true : event.detail === true}" style="margin-left: -10px" name="scrolling_dialog"></radio-button-component>
+					Item ${item}
+				</label>
+			</div>
 		</article>
 		<footer>
 			<button-component dialog-action="cancel">Cancel</button-component>
-			<button-component dialog-action="confirm">Accept</button-component>
+			<button-component dialog-action="confirm" disabled="${!selectedScrollingDialogOption}">Accept</button-component>
 		</footer>
 	</dialog-component>
 

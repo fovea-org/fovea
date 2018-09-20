@@ -1,6 +1,6 @@
 import {dependsOn, prop, styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
-import {ButtonComponent, DialogAction, openDialog, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
+import {ButtonComponent, RadioButtonComponent, DialogAction, openDialog, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
 import {DIALOG_API_REFERENCE_DATA} from "./dialog-api-reference-data";
 import {Highlight} from "../../component/highlight/highlight";
 import {ShowcaseComponent} from "../../component/showcase/showcase-component";
@@ -24,14 +24,20 @@ IconComponent.addIcons(
 	"../shared/shared.scss",
 	"./dialog-page-component.scss"
 ])
-@dependsOn(DialogComponent, IconComponent, ButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
+@dependsOn(DialogComponent, RadioButtonComponent, IconComponent, ButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class DialogPageComponent extends HTMLElement implements IRouterTarget {
 
 	/**
 	 * An array of numbers
 	 * @type {number[]}
 	 */
-	@prop protected listItems: number[] = [...Array(30).keys()];
+	@prop protected listItems: number[] = [...Array(15).keys()];
+
+	/**
+	 * Holds true if a Radio Button has been selected within the scrolling dialog
+	 * @type {boolean}
+	 */
+	@prop protected selectedScrollingDialogOption: boolean = false;
 
 	/**
 	 * The API reference data for DialogComponents to render

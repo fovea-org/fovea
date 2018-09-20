@@ -109,7 +109,7 @@ export class RadioButtonComponent extends CheckboxBaseComponent {
 		if (this.name == null) return;
 
 		const group = NAME_TO_RADIO_BUTTONS_MAP.get(this.name);
-		if (group == null) return;
+		if (group == null || [...group].every(button => !button.checked)) return;
 		group.forEach(radioButton => {
 			if (radioButton !== this) {
 				radioButton.toggle(!this.checked);

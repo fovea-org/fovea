@@ -19,7 +19,7 @@ export abstract class CheckboxBaseComponent extends FormItemComponent {
 	 * Holds true if the Checkbox is currently checked
 	 * @type {boolean}
 	 */
-	@prop @setOnHost @emit() public checked: boolean = false;
+	@prop @setOnHost @emit({name: "checked"}) public checked: boolean = false;
 
 	/**
 	 * Holds true if the Checkbox is in an indeterminate state

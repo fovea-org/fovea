@@ -60,7 +60,7 @@ export default class TextFieldPageComponent extends HTMLElement implements IRout
 	/**
 	 * Invoked when the 'checked' property changes on the left-to-right RadioButtonComponent
 	 */
-	@listener("checked-changed", {on: "$ltrRadioButton"})
+	@listener("checked", {on: "$ltrRadioButton"})
 	protected onLtrRadioButtonCheckedChanged (): void {
 		this.direction = this.$ltrRadioButton.checked ? "ltr" : "rtl";
 	}
@@ -68,7 +68,7 @@ export default class TextFieldPageComponent extends HTMLElement implements IRout
 	/**
 	 * Invoked when the 'checked' property changes on the right-to-left RadioButtonComponent
 	 */
-	@listener("checked-changed", {on: "$rtlRadioButton"})
+	@listener("checked", {on: "$rtlRadioButton"})
 	protected onRtlRadioButtonCheckedChanged (): void {
 		this.direction = this.$rtlRadioButton.checked ? "rtl" : "ltr";
 	}
