@@ -4,7 +4,7 @@
 	@include reset();
 	@include button();
 	--transition-duration: #{$duration-complex};
-	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	--transition-timing-function: #{$timing-function-standard-curve};
 	color: $color-primary;
 	contain: content;
 	overflow: hidden;

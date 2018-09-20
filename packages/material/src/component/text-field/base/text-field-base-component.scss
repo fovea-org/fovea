@@ -8,7 +8,7 @@ $minimum-horizontal-inset: 16px;
 
 	// Public CSS properties
 	--transition-duration: 150ms;
-	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	--transition-timing-function: #{$timing-function-standard-curve};
 	--color: #{$color-primary};
 	--color-input: #{$color-typography};
 	--color-fill: #{color(black, 05)};
@@ -466,7 +466,7 @@ hr {
  */
 :host([outlined][focused]) {
 	#outline-mask-rect {
-		transition: transform calc(var(--transition-duration) / 2) var(--timing-function-deceleration-curve, #{$timing-function-deceleration-curve});
+		transition: transform calc(var(--transition-duration) / 2) #{$timing-function-deceleration-curve};
 	}
 }
 

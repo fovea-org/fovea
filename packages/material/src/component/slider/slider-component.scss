@@ -32,7 +32,7 @@ $range-height: 2px;
 :host {
 	color: $color-primary;
 	--transition-duration: 150ms;
-	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	--transition-timing-function: #{$timing-function-standard-curve};
 	@include hardwareAccelerated();
 
 	width: 100%;

@@ -140,7 +140,7 @@
 
 :host([open]) {
 	--transition-duration: #{$duration-dialog-open};
-	--transition-timing-function: var(--timing-function-acceleration-curve, #{$timing-function-acceleration-curve});
+	--transition-timing-function: #{$timing-function-acceleration-curve};
 }
 
 :host([state="opening"]),
@@ -161,7 +161,7 @@
 
 :host(:not([open])) {
 	--transition-duration: #{$duration-dialog-close};
-	--transition-timing-function: var(--timing-function-acceleration-curve, #{$timing-function-acceleration-curve});
+	--transition-timing-function: #{$timing-function-acceleration-curve};
 }
 
 :host([state="opening"]),

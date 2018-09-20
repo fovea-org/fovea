@@ -1,4 +1,4 @@
-$timing-function-deceleration-curve : cubic-bezier(0.0, 0.0, 0.2, 1);
-$timing-function-standard-curve: cubic-bezier(0.4, 0.0, 0.2, 1);
-$timing-function-acceleration-curve: cubic-bezier(0.4, 0.0, 1, 1);
-$timing-function-sharp-curve: cubic-bezier(.4, 0, .6, 1);
+$timing-function-deceleration-curve : var(--timing-function-deceleration-curve, cubic-bezier(0.0, 0.0, 0.2, 1));
+$timing-function-standard-curve: var(--timing-function-standard-curve, cubic-bezier(0.4, 0.0, 0.2, 1));
+$timing-function-acceleration-curve: var(--timing-function-acceleration-curve, cubic-bezier(0.4, 0.0, 1, 1));
+$timing-function-sharp-curve: var(--timing-function-sharp-curve, cubic-bezier(.4, 0, .6, 1));

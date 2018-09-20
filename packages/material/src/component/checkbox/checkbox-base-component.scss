@@ -2,5 +2,5 @@
 
 :host {
 	--transition-duration: #{$duration-selection-control};
-	--transition-timing-function: var(--timing-function-standard-curve, #{$timing-function-standard-curve});
+	--transition-timing-function: #{$timing-function-standard-curve};
 }
