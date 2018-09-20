@@ -201,7 +201,6 @@ export class DialogComponent extends HTMLElement {
 	 */
 	private decideScrollability (): void {
 		requestAnimationFrame(() => {
-			console.log(this.dialogArticleElement!.scrollHeight, this.dialogArticleElement!.offsetHeight);
 			this.canScroll = this.dialogArticleElement == null ? false : this.dialogArticleElement.scrollHeight > this.dialogArticleElement.offsetHeight;
 		});
 	}
