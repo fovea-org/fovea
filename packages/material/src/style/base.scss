@@ -6,8 +6,8 @@
 @import "./timing-function";
 @import "./duration";
 
-$body1-line-height: 24px;
-$caption-line-height: 20px;
+$body1-line-height: fontSize(24px);
+$caption-line-height: fontSize(20px);
 
 @mixin divider($position: bottom, $color: color(black, 12)) {
 	@if ($position == top) {
@@ -36,8 +36,8 @@ $caption-line-height: 20px;
 
 @mixin headline1 {
 	@include typographyBase();
-	font-size: 96px;
-	line-height: 96px;
+	font-size: fontSize(96px);
+	line-height: fontSize(96px);
 	letter-spacing: -1.5px;
 	font-weight: $font-weight-light;
 	text-decoration: inherit;
@@ -46,8 +46,8 @@ $caption-line-height: 20px;
 
 @mixin headline2 {
 	@include typographyBase();
-	font-size: 60px;
-	line-height: 60px;
+	font-size: fontSize(60px);
+	line-height: fontSize(60px);
 	letter-spacing: -0.5px;
 	font-weight: $font-weight-light;
 	text-decoration: inherit;
@@ -56,8 +56,8 @@ $caption-line-height: 20px;
 
 @mixin headline3 {
 	@include typographyBase();
-	font-size: 48px;
-	line-height: 50px;
+	font-size: fontSize(48px);
+	line-height: fontSize(50px);
 	letter-spacing: 0;
 	font-weight: $font-weight-regular;
 	text-decoration: inherit;
@@ -66,8 +66,8 @@ $caption-line-height: 20px;
 
 @mixin headline4 {
 	@include typographyBase();
-	font-size: 34px;
-	line-height: 40px;
+	font-size: fontSize(34px);
+	line-height: fontSize(40px);
 	letter-spacing: .25px;
 	font-weight: $font-weight-regular;
 	text-decoration: inherit;
@@ -76,8 +76,8 @@ $caption-line-height: 20px;
 
 @mixin headline5 {
 	@include typographyBase();
-	font-size: 24px;
-	line-height: 38px;
+	font-size: fontSize(24px);
+	line-height: fontSize(38px);
 	letter-spacing: 0;
 	font-weight: $font-weight-regular;
 	text-decoration: inherit;
@@ -86,8 +86,8 @@ $caption-line-height: 20px;
 
 @mixin headline6 {
 	@include typographyBase();
-	font-size: 20px;
-	line-height: 32px;
+	font-size: fontSize(20px);
+	line-height: fontSize(32px);
 	letter-spacing: .15px;
 	font-weight: $font-weight-medium;
 	text-decoration: inherit;
@@ -96,8 +96,8 @@ $caption-line-height: 20px;
 
 @mixin subtitle1 {
 	@include typographyBase();
-	font-size: 16px;
-	line-height: 28px;
+	font-size: fontSize(16px);
+	line-height: fontSize(28px);
 	letter-spacing: .15px;
 	font-weight: $font-weight-regular;
 	text-decoration: inherit;
@@ -106,8 +106,8 @@ $caption-line-height: 20px;
 
 @mixin subtitle2 {
 	@include typographyBase();
-	font-size: 14px;
-	line-height: 22px;
+	font-size: fontSize(14px);
+	line-height: fontSize(22px);
 	letter-spacing: .1px;
 	font-weight: $font-weight-medium;
 	text-decoration: inherit;
@@ -116,7 +116,7 @@ $caption-line-height: 20px;
 
 @mixin body1 {
 	@include typographyBase();
-	font-size: 16px;
+	font-size: fontSize(16px);
 	line-height: $body1-line-height;
 	letter-spacing: .5px;
 	font-weight: $font-weight-regular;
@@ -126,8 +126,8 @@ $caption-line-height: 20px;
 
 @mixin body2 {
 	@include typographyBase();
-	font-size: 14px;
-	line-height: 20px;
+	font-size: fontSize(14px);
+	line-height: fontSize(20px);
 	letter-spacing: .45px;
 	font-weight: $font-weight-regular;
 	text-decoration: inherit;
@@ -136,7 +136,7 @@ $caption-line-height: 20px;
 
 @mixin caption {
 	@include typographyBase();
-	font-size: 12px;
+	font-size: fontSize(12px);
 	line-height: $caption-line-height;
 	letter-spacing: .4px;
 	font-weight: $font-weight-regular;
@@ -146,8 +146,8 @@ $caption-line-height: 20px;
 
 @mixin button {
 	@include typographyBase();
-	font-size: 14px;
-	line-height: 36px;
+	font-size: fontSize(14px);
+	line-height: fontSize(36px);
 	letter-spacing: .75px;
 	font-weight: $font-weight-medium;
 	text-decoration: none;
@@ -156,8 +156,8 @@ $caption-line-height: 20px;
 
 @mixin overline {
 	@include typographyBase();
-	font-size: 12px;
-	line-height: 32px;
+	font-size: fontSize(12px);
+	line-height: fontSize(32px);
 	letter-spacing: 1.5px;
 	font-weight: $font-weight-medium;
 	text-decoration: none;
@@ -182,21 +182,13 @@ $caption-line-height: 20px;
 @mixin hostRtl($selectorArgs...) {
 
 	@if length($selectorArgs) == 0 {
-		// For browsers that support the ':dir' pseudo class
-		:host(:dir(rtl)#{$selectorArgs}) {
-			@content;
-		}
 
 		// For those that don't
-		:host([dir="rtl"]#{$selectorArgs}) {
+		:host([dir="rtl"]) {
 			@content;
 		}
 	} @else {
 		@each $currentSelector in $selectorArgs {
-			// For browsers that support the ':dir' pseudo class
-			:host(:dir(rtl)#{$currentSelector}) {
-				@content;
-			}
 
 			// For those that don't
 			:host([dir="rtl"]#{$currentSelector}) {
@@ -209,21 +201,13 @@ $caption-line-height: 20px;
 @mixin hostNotRtl($selectorArgs...) {
 
 	@if length($selectorArgs) == 0 {
-		// For browsers that support the ':dir' pseudo class
-		:host(:not(:dir(rtl))#{$selectorArgs}) {
-			@content;
-		}
 
 		// For those that don't
-		:host(:not([dir="rtl"])#{$selectorArgs}) {
+		:host(:not([dir="rtl"])) {
 			@content;
 		}
 	} @else {
 		@each $currentSelector in $selectorArgs {
-			// For browsers that support the ':dir' pseudo class
-			:host(:not(:dir(rtl))#{$currentSelector}) {
-				@content;
-			}
 
 			// For those that don't
 			:host(:not([dir="rtl"])#{$currentSelector}) {

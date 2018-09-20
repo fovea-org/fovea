@@ -135,7 +135,7 @@ export function resolveFile (id: string, rawOptions: Partial<ISassImportResolveO
 
 	// otherwise, if `base` does not end with `.css`
 	else if (!endsWithCssExtension(base)) {
-		throw new Error("File to import not found or unreadable");
+		throw new Error(`File: '${id}' to import not found or unreadable`);
 	}
 
 	else {

@@ -58,9 +58,9 @@
 	</button-component>
 
 	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
-		<small>Dialog 1 action: ${dialog1Response == null ? '(none)' : dialog1Response}</small>
-		<small>Dialog 2 action: ${dialog2Response == null ? '(none)' : dialog2Response}</small>
-		<small>Dialog 3 action: ${dialog3Response == null ? '(none)' : dialog3Response}</small>
+		<small>Selected dialog 1 action: ${dialog1Response == null ? '(none)' : dialog1Response}</small>
+		<small>Selected dialog 2 action: ${dialog2Response == null ? '(none)' : dialog2Response}</small>
+		<small>Selected dialog 3 action: ${dialog3Response == null ? '(none)' : dialog3Response}</small>
 	</footer>
 </showcase-component>
 
@@ -86,11 +86,188 @@
 	</button-component>
 
 	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
-		<small>Dialog 4 action: ${dialog1Response == null ? '(none)' : dialog4Response}</small>
+		<small>Selected dialog 4 action: ${dialog1Response == null ? '(none)' : dialog4Response}</small>
 	</footer>
 
 </showcase-component>
 
 <h5>Usage</h5>
 
+<p>
+	<code>DialogComponents</code> have both a <em>declarative</em> and an <em>imperative</em> API.
+</p>
+
+<p>
+	They are grouped by three sections:
+</p>
+
+<ul>
+	<li>
+		<code>header</code>
+		<ul>
+			<li>
+				<em>Where the dialog title lives</em>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<code>article</code>
+		<ul>
+			<li>
+				<em>Where the dialog content lives</em>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<code>footer</code>
+		<ul>
+			<li>
+				<em>Where the dialog action buttons live</em>
+			</li>
+		</ul>
+	</li>
+</ul>
+
+<h6>Declarative API</h6>
+
+<p>
+	You can use <code>DialogComponent</code>s directly from your templates:
+</p>
+
+<code *highlight="language: html">
+<dialog-component>
+	<header>
+		This is the dialog header
+	</header>
+	<article>
+		This is the explainer text of the dialog
+	</article>
+	<footer>
+		<button-component dialog-action="cancel">CANCEL</button-component>
+		<button-component dialog-action="confirm">CONFIRM</button-component>
+	</footer>
+</dialog-component>
+</code>
+
+<showcase-component caption="The output of the above code example">
+	<dialog-component open autoClose="false" style="position: relative" dismissable="false">
+		<header>
+			This is the dialog header
+		</header>
+		<article>
+			This is the explainer text of the dialog
+		</article>
+		<footer>
+			<button-component dialog-action="cancel">CANCEL</button-component>
+			<button-component dialog-action="confirm">CONFIRM</button-component>
+		</footer>
+	</dialog-component>
+</showcase-component>
+
+<p>
+	If you use the semantic <code>header</code>, <code>article</code>, and <code>footer</code> elements,
+	the <code>DialogComponent</code> already knows their function. If you want to use other elements, you can set the <code>dialog-header</code>, <code>dialog-article</code>, and <code>dialog-footer</code> attributes on the elements. For example:
+</p>
+
+<code *highlight="language: html">
+	<dialog-component>
+		<div dialog-header>
+			This is the dialog header
+		</div>
+		<div dialog-article>
+			This is the explainer text of the dialog
+		</div>
+		<div dialog-footer>
+			<button-component dialog-action="cancel">CANCEL</button-component>
+			<button-component dialog-action="confirm">CONFIRM</button-component>
+		</div>
+	</dialog-component>
+</code>
+
+<showcase-component caption="The output of the above code example">
+	<dialog-component open autoClose="false" style="position: relative" dismissable="false">
+		<div dialog-header>
+			This is the dialog header
+		</div>
+		<div dialog-article>
+			This is the explainer text of the dialog
+		</div>
+		<div dialog-footer>
+			<button-component dialog-action="cancel">CANCEL</button-component>
+			<button-component dialog-action="confirm">CONFIRM</button-component>
+		</div>
+	</dialog-component>
+</showcase-component>
+
+<p>
+	The <code>dialog-action</code> attribute can annotate any element that should be able to perform an action from the dialog. If given, it must have a value of <code>"cancel"</code> or <code>"confirm"</code>.
+</p>
+
+<p>
+	Notice how in the above examples, the <code>footer</code> contained two buttons, both of which had a <code>dialog-action</code> attribute:
+</p>
+
+<code *highlight="language: html">
+<footer>
+	<button-component dialog-action="cancel">CANCEL</button-component>
+	<button-component dialog-action="confirm">CONFIRM</button-component>
+</footer>
+</code>
+
+<p>
+	When an action is made, a <code>change</code> event is fired on the <code>DialogComponent</code> which holds the dialog action in the <code>detail</code> property:
+</p>
+
+<code *highlight="language: typescript">
+dialog.addEventListener("change", ({detail}) => {
+	console.log(`User selected: ${detail}`);
+})
+</code>
+
+<p>
+	Here's a full reference of the <code>prop</code>s of <code>DialogComponent</code>s:
+</p>
+
 <api-reference-component data="${apiReferenceData}"></api-reference-component>
+
+<h6>Imperative API</h6>
+
+<p>
+	Quite often, a dialog is needed in order to receive a response from the user, and then it should be discarded. For example, consider the built-in <code>alert()</code> and <code>confirm()</code> functions on the Web Platform.
+</p>
+
+<p>
+	To support this kind of behavior, <code>DialogComponent</code>s also have an imperative API provided by the <code>openDialog</code> function:
+</p>
+
+<code *highlight="language: typescript">
+import {openDialog} from "@fovea/material";
+
+const response = await openDialog({
+  title: "Fire torpedoes?",
+  text: "Firing those torpedoes might make you a new enemy.",
+  actions: [
+    {
+      text: "Cancel",
+      action: "cancel"
+    },
+    {
+      text: "Fire",
+      action: "confirm"
+    }
+  ]
+});
+
+// Will be either "cancel" or "confirm".
+console.log(response);
+</code>
+
+<showcase-component caption="The output of the above code example">
+	<button-component onclick="${openImperativeDialog()}">Open imperative dialog</button-component>
+
+	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
+		<small>Selected action: ${imperativeDialogResponse == null ? '(none)' : imperativeDialogResponse}</small>
+	</footer>
+</showcase-component>
+
+<p>The <code>DialogComponent</code> will be removed from the DOM immediately after successfully closing</p>

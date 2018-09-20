@@ -1,6 +1,6 @@
 import {dependsOn, prop, styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
-import {ButtonComponent, DialogAction, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
+import {ButtonComponent, DialogAction, openDialog, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
 import {DIALOG_API_REFERENCE_DATA} from "./dialog-api-reference-data";
 import {Highlight} from "../../component/highlight/highlight";
 import {ShowcaseComponent} from "../../component/showcase/showcase-component";
@@ -64,11 +64,39 @@ export default class DialogPageComponent extends HTMLElement implements IRouterT
 	@prop protected dialog4Response?: DialogAction;
 
 	/**
+	 * The response from the imperative dialog
+	 * @type {DialogAction}
+	 */
+	@prop protected imperativeDialogResponse?: DialogAction;
+
+	/**
 	 * Invoked when a dialog emits a response
 	 * @param {number} dialogId
 	 * @param {DialogAction} action
 	 */
 	protected onDialogAction (dialogId: 1|2|3|4, action?: DialogAction): void {
 		(<any>this)[`dialog${dialogId}Response`] = action;
+	}
+
+	/**
+	 * Opens a dialog imperatively
+	 * @returns {Promise<void>}
+	 */
+	protected async openImperativeDialog (): Promise<void> {
+		this.imperativeDialogResponse = await openDialog({
+			title: "Fire torpedoes?",
+			text: "Firing those torpedoes might make you a new enemy.",
+			target: this.shadowRoot!,
+			actions: [
+				{
+					text: "Cancel",
+					action: "cancel"
+				},
+				{
+					text: "Fire",
+					action: "confirm"
+				}
+			]
+		});
 	}
 }

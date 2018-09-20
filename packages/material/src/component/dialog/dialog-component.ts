@@ -42,31 +42,37 @@ export class DialogComponent extends HTMLElement {
 	 */
 	private static readonly DIALOG_ARTICLE_ATTRIBUTE: string = "dialog-article";
 	/**
-	 * The last dialog action. Will emit an event when it changes
-	 * @type {DialogAction}
-	 */
-	@emit({name: "change"}) public dialogAction?: DialogAction;
-	/**
-	 * The current state of the dialog
-	 * @type {boolean}
-	 */
-	@setOnHost @emit() public state: DialogOpenState = "closed";
-	/**
 	 * Whether or not the dialog is currently open
 	 * @type {boolean}
 	 */
 	@prop @setOnHost public open: boolean = false;
+
 	/**
 	 * Whether or not the dialog is dismissable
 	 * @type {boolean}
 	 */
 	@prop @setOnHost public dismissable: boolean = true;
+
+	/**
+	 * Whether or not the dialog will auto-close as a result of actions
+	 * @type {boolean}
+	 */
+	@prop @setOnHost public autoClose: boolean = true;
 	/**
 	 * Whether or not to use a scrim
 	 * @type {boolean}
 	 */
 	@prop @setOnHost public scrim: boolean = true;
-
+	/**
+	 * The current state of the dialog
+	 * @type {boolean}
+	 */
+	@setOnHost @emit() protected state: DialogOpenState = "closed";
+	/**
+	 * The last dialog action. Will emit an event when it changes
+	 * @type {DialogAction}
+	 */
+	@emit({name: "change"}) protected dialogAction?: DialogAction;
 	/**
 	 * Whether or not the dialog can scroll
 	 * @type {boolean}
@@ -111,7 +117,7 @@ export class DialogComponent extends HTMLElement {
 	 */
 	@listener("click", {on: "$scrim"})
 	protected onScrimClicked (): void {
-		if (!this.dismissable || !this.open) return;
+		if (!this.dismissable || !this.autoClose || !this.open) return;
 		this.open = false;
 	}
 
@@ -197,15 +203,6 @@ export class DialogComponent extends HTMLElement {
 	}
 
 	/**
-	 * Decides whether or not the dialog can scroll
-	 */
-	private decideScrollability (): void {
-		requestAnimationFrame(() => {
-			this.canScroll = this.dialogArticleElement == null ? false : this.dialogArticleElement.scrollHeight > this.dialogArticleElement.offsetHeight;
-		});
-	}
-
-	/**
 	 * Invoked when a Keyboard key is pressed up
 	 * @param {KeyboardEvent} e
 	 */
@@ -215,9 +212,18 @@ export class DialogComponent extends HTMLElement {
 			case KeyboardUtil.ESCAPE:
 				if (!this.dismissable || !this.open) break;
 				this.dialogAction = "cancel";
-				this.open = false;
+				if (this.autoClose) this.open = false;
 				break;
 		}
+	}
+
+	/**
+	 * Decides whether or not the dialog can scroll
+	 */
+	private decideScrollability (): void {
+		requestAnimationFrame(() => {
+			this.canScroll = this.dialogArticleElement == null ? false : this.dialogArticleElement.scrollHeight > this.dialogArticleElement.offsetHeight;
+		});
 	}
 
 	/**
@@ -303,7 +309,7 @@ export class DialogComponent extends HTMLElement {
 			case "confirm":
 			case "cancel":
 				this.dialogAction = dialogAction;
-				this.open = false;
+				if (this.autoClose) this.open = false;
 				break;
 		}
 	}
