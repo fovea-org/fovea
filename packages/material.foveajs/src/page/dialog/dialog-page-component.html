@@ -94,6 +94,20 @@
 
 </showcase-component>
 
+<showcase-component caption="Simple Dialogs without actions">
+	<dialog-component $dialog5 style="margin: 0">
+		<article>
+			This dialog has no actions
+		</article>
+	</dialog-component>
+
+	<button-component onclick="${$dialog5.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 5
+	</button-component>
+
+</showcase-component>
+
 <h5>Usage</h5>
 
 <p>
