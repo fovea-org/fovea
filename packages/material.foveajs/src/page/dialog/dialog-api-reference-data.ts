@@ -23,6 +23,13 @@ export const DIALOG_API_REFERENCE_DATA: IApiReferenceData[] = [
 		usage: `<dialog-component scrim></dialog-component>`
 	},
 	{
+		prop: "fullscreen",
+		type: "boolean",
+		defaultValue: false,
+		description: "If true, the Dialog will take up the whole screen area",
+		usage: `<dialog-component scrim></dialog-component>`
+	},
+	{
 		prop: "autoClose",
 		type: "boolean",
 		defaultValue: true,

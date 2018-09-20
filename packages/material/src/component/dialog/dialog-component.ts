@@ -55,6 +55,12 @@ export class DialogComponent extends HTMLElement {
 	@prop @setOnHost public dismissable: boolean = true;
 
 	/**
+	 * Whether or not the dialog is a fullscreen dialog
+	 * @type {boolean}
+	 */
+	@prop @setOnHost public fullscreen: boolean = false;
+
+	/**
 	 * Whether or not the dialog will auto-close as a result of actions
 	 * @type {boolean}
 	 */
@@ -156,6 +162,7 @@ export class DialogComponent extends HTMLElement {
 			setTimeout(() => {
 				if (this.open) return;
 				this.state = "closed";
+				this.blur();
 			}, duration);
 		}
 	}

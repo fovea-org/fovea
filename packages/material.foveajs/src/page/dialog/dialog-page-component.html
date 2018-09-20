@@ -89,7 +89,7 @@
 	</button-component>
 
 	<footer style="display: flex; flex-direction: column; flex-basis: 100%; align-items: center">
-		<small>Selected dialog 4 action: ${dialog1Response == null ? '(none)' : dialog4Response}</small>
+		<small>Selected dialog 4 action: ${dialog4Response == null ? '(none)' : dialog4Response}</small>
 	</footer>
 
 </showcase-component>
@@ -104,6 +104,26 @@
 	<button-component onclick="${$dialog5.open = true}">
 		<icon-component icon="zoom-in"></icon-component>
 		Open dialog 5
+	</button-component>
+
+</showcase-component>
+
+<showcase-component caption="Fullscreen dialogs">
+	<dialog-component fullscreen $dialog6 style="margin: 0">
+		<header>
+			This is a fullscreen dialog
+		</header>
+		<article>
+			This dialog takes up the entire available space
+		</article>
+		<footer>
+			<icon-button-component dialog-action="cancel" icon="close"></icon-button-component>
+		</footer>
+	</dialog-component>
+
+	<button-component onclick="${$dialog6.open = true}">
+		<icon-component icon="zoom-in"></icon-component>
+		Open dialog 6
 	</button-component>
 
 </showcase-component>

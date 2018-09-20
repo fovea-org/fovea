@@ -1,6 +1,6 @@
 import {dependsOn, prop, styleSrc, templateSrc} from "@fovea/core";
 import {IRouterTarget} from "@fovea/router";
-import {ButtonComponent, RadioButtonComponent, DialogAction, openDialog, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
+import {ButtonComponent, RadioButtonComponent, IconButtonComponent, DialogAction, openDialog, DialogComponent, ICON_CHECK, ICON_CLOSE, ICON_ZOOM_IN, IconComponent} from "@fovea/material";
 import {DIALOG_API_REFERENCE_DATA} from "./dialog-api-reference-data";
 import {Highlight} from "../../component/highlight/highlight";
 import {ShowcaseComponent} from "../../component/showcase/showcase-component";
@@ -24,7 +24,7 @@ IconComponent.addIcons(
 	"../shared/shared.scss",
 	"./dialog-page-component.scss"
 ])
-@dependsOn(DialogComponent, RadioButtonComponent, IconComponent, ButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
+@dependsOn(DialogComponent, IconButtonComponent, RadioButtonComponent, IconComponent, ButtonComponent, Highlight, ShowcaseComponent, ApiReferenceComponent)
 export default class DialogPageComponent extends HTMLElement implements IRouterTarget {
 
 	/**
