@@ -60,6 +60,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 		browserslistGeneratorVersion,
 		colorVersion,
 		foveaCoreVersion,
+		foveaLibVersion,
 		foveaCliVersion,
 		foveaRouterVersion] = await Promise.all([
 		await latestVersion("tslint"),
@@ -70,6 +71,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 		await latestVersion("@wessberg/browserslist-generator"),
 		await latestVersion("@wessberg/color"),
 		await latestVersion("@fovea/core"),
+		await latestVersion("@fovea/lib"),
 		await latestVersion("@fovea/cli"),
 		await latestVersion("@fovea/router")
 	]);
@@ -85,6 +87,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 			"@types/node": `^${typesNodeVersion}`,
 			"@types/workbox-sw": `^${typesWorkboxSWVersion}`,
 			"@fovea/core": `^${foveaCoreVersion}`,
+			"@fovea/lib": `^${foveaLibVersion}`,
 			"@fovea/router": `^${foveaRouterVersion}`,
 			tslib: `^${tslibVersion}`
 		}

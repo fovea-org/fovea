@@ -1,126 +1,126 @@
 {
-	"main": "./dist/cjs/index.js",
-	"module": "./dist/esm/index.js",
-	"browser": "./dist/esm/index.js",
-	"types": "./dist/esm/index.d.ts",
-	"typings": "./dist/esm/index.d.ts",
-	"es2015": "./dist/esm/index.js",
-	"files": [
-		"dist/**/*.*",
-		"bin/*"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fovea-org/fovea.git"
-	},
-	"bugs": {
-		"url": "https://github.com/fovea-org/fovea/issues"
-	},
-	"contributors": [
-		{
-			"name": "Frederik Wessberg",
-			"email": "frederikwessberg@hotmail.com",
-			"url": "https://github.com/wessberg"
-		}
-	],
-	"engines": {
-		"node": ">=10.1.0"
-	},
-	"license": "MIT",
-	"keywords": [],
-	"bin": {
-		"fovea": "bin/fovea"
-	},
-	"preferGlobal": true,
-	"name": "@fovea/cli",
-	"version": "1.0.131",
-	"description": "Let's compile the web!",
-	"scripts": {
-		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
-		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
-		"prerollup": "rm -r -f dist",
-		"rollup": "rollup -c rollup.config.js",
-		"build": "npm run rollup"
-	},
-	"devDependencies": {
-		"@wessberg/rollup-plugin-di": "^1.0.86",
-		"@wessberg/scaffold": "1.0.4",
-		"tslib": "^1.9.3",
-		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.8.0"
-	},
-	"dependencies": {
-		"@fovea/compiler": "^1.0.131",
-		"@fovea/rollup-plugin-fovea": "^1.0.131",
-		"@fovea/style": "^1.0.131",
-		"@types/chokidar": "^1.7.5",
-		"@types/deep-equal": "^1.0.1",
-		"@types/deep-extend": "^0.4.31",
-		"@types/file-type": "^5.2.1",
-		"@types/iltorb": "^2.3.0",
-		"@types/mime": "^2.0.0",
-		"@types/node": "^10.9.4",
-		"@types/ora": "^1.3.4",
-		"@types/prettier": "^1.13.2",
-		"@types/resolve": "0.0.8",
-		"@types/sharp": "^0.17.10",
-		"@types/stringify-object": "^3.2.0",
-		"@types/svgo": "^1.0.1",
-		"@types/ws": "^6.0.1",
-		"@wessberg/arrayutil": "0.0.4",
-		"@wessberg/browserslist-generator": "0.0.44",
-		"@wessberg/di": "^1.1.0",
-		"@wessberg/fileloader": "^1.1.9",
-		"@wessberg/filesaver": "^1.0.8",
-		"@wessberg/pathutil": "0.0.10",
-		"@wessberg/rollup-plugin-ts": "0.0.40",
-		"@wessberg/stringutil": "^1.0.17",
-		"babel-minify": "^0.4.3",
-		"buffer-serializer": "^1.1.0",
-		"chalk": "^2.4.1",
-		"chokidar": "^2.0.4",
-		"commander": "^2.18.0",
-		"cross-spawn-promise": "^0.10.1",
-		"deep-equal": "^1.0.1",
-		"deep-extend": "^0.6.0",
-		"devcert": "^1.0.0",
-		"file-type": "^9.0.0",
-		"html-format": "^1.0.1",
-		"http-signature": "^1.2.0",
-		"iltorb": "^2.4.0",
-		"latest-version": "^4.0.0",
-		"magic-string": "^0.25.0",
-		"mime": "^2.3.1",
-		"ora": "^3.0.0",
-		"postcss": "^7.0.2",
-		"postcss-svgo": "^4.0.0",
-		"prettier": "^1.14.2",
-		"resolve": "^1.8.1",
-		"rollup": "^0.65.2",
-		"rollup-plugin-commonjs": "^9.1.6",
-		"rollup-plugin-node-resolve": "^3.4.0",
-		"rollup-pluginutils": "^2.3.1",
-		"sharp": "^0.20.8",
-		"stringify-object": "^3.2.2",
-		"svgo": "^1.0.5",
-		"temp-dir": "^1.0.0",
-		"to-ico": "^1.1.5",
-		"typescript": "^3.0.3",
-		"ws": "^6.0.0"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"scaffold": {
-		"patreonUserId": "11315442",
-		"contributorMeta": {
-			"Frederik Wessberg": {
-				"imageUrl": "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",
-				"role": "Lead Developer",
-				"twitterHandle": "FredWessberg",
-				"isCocEnforcer": true
-			}
-		},
-		"backers": []
-	}
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "typings": "./dist/esm/index.d.ts",
+  "es2015": "./dist/esm/index.js",
+  "files": [
+    "dist/**/*.*",
+    "bin/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fovea-org/fovea.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fovea-org/fovea/issues"
+  },
+  "contributors": [
+    {
+      "name": "Frederik Wessberg",
+      "email": "frederikwessberg@hotmail.com",
+      "url": "https://github.com/wessberg"
+    }
+  ],
+  "engines": {
+    "node": ">=10.1.0"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "bin": {
+    "fovea": "bin/fovea"
+  },
+  "preferGlobal": true,
+  "name": "@fovea/cli",
+  "version": "1.0.131",
+  "description": "Let's compile the web!",
+  "scripts": {
+    "generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
+    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+    "prerollup": "rm -r -f dist",
+    "rollup": "rollup -c rollup.config.js",
+    "build": "npm run rollup"
+  },
+  "devDependencies": {
+    "@wessberg/rollup-plugin-di": "^1.0.87",
+    "@wessberg/scaffold": "^1.0.4",
+    "tslib": "^1.9.3",
+    "tslint": "^5.11.0",
+    "tslint-sonarts": "^1.8.0"
+  },
+  "dependencies": {
+    "@fovea/compiler": "^1.0.131",
+    "@fovea/rollup-plugin-fovea": "^1.0.131",
+    "@fovea/style": "^1.0.131",
+    "@types/chokidar": "^1.7.5",
+    "@types/deep-equal": "^1.0.1",
+    "@types/deep-extend": "^0.4.31",
+    "@types/file-type": "^5.2.1",
+    "@types/iltorb": "^2.3.0",
+    "@types/mime": "^2.0.0",
+    "@types/node": "^10.10.1",
+    "@types/ora": "^1.3.4",
+    "@types/prettier": "^1.13.2",
+    "@types/resolve": "^0.0.8",
+    "@types/sharp": "^0.17.10",
+    "@types/stringify-object": "^3.2.0",
+    "@types/svgo": "^1.0.1",
+    "@types/ws": "^6.0.1",
+    "@wessberg/arrayutil": "0.0.4",
+    "@wessberg/browserslist-generator": "^0.0.44",
+    "@wessberg/di": "^1.1.0",
+    "@wessberg/fileloader": "^1.1.9",
+    "@wessberg/filesaver": "^1.0.8",
+    "@wessberg/pathutil": "0.0.10",
+    "@wessberg/rollup-plugin-ts": "0.0.40",
+    "@wessberg/stringutil": "^1.0.17",
+    "babel-minify": "^0.4.3",
+    "buffer-serializer": "^1.1.0",
+    "chalk": "^2.4.1",
+    "chokidar": "^2.0.4",
+    "commander": "^2.18.0",
+    "cross-spawn-promise": "^0.10.1",
+    "deep-equal": "^1.0.1",
+    "deep-extend": "^0.6.0",
+    "devcert": "^1.0.0",
+    "file-type": "^9.0.0",
+    "html-format": "^1.0.1",
+    "http-signature": "^1.2.0",
+    "iltorb": "^2.4.0",
+    "latest-version": "^4.0.0",
+    "magic-string": "^0.25.1",
+    "mime": "^2.3.1",
+    "ora": "^3.0.0",
+    "postcss": "^7.0.2",
+    "postcss-svgo": "^4.0.0",
+    "prettier": "^1.14.3",
+    "resolve": "^1.8.1",
+    "rollup": "^0.66.1",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-pluginutils": "^2.3.3",
+    "sharp": "^0.20.8",
+    "stringify-object": "^3.2.2",
+    "svgo": "^1.1.1",
+    "temp-dir": "^1.0.0",
+    "to-ico": "^1.1.5",
+    "typescript": "^3.0.3",
+    "ws": "^6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scaffold": {
+    "patreonUserId": "11315442",
+    "contributorMeta": {
+      "Frederik Wessberg": {
+        "imageUrl": "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",
+        "role": "Lead Developer",
+        "twitterHandle": "FredWessberg",
+        "isCocEnforcer": true
+      }
+    },
+    "backers": []
+  }
 }

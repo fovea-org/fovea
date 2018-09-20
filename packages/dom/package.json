@@ -1,80 +1,80 @@
 {
-	"main": "./dist/cjs/index.js",
-	"module": "./dist/esm/index.js",
-	"browser": "./dist/esm/index.js",
-	"types": "./dist/esm/index.d.ts",
-	"typings": "./dist/esm/index.d.ts",
-	"es2015": "./dist/esm/index.js",
-	"files": [
-		"dist/**/*.*",
-		"bin/*"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fovea-org/fovea.git"
-	},
-	"bugs": {
-		"url": "https://github.com/fovea-org/fovea/issues"
-	},
-	"contributors": [
-		{
-			"name": "Frederik Wessberg",
-			"email": "frederikwessberg@hotmail.com",
-			"url": "https://github.com/wessberg"
-		}
-	],
-	"engines": {
-		"node": ">=10.1.0"
-	},
-	"license": "MIT",
-	"keywords": [],
-	"name": "@fovea/dom",
-	"version": "1.0.131",
-	"description": "Let's compile the web!",
-	"scripts": {
-		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
-		"lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
-		"prerollup": "rm -r -f dist",
-		"rollup": "rollup -c rollup.config.js",
-		"pretest": "rollup -c rollup.test.config.js",
-		"test": "ava",
-		"posttest": "rm -r -f compiled",
-		"build": "npm run rollup"
-	},
-	"dependencies": {
-		"@fovea/common": "^1.0.131",
-		"@types/node": "^10.9.4",
-		"@types/parsimmon": "^1.10.0",
-		"@wessberg/codeanalyzer": "^1.0.138",
-		"@wessberg/di": "^1.1.0",
-		"@wessberg/stringutil": "^1.0.17",
-		"parsimmon": "^1.12.0",
-		"posthtml-parser": "^0.4.1",
-		"typescript": "^3.0.3"
-	},
-	"devDependencies": {
-		"@wessberg/rollup-plugin-di": "^1.0.86",
-		"@wessberg/rollup-plugin-ts": "0.0.40",
-		"@wessberg/scaffold": "^1.0.4",
-		"ava": "^0.25.0",
-		"rollup": "^0.65.2",
-		"tslib": "^1.9.3",
-		"tslint": "^5.11.0",
-		"tslint-sonarts": "^1.8.0"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"scaffold": {
-		"patreonUserId": "11315442",
-		"contributorMeta": {
-			"Frederik Wessberg": {
-				"imageUrl": "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",
-				"role": "Lead Developer",
-				"twitterHandle": "FredWessberg",
-				"isCocEnforcer": true
-			}
-		},
-		"backers": []
-	}
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "typings": "./dist/esm/index.d.ts",
+  "es2015": "./dist/esm/index.js",
+  "files": [
+    "dist/**/*.*",
+    "bin/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fovea-org/fovea.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fovea-org/fovea/issues"
+  },
+  "contributors": [
+    {
+      "name": "Frederik Wessberg",
+      "email": "frederikwessberg@hotmail.com",
+      "url": "https://github.com/wessberg"
+    }
+  ],
+  "engines": {
+    "node": ">=10.1.0"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "name": "@fovea/dom",
+  "version": "1.0.131",
+  "description": "Let's compile the web!",
+  "scripts": {
+    "generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
+    "lint": "tsc --noEmit && tslint -c tslint.json --project tsconfig.json",
+    "prerollup": "rm -r -f dist",
+    "rollup": "rollup -c rollup.config.js",
+    "pretest": "rollup -c rollup.test.config.js",
+    "test": "ava",
+    "posttest": "rm -r -f compiled",
+    "build": "npm run rollup"
+  },
+  "dependencies": {
+    "@fovea/common": "^1.0.131",
+    "@types/node": "^10.10.1",
+    "@types/parsimmon": "^1.10.0",
+    "@wessberg/codeanalyzer": "^1.0.139",
+    "@wessberg/di": "^1.1.0",
+    "@wessberg/stringutil": "^1.0.17",
+    "parsimmon": "^1.12.0",
+    "posthtml-parser": "^0.4.1",
+    "typescript": "^3.0.3"
+  },
+  "devDependencies": {
+    "@wessberg/rollup-plugin-di": "^1.0.87",
+    "@wessberg/rollup-plugin-ts": "0.0.40",
+    "@wessberg/scaffold": "^1.0.4",
+    "ava": "^0.25.0",
+    "rollup": "^0.66.1",
+    "tslib": "^1.9.3",
+    "tslint": "^5.11.0",
+    "tslint-sonarts": "^1.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scaffold": {
+    "patreonUserId": "11315442",
+    "contributorMeta": {
+      "Frederik Wessberg": {
+        "imageUrl": "https://avatars2.githubusercontent.com/u/20454213?s=460&v=4",
+        "role": "Lead Developer",
+        "twitterHandle": "FredWessberg",
+        "isCocEnforcer": true
+      }
+    },
+    "backers": []
+  }
 }
