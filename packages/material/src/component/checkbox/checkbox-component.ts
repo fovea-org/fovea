@@ -16,11 +16,8 @@ import {CheckboxBaseComponent} from "./checkbox-base-component";
 export class CheckboxComponent extends CheckboxBaseComponent {
 
 	/**
-	 * Invoked when the Checkbox is toggled based on a non-direct interaction.
-	 * For example, from clicking on an associated label
-	 * @override
+	 * A reference to the main UI element (which in this case, is this itself)
+	 * @type {this}
 	 */
-	protected onToggledFromNonDirectInteraction () {
-		this.dispatchEvent(new PointerEvent("click"));
-	}
+	protected mainUIElement = this;
 }

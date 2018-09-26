@@ -15,7 +15,7 @@ import {IDOMGeneratorBuildNodeInstructionsOptions} from "./i-dom-generator-build
 import {IContextUtil} from "../../../util/context-util/i-context-util";
 import {FoveaDOMAstNode} from "../../fovea-dom-ast/i-fovea-dom-ast";
 import {IContext} from "../../../util/context-util/i-context";
-import {FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER, IF_CUSTOM_ATTRIBUTE_QUALIFIER} from "@fovea/common";
+import {FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER, FoveaHostKind, IF_CUSTOM_ATTRIBUTE_QUALIFIER} from "@fovea/common";
 
 /**
  * A class that can generate dom instructions from a HTMLBodyElement.
@@ -140,13 +140,13 @@ export class DOMGenerator implements IDOMGenerator {
 		if (!isFoveaDOMAstElement(node)) return;
 
 		// Check the node name to see if there is a referenced custom selector there
-		this.conditionallyConsumeReferencedCustomSelector(node.name, "component", context);
+		this.conditionallyConsumeReferencedCustomSelector(node.name, FoveaHostKind.CUSTOM_ELEMENT, context);
 
 		// Check all of its custom attributes to see if there is a referenced custom selector there
 		node.customAttributes.forEach(({name}) => {
 			// Only handle the custom attribute if it is not one of the ones that Fovea supplies by itself.
 			if (name !== FOREACH_CUSTOM_ATTRIBUTE_QUALIFIER && name !== IF_CUSTOM_ATTRIBUTE_QUALIFIER) {
-				this.conditionallyConsumeReferencedCustomSelector(name, "custom-attribute", context);
+				this.conditionallyConsumeReferencedCustomSelector(name, FoveaHostKind.CUSTOM_ATTRIBUTE, context);
 			}
 		});
 	}
@@ -154,10 +154,10 @@ export class DOMGenerator implements IDOMGenerator {
 	/**
 	 * Checks if a selector refers to something that is built-in and adds it to the context as a referenced custom selector if not.
 	 * @param {string} selector
-	 * @param {string} kind
+	 * @param {FoveaHostKind} kind
 	 * @param {IContext} context
 	 */
-	private conditionallyConsumeReferencedCustomSelector (selector: string, kind: "component"|"custom-attribute", context: IContext): void {
+	private conditionallyConsumeReferencedCustomSelector (selector: string, kind: FoveaHostKind, context: IContext): void {
 		// If its' selector is not one of the built-in ones, add it to the Set of referenced Custom Selectors
 		if (!this.domUtil.isBuiltInSelector(selector) && selector !== this.domUtil.selfReferenceNodeName) {
 			const has = context.referencedCustomSelectors.some(value => value.kind === kind && value.selector === selector);

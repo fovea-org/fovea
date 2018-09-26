@@ -1,5 +1,5 @@
 import {FoveaDiagnosticKind} from "./fovea-diagnostic-kind";
-import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
+import {FoveaHostKind} from "@fovea/common";
 
 export interface IFoveaDiagnosticCtor {
 	kind: FoveaDiagnosticKind;

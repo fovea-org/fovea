@@ -13,7 +13,6 @@ import {ClassDeclaration, ClassExpression, NodeArray} from "typescript";
 import {IFoveaOptions} from "../options/i-fovea-options";
 import {IFoveaCompilerBase} from "./i-fovea-compiler-base";
 import {IFoveaHostMarkerMarkExcludeResult, IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
-import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {IEmitExtractor} from "../emit-extractor/i-emit-extractor";
 import {IHostListenerExtractor} from "../host-listener-extractor/i-host-listener-extractor";
@@ -30,7 +29,7 @@ import {IFoveaCompileFileOptions} from "./i-fovea-compile-file-options";
 import {IFoveaCompileForeignFileOptions} from "./i-fovea-compile-foreign-file-options";
 import {IFoveaUsePrecompiledFileOptions} from "./i-fovea-use-precompiled-file-options";
 import {ICompilerFlagsExtender} from "../compiler-flags-extender/i-compiler-flags-extender";
-import {libHelperName} from "@fovea/common";
+import {libHelperName, FoveaHostKind} from "@fovea/common";
 import {IHostAttributesExtractor} from "../host-attributes-extractor/i-host-attributes-extractor";
 import {IChildListObserverExtractor} from "../child-list-observer-extractor/i-child-list-observer-extractor";
 import {IOnAttributeChangeExtractor} from "../on-attribute-change-extractor/i-on-attribute-change-extractor";
@@ -220,7 +219,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 					stats.declaredCustomSelectors.push({
 						file: context.container.file,
 						hostName: mark.className,
-						kind: "custom-attribute",
+						kind: FoveaHostKind.CUSTOM_ATTRIBUTE,
 						selector: customAttributeMatch[1],
 						isDefaultExport,
 						isNamedExport
@@ -234,7 +233,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 						stats.declaredCustomSelectors.push({
 							file: context.container.file,
 							hostName: mark.className,
-							kind: "component",
+							kind: FoveaHostKind.CUSTOM_ELEMENT,
 							selector: customElementMatch[1],
 							isDefaultExport,
 							isNamedExport
@@ -248,8 +247,8 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			stats.hasHostAttributes = stats.hasHostAttributes || markStats.hasHostAttributes;
 			stats.hasSyncEvaluations = stats.hasSyncEvaluations || markStats.hasSyncEvaluations;
 			stats.hasAsyncEvaluations = stats.hasAsyncEvaluations || markStats.hasAsyncEvaluations;
-			stats.hasIFoveaHosts = stats.hasIFoveaHosts || markStats.hasIFoveaHosts;
-			stats.hasICustomAttributes = stats.hasICustomAttributes || markStats.hasICustomAttributes;
+			stats.hasCustomElements = stats.hasCustomElements || markStats.hasCustomElements;
+			stats.hasCustomAttributes = stats.hasCustomAttributes || markStats.hasCustomAttributes;
 			stats.hasHostListeners = stats.hasHostListeners || markStats.hasHostListeners;
 			stats.hasVisibilityObservers = stats.hasVisibilityObservers || markStats.hasVisibilityObservers;
 			stats.hasChildListObservers = stats.hasChildListObservers || markStats.hasChildListObservers;
@@ -298,7 +297,7 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 			return;
 		}
 
-		// Take all classes that is qualified for compilation (ones that are IFoveaHosts)
+		// Take all classes that is qualified for compilation (ones that are FoveaHosts)
 		const marks = classes.map(classDeclaration => this.foveaHostMarker.mark({classDeclaration, file}));
 
 		// Take the first precompiled mark
@@ -312,11 +311,11 @@ export class FoveaCompilerBase implements IFoveaCompilerBase {
 		// Otherwise, take those classes that should be included
 		const filtered = <IFoveaHostMarkerMarkIncludeResult[]> marks.filter(mark => mark.include);
 
-		// Set the 'hasICustomAttributes' value to true if any of the filtered classes is a Custom Attribute
-		this.foveaStats.setHasICustomAttributes(file, filtered.some(mark => mark.kind === FoveaHostKind.CUSTOM_ATTRIBUTE));
+		// Set the 'hasCustomAttributes' value to true if any of the filtered classes is a Custom Attribute
+		this.foveaStats.setHasCustomAttributes(file, filtered.some(mark => mark.kind === FoveaHostKind.CUSTOM_ATTRIBUTE));
 
-		// Set the 'hasIFoveaHosts' value to true if any of the filtered classes is an IFoveaHost
-		this.foveaStats.setHasIFoveaHosts(file, filtered.some(mark => mark.kind === FoveaHostKind.HOST));
+		// Set the 'hasCustomElements' value to true if any of the filtered classes is a Custom Element
+		this.foveaStats.setHasCustomElements(file, filtered.some(mark => mark.kind === FoveaHostKind.CUSTOM_ELEMENT));
 
 		// It will have changed if at least 1 class has been included for compilation
 		const hasChanged = filtered.length > 0;

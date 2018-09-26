@@ -1,13 +1,13 @@
-import {ICustomAttribute, IFoveaHost} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 import {EXPECTED_ATTRIBUTE_VALUE_MAP} from "../expected-attribute-value-map/expected-attribute-value-map";
 
 /**
  * Sets the expected attribute value for the given host, attribute name and attribute value
- * @param {IFoveaHost|ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {string} attributeName
  * @param {string|null} attributeValue
  */
-export function setExpectedAttributeValue (host: IFoveaHost|ICustomAttribute, attributeName: string, attributeValue: string|null): void {
+export function setExpectedAttributeValue (host: FoveaHost, attributeName: string, attributeValue: string|null): void {
 	let map = EXPECTED_ATTRIBUTE_VALUE_MAP.get(host);
 	// If the map doesn't exist, initialize it to a new one
 	if (map == null) {

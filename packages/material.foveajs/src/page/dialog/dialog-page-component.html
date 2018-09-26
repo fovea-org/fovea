@@ -70,7 +70,7 @@
 			Scrolling dialog
 		</header>
 		<article>
-			<div *foreach="${listItems}">
+			<div *foreach="${[...Array(15).keys()]}">
 				<label>
 					<radio-button-component onchecked="${selectedScrollingDialogOption = selectedScrollingDialogOption === true ? true : event.detail === true}" style="margin-left: -10px" name="scrolling_dialog"></radio-button-component>
 					Item ${item}

@@ -1,4 +1,5 @@
 import {IRippleCoordinates} from "./i-ripple-coordinates";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * A Ripple is a circular shape that fades in/out on a target element
@@ -60,7 +61,7 @@ export class Ripple {
 	 */
 	public set disposeWhenDone (disposeWhenDone: boolean) {
 		this._disposeWhenDone = disposeWhenDone;
-		if (!this.animating) this.rippleOut();
+		if (!this.animating) this.rippleOut().then();
 	}
 
 	/**
@@ -74,47 +75,67 @@ export class Ripple {
 	/**
 	 * Sets the relevant styles on the ripple and renders it onto screen
 	 * @param {boolean} center
-	 * @param {IRippleCoordinates | null} coordinates
+	 * @param {IRippleCoordinates?} coordinates
 	 */
-	public rippleIn (center: boolean, coordinates: IRippleCoordinates|null): void {
+	public async rippleIn (center: boolean, coordinates?: IRippleCoordinates): Promise<void> {
 		if (this.ripple == null) return;
-
-		Object.assign(
-			this.ripple.style,
-			this.rippleBaseStyles,
-			this.getRippleDimensions(center, coordinates)
-		);
-		this.ripple.setAttribute("data-ripple", "");
-		this.ripple.setAttribute("aria-hidden", "true");
-
-		this.root.appendChild(this.ripple);
-		// Force Re-calculating styles
-		this.ripple.offsetWidth;
-		this.ripple.classList.add("fade-in");
 		this.animating = true;
 
-		setTimeout(() => {
-			this.animating = false;
-			if (this.disposeWhenDone) {
-				this.rippleOut();
-			}
-		}, this.maxDuration - this.FADE_IN_DURATION_NEGATIVE_OFFSET);
+		// Compute the ripple dimensions
+		const rippleDimensions = await rafScheduler.measure(() => this.getRippleDimensions(center, coordinates));
+
+		await rafScheduler.mutate(() => {
+			if (this.ripple == null) return;
+
+			Object.assign(
+				this.ripple.style,
+				this.rippleBaseStyles,
+				rippleDimensions
+			);
+			this.ripple.setAttribute("data-ripple", "");
+			this.ripple.setAttribute("aria-hidden", "true");
+
+			this.root.appendChild(this.ripple);
+		});
+
+		await rafScheduler.measure(() => {
+			if (this.ripple == null) return;
+			// Force Re-calculating styles
+			this.ripple.offsetWidth;
+			this.ripple.classList.add("fade-in");
+
+			setTimeout(async () => {
+				this.animating = false;
+				if (this.disposeWhenDone) {
+					await this.rippleOut();
+				}
+			}, this.maxDuration - this.FADE_IN_DURATION_NEGATIVE_OFFSET);
+		});
 	}
 
 	/**
 	 * Renders the ripple out and removes it from the DOM
 	 */
-	public rippleOut (): void {
+	public async rippleOut (): Promise<void> {
 		if (this.ripple == null) return;
-		this.ripple.classList.replace("fade-in", "fade-out");
+		await rafScheduler.mutate(() => {
+			if (this.ripple == null) return;
+			this.ripple.classList.replace("fade-in", "fade-out");
+		});
+
 		this.animating = true;
 
-		setTimeout(() => {
-			this.animating = false;
-			if (this.ripple == null) return;
-			this.root.removeChild(this.ripple);
-			this.ripple = null;
-		}, this.maxDuration);
+		await rafScheduler.measure(() => {
+			setTimeout(async () => {
+				this.animating = false;
+				if (this.ripple == null) return;
+
+				const ripple = this.ripple;
+				this.ripple = null;
+
+				await rafScheduler.mutate(() => this.root.removeChild(ripple));
+			}, this.maxDuration);
+		});
 	}
 
 	/**
@@ -133,10 +154,10 @@ export class Ripple {
 	/**
 	 * Computes and returns the dimensions that a ripple should be constructed with
 	 * @param {boolean} center
-	 * @param {IRippleCoordinates|null} coordinates
+	 * @param {IRippleCoordinates?} coordinates
 	 * @returns {{[p: string]: string}}
 	 */
-	private getRippleDimensions (center: boolean, coordinates: IRippleCoordinates|null): { [key: string]: string } {
+	private getRippleDimensions (center: boolean, coordinates?: IRippleCoordinates): { [key: string]: string } {
 		const dimensions = this.computeRippleDimensions(center, coordinates);
 		if (dimensions == null) return {};
 
@@ -169,10 +190,10 @@ export class Ripple {
 	/**
 	 * Computes the width, height, and size of the ripple to generate based on a pointer event
 	 * @param {boolean} center
-	 * @param {IRippleCoordinates|null} coordinates
+	 * @param {IRippleCoordinates?} coordinates
 	 * @returns {object | void}
 	 */
-	private computeRippleDimensions (center: boolean, coordinates: IRippleCoordinates|null): { width: number; height: number; size: number }|void {
+	private computeRippleDimensions (center: boolean, coordinates?: IRippleCoordinates): { width: number; height: number; size: number }|void {
 		// Get the width and height of the surrounding container.
 		// The ripple will always have equal width and height.
 		const dimensions = this.getTargetDimensions();

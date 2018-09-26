@@ -1,11 +1,13 @@
-import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor, Json} from "@fovea/common";
+import {AnyHost} from "../../host/any-host/any-host";
+
+// tslint:disable:no-any
 
 /**
- * This function is invoked when a value is attempted to be gotten from an IFoveaHost
- * @param {IFoveaHost|IFoveaHostConstructor|ICustomAttribute|ICustomAttributeConstructor} host
+ * This function is invoked when a value is attempted to be gotten from any host
+ * @param {AnyHost} host
  * @param {string} name
- * @returns {Json}
+ * @returns {*}
  */
-export function propGetter (host: IFoveaHost|IFoveaHostConstructor|ICustomAttribute|ICustomAttributeConstructor, name: string): Json {
-	return (<Json>host)[`_${name}`];
+export function propGetter (host: AnyHost, name: string): any {
+	return (<any>host)[`_${name}`];
 }

@@ -2,7 +2,7 @@ import {setAttributeNameForPropName} from "../../prop/prop-name-to-attribute-nam
 import {PropertyToAttributeTuple} from "./property-to-attribute-tuple";
 
 /**
- * Maps the properties of an IFoveaHost to their attribute counterparts.
+ * Maps the properties of an FoveaHost to their attribute counterparts.
  * @param {[string , string][]} tuples
  * @private
  */

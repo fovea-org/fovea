@@ -6,8 +6,8 @@ export interface IMutableCompilerHintStats {
 	hasHostAttributes: boolean;
 	hasSyncEvaluations: boolean;
 	hasAsyncEvaluations: boolean;
-	hasIFoveaHosts: boolean;
-	hasICustomAttributes: boolean;
+	hasCustomElements: boolean;
+	hasCustomAttributes: boolean;
 	hasHostListeners: boolean;
 	hasVisibilityObservers: boolean;
 	hasChildListObservers: boolean;
@@ -46,8 +46,8 @@ export interface IFoveaStats extends IImmutableFoveaStats {
 	setHasStaticCSS (file: string, hasStaticCSS: boolean): void;
 	setHasAsyncEvaluations (file: string, hasAsyncEvaluations: boolean): void;
 	setHasSyncEvaluations (file: string, hasSyncEvaluations: boolean): void;
-	setHasIFoveaHosts (file: string, hasIFoveaHosts: boolean): void;
-	setHasICustomAttributes (file: string, hasICustomAttributes: boolean): void;
+	setHasCustomElements (file: string, hasCustomElements: boolean): void;
+	setHasCustomAttributes (file: string, hasCustomAttributes: boolean): void;
 	setHasHostListeners (file: string, hasHostListeners: boolean): void;
 	setHasVisibilityObservers (file: string, hasVisibilityObservers: boolean): void;
 	setHasChildListObservers (file: string, hasChildListObservers: boolean): void;

@@ -1,9 +1,9 @@
+import {Uuid} from "@fovea/common";
+
 /**
  * An auto-incrementing uuid
  * @type {number}
  */
-import {Uuid} from "@fovea/common";
-
 let UUID: Uuid = 0;
 
 /**

@@ -1,19 +1,21 @@
-import {IFoveaHost, IFoveaHostConstructor, Json} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
 import {getExpectedAttributeValue} from "../../attribute/expected-attribute-value/get-expected-attribute-value/get-expected-attribute-value";
 import {getPropNameForAttributeName} from "../../prop/prop-name-to-attribute-name/get-prop-name-for-attribute-name/get-prop-name-for-attribute-name";
 import {setExpectedAttributeValue} from "../../attribute/expected-attribute-value/set-expected-attribute-value/set-expected-attribute-value";
 import {PROPS_FOR_HOST} from "../../prop/props-for-host/props-for-host/props-for-host";
 import {coerceValue} from "../../observe/expression-chain/coercion/coerce-value";
 
+// tslint:disable:no-any
+
 /**
- * A helper function that will be invoked when an attribute changes on an IFoveaHost
- * @param {IFoveaHost} host
+ * A helper function that will be invoked when an attribute changes on an FoveaHost
+ * @param {FoveaHost} host
  * @param {string} attributeName
  * @param {string|null} _oldValue
  * @param {string|null} newValue
  * @private
  */
-export function ___attributeChanged (host: IFoveaHost, attributeName: string, _oldValue: string|null, newValue: string|null): void {
+export function ___attributeChanged (host: FoveaHost, attributeName: string, _oldValue: string|null, newValue: string|null): void {
 
 	// Start with getting the expected attribute value and see if it is identical to the new value
 	const expectedAttributeValue = getExpectedAttributeValue(host, attributeName);
@@ -30,14 +32,14 @@ export function ___attributeChanged (host: IFoveaHost, attributeName: string, _o
 	if (matchingPropName == null) return;
 
 	// Get the prop that matches the changed attribute name
-	const matchingProp = PROPS_FOR_HOST.findValue(<IFoveaHostConstructor>host.constructor, prop => prop.name === matchingPropName);
+	const matchingProp = PROPS_FOR_HOST.findValue(<FoveaHostConstructor>host.constructor, prop => prop.name === matchingPropName);
 
 	// If there is no matching prop, return immediately
 	if (matchingProp == null) return;
 
 	// Assign the new value to the host
 	const coercedValue = coerceValue(newValue, matchingProp.type);
-	if ((<Json>host)[matchingPropName] !== coercedValue) {
-		(<Json>host)[matchingPropName] = coercedValue;
+	if ((<any>host)[matchingPropName] !== coercedValue) {
+		(<any>host)[matchingPropName] = coercedValue;
 	}
 }

@@ -5,11 +5,22 @@ import {environment} from "./environment/environment";
 import {toHex} from "@wessberg/color";
 
 /**
+ * Truncates the given text by the given max length
+ * @param {string} text
+ * @param {number} maxLength
+ * @returns {string}
+ */
+function truncate (text: string, maxLength: number): string {
+	if (text.length <= maxLength) return text;
+	return `${text.slice(0, (maxLength -3))}...`;
+}
+
+/**
  * This will generate a manifest.json file for your app
  */
 export default (resource: IResource) => ({
 	name: environment.NPM_PACKAGE_NAME,
-	short_name: environment.NPM_PACKAGE_NAME,
+	short_name: truncate(environment.NPM_PACKAGE_NAME, 12),
 	start_url: "/",
 	display: "standalone",
 	orientation: "portrait",

@@ -33,6 +33,12 @@ export abstract class CheckboxBaseComponent extends FormItemComponent {
 	protected $formItem: HTMLInputElement;
 
 	/**
+	 * The element that has a ripple.
+	 * @type {HTMLElement}
+	 */
+	protected abstract mainUIElement: HTMLElement;
+
+	/**
 	 * Delegates to the child input
 	 * @returns {boolean}
 	 */
@@ -82,16 +88,17 @@ export abstract class CheckboxBaseComponent extends FormItemComponent {
 			case KeyboardUtil.SPACEBAR:
 				e.preventDefault();
 				e.stopPropagation();
-				this.onToggledFromNonDirectInteraction();
+				this.fireClickEventOnMainUIElement();
 				break;
 		}
 	}
 
 	/**
-	 * Invoked when the Checkbox is toggled based on a non-direct interaction.
-	 * For example, from clicking on an associated label
+	 * Fires a click event on the main UI element
 	 */
-	protected abstract onToggledFromNonDirectInteraction (): void;
+	private fireClickEventOnMainUIElement (): void {
+		this.mainUIElement.dispatchEvent(new PointerEvent("click"));
+	}
 
 	/**
 	 * Invoked when the component is clicked
@@ -99,18 +106,21 @@ export abstract class CheckboxBaseComponent extends FormItemComponent {
 	 */
 	@listener("click")
 	public onClick (e: MouseEvent) {
+		const targetIsMainUIElement = e.target === this.mainUIElement;
 
 		// Prevent the host element from having click events capturable by the child input since it may repeat the same actions
-		if (e.target !== this.$formItem) {
+		if (targetIsMainUIElement || e.target === this) {
 			e.preventDefault();
 			e.stopPropagation();
 		}
 
-		else {
-			this.onToggledFromNonDirectInteraction();
+		if (!targetIsMainUIElement) {
+			this.fireClickEventOnMainUIElement();
 		}
 
-		this.toggle();
+		else {
+			this.toggle();
+		}
 	}
 
 	/**

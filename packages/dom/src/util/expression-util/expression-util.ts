@@ -1,11 +1,11 @@
 import {IExpressionUtil} from "./i-expression-util";
 import {takeInnerExpression} from "@fovea/common";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
-import {createSourceFile, isArrayBindingPattern, isArrayLiteralExpression, isArrowFunction, isAsExpression, isAwaitExpression, isBinaryExpression, isBindingElement, isBlock, isCallExpression, isCaseBlock, isCaseClause, isComputedPropertyName, isConditionalExpression, isDefaultClause, isDeleteExpression, isElementAccessExpression, isExpressionStatement, isForInStatement, isForOfStatement, isForStatement, isFunctionDeclaration, isFunctionExpression, isIdentifier, isIfStatement, isLabeledStatement, isLiteralExpression, isMethodDeclaration, isNewExpression, isNonNullExpression, isNoSubstitutionTemplateLiteral, isObjectBindingPattern, isObjectLiteralExpression, isOmittedExpression, isParameter, isParenthesizedExpression, isPostfixUnaryExpression, isPrefixUnaryExpression, isPropertyAccessExpression, isPropertyAssignment, isReturnStatement, isStringLiteral, isSwitchStatement, isTemplateExpression, isTemplateHead, isTemplateMiddle, isTemplateSpan, isTemplateTail, isToken, isTypeAssertion, isTypeReferenceNode, isVariableDeclaration, isVariableDeclarationList, isVariableStatement, isYieldExpression, Node, NodeArray, ScriptTarget, SyntaxKind, tokenToString, TypeOfExpression} from "typescript";
 import {IExpressionContentPart, IExpressionContentPartMetadata, IGenerateExpressionContentResult} from "./generate-expression-content-result";
 import {RawExpressionBindable} from "../../expression/raw-expression-bindable/raw-expression-bindable";
 import {IContext} from "../context-util/i-context";
 import {PICKED_GLOBAL_KEYS} from "../global-keys/global-keys";
+import {createSourceFile, isArrayBindingPattern, isSpreadElement, isArrayLiteralExpression, isArrowFunction, isAsExpression, isAwaitExpression, isBinaryExpression, isBindingElement, isBlock, isCallExpression, isCaseBlock, isCaseClause, isComputedPropertyName, isConditionalExpression, isDefaultClause, isDeleteExpression, isElementAccessExpression, isExpressionStatement, isForInStatement, isForOfStatement, isForStatement, isFunctionDeclaration, isFunctionExpression, isIdentifier, isIfStatement, isLabeledStatement, isLiteralExpression, isMethodDeclaration, isNewExpression, isNonNullExpression, isNoSubstitutionTemplateLiteral, isObjectBindingPattern, isObjectLiteralExpression, isOmittedExpression, isParameter, isParenthesizedExpression, isPostfixUnaryExpression, isPrefixUnaryExpression, isPropertyAccessExpression, isPropertyAssignment, isReturnStatement, isStringLiteral, isSwitchStatement, isTemplateExpression, isTemplateHead, isTemplateMiddle, isTemplateSpan, isTemplateTail, isToken, isTypeAssertion, isTypeReferenceNode, isVariableDeclaration, isVariableDeclarationList, isVariableStatement, isYieldExpression, Node, NodeArray, ScriptTarget, SyntaxKind, tokenToString, TypeOfExpression} from "typescript";
 
 /**
  * A utility class for working with expressions
@@ -164,6 +164,13 @@ export class ExpressionUtil implements IExpressionUtil {
 					...this.generateExpressionContent(statement.left, originalContent, environment, metadata, statement),
 					...this.generateExpressionContent(statement.operatorToken, originalContent, environment, metadata, statement),
 					...this.generateExpressionContent(statement.right, originalContent, environment, metadata, statement)
+				);
+			}
+
+			else if (isSpreadElement(statement)) {
+				result.push(
+					this.wrapExpression("..."),
+					...this.generateExpressionContent(statement.expression, originalContent, environment, metadata, statement)
 				);
 			}
 
@@ -331,8 +338,8 @@ export class ExpressionUtil implements IExpressionUtil {
 					...(statement.dotDotDotToken == null ? [] : [this.wrapExpression("...")]),
 					...(statement.propertyName == null
 						? this.generateExpressionContent(statement.name, originalContent, environment, metadata, statement)
-					  : [
-					  	...this.generateExpressionContent(statement.propertyName, originalContent, environment, metadata, statement),
+						: [
+							...this.generateExpressionContent(statement.propertyName, originalContent, environment, metadata, statement),
 							this.wrapExpression(":"),
 							...this.generateExpressionContent(statement.name, originalContent, environment, metadata, statement)
 						])

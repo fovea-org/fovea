@@ -31,6 +31,14 @@ $ yarn add @fovea/material
 
 <!-- Write usage description here -->
 
+## Browser support
+
+`@fovea/material` supports every browser that Fovea supports. Additionally, it depends on the availability of the following APIs:
+
+- `IntersectionObserver`
+- `requestAnimationFrame`
+- `requestIdleCallback`
+
 ## FAQ
 
 <!-- Write your FAQ here -->

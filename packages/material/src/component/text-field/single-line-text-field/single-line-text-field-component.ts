@@ -2,7 +2,7 @@ import {dependsOn, hostAttributes, onChange, prop, setOnHost, styleSrc, template
 import {TextFieldBaseComponent} from "../base/text-field-base-component";
 import {IconComponent} from "../../icon/icon-component";
 import {getMsFromCSSDuration} from "../../../util/duration-util";
-import {debounce} from "../../../util/debounce-util";
+import {debounce, rafScheduler} from "@fovea/scheduler";
 
 // tslint:disable:no-any
 
@@ -105,21 +105,23 @@ export class SingleLineTextFieldComponent extends TextFieldBaseComponent {
 	 * Invoked when the 'invalid' prop changes. Checks if the 'replacingHelperText' property should be toggled (to force an animation of the text change)
 	 */
 	@onChange("invalid")
-	protected onInvalidChanged (): void {
+	protected async onInvalidChanged (): Promise<void> {
 		this.replacingHelperText = this.helper != null && this.invalidText != null;
 		if (this.replacingHelperText) {
-			this.debounceToggleOffReplacingHelperText();
+			await this.debounceToggleOffReplacingHelperText();
 		}
 	}
 
 	/**
 	 * Debounces toggling off the 'replacingHelperText' prop
 	 */
-	private debounceToggleOffReplacingHelperText (): void {
-		debounce(
-			this.boundToggleOffReplacingHelperText,
-			getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration"))
-		);
+	private async debounceToggleOffReplacingHelperText (): Promise<void> {
+		await rafScheduler.measure(() => {
+			debounce(
+				this.boundToggleOffReplacingHelperText,
+				getMsFromCSSDuration(getComputedStyle(this).getPropertyValue("--transition-duration"))
+			);
+		});
 	}
 
 	/**

@@ -30,8 +30,7 @@ $ yarn add @fovea/cli
 ### Run once with NPX
 
 ```
-$ npm install @fovea/cli --save-dev
-$ npx fovea create <name-of-your-app>
+$ npx -p @fovea/cli fovea create <name-of-your-app>
 ```
 
 ## Usage

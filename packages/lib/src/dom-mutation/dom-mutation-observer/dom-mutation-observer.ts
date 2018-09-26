@@ -5,8 +5,6 @@ import {DOMConnectionCallback} from "./dom-connection-callback";
 import {DOMCallbackCondition} from "./dom-callback-condition";
 import {IDOMConnectionObserverOptions} from "./i-dom-connection-observer-options";
 import {DOMAttributeCallback} from "./dom-attribute-callback";
-import {HAS_PATCHED_PROTOTYPES, patch} from "./patch/patch";
-import {ConnectionEventKind} from "../connection-event-kind";
 import {isConnected} from "../is-connected";
 
 // The options to provide when observing nodes
@@ -16,43 +14,62 @@ const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtre
 const ATTRIBUTE_OBSERVER_OPTIONS: MutationObserverInit = {attributes: true, attributeOldValue: true};
 
 /**
- * Invoke this function when MutationRecords are available
- * @param {MutationRecord[]} changes
- * @param {DOMMutationObserver} observer
- * @param {DOMCallbackCondition} [callbackCondition]
+ * A Set of nodes that has been connected previously
+ * @type {WeakSet<Node>}
  */
-function onMutationChanges (changes: MutationRecord[], observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition = () => true): void {
-	changes.forEach(change => {
+const CONNECTED_NODES: WeakSet<Node> = new WeakSet();
 
-		switch (observer.kind) {
+/**
+ * The timeout for node connection checks
+ * @type {number}
+ */
+const CONNECTED_TIMEOUT: number = 200;
 
-			case DOMMutationObserverKind.ATTRIBUTE_CHANGED:
+/**
+ * Invoked when a MutationRecord is available
+ * @param {DOMMutationObserver} observer
+ * @param {DOMCallbackCondition} callbackCondition
+ * @param {MutationRecord} change
+ */
+function onMutationChange (observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition, change: MutationRecord): void {
+	switch (observer.kind) {
+
+		case DOMMutationObserverKind.ATTRIBUTE_CHANGED:
+			// Test the condition
+			if (!callbackCondition()) return;
+			observer.callback({
+				attributeName: change.attributeName!,
+				newValue: "getAttribute" in observer.node ? (<Element>observer.node).getAttribute(change.attributeName!) : null,
+				oldValue: change.oldValue
+			});
+			break;
+
+		case DOMMutationObserverKind.CHILDREN_ADDED:
+			if (change.addedNodes.length > 0) {
 				// Test the condition
 				if (!callbackCondition()) return;
-				observer.callback({
-					attributeName: change.attributeName!,
-					newValue: "getAttribute" in observer.node ? (<Element>observer.node).getAttribute(change.attributeName!) : null,
-					oldValue: change.oldValue
-				});
-				break;
+				observer.callback(Array.from(change.addedNodes));
+			}
+			break;
 
-			case DOMMutationObserverKind.CHILDREN_ADDED:
-				if (change.addedNodes.length > 0) {
-					// Test the condition
-					if (!callbackCondition()) return;
-					observer.callback(Array.from(change.addedNodes));
-				}
-				break;
+		case DOMMutationObserverKind.CHILDREN_REMOVED:
+			if (change.removedNodes.length > 0) {
+				// Test the condition
+				if (!callbackCondition()) return;
+				observer.callback(Array.from(change.removedNodes));
+			}
+			break;
+	}
+}
 
-			case DOMMutationObserverKind.CHILDREN_REMOVED:
-				if (change.removedNodes.length > 0) {
-					// Test the condition
-					if (!callbackCondition()) return;
-					observer.callback(Array.from(change.removedNodes));
-				}
-				break;
-		}
-	});
+/**
+ * Invoked when MutationRecords are available
+ * @param {DOMMutationObserver} observer
+ * @param {DOMCallbackCondition} callbackCondition
+ * @param {MutationRecord[]} changes
+ */
+function onMutationChanges (observer: DOMMutationObserver, callbackCondition: DOMCallbackCondition = () => true, changes: MutationRecord[]): void {
+	changes.forEach(onMutationChange.bind(null, observer, callbackCondition));
 }
 
 /**
@@ -62,7 +79,7 @@ function onMutationChanges (changes: MutationRecord[], observer: DOMMutationObse
  * @returns {IDOMConnectionObserverResult}
  */
 function onMutation (observer: DOMMutationObserver, callbackCondition?: DOMCallbackCondition): IDOMConnectionObserverResult {
-	const mutationObserver = new MutationObserver(changes => onMutationChanges(changes, observer, callbackCondition));
+	const mutationObserver = new MutationObserver(onMutationChanges.bind(null, observer, callbackCondition));
 	mutationObserver.observe(observer.root, observer.kind === DOMMutationObserverKind.ATTRIBUTE_CHANGED ? ATTRIBUTE_OBSERVER_OPTIONS : MUTATION_OBSERVER_OPTIONS);
 
 	// Return an object with an 'unobserve' property which clears the observer
@@ -101,49 +118,37 @@ export function onAttributesChanged (node: Node|ShadowRoot, callback: DOMAttribu
 	return onMutation({kind: DOMMutationObserverKind.ATTRIBUTE_CHANGED, callback, root: node, node});
 }
 
-const previousConnectionStateMap: WeakMap<Function, boolean> = new WeakMap();
+/**
+ * Clears the provided timeout
+ * @param {Node} node
+ * @param {number | undefined} timeout
+ */
+function unobserveConnectionObserver (node: Node, timeout: number|undefined): void {
+	CONNECTED_NODES.delete(node);
+	if (timeout != null) clearTimeout(timeout);
+}
 
 /**
  * Subscribes the given callback to the event that a Node is connected to the DOM
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
- * @param {Partial<IDOMConnectionObserverOptions>} options
+ * @param {Partial<IDOMConnectionObserverOptions>} _options
  * @returns {IDOMConnectionObserverResult}
  */
-export function onConnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
-	if (!HAS_PATCHED_PROTOTYPES()) patch();
+export function onConnected (node: Node, callback: DOMConnectionCallback, _options: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	let timeout: number|undefined;
 
-	let hasReceivedEvent: boolean = false;
-
-	const handler = (): boolean => {
-		if (isConnected(node) && !hasReceivedEvent && previousConnectionStateMap.get(callback) !== true) {
-			previousConnectionStateMap.set(callback, true);
-			callback();
-			return true;
-		}
-		return false;
-	};
-
-	if (!nextTime && !handler()) {
-		// Wait a tick and check again.
-		setTimeout(() => handler());
+	if (isConnected(node)) {
+		CONNECTED_NODES.add(node);
+		callback();
 	}
 
-	const eventHandler = () => {
-		hasReceivedEvent = true;
-		if (previousConnectionStateMap.get(callback) !== true) {
-			previousConnectionStateMap.set(callback, true);
-			callback();
-		}
-	};
-
-	node.addEventListener(ConnectionEventKind.CONNECTED, eventHandler);
+	else {
+		timeout = setTimeout(onConnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
+	}
 
 	return {
-		unobserve: () => {
-			node.removeEventListener(ConnectionEventKind.CONNECTED, eventHandler);
-			previousConnectionStateMap.delete(callback);
-		}
+		unobserve: unobserveConnectionObserver.bind(null, node, timeout)
 	};
 }
 
@@ -151,42 +156,22 @@ export function onConnected (node: Node, callback: DOMConnectionCallback, {nextT
  * Subscribes the given callback to the event that a Node is disconnected from the DOM
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
- * @param {Partial<IDOMConnectionObserverOptions>} options
+ * @param {Partial<IDOMConnectionObserverOptions>} _options
  * @returns {IDOMConnectionObserverResult}
  */
-export function onDisconnected (node: Node, callback: DOMConnectionCallback, {nextTime = true}: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
-	if (!HAS_PATCHED_PROTOTYPES()) patch();
+export function onDisconnected (node: Node, callback: DOMConnectionCallback, _options: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+	let timeout: number|undefined;
 
-	let hasReceivedEvent: boolean = false;
-
-	const handler = (): boolean => {
-		if (!isConnected(node) && !hasReceivedEvent && previousConnectionStateMap.get(callback) !== false) {
-			previousConnectionStateMap.set(callback, false);
-			callback();
-			return true;
-		}
-		return false;
-	};
-
-	if (!nextTime && !handler()) {
-		// Wait a tick and check again.
-		setTimeout(() => handler());
+	if (!isConnected(node) && CONNECTED_NODES.has(node)) {
+		CONNECTED_NODES.delete(node);
+		callback();
 	}
 
-	const eventHandler = () => {
-		hasReceivedEvent = true;
-		if (previousConnectionStateMap.get(callback) !== false) {
-			previousConnectionStateMap.set(callback, false);
-			callback();
-		}
-	};
-
-	node.addEventListener(ConnectionEventKind.DISCONNECTED, eventHandler);
+	else {
+		timeout = setTimeout(onDisconnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
+	}
 
 	return {
-		unobserve: () => {
-			node.removeEventListener(ConnectionEventKind.DISCONNECTED, eventHandler);
-			previousConnectionStateMap.delete(callback);
-		}
+		unobserve: unobserveConnectionObserver.bind(null, node, timeout)
 	};
 }

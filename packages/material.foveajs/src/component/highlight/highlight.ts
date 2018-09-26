@@ -1,6 +1,5 @@
 import {customAttribute, hostAttributes, prop, setOnHost, styleSrc} from "@fovea/core";
-
-declare function requestIdleCallback<T> (callback: T): number;
+import {rafScheduler, ricScheduler} from "@fovea/scheduler";
 
 /**
  * A Custom Attribute that can perform syntax highlighting of blocks of code
@@ -44,7 +43,7 @@ export class Highlight {
 	 */
 	private async refresh (): Promise<void> {
 		const code = await this.getHighlightedCodeWhenIdle();
-		if (code != null) this.replaceWithHighlightedCodeWhenIdle(code);
+		if (code != null) await this.replaceWithHighlightedCodeWhenIdle(code);
 	}
 
 	/**
@@ -53,15 +52,15 @@ export class Highlight {
 	 * @param {string} code
 	 * @returns {void}
 	 */
-	private replaceWithHighlightedCodeWhenIdle (code: string): void {
-		requestIdleCallback(() => this.replaceWithHighlightedCode(code));
+	private async replaceWithHighlightedCodeWhenIdle (code: string): Promise<void> {
+		await ricScheduler.mutate(async () => await this.replaceWithHighlightedCode(code));
 	}
 
 	/**
 	 * Replaces the inner HTML of the code element with a syntax highlighted template
 	 * @returns {void}
 	 */
-	private replaceWithHighlightedCode (code: string): void {
+	private async replaceWithHighlightedCode (code: string): Promise<void> {
 		// Create a template from the response text
 		const template = document.createElement("template");
 		template.innerHTML = code;
@@ -69,14 +68,16 @@ export class Highlight {
 		// Take the nested code element from it
 		const innerCodeElement = stampedTemplate.querySelector("code")!;
 
-		// Remove all children from the host element
-		while (this.hostElement.childNodes.length > 0) {
-			this.hostElement.removeChild(this.hostElement.childNodes[0]);
-		}
-		// Append all children of the parsed fragment to it
-		while (innerCodeElement.childNodes.length > 0) {
-			this.hostElement.appendChild(innerCodeElement.childNodes[0]);
-		}
+		await rafScheduler.mutate(() => {
+			// Remove all children from the host element
+			while (this.hostElement.childNodes.length > 0) {
+				this.hostElement.removeChild(this.hostElement.childNodes[0]);
+			}
+			// Append all children of the parsed fragment to it
+			while (innerCodeElement.childNodes.length > 0) {
+				this.hostElement.appendChild(innerCodeElement.childNodes[0]);
+			}
+		});
 	}
 
 	/**
@@ -85,9 +86,7 @@ export class Highlight {
 	 * @returns {Promise<string?>}
 	 */
 	private async getHighlightedCodeWhenIdle (): Promise<string|undefined> {
-		return new Promise<string>(resolve => {
-			requestIdleCallback(async () => resolve(await this.getHighlightedCode()));
-		});
+		return await ricScheduler.measure(this.getHighlightedCode.bind(this));
 	}
 
 	/**

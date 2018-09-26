@@ -3,7 +3,7 @@ import {IListenResult} from "./i-listen-result";
 import {log} from "../log/log";
 
 /**
- * Starts listening for specific events on some element bound to an IFoveaHost
+ * Starts listening for specific events on some element bound to a FoveaHost
  * @param {IListenOptions} options
  * @returns {IListenResult}
  * @private

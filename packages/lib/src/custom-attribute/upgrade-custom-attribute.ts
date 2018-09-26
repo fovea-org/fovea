@@ -12,6 +12,7 @@ import {IDestroyable} from "../destroyable/i-destroyable";
 export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostElement: Element): IDestroyable {
 	// Also set the hostElement as an internal property
 	customAttribute.___hostElement = hostElement;
+	let hasReceivedDisconnected = false;
 
 	// Subscribe to the event that the host element is attached to the DOM and invoke the 'connectedCallback' if it provided
 	let connectionObserver: IDOMConnectionObserverResult|null = onConnected(hostElement, () => {
@@ -22,6 +23,7 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 
 	// Subscribe to the event that the host element is detached from the DOM and invoke the 'disconnectedCallback' if it provided
 	let disconnectionObserver: IDOMConnectionObserverResult|null = onDisconnected(hostElement, () => {
+		hasReceivedDisconnected = true;
 		if (customAttribute.disconnectedCallback != null) {
 			customAttribute.disconnectedCallback();
 		}
@@ -37,6 +39,11 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 			if (disconnectionObserver != null) {
 				disconnectionObserver.unobserve();
 				disconnectionObserver = null;
+			}
+
+			if (!hasReceivedDisconnected && customAttribute.disconnectedCallback != null) {
+				hasReceivedDisconnected = true;
+				customAttribute.disconnectedCallback();
 			}
 		}
 	};

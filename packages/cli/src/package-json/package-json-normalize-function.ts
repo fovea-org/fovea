@@ -62,6 +62,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 		foveaCoreVersion,
 		foveaLibVersion,
 		foveaCommonVersion,
+		foveaSchedulerVersion,
 		foveaCliVersion,
 		foveaRouterVersion] = await Promise.all([
 		await latestVersion("tslint"),
@@ -74,6 +75,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 		await latestVersion("@fovea/core"),
 		await latestVersion("@fovea/lib"),
 		await latestVersion("@fovea/common"),
+		await latestVersion("@fovea/scheduler"),
 		await latestVersion("@fovea/cli"),
 		await latestVersion("@fovea/router")
 	]);
@@ -91,6 +93,7 @@ async function getDependencies (): Promise<Partial<IPackageJson>> {
 			"@fovea/core": `^${foveaCoreVersion}`,
 			"@fovea/lib": `^${foveaLibVersion}`,
 			"@fovea/common": `^${foveaCommonVersion}`,
+			"@fovea/scheduler": `^${foveaSchedulerVersion}`,
 			"@fovea/router": `^${foveaRouterVersion}`,
 			tslib: `^${tslibVersion}`
 		}

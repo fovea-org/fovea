@@ -1,13 +1,14 @@
 import {TemplateResultBase} from "../../template-result-base/template-result-base";
 import {ITemplateConditionalElementResult} from "./i-template-conditional-element-result";
 import {TemplateElementResult} from "../../template-result/template-element-result";
-import {IExpressionChainObserver} from "../../../../observe/expression-chain/expression-chain-observer/i-expression-chain-observer";
 import {observeExpressionChain} from "../../../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
 import {ITemplateVariables} from "../../../template-variables/i-template-variables";
 import {TemplateElement} from "../../../element/template-element/template-element";
-import {ICustomAttribute, IFoveaHost, Optional} from "@fovea/common";
+import {FoveaHost, Optional, ExpressionChain} from "@fovea/common";
 import {ITemplateConditionalElementResultOptions} from "./i-template-conditional-element-result-options";
 import {constructType} from "../../../../prop/construct-type/construct-type";
+import {IObserver} from "../../../../observe/i-observer";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * A class that reflects an instance of a TemplateConditionalElement
@@ -27,15 +28,21 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 
 	/**
 	 * The observer for the provided condition
-	 * @type {IExpressionChainObserver}
+	 * @type {IObserver}
 	 */
-	private readonly conditionObserver: IExpressionChainObserver;
+	private conditionObserver?: IObserver;
 
 	/**
 	 * The inherited ITemplateVariables of this TemplateConditionalElement
 	 * @type {ITemplateVariables}
 	 */
 	private readonly templateVariables?: ITemplateVariables;
+
+	/**
+	 * The condition that must be true to stamp the TemplateConditionalElement
+	 * @type {ExpressionChain}
+	 */
+	private readonly condition: ExpressionChain;
 
 	/**
 	 * A wrapper function to invoke to retrieve a new TemplateElement
@@ -50,7 +57,7 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 	private readonly base: TemplateElement;
 
 	constructor ({host, templateVariables, condition, owner, root, templateElementCtor, base, previousSibling}: ITemplateConditionalElementResultOptions) {
-		super({host, previousSibling, owner});
+		super({host, previousSibling, owner, root});
 
 		// Set the provided templateVariables (if any)
 		this.templateVariables = templateVariables;
@@ -60,14 +67,25 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 
 		// Set the provided base as the base
 		this.base = base;
+		this.condition = condition;
+
+		// Observe the model
+		rafScheduler.mutate(this.observe.bind(this), {instantIfFlushing: true}).then();
+	}
+
+	/**
+	 * Observes the model
+	 */
+	private observe (): void {
+		if (this.destroyed || this.disposed) return;
 
 		// Observe the model
 		this.conditionObserver = observeExpressionChain<boolean>({
 			coerceTo: constructType("boolean"),
-			host,
-			expressions: condition,
-			templateVariables,
-			onChange: newValue => this.onConditionChanged(newValue, host, owner, root)
+			host: this.host,
+			expressions: this.condition,
+			templateVariables: this.templateVariables,
+			onChange: newValue => this.onConditionChanged(newValue, this.host, this.owner, this.root)
 		});
 	}
 
@@ -87,46 +105,52 @@ export class TemplateConditionalElementResult extends TemplateResultBase impleme
 	 * Destroys a TemplateConditionalElement
 	 */
 	public destroy (): void {
+		this.destroyed = true;
 		this.destroyTemplate();
-		this.conditionObserver.unobserve();
+		if (this.conditionObserver != null) {
+			this.conditionObserver.unobserve();
+			this.conditionObserver = undefined;
+		}
 	}
 
 	/**
 	 * Disposes a TemplateConditionalElement
 	 */
 	public dispose (): void {
+		this.disposed = true;
 		this.disposeTemplate();
-		this.conditionObserver.unobserve();
+		if (this.conditionObserver != null) {
+			this.conditionObserver.unobserve();
+			this.conditionObserver = undefined;
+		}
 	}
 
 	/**
 	 * Destroys a Template
 	 */
 	private destroyTemplate (): void {
-		if (this.templateResult != null) {
-			this.templateResult.destroy();
-			this.templateResult = null;
-		}
+		if (this.templateResult == null) return;
+		this.templateResult.destroy();
+		this.templateResult = null;
 	}
 
 	/**
 	 * Disposes the bound TemplateResult (if it has any)
 	 */
 	private disposeTemplate (): void {
-		if (this.templateResult != null) {
-			this.templateResult.dispose();
-			this.templateResult = null;
-		}
+		if (this.templateResult == null) return;
+		this.templateResult.dispose();
+		this.templateResult = null;
 	}
 
 	/**
 	 * Invoked when the Condition changes
 	 * @param {Optional<boolean>} newValue
-	 * @param {IFoveaHost|ICustomAttribute} host
+	 * @param {FoveaHost} host
 	 * @param {Node} owner
 	 * @param {ShadowRoot|Element} root
 	 */
-	private onConditionChanged (newValue: Optional<boolean>, host: IFoveaHost|ICustomAttribute, owner: Node, root: ShadowRoot|Element): void {
+	private onConditionChanged (newValue: Optional<boolean>, host: FoveaHost, owner: Node, root: ShadowRoot|Element): void {
 		// If it didn't change, return immediately
 		if (newValue === this.oldValue) return;
 

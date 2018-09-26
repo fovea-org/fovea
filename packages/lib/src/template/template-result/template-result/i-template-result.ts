@@ -1,4 +1,4 @@
-import {IFoveaHost} from "@fovea/common";
+import {ICustomElement} from "@fovea/common";
 import {IDisposable} from "../../../disposable/i-disposable";
 import {IDestroyable} from "../../../destroyable/i-destroyable";
 
@@ -6,5 +6,5 @@ export interface ITemplateResult extends IDisposable, IDestroyable {
 	previousSibling: ITemplateResult|null;
 	lastNode: Node|null;
 	owner: Node;
-	upgrade (host: IFoveaHost, node: Node, root: ShadowRoot|Element): void;
+	upgrade (host: ICustomElement, node: Node, root: ShadowRoot|Element): void;
 }

@@ -1,4 +1,4 @@
-import {styleSrc, templateSrc} from "@fovea/core";
+import {styleSrc, templateSrc, listener} from "@fovea/core";
 import {CheckboxBaseComponent} from "../checkbox/checkbox-base-component";
 
 /**
@@ -13,6 +13,14 @@ export class SwitchComponent extends CheckboxBaseComponent {
 	 * A reference to the <div> element representing a thumb inside the local DOM
 	 */
 	protected $thumb: HTMLDivElement;
+
+	/**
+	 * A reference to the <div> element representing a thumb inside the local DOM
+	 * @type {HTMLDivElement}
+	 */
+	protected get mainUIElement (): HTMLDivElement {
+		return this.$thumb;
+	}
 
 	/**
 	 * Invoked when the underlying input is focused
@@ -31,12 +39,12 @@ export class SwitchComponent extends CheckboxBaseComponent {
 	}
 
 	/**
-	 * Invoked when the Checkbox is toggled based on a non-direct interaction.
-	 * For example, from clicking on an associated label
+	 * Invoked when Switch is clicked
 	 * @override
+	 * @param {MouseEvent} e
 	 */
-	protected onToggledFromNonDirectInteraction () {
-		this.$thumb.dispatchEvent(new PointerEvent("click"));
-		this.dispatchEvent(new PointerEvent("click"));
+	@listener("click", {on: "$thumb"})
+	public onClick (e: MouseEvent) {
+		super.onClick(e);
 	}
 }

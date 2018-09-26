@@ -21,7 +21,7 @@ export class TextareaBaseComponent extends TextFieldBaseComponent {
 	 * @override
 	 */
 	@listener(["keyup", "input"], {on: "$formItem"})
-	protected debounceRefreshOutline (): void {
-		super.debounceRefreshOutline();
+	protected async refreshOutlineOnIdle (): Promise<void> {
+		await super.refreshOutlineOnIdle();
 	}
 }

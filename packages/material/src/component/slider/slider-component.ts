@@ -2,6 +2,7 @@ import {dependsOn, hostAttributes, listener, prop, setOnHost, styleSrc, template
 import {RippleComponent} from "../ripple/ripple-component";
 import {FormItemComponent} from "../form-item/form-item-component";
 import {KeyboardUtil} from "../../util/keyboard-util";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Element represents a Slider.
@@ -134,20 +135,23 @@ export class SliderComponent extends FormItemComponent {
 	 */
 	@listener("keydown", {on: "$formItem"})
 	@listener("keydown")
-	protected onKeyDown (e: KeyboardEvent) {
+	protected async onKeyDown (e: KeyboardEvent): Promise<void> {
 		// Stop propagation in order to avoid the event from being handled twice (bubbling up rom the form item to the host component)
 		e.stopPropagation();
 		switch (e.key) {
-			case KeyboardUtil.TAB:
 			case KeyboardUtil.LEFT_ARROW:
 			case KeyboardUtil.RIGHT_ARROW:
 			case KeyboardUtil.UP_ARROW:
 			case KeyboardUtil.DOWN_ARROW:
-				this.$formItem.focus();
-				this.onFocus();
+				await rafScheduler.mutate(() => {
+					this.$formItem.focus();
+					this.onFocus();
+				});
 				break;
 			case KeyboardUtil.ESCAPE:
-				this.$formItem.blur();
+				await rafScheduler.mutate(() => {
+					this.$formItem.blur();
+				});
 				break;
 		}
 	}

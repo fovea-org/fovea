@@ -1,6 +1,6 @@
 import {hostAttributes, listener, onChange, prop, setOnHost} from "@fovea/core";
 import {FormItemComponent} from "../../form-item/form-item-component";
-import {debounceUntilIdle} from "../../../util/debounce-util";
+import {rafScheduler, ricScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Element represents the base functionality of a Text Field.
@@ -251,10 +251,14 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	 */
 	protected connectedCallback () {
 		super.connectedCallback();
-		this.appendChild(this.$labelItem);
 
-		this.debounceRefreshComputedInputFooterHeight();
-		this.debounceRefreshOutline();
+		rafScheduler.mutate(() => {
+			if (this.$labelItem == null) return;
+			this.appendChild(this.$labelItem);
+		}, {instantIfFlushing: true}).then();
+
+		this.refreshComputedInputFooterHeightOnIdle().then();
+		this.refreshOutlineOnIdle().then();
 	}
 
 	/**
@@ -288,8 +292,8 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	 */
 	@onChange(["helper", "errorMessage", "invalid"])
 	@listener("resize", {on: window})
-	protected debounceRefreshComputedInputFooterHeight (): void {
-		debounceUntilIdle(this.boundRefreshComputedInputFooterHeight);
+	protected async refreshComputedInputFooterHeightOnIdle (): Promise<void> {
+		await ricScheduler.mutate(this.boundRefreshComputedInputFooterHeight);
 	}
 
 	/**
@@ -297,23 +301,27 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	 */
 	@onChange(["label", "focused", "outlined", "filled", "invalid"])
 	@listener("resize", {on: window})
-	protected debounceRefreshOutline (): void {
-		debounceUntilIdle(this.boundRefreshOutline);
+	protected async refreshOutlineOnIdle (): Promise<void> {
+		await ricScheduler.mutate(this.boundRefreshOutline);
 	}
 
 	/**
 	 * Refreshes the outline of the text field
 	 */
-	protected refreshOutline (): void {
+	protected async refreshOutline (): Promise<void> {
 		if (!this.outlined) return;
+		const [width, height, labelWidth] = await rafScheduler.measure(() => {
+			const helperHeight = parseInt(getComputedStyle(this).getPropertyValue("--computed-input-footer-height"));
+			const normalizedHelperHeight = isNaN(helperHeight) ? 0 : helperHeight;
+			return [
+				this.offsetWidth,
+				this.offsetHeight - normalizedHelperHeight,
+				this.$labelItem == null ? 0 : (this.$labelItem.offsetWidth * 0.75)
+			];
+		});
 
-		const width = this.offsetWidth;
-		const helperHeight = parseInt(getComputedStyle(this).getPropertyValue("--computed-input-footer-height"));
-		const normalizedHelperHeight = isNaN(helperHeight) ? 0 : helperHeight;
-		const height = this.offsetHeight - normalizedHelperHeight;
 		if (width < 0 || height < 0) return;
 
-		const labelWidth = this.$labelItem == null ? 0 : (this.$labelItem.offsetWidth * 0.75);
 		this.outlineCutoffStart = this.outlineInset - this.outlineCutoffMargin;
 		this.outlineCutoffWidth = labelWidth === 0 ? 0 : labelWidth + (this.outlineCutoffMargin * 2);
 		this.outlineViewBox = `0 0 ${width} ${height}`;
@@ -324,8 +332,9 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	/**
 	 * Computes the height of the input footer and sets it as a CSS Custom Property
 	 */
-	private refreshComputedInputFooterHeight (): void {
+	private async refreshComputedInputFooterHeight (): Promise<void> {
 		if (this.$inputFooter == null) return;
-		this.style.setProperty("--computed-input-footer-height", `${this.$inputFooter.offsetHeight}px`);
+		const offsetHeight = await rafScheduler.measure(() => this.$inputFooter.offsetHeight);
+		await rafScheduler.mutate(() => this.style.setProperty("--computed-input-footer-height", `${offsetHeight}px`));
 	}
 }

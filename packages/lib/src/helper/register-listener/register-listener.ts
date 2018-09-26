@@ -1,16 +1,16 @@
-import {ICustomAttributeConstructor, IFoveaHostConstructor, IHostListenerBaseOptions} from "@fovea/common";
+import {FoveaHostConstructor, IHostListenerBaseOptions} from "@fovea/common";
 import {addHostListenersForHost} from "../../listener/host-listener/host-listeners-for-host/add-host-listeners-for-host";
 
 /**
  * Registers a host listener for the given host and method
- * @param {IFoveaHostConstructor | ICustomAttributeConstructor} host
+ * @param {FoveaHostConstructor} host
  * @param {string} method
  * @param {boolean} isStatic
  * @param {string|string[]} name
  * @param {Partial<IHostListenerBaseOptions>} options
  * @private
  */
-export function ___registerListener (host: IFoveaHostConstructor|ICustomAttributeConstructor, method: string, isStatic: boolean, name: string|string[], options?: Partial<IHostListenerBaseOptions>): void {
+export function ___registerListener (host: FoveaHostConstructor, method: string, isStatic: boolean, name: string|string[], options?: Partial<IHostListenerBaseOptions>): void {
 	const passive = options == null || options.passive == null ? undefined : options.passive;
 	const once = options == null || options.once == null ? false : options.once;
 	const condition = options == null || options.condition == null ? true : options.condition;

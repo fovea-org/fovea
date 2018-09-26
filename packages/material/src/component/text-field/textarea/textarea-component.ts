@@ -36,7 +36,7 @@ export class TextareaComponent extends TextareaBaseComponent {
 	 * after a mousedown event. We don't care about touch events here since textareas cannot be sized in the UI on mobile
 	 */
 	@listener(["mousemove"], {on: "$formItem"})
-	protected onMouseMove (): void {
-		this.refreshOutline();
+	protected async onMouseMove (): Promise<void> {
+		await this.refreshOutline();
 	}
 }

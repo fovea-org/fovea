@@ -1,6 +1,7 @@
 import {customAttribute, hostAttributes, listener, prop, selector, styleSrc} from "@fovea/core";
 import {IRippleCoordinates} from "./i-ripple-coordinates";
 import {Ripple} from "./ripple";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Attribute can paint a Ripple on an element
@@ -42,12 +43,6 @@ export class RippleComponent {
 	private pointerDown: boolean = false;
 
 	/**
-	 * The last seen coordinates from a pointerdown event
-	 * @type {null}
-	 */
-	private lastCoordinates: IRippleCoordinates|null = null;
-
-	/**
 	 * The last constructed Ripple
 	 * @type {null}
 	 */
@@ -73,7 +68,7 @@ export class RippleComponent {
 
 	/**
 	 * A bound reference to the 'onPointerLeave' method
-	 * @type {any}
+	 * @type {Function}
 	 */
 	private readonly boundOnPointerLeave = this.onPointerLeave.bind(this);
 
@@ -86,15 +81,16 @@ export class RippleComponent {
 	 * to render a ripple for it
 	 */
 	@listener("click")
-	public async onClick () {
-		if (this.pointerDown || this.disabled || this.hasPointerSequence) return;
-		this.pointerDown = true;
-		this.pointerDownTime = performance.now();
-		this.lastCoordinates = null;
-		this.didClick = true;
-		await this.onPointerDownChanged();
-		this.onPointerUpOrLeave();
-		await this.onPointerDownChanged();
+	public onClick () {
+		rafScheduler.mutate(async () => {
+			if (this.pointerDown || this.disabled || this.hasPointerSequence) return;
+			this.pointerDown = true;
+			this.pointerDownTime = performance.now();
+			this.didClick = true;
+			await this.onPointerDownChanged();
+			this.onPointerUpOrLeave();
+			await this.onPointerDownChanged();
+		}).then();
 	}
 
 	/**
@@ -103,22 +99,24 @@ export class RippleComponent {
 	 */
 	@listener("pointerdown")
 	public onPointerDown ({width, height, clientX, clientY, currentTarget}: PointerEvent): void {
-		if (this.disabled || currentTarget == null || !(currentTarget instanceof Element)) return;
-		this.hasPointerSequence = true;
-		this.addLeaveEventListeners();
+		rafScheduler.measure(async () => {
+			if (this.disabled || currentTarget == null || !(currentTarget instanceof Element)) return;
+			this.didClick = false;
+			this.pointerDownTime = performance.now();
+			this.pointerDown = true;
+			this.hasPointerSequence = true;
+			this.addLeaveEventListeners();
 
-		const rect = currentTarget.getBoundingClientRect();
-		const offsetX = clientX - rect.left;
-		const offsetY = clientY - rect.top;
+			const coordinates = width === -1 && height === -1 ? undefined : (() => {
+				const rect = currentTarget.getBoundingClientRect();
+				return {
+					offsetX: clientX - rect.left,
+					offsetY: clientY - rect.top
+				};
+			})();
 
-		if (width === -1 && height === -1) this.lastCoordinates = null;
-		else this.lastCoordinates = {offsetX, offsetY};
-
-		this.didClick = false;
-		this.pointerDownTime = performance.now();
-		this.pointerDown = true;
-		// noinspection JSIgnoredPromiseFromCall
-		this.onPointerDownChanged();
+			await this.onPointerDownChanged(coordinates);
+		}).then();
 	}
 
 	/**
@@ -126,14 +124,28 @@ export class RippleComponent {
 	 */
 	@listener(["pointerup"])
 	public onPointerUp (): void {
-		if (this.disabled || !this.pointerDown) return;
+		rafScheduler.measure(() => {
+			if (this.disabled || !this.pointerDown) return;
 
-		this.removeLeaveEventListeners();
+			this.removeLeaveEventListeners();
 
-		this.didClick = this.pointerDownTime != null && (performance.now() - this.pointerDownTime) < 200;
-		this.onPointerUpOrLeave();
-		// noinspection JSIgnoredPromiseFromCall
-		this.onPointerDownChanged();
+			this.didClick = this.pointerDownTime != null && (performance.now() - this.pointerDownTime) < 200;
+			this.onPointerUpOrLeave();
+			// noinspection JSIgnoredPromiseFromCall
+			this.onPointerDownChanged();
+		}).then();
+	}
+
+	/**
+	 * Invoked when a pointer device leaves the target
+	 */
+	public onPointerLeave (): void {
+		rafScheduler.mutate(() => {
+			if (this.disabled || !this.pointerDown) return;
+			this.didClick = false;
+			this.onPointerUpOrLeave();
+			this.disposeLastRippleWhenDone();
+		}).then();
 	}
 
 	/**
@@ -155,20 +167,11 @@ export class RippleComponent {
 	}
 
 	/**
-	 * Invoked when a pointer device leaves the target
-	 */
-	public onPointerLeave (): void {
-		if (this.disabled || !this.pointerDown) return;
-		this.didClick = false;
-		this.onPointerUpOrLeave();
-		this.disposeLastRippleWhenDone();
-	}
-
-	/**
 	 * Invoked when the "pointerDown" prop changes its' value
+	 * @param {IRippleCoordinates|null} coordinates
 	 * @returns {Promise<void>}
 	 */
-	private async onPointerDownChanged (): Promise<void> {
+	private async onPointerDownChanged (coordinates?: IRippleCoordinates): Promise<void> {
 		if (this.disabled) return;
 
 		// If the pointer is down, create a new ripple and animate it in
@@ -179,7 +182,7 @@ export class RippleComponent {
 			// Instantiate a new ripple
 			this.lastRipple = new Ripple(this.target, this.color);
 			// Animate it in. If it was a click, it will automatically dispose it afterwards
-			this.lastRipple.rippleIn(this.center, this.lastCoordinates);
+			await this.lastRipple.rippleIn(this.center, coordinates);
 		}
 
 		// If the pointer has gone up in relation to a click, inform the Ripple that it should clean itself up when it is done animating
@@ -198,7 +201,7 @@ export class RippleComponent {
 	 */
 	private disposeLastRipple (): void {
 		if (this.lastRipple != null) {
-			this.lastRipple.rippleOut();
+			this.lastRipple.rippleOut().then();
 			this.lastRipple = null;
 		}
 	}

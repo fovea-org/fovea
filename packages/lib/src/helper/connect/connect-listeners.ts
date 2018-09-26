@@ -1,5 +1,4 @@
-import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
-import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
+import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
 import {listen} from "../../listen/listen";
 import {parseTarget} from "../../target/parse-target";
 import {BOUND_HOST_LISTENERS} from "../../listener/host-listener/bound-host-listeners";
@@ -7,24 +6,24 @@ import {HOST_LISTENERS_FOR_HOST} from "../../listener/host-listener/host-listene
 
 /**
  * Connects all listeners for the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  */
-export function ___connectListeners (host: IFoveaHost|ICustomAttribute): void {
+export function ___connectListeners (host: FoveaHost): void {
 
-	const constructor = <IFoveaHostConstructor|ICustomAttributeConstructor> host.constructor;
+	const constructor = <FoveaHostConstructor> host.constructor;
 
 	// Add listeners for all of the host listeners where the condition is truthy
 	BOUND_HOST_LISTENERS.add(host, ...HOST_LISTENERS_FOR_HOST
 		.filterValues(constructor, ({condition}) => condition == null ? true : condition)
 		.map(({passive, method, once, eventName, on}) => listen({
-				on: on != null ? <EventTarget> parseTarget(host, on) : getHostElementForHost(host),
+				on: on != null ? <EventTarget> parseTarget(host, on) : host.___hostElement,
 				rawOn: on,
 				host,
 				passive,
 				once,
 				handler: <Function> (method!.isStatic
-					? constructor[<keyof (IFoveaHostConstructor|ICustomAttributeConstructor)> method!.name]
-					: <Function> host[<keyof (IFoveaHost|ICustomAttribute)>method!.name]),
+					? constructor[<keyof FoveaHostConstructor> method!.name]
+					: <Function> host[<keyof FoveaHost>method!.name]),
 				name: eventName!
 			})
 		));

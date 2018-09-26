@@ -5,7 +5,6 @@ import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 import {CallExpression, ClassDeclaration, ClassExpression, ConstructorDeclaration, ExpressionStatement, isCallExpression, isClassDeclaration, isClassExpression, isExpressionStatement, isPropertyAccessExpression, MethodDeclaration, PropertyAccessExpression, SuperExpression, SyntaxKind} from "typescript";
 import {ILibUser} from "../lib-user/i-lib-user";
-import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
 import {IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
 import {IFoveaCompilerOptions} from "../options/i-fovea-compiler-options";
 import {ICompilationContext} from "../fovea-compiler/i-compilation-context";
@@ -13,10 +12,10 @@ import {isSuperExpression, ITypescriptASTUtil} from "@wessberg/typescript-ast-ut
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {kebabCase} from "@wessberg/stringutil";
 import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
-import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName, LibHelperName} from "@fovea/common";
+import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName, LibHelperName, FoveaHostKind} from "@fovea/common";
 
 /**
- * A class that can extend the prototype of an IFoveaHost
+ * A class that can extend the prototype of a FoveaHost
  */
 export class PrototypeExtender implements IPrototypeExtender {
 	constructor (private readonly configuration: IConfiguration,
@@ -29,7 +28,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 	}
 
 	/**
-	 * Extends the lifecycle hooks of an IFoveaHost
+	 * Extends the lifecycle hooks of a FoveaHost
 	 * @param {IPrototypeExtenderExtendOptions} options
 	 */
 	public extend (options: IPrototypeExtenderExtendOptions): void {
@@ -59,8 +58,8 @@ export class PrototypeExtender implements IPrototypeExtender {
 		// Extend the destroyedCallback lifecycle hook
 		this.extendDestroyedCallback(mark.classDeclaration, compilerOptions, context, parentIsComponent);
 
-		// If the host is an IFoveaHost
-		if (mark.kind === FoveaHostKind.HOST) {
+		// If the host is a Custom Element
+		if (mark.kind === FoveaHostKind.CUSTOM_ELEMENT) {
 
 			// If there is at least 1 prop to observe
 			if (observedPropNames.length > 0) {
@@ -119,7 +118,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 	}
 
 	/**
-	 * Extends the 'observedAttributes' callback of an IFoveaHost
+	 * Extends the 'observedAttributes' callback of a FoveaHost
 	 * @param {ClassDeclaration | ClassExpression} classDeclaration
 	 * @param {string[]} observedPropNames
 	 * @param {IFoveaCompilerOptions} compilerOptions
@@ -244,7 +243,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 	}
 
 	/**
-	 * Extends the constructor of an IFoveaHost
+	 * Extends the constructor of a FoveaHost
 	 * @param {ClassDeclaration|ClassExpression} classDeclaration
 	 * @param {FoveaHostKind} kind
 	 * @param {IFoveaCompilerOptions} compilerOptions
@@ -255,10 +254,10 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// Find an existing constructor
 		const constructor = this.codeAnalyzer.classService.getConstructor(classDeclaration);
-		const helperFunctionName: LibHelperName = kind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "constructCustomAttribute" : "constructFoveaHost";
+		const helperFunctionName: LibHelperName = kind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "constructCustomAttribute" : "constructCustomElement";
 
 		// The extension to add to the constructor.
-		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use(helperFunctionName, compilerOptions, context)}(this${kind === FoveaHostKind.HOST ? "" : `, ${hostElementIdentifier}`});`;
+		const extension = (hostElementIdentifier: string) => ` ${this.libUser.use(helperFunctionName, compilerOptions, context)}(this${kind === FoveaHostKind.CUSTOM_ELEMENT ? "" : `, ${hostElementIdentifier}`});`;
 
 		// Define the name of the first argument of Custom Attributes
 		let customAttributeNameArg = "hostElement";
@@ -268,7 +267,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 			// Only proceed if the parent is not a component - otherwise it will just inherit its' constructor
 			if (!parentIsComponent) {
-				const bodyExtension = extension(kind === FoveaHostKind.HOST ? "this" : customAttributeNameArg);
+				const bodyExtension = extension(kind === FoveaHostKind.CUSTOM_ELEMENT ? "this" : customAttributeNameArg);
 
 				const body = (
 					this.codeAnalyzer.classService.isBaseClass(classDeclaration)
@@ -281,7 +280,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 				if (!compilerOptions.dryRun) {
 					context.container.appendLeft(
 						classDeclaration.members.end,
-						`\n	constructor (${kind === FoveaHostKind.HOST ? "" : customAttributeNameArg}) {` +
+						`\n	constructor (${kind === FoveaHostKind.CUSTOM_ELEMENT ? "" : customAttributeNameArg}) {` +
 						`${body}` +
 						`\n	}`
 					);
@@ -291,8 +290,8 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// The class implements the constructor as one of its own members. Extend it!
 		else {
-			// If it is an IFoveaHost, simple use 'this' as the argument name. Otherwise, use the name of the host argument
-			const extensionName = () => kind === FoveaHostKind.HOST ? "this" : customAttributeNameArg;
+			// If it is a Custom Element, simple use 'this' as the argument name. Otherwise, use the name of the host argument
+			const extensionName = () => kind === FoveaHostKind.CUSTOM_ELEMENT ? "this" : customAttributeNameArg;
 
 			if (kind === FoveaHostKind.CUSTOM_ATTRIBUTE) {
 				// We have to detect the identifier for the first argument and pass that on to __construct.
@@ -338,7 +337,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 	}
 
 	/**
-	 * Extends the 'connectedCallback' of an IFoveaHost
+	 * Extends the 'connectedCallback' of a FoveaHost
 	 * @param {ClassDeclaration|ClassExpression} classDeclaration
 	 * @param {FoveaHostKind} kind
 	 * @param {IFoveaCompilerOptions} compilerOptions
@@ -351,7 +350,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 		const connectedCallback = this.codeAnalyzer.classService.getMethodWithName(this.configuration.connectedCallbackName, classDeclaration);
 
 		// The extension to add to the connectedCallback.
-		const extension = `${this.libUser.use(kind === FoveaHostKind.HOST ? "connectFoveaHost" : "connectCustomAttribute", compilerOptions, context)}(this);`;
+		const extension = `${this.libUser.use(kind === FoveaHostKind.CUSTOM_ELEMENT ? "connectCustomElement" : "connectCustomAttribute", compilerOptions, context)}(this);`;
 		const body = `\n		${extension}`;
 
 		// If the class doesn't implement a connectedCallback

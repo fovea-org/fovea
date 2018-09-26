@@ -1,9 +1,9 @@
-import {emit, hostAttributes, listener, onChange, onChildrenAdded, onChildrenRemoved, prop, setOnHost, styleSrc, templateSrc} from "@fovea/core";
+import {emit, hostAttributes, listener, onChange, onChildrenAdded, onChildrenRemoved, prop, setOnHost, styleSrc, templateSrc, onBecameInvisible, onBecameVisible} from "@fovea/core";
 import {getCSSPropertyValue} from "../../util/style-util";
 import {getMsFromCSSDuration} from "../../util/duration-util";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {DialogAction, DialogOpenState} from "./i-open-dialog-options";
-import {debounceUntilIdle} from "../../util/debounce-util";
+import {rafScheduler, ricScheduler} from "@fovea/scheduler";
 
 // tslint:disable:no-identical-functions
 
@@ -74,7 +74,7 @@ export class DialogComponent extends HTMLElement {
 	 * The current state of the dialog
 	 * @type {boolean}
 	 */
-	@setOnHost @emit() protected state: DialogOpenState = "closed";
+	@setOnHost @emit({name: "state"}) protected state: DialogOpenState = "closed";
 	/**
 	 * The last dialog action. Will emit an event when it changes
 	 * @type {DialogAction}
@@ -109,12 +109,6 @@ export class DialogComponent extends HTMLElement {
 	private slottedChildrenWithClickListeners: Set<HTMLElement> = new Set();
 
 	/**
-	 * A this-bound reference to the 'refresh' method
-	 * @type {Function}
-	 */
-	private boundRefresh = this.refresh.bind(this);
-
-	/**
 	 * An optional reference to the dialog article element
 	 * @type {HTMLElement?}
 	 */
@@ -124,6 +118,28 @@ export class DialogComponent extends HTMLElement {
 	 * A reference to the 'onButtonClicked' method, bound to the scope of this instance
 	 */
 	private boundOnButtonClicked = this.onButtonClicked.bind(this);
+
+	/**
+	 * Whether or not the dialog is currently visible
+	 * @type {boolean}
+	 */
+	private visible: boolean = false;
+
+	/**
+	 * Invoked when the dialog became invisible
+	 */
+	@onBecameInvisible()
+	protected onBecameInvisible () {
+		this.visible = false;
+	}
+
+	/**
+	 * Invoked when the dialog became visible
+	 */
+	@onBecameVisible()
+	protected onBecameVisible () {
+		this.visible = true;
+	}
 
 	/**
 	 * Invoked when the scrim is clicked
@@ -138,31 +154,32 @@ export class DialogComponent extends HTMLElement {
 	 * Invoked when 'open' changes
 	 */
 	@onChange("open")
-	protected onOpenChanged (): void {
-		const duration = getMsFromCSSDuration(getCSSPropertyValue(this, "--transition-duration"));
+	protected async onOpenChanged (): Promise<void> {
+		const duration = await rafScheduler.measure(() => getMsFromCSSDuration(getCSSPropertyValue(this, "--transition-duration")));
 
 		if (this.open) {
-			this.focus();
-			this.decideScrollability();
 
-			// Recalculate styles
-			this.offsetWidth;
+			setTimeout(async () => {
+				this.state = "opening";
+				await this.decideScrollability();
 
-			this.state = "opening";
-
-			setTimeout(() => {
-				if (!this.open) return;
-				this.state = "open";
-			}, duration);
+				setTimeout(async () => {
+					if (!this.open) return;
+					this.state = "open";
+					if (this.visible) {
+						await ricScheduler.mutate(this.focus.bind(this));
+					}
+				}, duration);
+			}, 20);
 		}
 
 		else {
 			if (this.state === "closed") return;
 			this.state = "closing";
-			setTimeout(() => {
+			setTimeout(async () => {
 				if (this.open) return;
 				this.state = "closed";
-				this.blur();
+				await ricScheduler.mutate(this.blur.bind(this));
 			}, duration);
 		}
 	}
@@ -171,7 +188,7 @@ export class DialogComponent extends HTMLElement {
 	 * Invoked when the dialog is attached to the DOM
 	 */
 	protected connectedCallback (): void {
-		this.onSlottedChildrenChanged();
+		this.refresh().then();
 	}
 
 	/**
@@ -180,15 +197,6 @@ export class DialogComponent extends HTMLElement {
 	protected disconnectedCallback (): void {
 		this.slottedChildrenWithClickListeners.forEach(child => child.removeEventListener("click", this.boundOnButtonClicked));
 		this.slottedChildrenWithClickListeners.clear();
-	}
-
-	/**
-	 * Invoked when the dialog receives slotted children
-	 */
-	@onChildrenAdded()
-	@onChildrenRemoved()
-	protected onSlottedChildrenChanged (): void {
-		debounceUntilIdle(this.boundRefresh);
 	}
 
 	/**
@@ -209,10 +217,12 @@ export class DialogComponent extends HTMLElement {
 	/**
 	 * Refreshes the dialog state based on the slotted children
 	 */
-	private refresh (): void {
+	@onChildrenAdded()
+	@onChildrenRemoved()
+	protected async refresh (): Promise<void> {
 		if (this.$slot == null) return;
 		let hasHeader: boolean = false;
-		const slottedChildren = this.$slot.assignedNodes();
+		const slottedChildren = await rafScheduler.measure(() => this.$slot.assignedNodes());
 
 		// Remove click listeners from removed nodes
 		for (const slottedChildWithClickListener of this.slottedChildrenWithClickListeners) {
@@ -257,10 +267,8 @@ export class DialogComponent extends HTMLElement {
 	/**
 	 * Decides whether or not the dialog can scroll
 	 */
-	private decideScrollability (): void {
-		requestAnimationFrame(() => {
-			this.canScroll = this.dialogArticleElement == null ? false : this.dialogArticleElement.scrollHeight > this.dialogArticleElement.offsetHeight;
-		});
+	private async decideScrollability (): Promise<void> {
+		this.canScroll = await rafScheduler.measure(() => this.dialogArticleElement == null ? false : this.dialogArticleElement.scrollHeight > this.dialogArticleElement.offsetHeight);
 	}
 
 	/**

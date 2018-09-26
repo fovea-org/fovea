@@ -1,14 +1,15 @@
-import {NODE_TO_ROOT_MAP} from "../node-to-root-map/node-to-root-map";
-import {ICustomAttribute, Json} from "@fovea/common";
+import {FoveaHost, Json, INodeExtension} from "@fovea/common";
 import {isICustomAttribute} from "../../../custom-attribute/is-i-custom-attribute";
+
+// tslint:disable:no-any
 
 /**
  * Gets the Shadow Root for a Node
- * @param {Node|ICustomAttribute} node
+ * @param {Node|FoveaHost} node
  * @returns {ShadowRoot}
  */
-export function getRootForNode (node: Node|ICustomAttribute): Element|ShadowRoot {
-	let root: Element|ShadowRoot|undefined = NODE_TO_ROOT_MAP.get(node);
+export function getRootForNode (node: Node & Partial<INodeExtension>|FoveaHost): Element|ShadowRoot {
+	let root: Element|ShadowRoot|undefined = node.___root;
 	if (root == null) {
 		root = isICustomAttribute(node) ? getRootForNode(node.___hostElement) : (<Json>node).getRootNode();
 	}

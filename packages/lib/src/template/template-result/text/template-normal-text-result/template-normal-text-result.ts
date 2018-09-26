@@ -14,13 +14,13 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 	public lastNode: Text|null;
 
 	constructor ({host, previousSibling, text, owner, root}: ITemplateNormalTextResultOptions) {
-		super({host, previousSibling, owner});
+		super({host, previousSibling, owner, root});
 
 		// Construct a new TextNode
 		this.lastNode = document.createTextNode(text);
 
 		// Upgrade it
-		this.upgrade(host, this.lastNode, root);
+		this.upgrade(this.lastNode, root);
 
 		// Add the node to its owner
 		this.attach(this.lastNode, owner);
@@ -30,6 +30,7 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 	 * Destroys the TemplateNormalTextResult
 	 */
 	public destroy (): void {
+		this.destroyed = true;
 		this.dispose();
 	}
 
@@ -37,6 +38,7 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 	 * Disposes a TemplateNormalTextResult
 	 */
 	public dispose (): void {
+		this.disposed = true;
 		if (this.lastNode != null) {
 			this.detach(this.lastNode);
 			this.lastNode = null;

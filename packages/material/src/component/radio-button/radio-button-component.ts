@@ -47,6 +47,12 @@ function mapRadioButtonToName (radioButton: RadioButtonComponent, name?: string)
 export class RadioButtonComponent extends CheckboxBaseComponent {
 
 	/**
+	 * A reference to the main UI element (which in this case, is this itself)
+	 * @type {this}
+	 */
+	protected mainUIElement = this;
+
+	/**
 	 * Whenever the name changes, update the map between Radio Buttons and names
 	 */
 	@onChange("name")
@@ -91,15 +97,6 @@ export class RadioButtonComponent extends CheckboxBaseComponent {
 
 		super.onClick(e);
 		this.updateGroup();
-	}
-
-	/**
-	 * Invoked when the Checkbox is toggled based on a non-direct interaction.
-	 * For example, from clicking on an associated label
-	 * @override
-	 */
-	protected onToggledFromNonDirectInteraction () {
-		this.dispatchEvent(new PointerEvent("click"));
 	}
 
 	/**

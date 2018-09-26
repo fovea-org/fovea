@@ -1,5 +1,33 @@
 import {DialogAction, IOpenDialogOptions} from "./i-open-dialog-options";
 import {DialogComponent} from "./dialog-component";
+import {addObservableEventListener, IObserver} from "../../util/event-util";
+
+/**
+ * An event handler for 'change' events
+ * @param {Function} promiseResolver
+ * @param {CustomEvent} e
+ * @param {IObserver} observer
+ */
+function changeEventHandler (promiseResolver: Function, e: CustomEvent, observer: IObserver): void {
+	promiseResolver(e.detail);
+	observer.unobserve();
+}
+
+/**
+ * An event handler for 'state' events
+ * @param {DialogComponent} dialog
+ * @param {CustomEvent} e
+ * @param {IObserver} observer
+ */
+function stateEventHandler (this: EventHandlerNonNull, dialog: DialogComponent, e: CustomEvent, observer: IObserver): void {
+	if (e.detail === "closed") {
+		observer.unobserve();
+
+		if (dialog.parentNode != null) {
+			dialog.parentNode.removeChild(dialog);
+		}
+	}
+}
 
 /**
  * An imperative way to spawn a dialog and await its result
@@ -55,31 +83,14 @@ export async function openDialog ({actions = [], scrim, target = document.body, 
 			}
 		}
 
-		// Resolve the Promise when the 'change' event is emitted
-		let changeHandler: EventHandlerNonNull|null = (e: CustomEvent) => {
-			resolve(e.detail);
-			dialog.removeEventListener("change", changeHandler!);
-			changeHandler = null;
-		};
-
-		// Resolve the Promise when the 'change' event is emitted
-		let stateHandler: EventHandlerNonNull|null = (e: CustomEvent) => {
-			if (e.detail === "closed") {
-				dialog.removeEventListener("state-changed", stateHandler!);
-
-				if (dialog.parentNode != null) {
-					dialog.parentNode.removeChild(dialog);
-				}
-			}
-
-			stateHandler = null;
-		};
-
 		target.appendChild(dialog);
-		setTimeout(() => dialog.open = true, 100);
 
-		// Listen for change events
-		dialog.addEventListener("change", changeHandler);
-		dialog.addEventListener("state-changed", stateHandler);
+		setTimeout(() => {
+			// Listen for change events
+			addObservableEventListener(dialog, "change", changeEventHandler.bind(null, resolve));
+			addObservableEventListener(dialog, "state", stateEventHandler.bind(null, dialog));
+
+			dialog.open = true;
+		}, 100);
 	});
 }

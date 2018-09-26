@@ -1,11 +1,11 @@
-import {ICustomAttribute, IFoveaHost} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 
 /**
  * Runs the common logic necessary to connect the provided host
- * @param {IFoveaHost|ICustomAttribute} host
+ * @param {FoveaHost} host
  * @private
  */
-export function connectBase (host: IFoveaHost|ICustomAttribute): void {
+export function connectBase (host: FoveaHost): void {
 	if (host.___connectTemplates != null) host.___connectTemplates();
 	if (host.___connectProps != null) host.___connectProps();
 	if (host.___connectListeners != null) host.___connectListeners();

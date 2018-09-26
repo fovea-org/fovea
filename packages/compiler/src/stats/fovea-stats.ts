@@ -95,19 +95,19 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
-	 * Returns true if any file has a 'hasIFoveaHosts' property value of 'true'
+	 * Returns true if any file has a 'hasCustomElements' property value of 'true'
 	 * @returns {boolean}
 	 */
-	public get hasIFoveaHosts (): boolean {
-		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasIFoveaHosts);
+	public get hasCustomElements (): boolean {
+		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasCustomElements);
 	}
 
 	/**
-	 * Returns true if any file has a 'hasICustomAttributes' property value of 'true'
+	 * Returns true if any file has a 'hasCustomAttributes' property value of 'true'
 	 * @returns {boolean}
 	 */
-	public get hasICustomAttributes (): boolean {
-		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasICustomAttributes);
+	public get hasCustomAttributes (): boolean {
+		return Array.from(this.fileToStatsMap.values()).some(stats => stats.hasCustomAttributes);
 	}
 
 	/**
@@ -226,8 +226,8 @@ export class FoveaStats implements IFoveaStats {
 			hasAttributeChangeObservers: this.hasAttributeChangeObservers,
 			hasChangeObservers: this.hasChangeObservers,
 			hasHostProps: this.hasHostProps,
-			hasICustomAttributes: this.hasICustomAttributes,
-			hasIFoveaHosts: this.hasIFoveaHosts,
+			hasCustomAttributes: this.hasCustomAttributes,
+			hasCustomElements: this.hasCustomElements,
 			hasProps: this.hasProps,
 			hasTemplateAttributes: this.hasTemplateAttributes,
 			hasTemplateCustomAttributes: this.hasTemplateCustomAttributes,
@@ -310,21 +310,21 @@ export class FoveaStats implements IFoveaStats {
 	}
 
 	/**
-	 * Sets the 'hasIFoveaHosts' property on the IFoveaStats for the given file
+	 * Sets the 'hasCustomElements' property on the IFoveaStats for the given file
 	 * @param {string} file
-	 * @param {boolean} hasIFoveaHosts
+	 * @param {boolean} hasCustomElements
 	 */
-	public setHasIFoveaHosts (file: string, hasIFoveaHosts: boolean): void {
-		this.getMutableStatsForFile(file).hasIFoveaHosts = hasIFoveaHosts;
+	public setHasCustomElements (file: string, hasCustomElements: boolean): void {
+		this.getMutableStatsForFile(file).hasCustomElements = hasCustomElements;
 	}
 
 	/**
-	 * Sets the 'hasICustomAttributes' property on the IFoveaStats for the given file
+	 * Sets the 'hasCustomAttributes' property on the IFoveaStats for the given file
 	 * @param {string} file
-	 * @param {boolean} hasICustomAttributes
+	 * @param {boolean} hasCustomAttributes
 	 */
-	public setHasICustomAttributes (file: string, hasICustomAttributes: boolean): void {
-		this.getMutableStatsForFile(file).hasICustomAttributes = hasICustomAttributes;
+	public setHasCustomAttributes (file: string, hasCustomAttributes: boolean): void {
+		this.getMutableStatsForFile(file).hasCustomAttributes = hasCustomAttributes;
 	}
 
 	/**
@@ -485,8 +485,8 @@ export class FoveaStats implements IFoveaStats {
 			hasStaticCSS: false,
 			hasSyncEvaluations: false,
 			hasAsyncEvaluations: false,
-			hasIFoveaHosts: false,
-			hasICustomAttributes: false,
+			hasCustomElements: false,
+			hasCustomAttributes: false,
 			hasEventEmitters: false,
 			hasHostListeners: false,
 			hasVisibilityObservers: false,

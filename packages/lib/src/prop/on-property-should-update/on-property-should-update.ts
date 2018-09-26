@@ -11,9 +11,9 @@ export function onPropertyShouldUpdate<T> (node: Element, propertyName: string, 
 	const normalizedKey = <keyof Element> propertyName;
 	const oldValue = (<Json>node)[normalizedKey];
 
-// If it didn't change, return immediately
+	// If it didn't change, return immediately
 	if (newValue === oldValue) return;
 
-// Set the new value
+	// Set the new value
 	(<Json>node)[normalizedKey] = newValue;
 }

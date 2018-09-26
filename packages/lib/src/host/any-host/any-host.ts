@@ -1,3 +1,3 @@
-import {ICustomAttribute, ICustomAttributeConstructor, IFoveaHost, IFoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
 
-export declare type AnyHost = IFoveaHost|ICustomAttribute|IFoveaHostConstructor|ICustomAttributeConstructor;
+export declare type AnyHost = FoveaHost|FoveaHostConstructor;

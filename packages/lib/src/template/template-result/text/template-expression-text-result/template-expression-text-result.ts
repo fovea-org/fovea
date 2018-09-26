@@ -1,10 +1,12 @@
 import {TemplateResultBase} from "../../template-result-base/template-result-base";
 import {ITemplateExpressionTextResult} from "./i-template-expression-text-result";
 import {ITemplateExpressionTextResultOptions} from "./i-template-expression-text-result-options";
-import {IExpressionChainObserver} from "../../../../observe/expression-chain/expression-chain-observer/i-expression-chain-observer";
 import {observeExpressionChain} from "../../../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
-import {Optional} from "@fovea/common";
+import {Optional, Expression} from "@fovea/common";
 import {constructType} from "../../../../prop/construct-type/construct-type";
+import {rafScheduler} from "@fovea/scheduler";
+import {IObserver} from "../../../../observe/i-observer";
+import {ITemplateVariables} from "../../../template-variables/i-template-variables";
 
 /**
  * A class that reflects an instance of a TemplateExpressionTextResult
@@ -16,31 +18,57 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	 * @type {Text}
 	 */
 	public lastNode: Text|null;
+
+	/**
+	 * A reference to the TextNode within the DOM
+	 * @type {Expression}
+	 */
+	private readonly expression: Expression;
+
 	/**
 	 * The expression observer that, when changed, should mutate the textContent of the TextNode
-	 * @type {IExpressionChainObserver}
+	 * @type {IObserver}
 	 */
-	private expressionObserver: IExpressionChainObserver|null;
+	private expressionObserver?: IObserver;
+
+	/**
+	 * The inherited ITemplateVariables of this TemplateMultiElement
+	 * @type {ITemplateVariables}
+	 */
+	private readonly templateVariables?: ITemplateVariables;
 
 	constructor ({host, expression, templateVariables, previousSibling, owner, root}: ITemplateExpressionTextResultOptions) {
-		super({host, previousSibling, owner});
+		super({host, previousSibling, owner, root});
 
 		// Construct a new TextNode
 		this.lastNode = document.createTextNode("");
 
 		// Upgrade it
-		this.upgrade(host, this.lastNode, root);
+		this.upgrade(this.lastNode, root);
 
 		// Add the node to its owner
 		this.attach(this.lastNode, owner);
 
-		// Observe the expression if it has a parent
+		this.expression = expression;
+		this.templateVariables = templateVariables;
+
+		// Observe the model
+		rafScheduler.mutate(this.observe.bind(this), {instantIfFlushing: true}).then();
+	}
+
+	/**
+	 * Observes the expression
+	 */
+	private observe (): void {
+		if (this.destroyed || this.disposed) return;
+
+		// Observe the expression
 		this.expressionObserver = observeExpressionChain<string>({
 			coerceTo: constructType("string"),
-			host,
-			expressions: [expression],
-			templateVariables,
-			onChange: newValue => this.onExpressionChanged(newValue)
+			host: this.host,
+			expressions: [this.expression],
+			templateVariables: this.templateVariables,
+			onChange: this.onExpressionChanged.bind(this)
 		});
 	}
 
@@ -63,7 +91,7 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 		// Stop observing the expression
 		if (this.expressionObserver != null) {
 			this.expressionObserver.unobserve();
-			this.expressionObserver = null;
+			this.expressionObserver = undefined;
 		}
 	}
 
@@ -72,6 +100,14 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	 * @param {Optional<string>} newValue
 	 */
 	private onExpressionChanged (newValue: Optional<string>): void {
+		rafScheduler.mutate(this.updateTextContent.bind(this, newValue), {instantIfFlushing: true}).then();
+	}
+
+	/**
+	 * Updates the Text content
+	 * @param {Optional<string>} newValue
+	 */
+	private updateTextContent (newValue: Optional<string>): void {
 		if (this.lastNode == null) return;
 		this.lastNode.textContent = newValue == null ? null : newValue;
 	}

@@ -1,11 +1,11 @@
-import {ICustomAttribute, IFoveaHost} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 
 /**
  * Shared logic for when a host is disposed or destroyed
- * @param {IFoveaHost|ICustomAttribute} host
+ * @param {FoveaHost} host
  * @private
  */
-export function disposeOrDestroyShared (host: IFoveaHost|ICustomAttribute): void {
+export function disposeOrDestroyShared (host: FoveaHost): void {
 	if (host.___disposeProps != null) host.___disposeProps();
 	if (host.___disposeListeners != null) host.___disposeListeners();
 	if (host.___disposeVisibilityObservers != null) host.___disposeVisibilityObservers();

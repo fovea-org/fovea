@@ -1,4 +1,4 @@
-import {FoveaHostKind} from "./fovea-host-kind";
+import {FoveaHostKind} from "@fovea/common";
 import {ClassDeclaration, ClassExpression, SourceFile} from "typescript";
 
 export interface IFoveaHostMarkerMarkResult {

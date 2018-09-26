@@ -14,6 +14,7 @@ import {normalizeParams, normalizeQueryParams} from "../util/query-util";
 import {IParams} from "../query/i-params";
 import {IDeepResolveResolveAliasValueMapper} from "./i-deep-resolve-result";
 import {RouteGuard} from "../route/route-guard";
+import {rafScheduler} from "@fovea/scheduler";
 
 // tslint:disable:no-any
 
@@ -489,8 +490,8 @@ export class Router {
 	 * Called when navigation happens to the initial state
 	 * @param state
 	 */
-	private static async onInitialState (state: IState): Promise<void> {
-		await this.updateRouterView(state, "replace");
+	private static onInitialState (state: IState): void {
+		rafScheduler.mutate(() => this.updateRouterView(state, "replace").then(), {instantIfFlushing: true});
 
 	}
 
@@ -498,16 +499,16 @@ export class Router {
 	 * Called when navigation happens to a past state
 	 * @param state
 	 */
-	private static async onPastState (state: IState): Promise<void> {
-		await this.updateRouterView(state, "back");
+	private static onPastState (state: IState): void {
+		rafScheduler.mutate(() => this.updateRouterView(state, "back").then(), {instantIfFlushing: true});
 	}
 
 	/**
 	 * Called when navigation happens to a future state
 	 * @param state
 	 */
-	private static async onFutureState (state: IState): Promise<void> {
-		await this.updateRouterView(state, "forward");
+	private static onFutureState (state: IState): void {
+		rafScheduler.mutate(() => this.updateRouterView(state, "forward").then(), {instantIfFlushing: true});
 	}
 
 	/**
@@ -653,13 +654,15 @@ export class Router {
 				continue;
 			}
 
-			// Otherwise remove the instance
-			if (poppedInstance.instance.parentNode != null) {
-				if ("destroyedCallback" in poppedInstance.instance) {
-					(<any>poppedInstance).instance.destroyedCallback();
+			rafScheduler.mutate(() => {
+				// Otherwise remove the instance
+				if (poppedInstance.instance.parentNode != null) {
+					if ("destroyedCallback" in poppedInstance.instance) {
+						(<any>poppedInstance).instance.destroyedCallback();
+					}
+					poppedInstance.instance.parentNode.removeChild(poppedInstance.instance);
 				}
-				poppedInstance.instance.parentNode.removeChild(poppedInstance.instance);
-			}
+			}, {instantIfFlushing: true});
 		}
 	}
 
@@ -679,13 +682,15 @@ export class Router {
 				const routerOutlet = this.getRouterOutletForRoute(instantiatedRoute.route, path);
 				routerOutlet.clearRoute(instantiatedRoute.route);
 			} catch {
-				// This is okay
-				if (instantiatedRoute.instance.parentNode != null) {
-					if ("destroyedCallback" in instantiatedRoute.instance) {
-						(<any>instantiatedRoute).instance.destroyedCallback();
+				rafScheduler.mutate(() => {
+					// This is okay
+					if (instantiatedRoute.instance.parentNode != null) {
+						if ("destroyedCallback" in instantiatedRoute.instance) {
+							(<any>instantiatedRoute).instance.destroyedCallback();
+						}
+						instantiatedRoute.instance.parentNode.removeChild(instantiatedRoute.instance);
 					}
-					instantiatedRoute.instance.parentNode.removeChild(instantiatedRoute.instance);
-				}
+				}, {instantIfFlushing: true});
 			}
 		}
 	}

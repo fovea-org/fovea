@@ -1,4 +1,4 @@
-import {ICustomAttribute, IFoveaHost, Json} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 import {setExpectedAttributeValue} from "../expected-attribute-value/set-expected-attribute-value/set-expected-attribute-value";
 import {coerceValue} from "../../observe/expression-chain/coercion/coerce-value";
 import {constructType} from "../../prop/construct-type/construct-type";
@@ -12,15 +12,15 @@ import {kebabCase} from "@wessberg/stringutil";
 
 /**
  * Updates the given value on the given element as an attribute
- * @param {IFoveaHost|ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {Element} element
  * @param {string} key
- * @param {Json} value
+ * @param {*} value
  * @param {boolean} isBooleanProp
  * @param {string?} [setForValueProperty]
  * @returns {void}
  */
-export function setAttribute (host: IFoveaHost|ICustomAttribute, element: Element, key: string, value: Json, isBooleanProp: boolean, setForValueProperty?: string): void {
+export function setAttribute (host: FoveaHost, element: Element, key: string, value: any, isBooleanProp: boolean, setForValueProperty?: string): void {
 	// Remove the attribute if it represents a boolean property and the new value is either not given or false
 	const shouldRemoveAttribute = value == null || isBooleanProp && !value;
 

@@ -28,12 +28,6 @@ IconComponent.addIcons(
 export default class DialogPageComponent extends HTMLElement implements IRouterTarget {
 
 	/**
-	 * An array of numbers
-	 * @type {number[]}
-	 */
-	@prop protected listItems: number[] = [...Array(15).keys()];
-
-	/**
 	 * Holds true if a Radio Button has been selected within the scrolling dialog
 	 * @type {boolean}
 	 */

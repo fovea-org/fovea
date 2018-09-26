@@ -6,7 +6,7 @@ import {IConfiguration} from "../configuration/i-configuration";
 import {ILibUser} from "../lib-user/i-lib-user";
 import {ClassDeclaration, ClassExpression, Decorator, ExportSpecifier, isCallExpression, SourceFile} from "typescript";
 import {IFoveaHostMarkerMarkIncludeResult} from "../fovea-marker/fovea-host-marker-mark-result";
-import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
+import {FoveaHostKind} from "@fovea/common";
 import {IFoveaCompilerOptions} from "../options/i-fovea-compiler-options";
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {FoveaHostDefinerExportStatus, IFoveaHostDefinerNoExportStatus} from "./i-fovea-host-definer-export-status";
@@ -70,7 +70,7 @@ export class FoveaHostDefiner implements IFoveaHostDefiner {
 
 			// Add a instruction to define the element or Custom Attribute immediately after the ClassDeclaration
 			context.container.appendAtPlacement(
-				`\n${this.libUser.use(mark.kind === FoveaHostKind.HOST ? "registerElement" : "registerCustomAttribute", compilerOptions, context)}("${selector}", ${className});`,
+				`\n${this.libUser.use(mark.kind === FoveaHostKind.CUSTOM_ELEMENT ? "registerElement" : "registerCustomAttribute", compilerOptions, context)}("${selector}", ${className});`,
 				insertPlacement
 			);
 		}

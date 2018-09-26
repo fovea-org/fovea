@@ -1,6 +1,5 @@
 import {ITemplateNormalElementResultOptions} from "./i-template-normal-element-result-options";
 import {TemplateResultBase} from "../../template-result-base/template-result-base";
-import {IExpressionChainObserver} from "../../../../observe/expression-chain/expression-chain-observer/i-expression-chain-observer";
 import {ITemplateNormalElementResult} from "./i-template-normal-element-result";
 import {ITemplateResult} from "../../template-result/i-template-result";
 import {TemplateResult} from "../../template-result/template-result";
@@ -29,15 +28,15 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 
 	/**
 	 * The expression observers that, when changed, should mutate the elements attributes
-	 * @type {IExpressionChainObserver[]}
+	 * @type {IObserver[]}
 	 */
-	private attributeObservers: IExpressionChainObserver[]|null;
+	private attributeObservers: IObserver[]|null;
 
 	/**
 	 * The expression observers that, when changed, should mutate the elements properties
-	 * @type {IExpressionChainObserver[]}
+	 * @type {IObserver[]}
 	 */
-	private propertyObservers: IExpressionChainObserver[]|null;
+	private propertyObservers: IObserver[]|null;
 
 	/**
 	 * The expression observers that, when changed, should set the 'value' property on the Custom Attributes that are set on this element
@@ -46,9 +45,9 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 
 	/**
 	 * The expression observers that, when changed, should mutate the elements listeners
-	 * @type {IExpressionChainObserver[]}
+	 * @type {IObserver[]}
 	 */
-	private listenerObservers: IExpressionChainObserver[]|null;
+	private listenerObservers: IObserver[]|null;
 
 	/**
 	 * The observer for a bound ref to the host
@@ -63,12 +62,12 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	private constructedChildren: TemplateResult[]|null = [];
 
 	constructor ({ref, attributes, properties, listeners, host, customAttributes, templateVariables, previousSibling, lastNode, owner, root, children}: ITemplateNormalElementResultOptions) {
-		super({host, previousSibling, owner});
+		super({host, previousSibling, owner, root});
 
 		this.lastNode = lastNode;
 
 		// Upgrade it
-		this.upgrade(host, this.lastNode, root);
+		this.upgrade(this.lastNode, root);
 
 		// Construct and append all children
 		let previousSiblingForChild: ITemplateResult|null;
@@ -80,9 +79,6 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 		});
 
 		this.customAttributeObservers = customAttributes.map(customAttribute => attachCustomAttribute(host, lastNode, customAttribute.key, customAttribute.value, templateVariables));
-
-		// Add the node to its owner
-		this.attach(this.lastNode, owner);
 
 		// If a ref is given, bind the ref to the host, prepended with a '$'
 		if (ref != null) {
@@ -97,12 +93,16 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 
 		// Set all listeners
 		this.listenerObservers = listeners.map(listener => observeListener(host, lastNode, listener, templateVariables));
+
+		// Add the node to its owner
+		this.attach(this.lastNode, owner);
 	}
 
 	/**
 	 * Destroys an element completely (removes all traces of it)
 	 */
 	public destroy (): void {
+		this.destroyed = true;
 		if (this.constructedChildren != null) {
 			this.constructedChildren.forEach(child => child.destroy());
 			this.constructedChildren = null;
@@ -130,6 +130,7 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 * Disposes an element
 	 */
 	public dispose (): void {
+		this.disposed = true;
 		if (this.constructedChildren != null) {
 			this.constructedChildren.forEach(child => child.dispose());
 			this.constructedChildren = null;

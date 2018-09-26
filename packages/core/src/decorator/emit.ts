@@ -2,7 +2,7 @@ import {IEmitBaseOptions} from "@fovea/common";
 import {HostDecoratorTarget} from "../host-decorator-target";
 
 /**
- * Registers a prop as an event emitter for an IFoveaHost or ICustomAttribute.
+ * Registers a prop as an event emitter for a FoveaHost
  * @param {Partial<IEmitBaseOptions>} options
  * @returns {Function}
  */

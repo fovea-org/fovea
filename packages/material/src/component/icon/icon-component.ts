@@ -1,5 +1,6 @@
 import {onChange, prop, styleSrc} from "@fovea/core";
 import {IIcon} from "./i-icon";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This component represents an Icon
@@ -78,6 +79,6 @@ export class IconComponent extends HTMLElement {
 		}
 
 		// Clone the template and add it the root
-		this.root.appendChild(template.content.cloneNode(true));
+		rafScheduler.mutate(() => this.root.appendChild(template.content.cloneNode(true)), {instantIfFlushing: true});
 	}
 }

@@ -1,7 +1,7 @@
 export {___use} from "./helper/use/use";
 export {___bootstrap} from "./helper/bootstrap/bootstrap";
 export {___connectCustomAttribute} from "./helper/connect/connect-custom-attribute";
-export {___connectFoveaHost} from "./helper/connect/connect-fovea-host";
+export {___connectCustomElement} from "./helper/connect/connect-custom-element";
 export {___connectTemplates} from "./helper/connect/connect-templates";
 export {___connectHostAttributes} from "./helper/connect/connect-host-attributes";
 export {___connectCSS} from "./helper/connect/connect-css";
@@ -46,7 +46,7 @@ export {___registerSetOnHost} from "./helper/register-set-on-host/register-set-o
 export {___mapPropertiesToAttributes} from "./helper/map-properties-to-attributes/map-properties-to-attributes";
 export {___registerElement} from "./helper/register-element/register-element";
 export {___registerCustomAttribute} from "./helper/register-custom-attribute/register-custom-attribute";
-export {___constructFoveaHost} from "./helper/construct/construct-fovea-host";
+export {___constructCustomElement} from "./helper/construct/construct-custom-element";
 export {___constructCustomAttribute} from "./helper/construct/construct-custom-attribute";
 export {___addCustomAttribute} from "./helper/add-custom-attribute/add-custom-attribute";
 export {___registerEmitter} from "./helper/register-emitter/register-emitter";

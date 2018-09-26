@@ -5,13 +5,13 @@ import {ClassDeclaration, ClassExpression} from "typescript";
 import {IFoveaHostUtil} from "../util/fovea-host-util/i-fovea-host-util";
 import {FoveaHostMarkerMarkResult} from "./fovea-host-marker-mark-result";
 import {IConfiguration} from "../configuration/i-configuration";
-import {FoveaHostKind} from "./fovea-host-kind";
+import {FoveaHostKind} from "@fovea/common";
 import {IFoveaDiagnostics} from "../diagnostics/i-fovea-diagnostics";
 import {FoveaDiagnosticKind} from "../diagnostics/fovea-diagnostic-kind";
 
 /**
  * A class that determines whether or not a class is valid for compilation with Fovea.
- * It will be if it is either an IFoveaHost or a Custom Attribute
+ * It will be if it is either an Custom Element or a Custom Attribute
  */
 export class FoveaHostMarker implements IFoveaHostMarker {
 	constructor (private readonly configuration: IConfiguration,
@@ -21,7 +21,7 @@ export class FoveaHostMarker implements IFoveaHostMarker {
 	}
 
 	/**
-	 * Checks if the provided class is an IFoveaHost or a Custom Attribute and thus is qualified for compilation.
+	 * Checks if the provided class is a Custom Element or a Custom Attribute and thus is qualified for compilation.
 	 * @param {ClassDeclaration} classDeclaration
 	 * @param {string} file
 	 * @returns {FoveaHostMarkerMarkResult}
@@ -89,7 +89,7 @@ export class FoveaHostMarker implements IFoveaHostMarker {
 			// If it is not a Custom Attribute, include it!
 			if (!isCustomAttribute) {
 				if (className != null) {
-					return {include: true, isManuallyRegistered, kind: FoveaHostKind.HOST, classDeclaration: originalClassDeclaration, className, sourceFile: originalClassDeclaration.getSourceFile(), file};
+					return {include: true, isManuallyRegistered, kind: FoveaHostKind.CUSTOM_ELEMENT, classDeclaration: originalClassDeclaration, className, sourceFile: originalClassDeclaration.getSourceFile(), file};
 				}
 
 				else {

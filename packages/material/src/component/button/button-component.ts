@@ -1,8 +1,8 @@
-import {dependsOn, listener, onChildrenAdded, onChildrenRemoved, prop, setOnHost, styleSrc, templateSrc, hostAttributes} from "@fovea/core";
+import {dependsOn, hostAttributes, listener, onChildrenAdded, onChildrenRemoved, prop, setOnHost, styleSrc, templateSrc} from "@fovea/core";
 import {RippleComponent} from "../ripple/ripple-component";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {FormItemComponent} from "../form-item/form-item-component";
-import {debounceUntilNextAnimationFrame} from "../../util/debounce-util";
+import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Attribute represents a Button
@@ -20,6 +20,7 @@ import {debounceUntilNextAnimationFrame} from "../../util/debounce-util";
 	value: "${value}"
 })
 export class ButtonComponent extends FormItemComponent {
+
 	/**
 	 * If true, the Button will have a background color and some elevation
 	 * @type {boolean}
@@ -33,17 +34,11 @@ export class ButtonComponent extends FormItemComponent {
 	@prop @setOnHost public outlined: boolean = false;
 
 	/**
-	 * A this-bound reference to the 'refresh' method
-	 * @type {Function}
-	 */
-	private boundRefresh = this.refresh.bind(this);
-
-	/**
 	 * Invoked when the button is connected to the DOM
 	 */
 	protected connectedCallback (): void {
 		super.connectedCallback();
-		this.refreshOnIdle();
+		this.refresh().then();
 	}
 
 	/**
@@ -64,19 +59,11 @@ export class ButtonComponent extends FormItemComponent {
 	}
 
 	/**
-	 * Invoked when the children changes.
-	 * Debounces a call to 'refresh'
+	 * Ensures that all text children are wrapped in elements for styling purposes
 	 */
 	@onChildrenAdded()
 	@onChildrenRemoved()
-	private refreshOnIdle (): void {
-		debounceUntilNextAnimationFrame(this.boundRefresh);
-	}
-
-	/**
-	 * Ensures that all text children are wrapped in elements for styling purposes
-	 */
-	private refresh () {
+	private async refresh (): Promise<void> {
 		const childNodes = this.childNodes;
 		const childNodesLength = childNodes.length;
 		for (let i = 0; i < childNodesLength; i++) {
@@ -85,8 +72,11 @@ export class ButtonComponent extends FormItemComponent {
 				const span = document.createElement("span");
 				const oldParent = node.parentNode;
 				if (oldParent != null) {
-					oldParent.replaceChild(span, node);
-					span.appendChild(node);
+					await rafScheduler.mutate(() => {
+						if (oldParent.parentNode == null) return;
+						if (node.parentNode === oldParent) oldParent.replaceChild(span, node);
+						span.appendChild(node);
+					}, {instantIfFlushing: true});
 				}
 			}
 		}

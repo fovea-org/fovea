@@ -1,2 +1,4 @@
-export {IFoveaHost, IFoveaHostConstructor} from "./i-fovea-host";
-export {isIFoveaHost} from "./is-i-fovea-host";
+export * from "./i-fovea-host";
+export * from "./fovea-host-kind";
+export * from "./fovea-host";
+export * from "./is-fovea-host";

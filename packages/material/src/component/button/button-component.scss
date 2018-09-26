@@ -41,7 +41,8 @@
 	cursor: pointer;
 }
 
-::slotted(button) {
+::slotted(button),
+button {
 	position: absolute;
 	top: 0;
 	left: 0;

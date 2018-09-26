@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@fovea/common": "^1.0.132",
+    "@fovea/scheduler": "^1.0.132",
     "@fovea/core": "^1.0.132",
     "@fovea/lib": "^1.0.132",
     "@fovea/material": "^1.0.132",

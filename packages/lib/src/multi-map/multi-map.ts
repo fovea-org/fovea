@@ -77,10 +77,13 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 * @param {Function} callback
 	 * @returns {boolean}
 	 */
-	public findValue<S extends V> (key: K, callback: (value: V, index: number, collection: C) => boolean): S|undefined {
+	public findValue<S extends V> (key: K, callback: (value: V, collection: C) => boolean): S|undefined {
 		if (!this.has(key)) return undefined;
 		const collection = this.get(key);
-		return <S|undefined> [...collection].find((value, index) => callback(value, index, collection));
+		for (const value of collection) {
+			if (callback(value, collection)) return <S> value;
+		}
+		return undefined;
 	}
 
 	/**
@@ -90,7 +93,7 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 * @param {Function} callback
 	 * @returns {boolean}
 	 */
-	public someValue (key: K, callback: (value: V, index: number, collection: C) => boolean): boolean {
+	public someValue (key: K, callback: (value: V, collection: C) => boolean): boolean {
 		return this.findValue(key, callback) != null;
 	}
 
@@ -101,10 +104,15 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 * @param {Function} callback
 	 * @returns {boolean}
 	 */
-	public mapValue<U> (key: K, callback: (value: V, index: number, collection: C) => U): U[] {
+	public mapValue<U> (key: K, callback: (value: V, collection: C) => U): U[] {
 		if (!this.has(key)) return [];
 		const collection = this.get(key);
-		return [...collection].map((value, index) => callback(value, index, collection));
+		const mapped: U[] = [];
+		let currentIndex = 0;
+		for (const value of collection) {
+			mapped[currentIndex++] = callback(value, collection);
+		}
+		return mapped;
 	}
 
 	/**
@@ -114,10 +122,17 @@ export class MultiMap<K, V, C extends Set<V> = Set<V>> {
 	 * @param {Function} callback
 	 * @returns {V[]}
 	 */
-	public filterValues (key: K, callback: (value: V, index: number, collection: C) => boolean): V[] {
+	public filterValues (key: K, callback: (value: V, collection: C) => boolean): V[] {
 		if (!this.has(key)) return [];
 		const collection = this.get(key);
-		return [...collection].filter((value, index) => callback(value, index, collection));
+		const filtered: V[] = [];
+		let currentIndex = 0;
+		for (const value of collection) {
+			if (callback(value, collection)) {
+				filtered[currentIndex++] = value;
+			}
+		}
+		return filtered;
 	}
 
 	/**

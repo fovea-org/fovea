@@ -1,4 +1,6 @@
+import {FoveaHostKind} from "@fovea/common";
+
 export interface IReferencedCustomSelector {
-	kind: "component"|"custom-attribute";
+	kind: FoveaHostKind;
 	selector: string;
 }

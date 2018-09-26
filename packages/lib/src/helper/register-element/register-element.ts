@@ -1,13 +1,13 @@
-import {IFoveaHostConstructor} from "@fovea/common";
+import {ICustomElementConstructor} from "@fovea/common";
 import {log} from "../../log/log";
 
 /**
  * Registers an element
  * @param {string} selector
- * @param {IFoveaHostConstructor} host
+ * @param {ICustomElementConstructor} host
  * @private
  */
-export function ___registerElement (selector: string, host: IFoveaHostConstructor): void {
+export function ___registerElement (selector: string, host: ICustomElementConstructor): void {
 	try {
 		customElements.define(selector, host);
 	} catch (ex) {

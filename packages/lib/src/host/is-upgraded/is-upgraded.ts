@@ -1,11 +1,11 @@
-import {ICustomAttribute, IFoveaHost} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 import {UPGRADED_HOSTS} from "../upgraded-hosts/upgraded-hosts";
 
 /**
  * Returns true if the host has been upgraded.
- * @param {IFoveaHost|ICustomAttribute} host
+ * @param {FoveaHost} host
  * @returns {boolean}
  */
-export function isUpgraded (host: IFoveaHost|ICustomAttribute): boolean {
+export function isUpgraded (host: FoveaHost): boolean {
 	return UPGRADED_HOSTS.has(host);
 }

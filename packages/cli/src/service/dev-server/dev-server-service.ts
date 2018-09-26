@@ -200,7 +200,6 @@ export class DevServerService implements IDevServerService {
 	private ensureLeadingSlash (path: string): string {
 		return path.startsWith("/") ? path : `/${path}`;
 	}
-
 	/**
 	 * Called when a request happens
 	 * @param {Http2ServerRequest} rawRequest

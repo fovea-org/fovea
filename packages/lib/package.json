@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.132",
+		"@fovea/scheduler": "^1.0.132",
 		"@wessberg/stringutil": "^1.0.17"
 	},
 	"devDependencies": {

@@ -1,4 +1,4 @@
-import {ICustomAttributeConstructor, IFoveaHostConstructor, IType} from "@fovea/common";
+import {FoveaHostConstructor, IType} from "@fovea/common";
 import {PROPS_FOR_HOST} from "../props-for-host/props-for-host/props-for-host";
 import {constructType} from "../construct-type/construct-type";
 
@@ -6,11 +6,11 @@ const fallbackType = constructType("any");
 
 /**
  * Gets the type that matches the given prop name
- * @param {ICustomAttributeConstructor | IFoveaHostConstructor} hostCtor
+ * @param {FoveaHostConstructor} hostCtor
  * @param {string} propName
  * @returns {IType}
  */
-export function getTypeForPropName (hostCtor: ICustomAttributeConstructor|IFoveaHostConstructor, propName: string|undefined): IType {
+export function getTypeForPropName (hostCtor: FoveaHostConstructor, propName: string|undefined): IType {
 	// Fall back to any if the prop is not defined
 	if (propName == null) return fallbackType;
 

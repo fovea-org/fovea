@@ -1,10 +1,9 @@
 import {ITemplateResult} from "../template-result/i-template-result";
-import {ICustomAttribute, IFoveaHost} from "@fovea/common";
+import {FoveaHost, INodeExtension} from "@fovea/common";
 import {ITemplateResultOptions} from "../template-result/i-template-result-options";
-import {setHostForNode} from "../../../host/host-for-node/set-host-for-node/set-host-for-node";
-import {setRootForNode} from "../../../host/root-for-node/set-root-for-node/set-root-for-node";
 import {incrementUuid} from "../../../uuid/increment-uuid/increment-uuid";
-import {setUuidForNode} from "../../../uuid/uuid-for-node/set-uuid-for-node/set-uuid-for-node";
+
+// tslint:disable:no-any
 
 /**
  * An abstract base class for generated instances of Templates
@@ -31,14 +30,33 @@ export abstract class TemplateResultBase implements ITemplateResult {
 
 	/**
 	 * The host of this TemplateResultBase
-	 * @type {IFoveaHost|ICustomAttribute}
+	 * @type {FoveaHost}
 	 */
-	protected readonly host: IFoveaHost|ICustomAttribute;
+	protected readonly host: FoveaHost;
 
-	protected constructor ({host, previousSibling, owner}: ITemplateResultOptions) {
+	/**
+	 * The root of this TemplateResultBase
+	 * @type {Element|ShadowRoot}
+	 */
+	protected readonly root: Element|ShadowRoot;
+
+	/**
+	 * Whether or not the TemplateConditionalElement has been destroyed
+	 * @type {boolean}
+	 */
+	protected destroyed: boolean = false;
+
+	/**
+	 * Whether or not the TemplateConditionalElement has been disposed
+	 * @type {boolean}
+	 */
+	protected disposed: boolean = false;
+
+	protected constructor ({host, previousSibling, owner, root}: ITemplateResultOptions) {
 		this.host = host;
 		this.owner = owner;
 		this.previousSibling = previousSibling;
+		this.root = root;
 	}
 
 	/**
@@ -53,20 +71,12 @@ export abstract class TemplateResultBase implements ITemplateResult {
 
 	/**
 	 * Upgrades the given host
-	 * @param {IFoveaHost|ICustomAttribute} host
 	 * @param {Node} node
 	 * @param {ShadowRoot|Element} root
 	 */
-	public upgrade (host: IFoveaHost|ICustomAttribute, node: Node, root: ShadowRoot|Element): void {
-
-		// Map the TextNode to it's host
-		setHostForNode(node, host);
-
-		// Map the node to its' root
-		setRootForNode(node, root);
-
-		// Generate and map a Uuid to the node
-		setUuidForNode(node, incrementUuid());
+	public upgrade (node: Node&Partial<INodeExtension>, root: ShadowRoot|Element): void {
+		node.___root = root;
+		node.___uuid = incrementUuid();
 	}
 
 	/**
@@ -75,7 +85,6 @@ export abstract class TemplateResultBase implements ITemplateResult {
 	 * @param {Node} owner
 	 */
 	protected attach (node: Node, owner: Node): void {
-
 		if (this.previousSibling != null && this.previousSibling.lastNode != null && this.previousSibling.owner === this.owner) {
 			owner.insertBefore(node, this.previousSibling.lastNode.nextSibling);
 		}

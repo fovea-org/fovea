@@ -2,7 +2,7 @@ import {IFoveaDiagnostics} from "./i-fovea-diagnostics";
 import {FoveaDiagnostic} from "./fovea-diagnostic";
 import {FoveaDiagnosticCtor, IAmbiguousHostFoveaDiagnosticCtor, IInvalidCssFoveaDiagnosticCtor, IInvalidDependsOnDecoratorUsageFoveaDiagnosticCtor, IInvalidHostAttributesDecoratorUsageFoveaDiagnosticCtor, IInvalidHostListenerDecoratorUsageFoveaDiagnosticCtor, IInvalidChildListObserverDecoratorUsageFoveaDiagnosticCtor, IInvalidOnChangeDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorDecoratorUsageFoveaDiagnosticCtor, IInvalidSelectorHasWhitespaceFoveaDiagnosticCtor, IInvalidSelectorIsNotAllLowerCaseFoveaDiagnosticCtor, IInvalidSelectorNeedsHyphenFoveaDiagnosticCtor, IInvalidSrcDecoratorUsageFoveaDiagnosticCtor, IInvalidTemplateFoveaDiagnosticCtor, IInvalidVisibilityObserverDecoratorUsageFoveaDiagnosticCtor, IOnlyLiteralValuesSupportedHereFoveaDiagnosticCtor, IUnknownSelectorFoveaDiagnosticCtor, IUnresolvedSrcFoveaDiagnosticCtor, IInvalidAttributeObserverDecoratorUsageFoveaDiagnosticCtor} from "./fovea-diagnostic-ctor";
 import {FoveaDiagnosticKind} from "./fovea-diagnostic-kind";
-import {FoveaHostKind} from "../fovea-marker/fovea-host-kind";
+import {FoveaHostKind} from "@fovea/common";
 import chalk from "chalk";
 import {IConfiguration} from "../configuration/i-configuration";
 import {FoveaDiagnosticDegree} from "./fovea-diagnostic-degree";
@@ -444,7 +444,7 @@ export class FoveaDiagnostics implements IFoveaDiagnostics {
 	 * @returns {string}
 	 */
 	private stringifyHostKind (hostKind: FoveaHostKind|string): string {
-		return hostKind === FoveaHostKind.HOST ? "component" : hostKind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "custom attribute" : hostKind;
+		return hostKind === FoveaHostKind.CUSTOM_ELEMENT ? "custom element" : hostKind === FoveaHostKind.CUSTOM_ATTRIBUTE ? "custom attribute" : hostKind;
 	}
 
 	/**

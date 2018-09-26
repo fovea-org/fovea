@@ -1,10 +1,10 @@
-import {ICustomAttributeConstructor, IFoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor} from "@fovea/common";
 
 /**
  * Bootstraps the constructor for a host by registering things like props, observers, listeners, etc
- * @param {IFoveaHostConstructor|ICustomAttributeConstructor} host
+ * @param {FoveaHostConstructor} host
  */
-export function ___bootstrap (host: IFoveaHostConstructor|ICustomAttributeConstructor): void {
+export function ___bootstrap (host: FoveaHostConstructor): void {
 	if (host.___useCSS != null) host.___useCSS();
 	if (host.___useTemplates != null) host.___useTemplates();
 	if (host.___registerChangeObservers != null) host.___registerChangeObservers();

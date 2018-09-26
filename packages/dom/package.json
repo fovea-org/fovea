@@ -39,7 +39,8 @@
     "pretest": "rollup -c rollup.test.config.js",
     "test": "ava",
     "posttest": "rm -r -f compiled",
-    "build": "npm run rollup"
+    "build": "npm run rollup",
+    "watch": "npm run rollup -- --watch"
   },
   "dependencies": {
     "@fovea/common": "^1.0.132",

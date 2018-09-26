@@ -2,7 +2,6 @@
 
 :host {
 	@include reset();
-	@include hardwareAccelerated();
 	@include typographyBase();
 	--size: #{$icon-size};
 

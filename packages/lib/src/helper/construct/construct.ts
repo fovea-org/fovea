@@ -1,34 +1,30 @@
-import {ICustomAttribute, IFoveaHost, isIFoveaHost} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
 import {incrementUuid} from "../../uuid/increment-uuid/increment-uuid";
-import {setHostElementForHost} from "../../host/host-element-for-host/set-host-element-for-host/set-host-element-for-host";
-import {setUuidForNode} from "../../uuid/uuid-for-node/set-uuid-for-node/set-uuid-for-node";
-import {removeUuidForNode} from "../../uuid/uuid-for-node/remove-uuid-for-node/remove-uuid-for-node";
-import {removeHostElementForHost} from "../../host/host-element-for-host/remove-host-element-for-host/remove-host-element-for-host";
-import {removeHostForNode} from "../../host/host-for-node/remove-host-for-node/remove-host-for-node";
 import {IDestroyable} from "../../destroyable/i-destroyable";
 
 /**
- * Constructs a new IFoveaHost or ICustomAttribute
- * @param {IFoveaHost|ICustomAttribute} host
+ * A noop destroyable for constructed FoveaHosts
+ * @type {{destroy: () => void}}
+ */
+const NOOP_DESTROYABLE = {
+	destroy: () => {
+	}
+};
+
+/**
+ * Constructs a new FoveaHost
+ * @param {FoveaHost} host
  * @param {Element} hostElement
  * @private
  */
-export function construct (host: IFoveaHost|ICustomAttribute, hostElement: Element): IDestroyable {
-
+export function construct (host: FoveaHost, hostElement: Element): IDestroyable {
 	// Map the host element to the host
-	setHostElementForHost(host, hostElement);
+	host.___hostElement = hostElement;
+	const constructor = <FoveaHostConstructor>host.constructor;
 
-	// Generate and map a Uuid to the host node
-	setUuidForNode(host, incrementUuid());
+	// Generate and map a Uuid to the host node as well as its' constructor (if needed)
+	if (constructor.___uuid == null) constructor.___uuid = incrementUuid();
+	host.___uuid = incrementUuid();
 
-	// Make sure that it can be disposed later on
-	return {
-		destroy: () => {
-			removeUuidForNode(host);
-			removeHostElementForHost(host);
-			if (isIFoveaHost(host)) {
-				removeHostForNode(host);
-			}
-		}
-	};
+	return NOOP_DESTROYABLE;
 }

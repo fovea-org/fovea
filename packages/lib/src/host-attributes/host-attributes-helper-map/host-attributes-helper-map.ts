@@ -1,8 +1,7 @@
 import {IHostAttributesHelperMap} from "./i-host-attributes-helper-map";
 import {IObserver} from "../../observe/i-observer";
 import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-chain-dict";
-import {ExpressionChain, ICustomAttribute, IFoveaHost, Ref} from "@fovea/common";
-import {getHostElementForHost} from "../../host/host-element-for-host/get-host-element-for-host/get-host-element-for-host";
+import {ExpressionChain, FoveaHost, Ref} from "@fovea/common";
 import {observeAttribute} from "../../attribute/observe-attribute/observe-attribute";
 import {attachCustomAttribute} from "../../custom-attribute/attach-custom-attribute/attach-custom-attribute";
 import {observeProperty} from "../../prop/observe-property/observe-property";
@@ -14,33 +13,33 @@ import {IDestroyable} from "../../destroyable/i-destroyable";
 
 /**
  * Adds the given ExpressionChain or IExpressionChainDict to the given host as an attribute
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {string} key
  * @param {ExpressionChain|IExpressionChainDict} [value]
  * @returns {IObserver}
  */
-function addAttributeForHost (host: IFoveaHost|ICustomAttribute, key: string, value?: ExpressionChain|IExpressionChainDict): IObserver {
-	return observeAttribute(host, getHostElementForHost(host), {key, value});
+function addAttributeForHost (host: FoveaHost, key: string, value?: ExpressionChain|IExpressionChainDict): IObserver {
+	return observeAttribute(host, host.___hostElement, {key, value});
 }
 
 /**
  * Adds the given ExpressionChain to the given host as a property
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {string} path
  * @param {ExpressionChain} [value]
  * @returns {IObserver}
  */
-function addPropertyForHost (host: IFoveaHost|ICustomAttribute, path: string, value?: ExpressionChain): IObserver {
-	return observeProperty(host, getHostElementForHost(host), {key: path, value});
+function addPropertyForHost (host: FoveaHost, path: string, value?: ExpressionChain): IObserver {
+	return observeProperty(host, host.___hostElement, {key: path, value});
 }
 
 /**
  * Adds all of the provided attributes to the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {[string, (ExpressionChain | undefined)][]} attributes
  * @returns {IObserver}
  */
-function addAttributesForHost (host: IFoveaHost|ICustomAttribute, ...attributes: [string, ExpressionChain|undefined][]): IObserver {
+function addAttributesForHost (host: FoveaHost, ...attributes: [string, ExpressionChain|undefined][]): IObserver {
 	let observers: IObserver[]|null = attributes.map(([key, value]) => addAttributeForHost(host, key, value));
 	return {
 		unobserve: () => {
@@ -54,11 +53,11 @@ function addAttributesForHost (host: IFoveaHost|ICustomAttribute, ...attributes:
 
 /**
  * Adds all of the provided properties to the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {[string, (ExpressionChain | undefined)][]} properties
  * @returns {IObserver}
  */
-function addPropertiesForHost (host: IFoveaHost|ICustomAttribute, ...properties: [string, ExpressionChain][]): IObserver {
+function addPropertiesForHost (host: FoveaHost, ...properties: [string, ExpressionChain][]): IObserver {
 	let observers: IObserver[]|null = properties.map(([path, value]) => addPropertyForHost(host, path, value));
 	return {
 		unobserve: () => {
@@ -72,22 +71,22 @@ function addPropertiesForHost (host: IFoveaHost|ICustomAttribute, ...properties:
 
 /**
  * Binds an event listener to the given host for events of the given name and with the given handler
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {string} name
  * @param {ExpressionChain} handler
  * @returns {IObserver}
  */
-function addListenerForHost (host: IFoveaHost|ICustomAttribute, name: string, handler: ExpressionChain): IObserver {
-	return observeListener(host, getHostElementForHost(host), {name, handler});
+function addListenerForHost (host: FoveaHost, name: string, handler: ExpressionChain): IObserver {
+	return observeListener(host, host.___hostElement, {name, handler});
 }
 
 /**
  * Adds all of the provided listeners to the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {[string, (ExpressionChain)][]} listeners
  * @returns {IObserver}
  */
-function addListenersForHost (host: IFoveaHost|ICustomAttribute, ...listeners: [string, ExpressionChain][]): IObserver {
+function addListenersForHost (host: FoveaHost, ...listeners: [string, ExpressionChain][]): IObserver {
 	let observers: IObserver[]|null = listeners.map(([name, value]) => addListenerForHost(host, name, value));
 	return {
 		unobserve: () => {
@@ -101,23 +100,23 @@ function addListenersForHost (host: IFoveaHost|ICustomAttribute, ...listeners: [
 
 /**
  * Adds the given Custom Attribute to the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {string} name
  * @param {ExpressionChain | IExpressionChainDict} value
  * @returns {IObserver & IDestroyable}
  */
-function addCustomAttributeForHost (host: IFoveaHost|ICustomAttribute, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver&IDestroyable {
-	return attachCustomAttribute(host, getHostElementForHost(host), name, value);
+function addCustomAttributeForHost (host: FoveaHost, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver&IDestroyable {
+	return attachCustomAttribute(host, host.___hostElement, name, value);
 }
 
 /**
  * Adds the given Custom Attribute to the given host
- * @param {IFoveaHost | ICustomAttribute} host
+ * @param {FoveaHost} host
  * @param {Ref} ref
  * @returns {IObserver}
  */
-function addRefForHost (host: IFoveaHost|ICustomAttribute, ref: Ref): IObserver {
-	return addRef(host, getHostElementForHost(host), ref);
+function addRefForHost (host: FoveaHost, ref: Ref): IObserver {
+	return addRef(host, host.___hostElement, ref);
 }
 
 export const hostAttributesHelperMap: IHostAttributesHelperMap = {
