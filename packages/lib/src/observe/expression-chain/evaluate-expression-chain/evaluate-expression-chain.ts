@@ -1,7 +1,8 @@
 import {EvaluateExpressionChainResult} from "./i-evaluate-expression-chain-result";
-import {evaluateExpression} from "../evaluate-expression/evaluate-expression";
-import {evaluateExpressionChainCommon} from "./evaluate-expression-chain-common";
 import {IObservedExpression} from "../observe-expression-chain/i-observed-expression";
+import {isStringOrSyncExpressionChain, SyncExpressionChain, AsyncExpressionChain} from "@fovea/common";
+import {evaluateSyncExpressionChain} from "./evaluate-sync-expression-chain";
+import {evaluateAsyncExpressionChain} from "./evaluate-async-expression-chain";
 
 /**
  * Evaluates all of the expressions provided in the given ExpressionChain and returns
@@ -9,10 +10,13 @@ import {IObservedExpression} from "../observe-expression-chain/i-observed-expres
  * @param {IObservedExpression} options
  * @returns {EvaluateExpressionChainResult}
  */
-export function evaluateExpressionChain<T> ({expressions, host, templateVariables, coerceTo}: Pick<IObservedExpression<T>, Exclude<keyof IObservedExpression<T>, "onChange">>): EvaluateExpressionChainResult {
-	// Evaluate all of the expressions
-	const results = expressions.map(expression => evaluateExpression(host, expression, templateVariables));
+export function evaluateExpressionChain<T> (options: Pick<IObservedExpression<T>, Exclude<keyof IObservedExpression<T>, "onChange">>): EvaluateExpressionChainResult {
+	// If it isn't async, use the synchronous evaluator
+	if (isStringOrSyncExpressionChain(options.expressions)) {
+		return evaluateSyncExpressionChain(<IObservedExpression<T> & {expressions: string|SyncExpressionChain}> options);
+	}
 
-	// Delegate the rest of the work to the common logic
-	return evaluateExpressionChainCommon(results, coerceTo);
+	else {
+		return evaluateAsyncExpressionChain(<IObservedExpression<T> & {expressions: AsyncExpressionChain}> options);
+	}
 }

@@ -1,5 +1,5 @@
 import {observeExpressionChain} from "../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
-import {ExpressionChain, FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {ExpressionChain, FoveaHost, FoveaHostConstructor, isExpressionChain} from "@fovea/common";
 import {ITemplateProperty} from "../../template/template-property/i-template-property";
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
 import {getTypeForPropName} from "../type-for-prop-name/get-type-for-prop-name";
@@ -29,7 +29,7 @@ function observeInner (host: FoveaHost, element: Element, propertyName: string, 
 }
 
 /**
- * Adds the given ExpressionChain or IExpressionChainDict to the given host
+ * Adds the given ExpressionChain or ExpressionChainDict to the given host
  * @param {FoveaHost} host
  * @param {Element} element
  * @param {ITemplateProperty} property
@@ -37,8 +37,7 @@ function observeInner (host: FoveaHost, element: Element, propertyName: string, 
  * @returns {IObserver}
  */
 export function observeProperty (host: FoveaHost, element: Element, property: ITemplateProperty, templateVariables?: ITemplateVariables): IObserver {
-
-	if (property.value == null || Array.isArray(property.value)) {
+	if (property.value == null || isExpressionChain(property.value)) {
 		return observeInner(host, element, property.key, property.value, templateVariables);
 	}
 

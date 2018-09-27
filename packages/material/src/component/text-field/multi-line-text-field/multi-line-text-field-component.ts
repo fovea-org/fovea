@@ -61,7 +61,7 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	protected async onScroll (): Promise<void> {
 		// Jump onto the animation frame after the next animation frame before invoking the scrollTo operation
 		await rafScheduler.mutate(async () => {
-			await rafScheduler.mutate(() => this.$formItem.scrollTo(0, 0));
+			this.$formItem.scrollTo(0, 0);
 		});
 	}
 

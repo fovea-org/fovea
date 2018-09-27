@@ -1,7 +1,6 @@
 import {ITemplateResult} from "../template-result/i-template-result";
-import {FoveaHost, INodeExtension} from "@fovea/common";
+import {FoveaHost} from "@fovea/common";
 import {ITemplateResultOptions} from "../template-result/i-template-result-options";
-import {incrementUuid} from "../../../uuid/increment-uuid/increment-uuid";
 
 // tslint:disable:no-any
 
@@ -68,16 +67,6 @@ export abstract class TemplateResultBase implements ITemplateResult {
 	 * Destroys a TemplateResultBase (such that it can never be re-instantiated)
 	 */
 	public abstract destroy (): void;
-
-	/**
-	 * Upgrades the given host
-	 * @param {Node} node
-	 * @param {ShadowRoot|Element} root
-	 */
-	public upgrade (node: Node&Partial<INodeExtension>, root: ShadowRoot|Element): void {
-		node.___root = root;
-		node.___uuid = incrementUuid();
-	}
 
 	/**
 	 * Attaches a node to the DOM and updates its' pointers

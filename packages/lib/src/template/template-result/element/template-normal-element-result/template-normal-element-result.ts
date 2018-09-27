@@ -10,6 +10,7 @@ import {IObserver} from "../../../../observe/i-observer";
 import {addRef} from "../../../../ref/add-ref/add-ref";
 import {observeListener} from "../../../../listener/observe-listener/observe-listener";
 import {IDestroyable} from "../../../../destroyable/i-destroyable";
+import {ricScheduler} from "@fovea/scheduler";
 
 // tslint:disable:no-any
 
@@ -66,9 +67,6 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 
 		this.lastNode = lastNode;
 
-		// Upgrade it
-		this.upgrade(this.lastNode, root);
-
 		// Construct and append all children
 		let previousSiblingForChild: ITemplateResult|null;
 		children.forEach(child => {
@@ -95,7 +93,7 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 		this.listenerObservers = listeners.map(listener => observeListener(host, lastNode, listener, templateVariables));
 
 		// Add the node to its owner
-		this.attach(this.lastNode, owner);
+		this.attach(lastNode, owner);
 	}
 
 	/**
@@ -103,10 +101,6 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 */
 	public destroy (): void {
 		this.destroyed = true;
-		if (this.constructedChildren != null) {
-			this.constructedChildren.forEach(child => child.destroy());
-			this.constructedChildren = null;
-		}
 
 		if (this.lastNode != null) {
 			this.detach(this.lastNode);
@@ -117,13 +111,8 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			this.lastNode = null;
 		}
 
-		// Stop observing Custom Attribute expressions
-		if (this.customAttributeObservers != null) {
-			this.customAttributeObservers.forEach(observer => observer.destroy());
-			this.customAttributeObservers = null;
-		}
-
-		this.disposeOrDestroyCommon();
+		// Dispose observers some time in the future
+		ricScheduler.mutate(this.disposeObservers.bind(this)).then();
 	}
 
 	/**
@@ -131,14 +120,23 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 */
 	public dispose (): void {
 		this.disposed = true;
-		if (this.constructedChildren != null) {
-			this.constructedChildren.forEach(child => child.dispose());
-			this.constructedChildren = null;
-		}
 
 		if (this.lastNode != null) {
 			this.detach(this.lastNode);
 			this.lastNode = null;
+		}
+
+		// Dispose observers and children some time in the future
+		ricScheduler.mutate(this.disposeObservers.bind(this)).then();
+	}
+
+	/**
+	 * Disposes all observers
+	 */
+	private disposeObservers (): void {
+		if (this.constructedChildren != null) {
+			this.constructedChildren.forEach(child => child.dispose());
+			this.constructedChildren = null;
 		}
 
 		// Stop observing Custom Attribute expressions

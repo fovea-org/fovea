@@ -1,5 +1,4 @@
 import {listener, prop, setOnHost} from "@fovea/core";
-import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Element represents a FormItem.
@@ -48,12 +47,6 @@ export abstract class FormItemComponent extends HTMLElement {
 	protected $formItem: HTMLInputElement|HTMLOutputElement|HTMLButtonElement|HTMLFieldSetElement|HTMLObjectElement|HTMLSelectElement|HTMLTextAreaElement;
 
 	/**
-	 * A this-bound reference to the 'appendFormItemToLightDOM' method
-	 * @type {Function}
-	 */
-	private readonly boundAppendFormItemToLightDOM = this.appendFormItemToLightDOM.bind(this);
-
-	/**
 	 * Delegates to the child input
 	 * @returns {string}
 	 */
@@ -86,21 +79,6 @@ export abstract class FormItemComponent extends HTMLElement {
 	}
 
 	/**
-	 * Invoked when the Switch is attached to the DOM
-	 */
-	protected connectedCallback () {
-		rafScheduler.mutate(this.boundAppendFormItemToLightDOM, {instantIfFlushing: true}).then();
-	}
-
-	/**
-	 * Appends the $formItem element to the light DOM of the element
-	 */
-	private appendFormItemToLightDOM (): void {
-		if (this.$formItem == null) return;
-		this.appendChild(this.$formItem);
-	}
-
-	/**
 	 * Delegates to the child input
 	 * @returns {boolean}
 	 */
@@ -114,6 +92,13 @@ export abstract class FormItemComponent extends HTMLElement {
 	 */
 	public setCustomValidity (error: string): void {
 		return this.$formItem.setCustomValidity(error);
+	}
+
+	/**
+	 * Invoked when the Switch is attached to the DOM
+	 */
+	protected connectedCallback () {
+		this.appendChild(this.$formItem);
 	}
 
 	/**

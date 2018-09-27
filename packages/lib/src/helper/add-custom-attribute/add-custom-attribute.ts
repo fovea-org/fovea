@@ -1,13 +1,12 @@
-import {ExpressionChain} from "@fovea/common";
+import {ExpressionChain, ExpressionChainDict} from "@fovea/common";
 import {TemplateElement} from "../../template/element/template-element/template-element";
-import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-chain-dict";
 
 /**
  * Adds a Custom Attribute to the provided TemplateElement
  * @param {TemplateElement} element
  * @param {string} name
- * @param {ExpressionChain|IExpressionChainDict} value
+ * @param {ExpressionChain|ExpressionChainDict} value
  */
-export function ___addCustomAttribute (element: TemplateElement, name: string, value?: ExpressionChain|IExpressionChainDict): void {
+export function ___addCustomAttribute (element: TemplateElement, name: string, value?: ExpressionChain|ExpressionChainDict): void {
 	element.addCustomAttribute(name, value);
 }

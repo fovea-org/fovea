@@ -1,11 +1,12 @@
 import {IExpressionUtil} from "./i-expression-util";
-import {takeInnerExpression} from "@fovea/common";
+import {EXPRESSION_FULL_QUALIFIER, splitByExpressions, takeInnerExpression} from "@fovea/common";
 import {ICodeAnalyzer} from "@wessberg/codeanalyzer";
 import {IExpressionContentPart, IExpressionContentPartMetadata, IGenerateExpressionContentResult} from "./generate-expression-content-result";
 import {RawExpressionBindable} from "../../expression/raw-expression-bindable/raw-expression-bindable";
 import {IContext} from "../context-util/i-context";
 import {PICKED_GLOBAL_KEYS} from "../global-keys/global-keys";
-import {createSourceFile, isArrayBindingPattern, isSpreadElement, isArrayLiteralExpression, isArrowFunction, isAsExpression, isAwaitExpression, isBinaryExpression, isBindingElement, isBlock, isCallExpression, isCaseBlock, isCaseClause, isComputedPropertyName, isConditionalExpression, isDefaultClause, isDeleteExpression, isElementAccessExpression, isExpressionStatement, isForInStatement, isForOfStatement, isForStatement, isFunctionDeclaration, isFunctionExpression, isIdentifier, isIfStatement, isLabeledStatement, isLiteralExpression, isMethodDeclaration, isNewExpression, isNonNullExpression, isNoSubstitutionTemplateLiteral, isObjectBindingPattern, isObjectLiteralExpression, isOmittedExpression, isParameter, isParenthesizedExpression, isPostfixUnaryExpression, isPrefixUnaryExpression, isPropertyAccessExpression, isPropertyAssignment, isReturnStatement, isStringLiteral, isSwitchStatement, isTemplateExpression, isTemplateHead, isTemplateMiddle, isTemplateSpan, isTemplateTail, isToken, isTypeAssertion, isTypeReferenceNode, isVariableDeclaration, isVariableDeclarationList, isVariableStatement, isYieldExpression, Node, NodeArray, ScriptTarget, SyntaxKind, tokenToString, TypeOfExpression} from "typescript";
+import {createSourceFile, isArrayBindingPattern, isArrayLiteralExpression, isArrowFunction, isAsExpression, isAwaitExpression, isBinaryExpression, isBindingElement, isBlock, isCallExpression, isCaseBlock, isCaseClause, isComputedPropertyName, isConditionalExpression, isDefaultClause, isDeleteExpression, isElementAccessExpression, isExpressionStatement, isForInStatement, isForOfStatement, isForStatement, isFunctionDeclaration, isFunctionExpression, isIdentifier, isIfStatement, isLabeledStatement, isLiteralExpression, isMethodDeclaration, isNewExpression, isNonNullExpression, isNoSubstitutionTemplateLiteral, isObjectBindingPattern, isObjectLiteralExpression, isOmittedExpression, isParameter, isParenthesizedExpression, isPostfixUnaryExpression, isPrefixUnaryExpression, isPropertyAccessExpression, isPropertyAssignment, isReturnStatement, isSpreadElement, isStringLiteral, isSwitchStatement, isTemplateExpression, isTemplateHead, isTemplateMiddle, isTemplateSpan, isTemplateTail, isToken, isTypeAssertion, isTypeReferenceNode, isVariableDeclaration, isVariableDeclarationList, isVariableStatement, isYieldExpression, Node, NodeArray, ScriptTarget, SyntaxKind, tokenToString, TypeOfExpression} from "typescript";
+import {RawExpressionChainBindable} from "../../expression/raw-expression-chain-bindable/raw-expression-chain-bindable";
 
 /**
  * A utility class for working with expressions
@@ -24,6 +25,20 @@ export class ExpressionUtil implements IExpressionUtil {
 	private readonly HOST_PREFIX: string = "host";
 
 	constructor (private readonly codeAnalyzer: ICodeAnalyzer) {
+	}
+
+	/**
+	 * Formats an Expression Chain from some content
+	 * @param {string} content
+	 * @param {IContext} context
+	 * @returns {RawExpressionChainBindable}
+	 */
+	public formatExpressionChain (content: string, context: IContext): RawExpressionChainBindable {
+		return splitByExpressions(content)
+			.map(part => EXPRESSION_FULL_QUALIFIER.test(part)
+				? this.formatExpression(part, context)
+				: part
+			);
 	}
 
 	/**

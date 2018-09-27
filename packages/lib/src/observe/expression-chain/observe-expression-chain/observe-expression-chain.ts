@@ -1,12 +1,12 @@
-import {Expression, ExpressionChain, isExpression, isUuid, Uuid} from "@fovea/common";
+import {AsyncExpressionChain, Expression, ExpressionChain, isPureStringExpressionChain, isSyncExpressionChain, isUuid, SyncExpressionChain, takeExpressionsOrStrings, Uuid} from "@fovea/common";
 import {IObservedExpression} from "./i-observed-expression";
-import {evaluateExpressionChain} from "../evaluate-expression-chain/evaluate-expression-chain";
 import {evaluateAsyncExpressionChain} from "../evaluate-expression-chain/evaluate-async-expression-chain";
 import {EvaluateExpressionChainResult} from "../evaluate-expression-chain/i-evaluate-expression-chain-result";
 import {Change} from "../../observe/change/change";
 import {AnyHost} from "../../../host/any-host/any-host";
 import {MultiMap} from "../../../multi-map/multi-map";
 import {IObserver} from "../../i-observer";
+import {evaluateSyncExpressionChain} from "../evaluate-expression-chain/evaluate-sync-expression-chain";
 
 // tslint:disable:no-any
 
@@ -26,22 +26,6 @@ const NOOP_EXPRESSION_CHAIN_OBSERVER: IObserver = {
 const OBSERVED_EXPRESSIONS: MultiMap<string, IObservedExpression<{}>> = new MultiMap();
 
 /**
- * Returns true if the given ExpressionChain contains an asynchronous expression
- * @param {ExpressionChain} expressionChain
- * @returns {boolean}
- */
-function isAsyncExpressionChain (expressionChain: ExpressionChain): boolean {
-	return expressionChain.some(expression => {
-		// if it is an expression, return true if it is async.
-		if (isExpression(expression)) {
-			const [, , isAsync] = expression;
-			return isAsync;
-		}
-		return false;
-	});
-}
-
-/**
  * Disposes the given observed expression for the given observer key
  * @param {string} observerKey
  * @param {IObservedExpression<T>} observedExpression
@@ -52,19 +36,19 @@ function disposeObservedExpressionForObserverKey<T> (observerKey: string, observ
 
 /**
  * Disposes the given observed expression for the given observer keys
- * @param {string[]} observerKeys
+ * @param {Set<string>} observerKeys
  * @param {IObservedExpression<T>} observedExpression
  */
-function disposeObservedExpressionForObserverKeys<T> (observerKeys: string[], observedExpression: IObservedExpression<T>): void {
+function disposeObservedExpressionForObserverKeys<T> (observerKeys: Set<string>, observedExpression: IObservedExpression<T>): void {
 	for (const observerKey of observerKeys) disposeObservedExpressionForObserverKey(observerKey, observedExpression);
 }
 
 /**
  * Disposes the given observed expression for the given observer keys
- * @param {string[]} observerKeys
+ * @param {Set<string>} observerKeys
  * @param {IObservedExpression<T>} observedExpression
  */
-function observedExpressionObserver<T> (observerKeys: string[], observedExpression: IObservedExpression<T>): IObserver {
+function observedExpressionObserver<T> (observerKeys: Set<string>, observedExpression: IObservedExpression<T>): IObserver {
 	return {unobserve: disposeObservedExpressionForObserverKeys.bind(null, observerKeys, observedExpression)};
 }
 
@@ -84,16 +68,18 @@ function takeObserverKeysForExpression (host: AnyHost, expression: Expression|st
  * Takes all observer keys for the given ExpressionChain
  * @param {AnyHost} host
  * @param {ExpressionChain} expressionChain
- * @returns {string}
+ * @returns {Set<string>}
  */
-function takeObserverKeysForExpressionChain (host: AnyHost, expressionChain: ExpressionChain): string[] {
+function takeObserverKeysForExpressionChain (host: AnyHost, expressionChain: ExpressionChain): Set<string> {
 	const keys: Set<string> = new Set();
-	for (const expression of expressionChain) {
+	if (isPureStringExpressionChain(expressionChain)) return keys;
+
+	for (const expression of takeExpressionsOrStrings(expressionChain)) {
 		for (const key of takeObserverKeysForExpression(host, expression)) {
 			keys.add(key);
 		}
 	}
-	return [...keys];
+	return keys;
 }
 
 /**
@@ -107,10 +93,10 @@ function addObserverForKey<T> (key: string, observedExpression: IObservedExpress
 
 /**
  * Adds an observer for all of the provided observer keys
- * @param {string[]} keys
+ * @param {Set<string>} keys
  * @param {IObservedExpression<T>} observedExpression
  */
-function addObserverForKeys<T> (keys: string[], observedExpression: IObservedExpression<T>): void {
+function addObserverForKeys<T> (keys: Set<string>, observedExpression: IObservedExpression<T>): void {
 	for (const key of keys) {
 		addObserverForKey(key, observedExpression);
 	}
@@ -126,7 +112,7 @@ export function observeExpressionChain<T> (observedExpression: IObservedExpressi
 	const observerKeys = takeObserverKeysForExpressionChain(observedExpression.host, observedExpression.expressions);
 
 	// If there's nothing to observe, evaluate the expressions immediately and return a noop observer
-	if (observerKeys.length === 0) {
+	if (observerKeys.size === 0) {
 		// Evaluate the value immediately
 		evaluate(undefined, observedExpression);
 		return NOOP_EXPRESSION_CHAIN_OBSERVER;
@@ -159,16 +145,6 @@ export function formatObserverKey (hostOrUuid: AnyHost|Uuid, expression: string)
  * @param {string} observerKey
  * @param {Change<T>} [change]
  */
-export function evaluateObserverKeyOnNextMicroTask<T> (observerKey: string, change?: Change<T>): void {
-	evaluateObserverKey(observerKey, change);
-}
-
-/**
- * Invokes the callbacks for an observed expression mapped to the provided identifier
- * @template T
- * @param {string} observerKey
- * @param {Change<T>} [change]
- */
 export function evaluateObserverKey<T> (observerKey: string, change?: Change<T>): void {
 	OBSERVED_EXPRESSIONS.forEach(observerKey, evaluate.bind(null, change));
 }
@@ -191,12 +167,12 @@ function onEvaluateResult<T> (newValue: EvaluateExpressionChainResult, observedE
  */
 function evaluate<T> (change: Change<T>|undefined, observedExpression: IObservedExpression<T>): void {
 	// If it isn't async, use the synchronous evaluator
-	if (!isAsyncExpressionChain(observedExpression.expressions)) {
-		onEvaluateResult(evaluateExpressionChain(observedExpression), observedExpression, change);
+	if (isPureStringExpressionChain(observedExpression.expressions) || isSyncExpressionChain(observedExpression.expressions)) {
+		onEvaluateResult(evaluateSyncExpressionChain(<{ expressions: string|SyncExpressionChain }&Pick<IObservedExpression<T>, Exclude<keyof IObservedExpression<T>, "onChange"|"expressions">>>observedExpression), observedExpression, change);
 	}
 
 	else {
-		evaluateAsyncExpressionChain(observedExpression).then(result => onEvaluateResult(result, observedExpression, change));
+		evaluateAsyncExpressionChain(<{ expressions: AsyncExpressionChain }&Pick<IObservedExpression<T>, Exclude<keyof IObservedExpression<T>, "onChange"|"expressions">>>observedExpression).then(result => onEvaluateResult(result, observedExpression, change));
 	}
 }
 

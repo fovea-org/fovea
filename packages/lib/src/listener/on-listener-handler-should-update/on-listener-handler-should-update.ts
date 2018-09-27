@@ -1,4 +1,4 @@
-import {FoveaHost, isExpression} from "@fovea/common";
+import {expressionChainContainsExpression, FoveaHost} from "@fovea/common";
 import {ITemplateListener} from "../../template/template-listener/i-template-listener";
 import {EvaluateExpressionChainResult} from "../../observe/expression-chain/evaluate-expression-chain/i-evaluate-expression-chain-result";
 import {IListenResult} from "../../listen/i-listen-result";
@@ -16,6 +16,5 @@ import {listen} from "../../listen/listen";
  */
 export function onListenerHandlerShouldUpdate (host: FoveaHost, node: Element, listener: ITemplateListener, newHandler: (e: Event, name: string) => EvaluateExpressionChainResult): IListenResult {
 	// Check if it includes at least one expression
-	const containsExpression = listener.handler.some(part => isExpression(part));
-	return listen({on: node, rawOn: node, host, once: false, handler: containsExpression ? newHandler : (<any>newHandler)(), name: listener.name});
+	return listen({on: node, rawOn: node, host, once: false, handler: expressionChainContainsExpression(listener.handler) ? newHandler : (<any>newHandler)(), name: listener.name});
 }

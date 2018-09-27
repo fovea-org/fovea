@@ -2,7 +2,7 @@ import {IFoveaDOMAstGenerator} from "./i-fovea-dom-ast-generator";
 import {IFoveaDOMAstGeneratorOptions} from "./i-fovea-dom-ast-generator-options";
 import {FoveaDOMAst, FoveaDOMAstElement, FoveaDOMAstKind, FoveaDOMAstNode, IFoveaDOMAstAttribute, IFoveaDOMAstCustomAttribute, IFoveaDOMAstListener, IFoveaDOMAstTextNode} from "../fovea-dom-ast/i-fovea-dom-ast";
 import {DOMAstNodeRaw, DOMAstRaw, IDOMAstNodeRaw} from "../dom-ast-implementation/i-dom-ast-raw";
-import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, EXPRESSION_FULL_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression} from "@fovea/common";
+import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression} from "@fovea/common";
 import {IFoveaDOMAstGeneratorPartsResult} from "./i-fovea-dom-ast-generator-parts-result";
 import {IExpressionUtil} from "../../util/expression-util/i-expression-util";
 import {IFoveaDOMAstGeneratorGenerateResult} from "./i-fovea-dom-ast-generator-generate-result";
@@ -11,7 +11,8 @@ import {IDOMUtil} from "../../util/dom-util/i-dom-util";
 import {IKeyValueParser} from "../../service/key-value-parser/i-key-value-parser";
 import {RawExpressionChainBindable} from "../../expression/raw-expression-chain-bindable/raw-expression-chain-bindable";
 import {IRawExpressionChainBindableDict} from "../../expression/i-raw-expression-chain-bindable-dict/i-raw-expression-chain-bindable-dict";
-import {removeWhitespace, isEmpty} from "@wessberg/stringutil";
+import {isEmpty, removeWhitespace} from "@wessberg/stringutil";
+
 /**
  * A class that can generate a raw AST into a FoveaDOMAst.
  */
@@ -419,13 +420,6 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 
 		let returnValue: RawExpressionChainBindable|IRawExpressionChainBindableDict|null = null;
 
-		// Return IExpressions or raw parts, depending on whether or not the splitted parts are expressions
-		const prepareExpressionChain = (propertyValue: string) => splitByExpressions(propertyValue)
-			.map(part => EXPRESSION_FULL_QUALIFIER.test(part)
-				? this.expressionUtil.formatExpression(part, context)
-				: part
-			);
-
 		if (keyValueSeparated || isAppend) {
 			// Parse the string for key-value pairs
 			const keyValueSeparatedValue = this.keyValueParser.parse(value);
@@ -434,14 +428,14 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 			if (typeof keyValueSeparatedValue !== "string") {
 				const dict: IRawExpressionChainBindableDict = {};
 				Object.entries(keyValueSeparatedValue).forEach(([propertyKey, propertyValue]) => {
-					dict[propertyKey] = prepareExpressionChain(propertyValue);
+					dict[propertyKey] = this.expressionUtil.formatExpressionChain(propertyValue, context);
 				});
 				returnValue = dict;
 			}
 		}
 
 		if (returnValue == null) {
-			returnValue = prepareExpressionChain(value);
+			returnValue = this.expressionUtil.formatExpressionChain(value, context);
 		}
 
 		return {
@@ -458,18 +452,12 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 	 */
 	private mapRawEntryToFoveaDOMListener (entry: [string, string], context: IContext): IFoveaDOMAstListener {
 		const [name, value] = entry;
-		// Split the value by evaluations and remove empty contents
-		const splittedByExpressions = splitByExpressions(value);
 		const actualName = name.slice(LISTENER_QUALIFIER.length);
 
 		return {
 			name: actualName,
 			// Return IExpressions or raw parts, depending on whether or not the splitted parts are evaluations are not
-			handler: splittedByExpressions
-				.map(part => EXPRESSION_FULL_QUALIFIER.test(part)
-					? this.expressionUtil.formatExpression(part, context)
-					: part
-				)
+			handler: this.expressionUtil.formatExpressionChain(value, context)
 		};
 	}
 }

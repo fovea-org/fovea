@@ -2,7 +2,6 @@ import {dependsOn, hostAttributes, listener, onChildrenAdded, onChildrenRemoved,
 import {RippleComponent} from "../ripple/ripple-component";
 import {KeyboardUtil} from "../../util/keyboard-util";
 import {FormItemComponent} from "../form-item/form-item-component";
-import {rafScheduler} from "@fovea/scheduler";
 
 /**
  * This Custom Attribute represents a Button
@@ -72,11 +71,8 @@ export class ButtonComponent extends FormItemComponent {
 				const span = document.createElement("span");
 				const oldParent = node.parentNode;
 				if (oldParent != null) {
-					await rafScheduler.mutate(() => {
-						if (oldParent.parentNode == null) return;
-						if (node.parentNode === oldParent) oldParent.replaceChild(span, node);
-						span.appendChild(node);
-					}, {instantIfFlushing: true});
+					if (node.parentNode === oldParent) oldParent.replaceChild(span, node);
+					span.appendChild(node);
 				}
 			}
 		}

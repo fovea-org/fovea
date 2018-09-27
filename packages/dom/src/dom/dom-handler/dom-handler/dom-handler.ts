@@ -192,7 +192,7 @@ export abstract class DOMHandler implements IDOMHandler {
 	 * @returns {string}
 	 */
 	protected stringifyExpression (node: FoveaDOMAstNode, value: RawExpressionBindable): string {
-		const [compute, observerKeysComputeFunction, templateVariablesComputeFunction, isAsync] = value;
+		const [compute, observerKeysComputeFunction, templateVariablesComputeFunction] = value;
 		const templateVariables = this.contextUtil.getTemplateVariablesForNode(node);
 		const usedTemplateVariables = templateVariablesComputeFunction(...templateVariables);
 
@@ -206,11 +206,11 @@ export abstract class DOMHandler implements IDOMHandler {
 		// Compute them
 		const additionalObserverKeysComputed = observerKeysComputeFunction(templateVariables, ...additionalObserverKeys);
 
-		return `[${compute(templateVariables, ...usedTemplateVariables)}, ${JSON.stringify(additionalObserverKeysComputed)}, ${isAsync}]`;
+		return `[${compute(templateVariables, ...usedTemplateVariables)}, ${JSON.stringify(additionalObserverKeysComputed)}]`;
 	}
 
 	/**
-	 * Stringifies an attribute value.
+	 * Stringifies an Expression Chain
 	 * @param {FoveaDOMAstNode} node
 	 * @param {RawExpressionChainBindable|IRawExpressionChainBindableDict|ITemplateMultiElementOptions} value
 	 * @returns {string}
@@ -230,7 +230,16 @@ export abstract class DOMHandler implements IDOMHandler {
 			return str;
 		}
 
-		str += "[";
+		// If there's only one value, the ExpressionChain will simply be a string. This is to avoid allocating an array unnecessarily.
+		const [firstValue] = value;
+		if (typeof firstValue === "string" && value.length === 1) {
+			return this.quote(firstValue);
+		}
+
+		// Check if at least one of the expressions is async
+		const containsAsyncExpression = value.some(expression => typeof expression !== "string" && expression[3] === true);
+
+		str += (containsAsyncExpression ? "[true,[" : "[");
 		value.forEach((part, index) => {
 			const isLastIndex = index === value.length - 1;
 
@@ -246,7 +255,7 @@ export abstract class DOMHandler implements IDOMHandler {
 
 			if (!isLastIndex) str += ",";
 		});
-		str += "]";
+		str += (containsAsyncExpression ? `]]` : `]`);
 		return str;
 	}
 

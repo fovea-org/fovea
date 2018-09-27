@@ -8,7 +8,8 @@ import {coerceValue} from "../coercion/coerce-value";
  * @param {IType} type
  * @returns {EvaluateExpressionChainResult}
  */
-export function evaluateExpressionChainCommon (results: Json[], type: IType): EvaluateExpressionChainResult {
+export function evaluateExpressionChainCommon (results: Json, type: IType): EvaluateExpressionChainResult {
+	if (!Array.isArray(results)) return coerceValue(results, type);
 
 	// If there are none, the new value will be undefined
 	if (results.length < 1) {

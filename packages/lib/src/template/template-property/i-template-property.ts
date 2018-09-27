@@ -1,7 +1,6 @@
-import {ExpressionChain} from "@fovea/common";
-import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-chain-dict";
+import {ExpressionChain, ExpressionChainDict} from "@fovea/common";
 
 export interface ITemplateProperty {
 	key: string;
-	value?: ExpressionChain|IExpressionChainDict;
+	value?: ExpressionChain|ExpressionChainDict;
 }

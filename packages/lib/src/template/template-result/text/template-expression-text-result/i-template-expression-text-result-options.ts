@@ -1,5 +1,5 @@
 import {ITemplateResultOptions} from "../../template-result/i-template-result-options";
-import {Expression} from "@fovea/common";
+import {ExpressionChain} from "@fovea/common";
 import {ITemplateVariables} from "../../../template-variables/i-template-variables";
 import {ITemplateResult} from "../../template-result/i-template-result";
 
@@ -7,6 +7,6 @@ export interface ITemplateExpressionTextResultOptions extends ITemplateResultOpt
 	owner: Node;
 	root: ShadowRoot|Element;
 	previousSibling: ITemplateResult|null;
-	expression: Expression;
+	expressionChain: ExpressionChain;
 	templateVariables?: ITemplateVariables;
 }

@@ -1,4 +1,4 @@
-import {evaluateObserverKeyOnNextMicroTask} from "../expression-chain/observe-expression-chain/observe-expression-chain";
+import {evaluateObserverKey} from "../expression-chain/observe-expression-chain/observe-expression-chain";
 import {Change} from "../observe/change/change";
 
 /**
@@ -10,5 +10,5 @@ import {Change} from "../observe/change/change";
 export function informObservers<T> (observerKey: string, change?: Change<T>): void {
 
 	// Inform observers.
-	evaluateObserverKeyOnNextMicroTask(observerKey, change);
+	evaluateObserverKey(observerKey, change);
 }

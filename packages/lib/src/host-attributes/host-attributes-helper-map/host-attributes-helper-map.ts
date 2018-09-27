@@ -1,7 +1,6 @@
 import {IHostAttributesHelperMap} from "./i-host-attributes-helper-map";
 import {IObserver} from "../../observe/i-observer";
-import {IExpressionChainDict} from "../../observe/expression-chain/i-expression-chain-dict";
-import {ExpressionChain, FoveaHost, Ref} from "@fovea/common";
+import {ExpressionChain, FoveaHost, Ref, ExpressionChainDict} from "@fovea/common";
 import {observeAttribute} from "../../attribute/observe-attribute/observe-attribute";
 import {attachCustomAttribute} from "../../custom-attribute/attach-custom-attribute/attach-custom-attribute";
 import {observeProperty} from "../../prop/observe-property/observe-property";
@@ -15,10 +14,10 @@ import {IDestroyable} from "../../destroyable/i-destroyable";
  * Adds the given ExpressionChain or IExpressionChainDict to the given host as an attribute
  * @param {FoveaHost} host
  * @param {string} key
- * @param {ExpressionChain|IExpressionChainDict} [value]
+ * @param {ExpressionChain|ExpressionChainDict} [value]
  * @returns {IObserver}
  */
-function addAttributeForHost (host: FoveaHost, key: string, value?: ExpressionChain|IExpressionChainDict): IObserver {
+function addAttributeForHost (host: FoveaHost, key: string, value?: ExpressionChain|ExpressionChainDict): IObserver {
 	return observeAttribute(host, host.___hostElement, {key, value});
 }
 
@@ -102,10 +101,10 @@ function addListenersForHost (host: FoveaHost, ...listeners: [string, Expression
  * Adds the given Custom Attribute to the given host
  * @param {FoveaHost} host
  * @param {string} name
- * @param {ExpressionChain | IExpressionChainDict} value
+ * @param {ExpressionChain | ExpressionChainDict} value
  * @returns {IObserver & IDestroyable}
  */
-function addCustomAttributeForHost (host: FoveaHost, name: string, value?: ExpressionChain|IExpressionChainDict): IObserver&IDestroyable {
+function addCustomAttributeForHost (host: FoveaHost, name: string, value?: ExpressionChain|ExpressionChainDict): IObserver&IDestroyable {
 	return attachCustomAttribute(host, host.___hostElement, name, value);
 }
 

@@ -1,6 +1,6 @@
 import {getCoerceTypeForAttributeName} from "../get-coerce-type-for-attribute-name/get-coerce-type-for-attribute-name";
 import {onAttributeShouldUpdate} from "../on-attribute-should-update/on-attribute-should-update";
-import {ExpressionChain, FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {ExpressionChain, FoveaHost, FoveaHostConstructor, isExpressionChain} from "@fovea/common";
 import {ITemplateProperty} from "../../template/template-property/i-template-property";
 import {ITemplateVariables} from "../../template/template-variables/i-template-variables";
 import {observeExpressionChain} from "../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
@@ -39,8 +39,7 @@ function observeInner (host: FoveaHost, element: Element, attribute: ITemplatePr
  * @returns {IObserver}
  */
 export function observeAttribute (host: FoveaHost, element: Element, attribute: ITemplateProperty, templateVariables?: ITemplateVariables): IObserver {
-
-	if (attribute.value == null || Array.isArray(attribute.value)) {
+	if (attribute.value == null || isExpressionChain(attribute.value)) {
 		return observeInner(host, element, attribute, attribute.key, attribute.value, false, templateVariables);
 	}
 

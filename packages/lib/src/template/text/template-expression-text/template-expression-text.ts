@@ -1,5 +1,5 @@
 import {ITemplateExpressionText} from "./i-template-expression-text";
-import {Expression} from "@fovea/common";
+import {ExpressionChain} from "@fovea/common";
 import {ITemplateExpressionTextResult} from "../../template-result/text/template-expression-text-result/i-template-expression-text-result";
 import {TemplateExpressionTextResult} from "../../template-result/text/template-expression-text-result/template-expression-text-result";
 import {TemplateBase} from "../../template-base/template-base";
@@ -10,7 +10,7 @@ import {ITemplateConstructOptions} from "../../template-construct-options/i-temp
  */
 export class TemplateExpressionText extends TemplateBase implements ITemplateExpressionText {
 
-	constructor (public readonly expression: Expression) {
+	constructor (public readonly expressionChain: ExpressionChain) {
 		super();
 	}
 
@@ -22,6 +22,6 @@ export class TemplateExpressionText extends TemplateBase implements ITemplateExp
 	public construct ({root, host, templateVariables, owner, previousSibling}: ITemplateConstructOptions): ITemplateExpressionTextResult {
 
 		// Construct a new TemplateExpressionTextResult
-		return new TemplateExpressionTextResult({host, expression: this.expression, templateVariables, previousSibling, owner, root});
+		return new TemplateExpressionTextResult({host, expressionChain: this.expressionChain, templateVariables, previousSibling, owner, root});
 	}
 }

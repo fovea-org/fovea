@@ -5,4 +5,4 @@ import {Json} from "../../json/json";
 export declare type HostIdentifier = string;
 export declare type ForeignIdentifier = string;
 export declare type ExpressionIsAsync = boolean;
-export declare type Expression = [(_host: Json, extra?: Json) => Optional<Json>, HostIdentifier[], ExpressionIsAsync];
+export declare type Expression = [(_host: Json, extra?: Json) => Optional<Json>, HostIdentifier[]];

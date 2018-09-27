@@ -22,7 +22,7 @@ export class DOMNodeHandler extends DOMHandler implements IDOMNodeHandler {
 		return this.createNodeWithArguments(
 			node,
 			isRawExpressionBindable(node.content)
-				? `${this.useHelper(node, "createExpressionTextNode")}(${this.stringifyExpression(node, node.content)})`
+				? `${this.useHelper(node, "createExpressionTextNode")}(${this.stringifyExpressionChain(node, [node.content])})`
 				: `${this.useHelper(node, "createTextNode")}(${this.quote(node.content)})`,
 			context
 		);

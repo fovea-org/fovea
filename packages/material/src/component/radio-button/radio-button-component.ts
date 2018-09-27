@@ -1,36 +1,9 @@
-import {dependsOn, hostAttributes, onChange, styleSrc, templateSrc} from "@fovea/core";
+import {dependsOn, hostAttributes, listener, onChange, styleSrc, templateSrc} from "@fovea/core";
 import {CheckboxBaseComponent} from "../checkbox/checkbox-base-component";
 import {RippleComponent} from "../ripple/ripple-component";
+import {findMatchingElementUp} from "../../util/dom-util";
 
-/**
- * A Map between radio names and RadioButton instances
- * @type {Map<string, Set<RadioButtonComponent>>}
- */
-const NAME_TO_RADIO_BUTTONS_MAP: Map<string, Set<RadioButtonComponent>> = new Map();
-
-/**
- * Maps a Radio Button to a specific name
- * @param {string} [name] - If not provided, the radio button will be removed from the Map
- * @param {RadioButtonComponent} radioButton
- */
-function mapRadioButtonToName (radioButton: RadioButtonComponent, name?: string): void {
-	for (const [currentName, buttonSet] of NAME_TO_RADIO_BUTTONS_MAP.entries()) {
-		if (buttonSet.has(radioButton)) {
-			buttonSet.delete(radioButton);
-			if (buttonSet.size === 0) {
-				NAME_TO_RADIO_BUTTONS_MAP.delete(currentName);
-			}
-		}
-	}
-	if (name != null) {
-		let newSet = NAME_TO_RADIO_BUTTONS_MAP.get(name);
-		if (newSet == null) {
-			newSet = new Set();
-			NAME_TO_RADIO_BUTTONS_MAP.set(name, newSet);
-		}
-		newSet.add(radioButton);
-	}
-}
+// tslint:disable:no-any
 
 /**
  * This Custom Element represents a Radio Button.
@@ -53,30 +26,12 @@ export class RadioButtonComponent extends CheckboxBaseComponent {
 	protected mainUIElement = this;
 
 	/**
-	 * Whenever the name changes, update the map between Radio Buttons and names
+	 * Gets the nearest root of the parent, whether it be a Shadow Root or the light DOM of the parent itself
+	 * @returns {ShadowRoot | Element}
 	 */
-	@onChange("name")
-	protected onNameChanged () {
-		if (this.name != null) {
-			mapRadioButtonToName(this, this.name);
-		}
-	}
-
-	/**
-	 * When the component is connected, update the map between Radio Buttons and names
-	 */
-	protected connectedCallback () {
-		super.connectedCallback();
-		if (this.name != null) {
-			mapRadioButtonToName(this, this.name);
-		}
-	}
-
-	/**
-	 * When the component is disconnected, remove the Radio Button from the map between Radio Buttons and names
-	 */
-	protected disconnectedCallback () {
-		mapRadioButtonToName(this);
+	private get parentRoot (): ShadowRoot|Element|null {
+		if (this.parentElement == null) return null;
+		return (<any>this.parentElement).getRootNode();
 	}
 
 	/**
@@ -84,7 +39,7 @@ export class RadioButtonComponent extends CheckboxBaseComponent {
 	 */
 	public onInputChange () {
 		super.onInputChange();
-		this.updateGroup();
+		this.toggleOffGroupedRadioButtons();
 	}
 
 	/**
@@ -92,25 +47,38 @@ export class RadioButtonComponent extends CheckboxBaseComponent {
 	 * @override
 	 * @param {MouseEvent} e
 	 */
+	@listener("click", {on: "$formItem"})
 	public onClick (e: MouseEvent) {
-		if (this.checked) return;
+		if (this.checked || this.readonly || this.disabled) return;
 
-		super.onClick(e);
-		this.updateGroup();
+		// Re-fire the event on the inner form item
+		if (e.target === this) {
+			e.stopPropagation();
+			e.preventDefault();
+			this.$formItem.dispatchEvent(new MouseEvent("click"));
+		}
+
+		this.checked = true;
 	}
 
 	/**
-	 * Updates the RadioButtonGroup
+	 * Toggles off all related radio buttons within the same group (in the current root of the DOM tree)
 	 */
-	private updateGroup (): void {
-		if (this.name == null) return;
+	@onChange("name")
+	private toggleOffGroupedRadioButtons (): void {
+		if (this.name == null || !this.checked) return;
 
-		const group = NAME_TO_RADIO_BUTTONS_MAP.get(this.name);
-		if (group == null || [...group].every(button => !button.checked)) return;
-		group.forEach(radioButton => {
-			if (radioButton !== this) {
-				radioButton.toggle(!this.checked);
-			}
-		});
+		const parentRoot = this.parentRoot;
+		if (parentRoot == null) return;
+
+		// Take all radio buttons for the group. Per the spec, all grouped Radio buttons must be within the same
+		// document root, so we only need to look within the current ShadowRoot of the parent
+		const radioButtonsInGroup = <RadioButtonComponent[]> [...parentRoot.querySelectorAll(`input[type="radio"][name="${this.name}"]`)]
+			.map(radioButton => findMatchingElementUp(RadioButtonComponent, radioButton));
+
+		for (const radioButton of radioButtonsInGroup) {
+			if (radioButton === this) continue;
+			radioButton.checked = false;
+		}
 	}
 }

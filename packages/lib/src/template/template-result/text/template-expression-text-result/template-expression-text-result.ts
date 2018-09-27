@@ -2,7 +2,7 @@ import {TemplateResultBase} from "../../template-result-base/template-result-bas
 import {ITemplateExpressionTextResult} from "./i-template-expression-text-result";
 import {ITemplateExpressionTextResultOptions} from "./i-template-expression-text-result-options";
 import {observeExpressionChain} from "../../../../observe/expression-chain/observe-expression-chain/observe-expression-chain";
-import {Optional, Expression} from "@fovea/common";
+import {Optional, ExpressionChain} from "@fovea/common";
 import {constructType} from "../../../../prop/construct-type/construct-type";
 import {rafScheduler} from "@fovea/scheduler";
 import {IObserver} from "../../../../observe/i-observer";
@@ -21,9 +21,9 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 
 	/**
 	 * A reference to the TextNode within the DOM
-	 * @type {Expression}
+	 * @type {ExpressionChain}
 	 */
-	private readonly expression: Expression;
+	private readonly expressionChain: ExpressionChain;
 
 	/**
 	 * The expression observer that, when changed, should mutate the textContent of the TextNode
@@ -37,19 +37,16 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 	 */
 	private readonly templateVariables?: ITemplateVariables;
 
-	constructor ({host, expression, templateVariables, previousSibling, owner, root}: ITemplateExpressionTextResultOptions) {
+	constructor ({host, expressionChain, templateVariables, previousSibling, owner, root}: ITemplateExpressionTextResultOptions) {
 		super({host, previousSibling, owner, root});
 
 		// Construct a new TextNode
 		this.lastNode = document.createTextNode("");
 
-		// Upgrade it
-		this.upgrade(this.lastNode, root);
-
 		// Add the node to its owner
 		this.attach(this.lastNode, owner);
 
-		this.expression = expression;
+		this.expressionChain = expressionChain;
 		this.templateVariables = templateVariables;
 
 		// Observe the model
@@ -66,7 +63,7 @@ export class TemplateExpressionTextResult extends TemplateResultBase implements 
 		this.expressionObserver = observeExpressionChain<string>({
 			coerceTo: constructType("string"),
 			host: this.host,
-			expressions: [this.expression],
+			expressions: this.expressionChain,
 			templateVariables: this.templateVariables,
 			onChange: this.onExpressionChanged.bind(this)
 		});

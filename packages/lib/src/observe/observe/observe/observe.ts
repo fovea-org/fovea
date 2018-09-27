@@ -17,10 +17,7 @@ import {ProxyObjectChangeHandler} from "./proxy-object-change-handler";
  */
 function observeChildren<T extends object, U, V extends U[]> (value: T|V, changeHandler: ProxyChangeHandler<T|V>, path: ChangePath, originalTarget: T|V): void {
 	takeObservablePropertyKeys(value).forEach((childKey: keyof (T|V)) => {
-		const observer = observe(<Json> value[childKey], changeHandler, <string[]> [...path, childKey], originalTarget);
-		if (!isObserved(value[childKey])) {
-			(<Json>value)[childKey] = observer;
-		}
+		(<Json>value)[childKey] = observe(<Json> value[childKey], changeHandler, <string[]> [...path, childKey], originalTarget);
 	});
 }
 

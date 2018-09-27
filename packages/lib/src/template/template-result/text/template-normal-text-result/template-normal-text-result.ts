@@ -19,9 +19,6 @@ export class TemplateNormalTextResult extends TemplateResultBase implements ITem
 		// Construct a new TextNode
 		this.lastNode = document.createTextNode(text);
 
-		// Upgrade it
-		this.upgrade(this.lastNode, root);
-
 		// Add the node to its owner
 		this.attach(this.lastNode, owner);
 	}
