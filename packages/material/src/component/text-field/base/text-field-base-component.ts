@@ -174,13 +174,13 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	 * A reference to 'refreshOutline' bound to this
 	 * @type {Function}
 	 */
-	private boundRefreshOutline = this.refreshOutline.bind(this);
+	private readonly boundRefreshOutline = this.refreshOutline.bind(this);
 
 	/**
 	 * A reference to 'refreshComputedInputFooterHeight' bound to this
 	 * @type {Function}
 	 */
-	private boundRefreshComputedInputFooterHeight = this.refreshComputedInputFooterHeight.bind(this);
+	private readonly boundRefreshComputedInputFooterHeight = this.refreshComputedInputFooterHeight.bind(this);
 
 	/**
 	 * A getter for the 'minlength' property

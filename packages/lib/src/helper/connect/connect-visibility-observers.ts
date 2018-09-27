@@ -16,10 +16,10 @@ import {IVisibilityObserverResult} from "../../visibility/i-visibility-observer-
  * @returns {IVisibilityObserverResult}
  */
 function connectVisibilityObserver (host: FoveaHost, {method, visible, target}: IVisibilityObserver): IVisibilityObserverResult {
-	const relevantHost = takeRelevantHost(host, method!.isStatic);
-	const bound = (<any>relevantHost)[method!.name].bind(relevantHost);
+	const relevantHost = takeRelevantHost(host, method.isStatic);
+	const bound = (<any>relevantHost)[method.name].bind(relevantHost);
 	const targetElement = target != null ? <Element> parseTarget(host, target) : host.___hostElement;
-	return visible! ? onVisible(targetElement, bound) : onInvisible(targetElement, bound);
+	return visible ? onVisible(targetElement, bound) : onInvisible(targetElement, bound);
 }
 
 /**

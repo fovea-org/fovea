@@ -21,13 +21,13 @@ export class MultiLineTextFieldComponent extends TextareaBaseComponent {
 	 * A reference to resetOverflow with a this-binding
 	 * @type {() => void}
 	 */
-	private boundResetOverflow = this.resetOverflow.bind(this);
+	private readonly boundResetOverflow = this.resetOverflow.bind(this);
 
 	/**
 	 * A this-bound reference to the 'handleRefreshHeight' method
 	 * @type {Function}
 	 */
-	private boundHandleRefreshHeight = this.handleRefreshHeight.bind(this);
+	private readonly boundHandleRefreshHeight = this.handleRefreshHeight.bind(this);
 
 	/**
 	 * Holds true if the text field is currently animating

@@ -41,7 +41,7 @@ export class PostCSSFoveaSCSSParser extends ScssParser implements IPostCSSFoveaP
 					break;
 
 				case "expression":
-					this.expression(<CSSExpressionToken> token);
+					this.expression(token);
 					break;
 
 				case ";":

@@ -1,10 +1,17 @@
 import {ITaskOptions} from "./i-task-options";
-import {ISchedulerOptions} from "./i-scheduler-options";
+import {ISchedulerOptions, PromiseResolver, ScheduledCallback, ScheduledCallbackId, SchedulerQueue} from "./i-scheduler-options";
+import {IScheduler} from "./i-scheduler";
+import {requestMicroTaskCallback} from "./request-micro-task";
 
 // tslint:disable:no-any
 
 // tslint:disable:interface-name
 
+/**
+ * Since Typescript doesn't (yet) come with typings for requestIdleCallback, we'll need to declare it
+ * @param {(deadline: IdleDeadline) => any} callback
+ * @returns {number}
+ */
 declare function requestIdleCallback (callback: (deadline: IdleDeadline) => any): number;
 
 interface IdleDeadline {
@@ -12,43 +19,13 @@ interface IdleDeadline {
 	timeRemaining (): number;
 }
 
-type ScheduledCallback = (...args: any[]) => any;
-type ScheduledCallbackId = any;
-type SchedulerQueue = "reads"|"writes";
-type PromiseResolver = (value: any) => any;
-const MICRO_TASK_IDENTIFIER = "promise.resolve";
-
 /**
- * A WeakMap between callback functions and their timeout ids.
- * @type {Map<Function|string, number>}
+ * A Scheduler can orchestrate the flow of work to ensure that reads are executed before writes
+ * within a provided SchedulerCallback. This is useful when working with the DOM.
+ * As a general rule, all DOM operations that directly read from or write to the DOM should be wrapped in a Scheduler with requestAnimationFrame as the SchedulerCallback.
+ * Other use cases could be to provide it with requestIdleCallback for scheduling non-essential work or Promise.resolve for Microtask management
  */
-const DEBOUNCED_CALLBACKS: Map<Function|string, number> = new Map();
-
-/**
- * Debounces the execution of the given callback for the given amount of ms
- * @param {T} callback
- * @param {number} ms
- * @param {string} [id]
- * @returns {number}
- */
-export function debounce<T extends Function> (callback: T, ms: number = 16, id?: string): number {
-	const key = id != null ? id : callback;
-	const existingTimeoutId = DEBOUNCED_CALLBACKS.get(key);
-
-	if (existingTimeoutId != null) {
-		clearTimeout(existingTimeoutId);
-	}
-
-	const timeout = <number><any> setTimeout(() => {
-		callback();
-		DEBOUNCED_CALLBACKS.delete(key);
-	}, ms);
-
-	DEBOUNCED_CALLBACKS.set(key, timeout);
-	return timeout;
-}
-
-class Scheduler {
+class Scheduler implements IScheduler {
 	/**
 	 * An estimation of the duration of each frame. Used to attempt avoiding exceeding frame budgets
 	 * @type {number}
@@ -65,7 +42,7 @@ class Scheduler {
 	 * A Set of all forced callbacks
 	 * @type {WeakSet<ScheduledCallback>}
 	 */
-	private forcedCallbacks: WeakSet<ScheduledCallback> = new WeakSet();
+	private readonly forcedCallbacks: WeakSet<ScheduledCallback> = new WeakSet();
 
 	/**
 	 * A Map between Scheduled Callback ids and ScheduledCallbacks
@@ -110,7 +87,7 @@ class Scheduler {
 	 * A this-bound reference to the 'flush' method
 	 * @type {() => void}
 	 */
-	private boundFlush = this.flush.bind(this);
+	private readonly boundFlush = this.flush.bind(this);
 
 	/**
 	 * The current time deadline before requiring forking the scheduler callback
@@ -118,7 +95,8 @@ class Scheduler {
 	 */
 	private deadline: number = -1;
 
-	constructor (private schedulerCallback: Function|typeof MICRO_TASK_IDENTIFIER, private options: ISchedulerOptions) {
+	constructor (private readonly schedulerCallback: Function,
+							 private readonly options: ISchedulerOptions) {
 	}
 
 	/**
@@ -135,7 +113,7 @@ class Scheduler {
 	 * @param {Partial<ITaskOptions>} [options={}]
 	 * @returns {Promise<ReturnType<T>>}
 	 */
-	public async measure<T extends ScheduledCallback> (task: T, {instantIfFlushing = false, id, force}: Partial<ITaskOptions> = {}): Promise<ReturnType<T>> {
+	public async measure<T extends ScheduledCallback> (task: T, {instantIfFlushing = false, force = false, id}: Partial<ITaskOptions> = {}): Promise<ReturnType<T>> {
 		return new Promise<ReturnType<T>>(resolve => {
 			const shouldScheduleFlush = !(instantIfFlushing && this.flushing);
 
@@ -153,7 +131,7 @@ class Scheduler {
 	 * @param {Partial<ITaskOptions>} [options={}]
 	 * @returns {Promise<ReturnType<T>>}
 	 */
-	public async mutate<T extends ScheduledCallback> (task: T, {instantIfFlushing = false, id, force}: Partial<ITaskOptions> = {}): Promise<ReturnType<T>> {
+	public async mutate<T extends ScheduledCallback> (task: T, {instantIfFlushing = false, force = false, id}: Partial<ITaskOptions> = {}): Promise<ReturnType<T>> {
 		return new Promise<ReturnType<T>>(resolve => {
 			const shouldScheduleFlush = !(instantIfFlushing && this.flushing);
 
@@ -210,8 +188,7 @@ class Scheduler {
 	private scheduleFlush (): void {
 		if (!this.scheduled) {
 			this.scheduled = true;
-			if (this.schedulerCallback === MICRO_TASK_IDENTIFIER) Promise.resolve().then(this.boundFlush);
-			else this.schedulerCallback.call(null, this.boundFlush);
+			this.schedulerCallback.call(null, this.boundFlush);
 		}
 	}
 
@@ -221,13 +198,9 @@ class Scheduler {
 	 * @returns {IdleDeadline}
 	 */
 	private normalizeDeadline (arg: number|IdleDeadline): number {
-		// If the arg is null, we're most likely inside a microtask
-		if (arg == null) {
-			return performance.now() + this.options.frameLength;
-		}
 
-		// If the argument is a number, we're using requestAnimationFrame
-		else if (typeof arg === "number") {
+		// If the argument is a number, we're using requestAnimationFrame or something similar (e.g. Promise.resolve invoked with a timestamp as an argument)
+		if (typeof arg === "number") {
 			return arg + this.options.frameLength;
 		}
 
@@ -306,4 +279,4 @@ class Scheduler {
 
 export const ricScheduler = new Scheduler(requestIdleCallback, {trackDeadlines: true, frameLength: 40});
 export const rafScheduler = new Scheduler(requestAnimationFrame, {trackDeadlines: false, frameLength: 40});
-export const microTaskScheduler = new Scheduler(MICRO_TASK_IDENTIFIER, {trackDeadlines: false, frameLength: 40});
+export const microTaskScheduler = new Scheduler(requestMicroTaskCallback, {trackDeadlines: false, frameLength: 40});

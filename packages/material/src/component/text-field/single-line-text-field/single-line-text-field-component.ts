@@ -89,7 +89,7 @@ export class SingleLineTextFieldComponent extends TextFieldBaseComponent {
 	/**
 	 * A reference to the toggleOffReplacingHelperText method with a this-binding
 	 */
-	private boundToggleOffReplacingHelperText = this.toggleOffReplacingHelperText.bind(this);
+	private readonly boundToggleOffReplacingHelperText = this.toggleOffReplacingHelperText.bind(this);
 
 	/**
 	 * Updates the validity of the input

@@ -493,7 +493,7 @@ export class Router {
 	 * @param state
 	 */
 	private static onPastState (state: IState): void {
-		rafScheduler.mutate(() => this.updateRouterView(state, "back").then(), {instantIfFlushing: true});
+		rafScheduler.mutate(async () => this.updateRouterView(state, "back").then(), {instantIfFlushing: true}).then();
 	}
 
 	/**
@@ -501,7 +501,7 @@ export class Router {
 	 * @param state
 	 */
 	private static onFutureState (state: IState): void {
-		rafScheduler.mutate(() => this.updateRouterView(state, "forward").then(), {instantIfFlushing: true});
+		rafScheduler.mutate(async () => this.updateRouterView(state, "forward").then(), {instantIfFlushing: true}).then();
 	}
 
 	/**

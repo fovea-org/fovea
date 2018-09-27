@@ -42,18 +42,18 @@
 		"build": "npm run rollup"
 	},
 	"devDependencies": {
-		"@wessberg/rollup-plugin-ts": "0.0.40",
+		"@wessberg/rollup-plugin-ts": "0.0.41",
 		"@wessberg/scaffold": "^1.0.4",
 		"ava": "^0.25.0",
-		"rollup": "^0.66.1",
+		"rollup": "^0.66.2",
 		"tslib": "^1.9.3",
 		"tslint": "^5.11.0",
 		"tslint-sonarts": "^1.8.0",
-		"typescript": "^3.0.3"
+		"typescript": "^3.1.1"
 	},
 	"dependencies": {
 		"@fovea/common": "^1.0.132",
-		"postcss": "^7.0.2",
+		"postcss": "^7.0.4",
 		"postcss-scss": "^2.0.0"
 	},
 	"publishConfig": {

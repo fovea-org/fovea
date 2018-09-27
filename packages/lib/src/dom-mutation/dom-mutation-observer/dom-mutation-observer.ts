@@ -6,6 +6,8 @@ import {DOMCallbackCondition} from "./dom-callback-condition";
 import {DOMAttributeCallback} from "./dom-attribute-callback";
 import {isConnected} from "../is-connected";
 
+// tslint:disable:no-any
+
 // The options to provide when observing nodes
 const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {childList: true, subtree: true};
 
@@ -142,7 +144,7 @@ export function onConnected (node: Node, callback: DOMConnectionCallback): IDOMC
 	}
 
 	else {
-		timeout = setTimeout(onConnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
+		timeout = <number><any> setTimeout(onConnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
 	}
 
 	return {
@@ -165,7 +167,7 @@ export function onDisconnected (node: Node, callback: DOMConnectionCallback): ID
 	}
 
 	else {
-		timeout = setTimeout(onDisconnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
+		timeout = <number><any> setTimeout(onDisconnected.bind(null, ...arguments), CONNECTED_TIMEOUT);
 	}
 
 	return {

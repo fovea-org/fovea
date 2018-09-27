@@ -30,8 +30,8 @@ function invokeBoundAttributeChangeObserverCallback (bound: Function, attributes
  * @returns {IAttributeChangeObserverResult}
  */
 function connectAttributeChangeObserver (host: FoveaHost, {method, attributes, target}: IAttributeChangeObserver): IAttributeChangeObserverResult {
-	const relevantHost = takeRelevantHost(host, method!.isStatic);
-	const bound = (<any>relevantHost)[method!.name].bind(relevantHost);
+	const relevantHost = takeRelevantHost(host, method.isStatic);
+	const bound = (<any>relevantHost)[method.name].bind(relevantHost);
 	const targetNode = target != null ? <Element> parseTarget(host, target) : host.___hostElement;
 	const boundInvokeBoundAttributeChangeObserverCallback = invokeBoundAttributeChangeObserverCallback.bind(null, bound, attributes);
 

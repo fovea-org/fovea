@@ -48,7 +48,7 @@ export class SessionHistory implements ISessionHistory {
 	 */
 	private readonly boundOnPopState = this.onPopState.bind(this);
 
-	constructor (private options: ISessionHistoryOptions) {
+	constructor (private readonly options: ISessionHistoryOptions) {
 
 		// Listen for popstate events
 		window.addEventListener("popstate", this.boundOnPopState);
@@ -90,7 +90,7 @@ export class SessionHistory implements ISessionHistory {
 	 */
 	public pop (): void {
 		if (this.currentStateUid == null) throw new ReferenceError(`You cannot go back when there is no state to go back to!`);
-		history.back(1);
+		history.back();
 		const previousState = this.states[this.currentStateUid - 1];
 		dispatchEvent(new PopStateEvent("popstate", {state: previousState}));
 	}

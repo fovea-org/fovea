@@ -38,6 +38,7 @@ $ yarn add @fovea/material
 - `IntersectionObserver`
 - `requestAnimationFrame`
 - `requestIdleCallback`
+- `performance.now`
 
 ## FAQ
 

@@ -106,7 +106,7 @@ export class DialogComponent extends HTMLElement {
 	 * Holds the slotted elements for which there has been bound click listeners
 	 * @type {Set<HTMLElement>}
 	 */
-	private slottedChildrenWithClickListeners: Set<HTMLElement> = new Set();
+	private readonly slottedChildrenWithClickListeners: Set<HTMLElement> = new Set();
 
 	/**
 	 * An optional reference to the dialog article element
@@ -117,7 +117,7 @@ export class DialogComponent extends HTMLElement {
 	/**
 	 * A reference to the 'onButtonClicked' method, bound to the scope of this instance
 	 */
-	private boundOnButtonClicked = this.onButtonClicked.bind(this);
+	private readonly boundOnButtonClicked = this.onButtonClicked.bind(this);
 
 	/**
 	 * Whether or not the dialog is currently visible

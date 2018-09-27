@@ -16,10 +16,10 @@ import {IChildListObserverResult} from "../../dom-mutation/child-list-observers-
  * @returns {IChildListObserverResult}
  */
 function connectChildListObserver (host: FoveaHost, {method, added, target}: IChildListObserver): IChildListObserverResult {
-	const relevantHost = takeRelevantHost(host, method!.isStatic);
-	const bound = (<any>relevantHost)[method!.name].bind(relevantHost);
+	const relevantHost = takeRelevantHost(host, method.isStatic);
+	const bound = (<any>relevantHost)[method.name].bind(relevantHost);
 	const targetNode = target != null ? <Element> parseTarget(host, target) : host.___hostElement;
-	return added! ? onChildrenAdded(targetNode, bound) : onChildrenRemoved(targetNode, bound);
+	return added ? onChildrenAdded(targetNode, bound) : onChildrenRemoved(targetNode, bound);
 }
 
 /**
