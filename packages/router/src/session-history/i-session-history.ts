@@ -11,7 +11,6 @@ export interface ISessionHistory {
 	replace (state: IStateInput): void;
 	pop (): void;
 	go (n: number): void;
-	onInitialState (callback: StateSubscriber): IStateObserver;
 	onPastState (callback: StateSubscriber): IStateObserver;
 	onFutureState (callback: StateSubscriber): IStateObserver;
 }

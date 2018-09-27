@@ -1,5 +1,5 @@
-import {IStateCloneable} from "../state/i-state";
+import {StateUid} from "../state/i-state";
 
 export interface IPopStateEvent extends PopStateEvent {
-	state: IStateCloneable|null;
+	state: StateUid;
 }

@@ -108,7 +108,13 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			if ("destroyedCallback" in this.lastNode) {
 				(<any>this).lastNode.destroyedCallback();
 			}
+
 			this.lastNode = null;
+		}
+
+		if (this.constructedChildren != null) {
+			this.constructedChildren.forEach(child => child.destroy());
+			this.constructedChildren = null;
 		}
 
 		// Dispose observers some time in the future
@@ -126,6 +132,11 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 			this.lastNode = null;
 		}
 
+		if (this.constructedChildren != null) {
+			this.constructedChildren.forEach(child => child.dispose());
+			this.constructedChildren = null;
+		}
+
 		// Dispose observers and children some time in the future
 		ricScheduler.mutate(this.disposeObservers.bind(this)).then();
 	}
@@ -134,16 +145,6 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 * Disposes all observers
 	 */
 	private disposeObservers (): void {
-		if (this.constructedChildren != null) {
-			this.constructedChildren.forEach(child => child.dispose());
-			this.constructedChildren = null;
-		}
-
-		// Stop observing Custom Attribute expressions
-		if (this.customAttributeObservers != null) {
-			this.customAttributeObservers.forEach(observer => observer.unobserve());
-			this.customAttributeObservers = null;
-		}
 
 		this.disposeOrDestroyCommon();
 	}
@@ -152,6 +153,12 @@ export class TemplateNormalElementResult extends TemplateResultBase implements I
 	 * Common functionality across destroying and disposing
 	 */
 	private disposeOrDestroyCommon (): void {
+
+		// Stop observing Custom Attribute expressions
+		if (this.customAttributeObservers != null) {
+			this.customAttributeObservers.forEach(observer => observer.unobserve());
+			this.customAttributeObservers = null;
+		}
 
 		// Stop observing attribute expressions
 		if (this.attributeObservers != null) {

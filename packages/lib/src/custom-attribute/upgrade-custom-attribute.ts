@@ -19,7 +19,7 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 		if (customAttribute.connectedCallback != null) {
 			customAttribute.connectedCallback();
 		}
-	}, {nextTime: false});
+	});
 
 	// Subscribe to the event that the host element is detached from the DOM and invoke the 'disconnectedCallback' if it provided
 	let disconnectionObserver: IDOMConnectionObserverResult|null = onDisconnected(hostElement, () => {
@@ -27,7 +27,7 @@ export function upgradeCustomAttribute (customAttribute: ICustomAttribute, hostE
 		if (customAttribute.disconnectedCallback != null) {
 			customAttribute.disconnectedCallback();
 		}
-	}, {nextTime: true});
+	});
 
 	return {
 		destroy: () => {

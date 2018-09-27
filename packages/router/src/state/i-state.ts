@@ -12,14 +12,6 @@ export interface IStateInput extends IStateBase {
 	params: IParams;
 }
 
-export interface IStateCloneable extends IStateBase {
-	id: StateUid;
-	query: string;
-	params: string;
-	queryUrlFriendly: string;
-	paramsUrlFriendly: string;
-}
-
 export interface IState extends IStateInput {
 	id: StateUid;
 }

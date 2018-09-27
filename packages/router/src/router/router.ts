@@ -38,13 +38,7 @@ export class Router {
 	 * A reference to the session history to use
 	 * @type {SessionHistory}
 	 */
-	private static readonly sessionHistory: ISessionHistory = new SessionHistory({});
-
-	/**
-	 * A subscriber for navigation to the initial state
-	 * @type {IStateObserver}
-	 */
-	private static readonly initialStateSubscriber: IStateObserver = Router.sessionHistory.onInitialState(Router.onInitialState.bind(Router));
+	private static readonly sessionHistory: ISessionHistory = new SessionHistory({router: Router});
 
 	/**
 	 * A subscriber for navigation to a past state
@@ -115,7 +109,6 @@ export class Router {
 	 * Invoked when the Router is disposed
 	 */
 	public static dispose (): void {
-		this.initialStateSubscriber.unobserve();
 		this.pastStateSubscriber.unobserve();
 		this.futureStateSubscriber.unobserve();
 		this.clearRoutes();
@@ -162,7 +155,7 @@ export class Router {
 		if (checkGuardsResult !== true) return await this.replace(checkGuardsResult);
 
 		// Otherwise, push the route
-		this.sessionHistory.push(stateInput);
+		this.sessionHistory.replace(stateInput);
 		return true;
 	}
 
@@ -211,6 +204,19 @@ export class Router {
 	}
 
 	/**
+	 * Attempts to parse the initial route based on the URL
+	 * @returns {RouterPushOptions}
+	 */
+	public static parseInitialRouteFromURL (): RouterPushOptions {
+		const url = new URL(location.toString());
+		return {
+			path: url.pathname,
+			title: document.title,
+			query: normalizeQueryParams(url)
+		};
+	}
+
+	/**
 	 * Initializes the router by adding the initial state
 	 * @param {IRouterOptions} options
 	 */
@@ -220,12 +226,8 @@ export class Router {
 		this.globalGuards = options.guards;
 		this.addRoutes(options.routes);
 
-		const url = new URL(location.toString());
-		const baseOptions = {
-			path: url.pathname,
-			title: document.title,
-			query: normalizeQueryParams(url)
-		};
+		// Parse the initial route from the URL
+		const baseOptions = this.parseInitialRouteFromURL();
 
 		// If it fails, redirect to the home route, but preserve the query parameters
 		const fallback = async () => await this.replace({...baseOptions, path: "/", params: {}});
@@ -484,15 +486,6 @@ export class Router {
 
 		// Fall back to returning null
 		return null;
-	}
-
-	/**
-	 * Called when navigation happens to the initial state
-	 * @param state
-	 */
-	private static onInitialState (state: IState): void {
-		rafScheduler.mutate(() => this.updateRouterView(state, "replace").then(), {instantIfFlushing: true});
-
 	}
 
 	/**

@@ -87,6 +87,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 					`\n		${registerListenerCalls.join("\n		")}`
 			);
 
+			// TODO: If the parent class implements these methods, which it will if it too includes listeners, this code will be unnecessarily duplicated
 			const connectBody = (
 				`\n		${this.libUser.use("connectListeners", compilerOptions, context)}(this);`
 			);

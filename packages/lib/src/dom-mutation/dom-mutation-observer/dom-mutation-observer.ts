@@ -3,7 +3,6 @@ import {DOMMutationObserver} from "./i-dom-mutation-observer";
 import {DOMMutationObserverKind} from "./dom-mutation-observer-kind";
 import {DOMConnectionCallback} from "./dom-connection-callback";
 import {DOMCallbackCondition} from "./dom-callback-condition";
-import {IDOMConnectionObserverOptions} from "./i-dom-connection-observer-options";
 import {DOMAttributeCallback} from "./dom-attribute-callback";
 import {isConnected} from "../is-connected";
 
@@ -132,10 +131,9 @@ function unobserveConnectionObserver (node: Node, timeout: number|undefined): vo
  * Subscribes the given callback to the event that a Node is connected to the DOM
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
- * @param {Partial<IDOMConnectionObserverOptions>} _options
  * @returns {IDOMConnectionObserverResult}
  */
-export function onConnected (node: Node, callback: DOMConnectionCallback, _options: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+export function onConnected (node: Node, callback: DOMConnectionCallback): IDOMConnectionObserverResult {
 	let timeout: number|undefined;
 
 	if (isConnected(node)) {
@@ -156,10 +154,9 @@ export function onConnected (node: Node, callback: DOMConnectionCallback, _optio
  * Subscribes the given callback to the event that a Node is disconnected from the DOM
  * @param {Node} node
  * @param {DOMConnectionCallback} callback
- * @param {Partial<IDOMConnectionObserverOptions>} _options
  * @returns {IDOMConnectionObserverResult}
  */
-export function onDisconnected (node: Node, callback: DOMConnectionCallback, _options: Partial<IDOMConnectionObserverOptions>): IDOMConnectionObserverResult {
+export function onDisconnected (node: Node, callback: DOMConnectionCallback): IDOMConnectionObserverResult {
 	let timeout: number|undefined;
 
 	if (!isConnected(node) && CONNECTED_NODES.has(node)) {

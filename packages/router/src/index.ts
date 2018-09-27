@@ -9,3 +9,5 @@ export {RouterPushOptions} from "./router/router-push-options";
 export {Router} from "./router/router";
 export {RouteInput} from "./route/route";
 export {RouteGuard} from "./route/route-guard";
+export {IParams} from "./query/i-params";
+export {JSONValue, IJSONArray, IJSONObject} from "./query/json-value";

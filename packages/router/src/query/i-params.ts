@@ -1,3 +1,5 @@
+import {JSONValue} from "./json-value";
+
 export interface IParams {
-	[key: string]: {}|null|undefined;
+	[key: string]: JSONValue;
 }
