@@ -27,10 +27,9 @@ export function envRollupPlugin (options: Partial<IEnvPluginOptions> = {}) {
 			if (id === PROCESS_MODULE_NAME) {
 				const result = JSON.stringify(uppercaseKeys({...options.additional, ...process.env}), filterEnvironmentVariables);
 
-				return `
-					export const env = ${result};
-					export default {env};
-				`;
+				return `\
+export const env = ${result};
+export default {env};`;
 			}
 		}
 
