@@ -2,6 +2,7 @@
 	<div id="navbar_content">
 		<button-component *foreach="${routes}" href="${item.name}" name="${item.name}" *routerLink>${item.name}</button-component>
 	</div>
+	<small id="version">v${version}</small>
 </aside>
 
 <!-- Matched routes will be injected here -->

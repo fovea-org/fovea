@@ -6,6 +6,13 @@
 	width: 100%;
 	height: 100%;
 
+	#version {
+		color: color(white, 50);
+		text-align: center;
+		display: block;
+		padding-bottom: size(2);
+	}
+
 	#navbar {
 		@include scrollableY();
 		z-index: 1000;
