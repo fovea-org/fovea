@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.133"></a>
+## [1.0.133](https://github.com/fovea-org/fovea/compare/v1.0.132...v1.0.133) (2018-09-27)
+
+
+### Features
+
+* Added major scheduling overhaul for performance gains. Rendering is now asynchronous. More details will arrive in a detailed post ([7371991](https://github.com/fovea-org/fovea/commit/7371991))
+* Optimizations on allocated heap memory ([2768bd1](https://github.com/fovea-org/fovea/commit/2768bd1))
+
+
+
+
+
 <a name="1.0.132"></a>
 ## [1.0.132](https://github.com/fovea-org/fovea/compare/v1.0.131...v1.0.132) (2018-09-20)
 

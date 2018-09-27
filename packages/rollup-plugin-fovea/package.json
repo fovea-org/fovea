@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/rollup-plugin-fovea",
-	"version": "1.0.132",
+	"version": "1.0.133",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -39,7 +39,7 @@
 		"build": "npm run rollup"
 	},
 	"dependencies": {
-		"@fovea/compiler": "^1.0.132"
+		"@fovea/compiler": "^1.0.133"
 	},
 	"devDependencies": {
 		"@wessberg/rollup-plugin-ts": "0.0.41",
