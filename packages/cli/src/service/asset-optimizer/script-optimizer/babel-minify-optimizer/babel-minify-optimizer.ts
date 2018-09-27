@@ -3,14 +3,17 @@ import {IBabelMinifyOptimizer} from "./i-babel-minify-optimizer";
 import {OptimizerResult} from "../../i-optimizer-result";
 import {ScriptFormatKind} from "../../../../format/script-format-kind";
 import {Buffer} from "buffer";
-import {IMinifierService} from "../../../minify/i-minifier-service";
+import {IBabelMinifyOptions} from "../../../minify/i-babel-minify-options";
+
+// @ts-ignore
+import minify from "babel-minify";
 
 /**
  * A minifier that uses babel as its' underlying implementation
  */
 export class BabelMinifyOptimizer implements IBabelMinifyOptimizer {
 
-	constructor (private readonly minifier: IMinifierService) {
+	constructor (private readonly minifyOptions: IBabelMinifyOptions) {
 	}
 
 	/**
@@ -43,6 +46,15 @@ export class BabelMinifyOptimizer implements IBabelMinifyOptimizer {
 	 * @returns {Promise<Buffer>}
 	 */
 	private async runOptimizer (options: IScriptOptimizerOptions): Promise<Buffer> {
-		return Buffer.from(this.minifier.minify({code: options.buffer}));
+		return Buffer.from(this.minify(options.buffer));
+	}
+
+	/**
+	 * Minifies the given code
+	 * @returns {string}
+	 */
+	private minify (content: string|Buffer): string {
+		const {code} = minify(content.toString(), this.minifyOptions, {sourceMaps: false});
+		return code;
 	}
 }
