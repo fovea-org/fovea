@@ -1,11 +1,22 @@
 // tslint:disable:no-default-export
-import {IFoveaCliConfig} from "@fovea/cli";
+import {IFoveaCliConfig, IFoveaCliBundleOptimizationConfig, IFoveaCliServeConfig} from "@fovea/cli";
 import {browsersWithoutSupportForFeatures, browsersWithSupportForFeatures, matchBrowserslistOnUserAgent} from "@wessberg/browserslist-generator";
 
-// The host name to serve from
-const host = "material.foveajs.test";
-// The port to serve on
-const port = 8000;
+
+// The serve configuration to use
+const serve: IFoveaCliServeConfig = {
+	host: "material.foveajs.test",
+	port: 8000
+};
+
+// The optimization options to use
+const optimization: Partial<IFoveaCliBundleOptimizationConfig> = {
+	treeshake: {
+		assignedTopLevelCallExpressionsHasNoSideEffects: true,
+		readingPropertiesOfObjectsHasNoSideEffects: true,
+		externalDependenciesHasNoSideEffects: true
+	}
+};
 
 
 /**
@@ -60,15 +71,9 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host, port},
 			disable: false,
-			optimization: {
-				treeshake: {
-					assignedTopLevelCallExpressionsHasNoSideEffects: true,
-					readingPropertiesOfObjectsHasNoSideEffects: true,
-					externalDependenciesHasNoSideEffects: true
-				}
-			}
+			serve,
+			optimization
 		},
 		{
 			tag: "modern",
@@ -77,8 +82,9 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host, port},
-			disable: true
+			disable: "watch",
+			serve,
+			optimization
 		},
 		{
 			tag: "legacy",
@@ -87,8 +93,9 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			serve: {host, port},
-			disable: true
+			disable: "watch",
+			serve,
+			optimization
 		}
 	]
 };
