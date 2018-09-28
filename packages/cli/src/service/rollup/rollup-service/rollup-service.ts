@@ -208,16 +208,12 @@ export class RollupService implements IRollupService {
 
 	/**
 	 * Gets the default "post" plugins (those that must come after anything else)
-	 * @param {string} root
-	 * @param {string} tsconfig
-	 * @param {string|string[]} browserslist
-	 * @param {{}[]} additionalBabelPlugins
-	 * @param {{}[]} additionalBabelPresets
+	 * @param {IRollupPostPluginsOptions} options
 	 * @returns {Plugin[]}
 	 */
-	private getDefaultPostPlugins ({root, tsconfig, browserslist, additionalBabelPlugins, additionalBabelPresets}: IRollupPostPluginsOptions): Plugin[] {
+	private getDefaultPostPlugins ({root, tsconfig, browserslist, babel}: IRollupPostPluginsOptions): Plugin[] {
 		return [
-			typescriptRollupPlugin({root, tsconfig, browserslist, additionalBabelPlugins, additionalBabelPresets})
+			typescriptRollupPlugin({root, tsconfig, browserslist, babel})
 		];
 	}
 

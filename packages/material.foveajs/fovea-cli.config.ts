@@ -61,7 +61,13 @@ export default <Partial<IFoveaCliConfig>>{
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
 			serve: {host, port},
-			disable: false
+			disable: false,
+			babel: {
+				comments: true,
+				additionalPlugins: [
+					"annotate-pure-calls"
+				]
+			}
 		},
 		{
 			tag: "modern",
@@ -71,7 +77,7 @@ export default <Partial<IFoveaCliConfig>>{
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
 			serve: {host, port},
-			disable: "watch"
+			disable: true
 		},
 		{
 			tag: "legacy",
@@ -81,7 +87,7 @@ export default <Partial<IFoveaCliConfig>>{
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
 			serve: {host, port},
-			disable: "watch"
+			disable: true
 		}
 	]
 };

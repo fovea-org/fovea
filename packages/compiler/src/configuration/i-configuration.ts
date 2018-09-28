@@ -12,4 +12,7 @@ export interface IConfiguration {
 	foveaLibModuleName: string;
 	foveaModuleName: string;
 	componentFallbackSuffix: string;
+	annotation: {
+		pureAnnotation: string;
+	};
 }

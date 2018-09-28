@@ -12,5 +12,8 @@ export const configuration: IConfiguration = {
 	destroyedCallbackName: "destroyedCallback",
 	foveaLibModuleName: "@fovea/lib",
 	foveaModuleName: "@fovea/core",
-	componentFallbackSuffix: "component"
+	componentFallbackSuffix: "component",
+	annotation: {
+		pureAnnotation: "/*#__PURE__*/"
+	}
 };

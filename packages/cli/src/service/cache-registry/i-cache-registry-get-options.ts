@@ -1,11 +1,10 @@
 import {CacheEntryKind} from "./cache-entry-kind";
 import {IAssetOptimizerService} from "../asset-optimizer/i-asset-optimizer-service";
+import {FirstArgumentType} from "./i-cache-registry-get-result";
 
 // tslint:disable:no-any
 
 // tslint:disable:array-type
-
-export declare type FirstArgumentType<T extends (...args: any[]) => any> = T extends (arg: infer R) => any ? R : any;
 
 export interface ICacheRegistryCacheOptions {
 	root: string;

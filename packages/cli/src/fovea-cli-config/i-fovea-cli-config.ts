@@ -1,13 +1,16 @@
-import {Plugin} from "postcss";
+import {FirstArgumentType} from "../service/cache-registry/i-cache-registry-get-result";
 
 export interface IFoveaCliOutputConfig {
 	tag: string;
 	directory: string;
 	serve: IFoveaCliServeConfig;
-	postCSSPlugins?: Plugin<{}>[];
+	postcss?: Partial<{
+		additionalPlugins: import("postcss").Plugin<{}>[];
+	}>;
+	babel?: Exclude<FirstArgumentType<typeof import("@wessberg/rollup-plugin-ts").default>, undefined>["babel"];
 	browserslist?: string[];
-	match (userAgent: string): boolean;
 	disable: boolean|"watch";
+	match (userAgent: string): boolean;
 }
 
 export declare type FoveaCliOutputConfigs = IFoveaCliOutputConfig[]|IFoveaCliOutputConfig;
@@ -59,7 +62,7 @@ export interface IFoveaCliStyleConfig {
 }
 
 export interface IFoveaCliConfigMinusOutput {
-	exclude: Iterable<RegExp> | RegExp;
+	exclude: Iterable<RegExp>|RegExp;
 	entry: string;
 	style: IFoveaCliStyleConfig;
 	manifest: string;

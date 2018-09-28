@@ -56,6 +56,7 @@ import {FoveaDiagnosticDegree} from "@fovea/compiler";
 import {ISubscriberError} from "../../observable/i-subscriber-error";
 import {IEnvironmentDefaults} from "../../environment/i-environment-defaults";
 import {buildEnvironment} from "../../build-environment/build-environment";
+import {IRollupPostPluginsOptions} from "../../service/rollup/rollup-service/i-rollup-post-plugins-options";
 
 // tslint:disable:no-any
 
@@ -759,8 +760,7 @@ export class BuildTask implements IBuildTask {
 				sourcemap: !buildTaskOptions.production,
 				context: "window",
 				browserslist: output.browserslist,
-				additionalBabelPresets: buildTaskOptions.production ? [["minify", this.minifyOptions]] : [],
-				additionalBabelPlugins: [],
+				babel: this.getBabelOptions(output, buildTaskOptions),
 				format: moduleKind,
 				watch: buildTaskOptions.watch,
 				plugins: [
@@ -789,7 +789,7 @@ export class BuildTask implements IBuildTask {
 							}
 						},
 						postcss: {
-							plugins: output.postCSSPlugins == null ? [] : output.postCSSPlugins,
+							plugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
 							hook: pluginName => {
 								switch (pluginName) {
 									case "postcss-sass": {
@@ -862,9 +862,7 @@ export class BuildTask implements IBuildTask {
 									}
 								}
 							});
-						}
-
-						else {
+						} else {
 							// Break if the observer has been unobserved in the meantime
 							if (returnObserver.unobserved) {
 								return;
@@ -1055,7 +1053,7 @@ export class BuildTask implements IBuildTask {
 		// Generate the theme variables and global styles content
 		const returnObserver = this.stylesParser.parse({
 			watch: buildTaskOptions.watch,
-			postCSSPlugins: output.postCSSPlugins == null ? [] : output.postCSSPlugins,
+			postCSSPlugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
 			root,
 			foveaCliConfig,
 			production: buildTaskOptions.production
@@ -1081,6 +1079,27 @@ export class BuildTask implements IBuildTask {
 	}
 
 	/**
+	 * Gets the options to use with Babel
+	 * @param {IFoveaCliOutputConfig} output
+	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
+	 * @returns {IRollupPostPluginsOptions["babel"]}
+	 */
+	private getBabelOptions (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): IRollupPostPluginsOptions["babel"] {
+		return {
+			// Default to not displaying comments, and otherwise use the user-provided value
+			comments: output.babel == null || output.babel.comments == null ? false : output.babel.comments,
+			minified: output.babel == null || output.babel.minified == null ? buildTaskOptions.production : output.babel.minified,
+			additionalPresets: [
+				...(buildTaskOptions.production ? [["minify", this.minifyOptions]] : []),
+				...(output.babel != null && output.babel.additionalPresets != null ? output.babel.additionalPresets : [])
+			],
+			additionalPlugins: [
+				...(output.babel != null && output.babel.additionalPlugins != null ? output.babel.additionalPlugins : [])
+			]
+		};
+	}
+
+	/**
 	 * Builds a ServiceWorker
 	 * @param {IBuildServiceWorkerOptions} options
 	 * @param {ISubscriber<IBundlerServiceBundlingEndedData>} subscriber
@@ -1103,7 +1122,7 @@ export class BuildTask implements IBuildTask {
 				// Add the Worker polyfills as the intro to the ServiceWorker
 				banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
 				browserslist: output.browserslist,
-				additionalBabelPresets: buildTaskOptions.production ? [["minify", this.minifyOptions]] : [],
+				babel: this.getBabelOptions(output, buildTaskOptions),
 				plugins: [
 					...(buildTaskOptions.production ? [
 						// Apply Brotli and Zlib compression
@@ -1173,12 +1192,9 @@ export class BuildTask implements IBuildTask {
 				if (error != null) {
 					if (error.data == null) {
 						errorMessage += `\nUnknown error`;
-					}
-					else if ("stack" in error.data) {
+					} else if ("stack" in error.data) {
 						errorMessage += `\n${(<any>error).data.stack.toString()}}`;
-					}
-
-					else {
+					} else {
 						errorMessage += `\n${error.data.toString()}}`;
 					}
 				}
