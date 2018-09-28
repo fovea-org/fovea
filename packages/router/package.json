@@ -42,6 +42,7 @@
 	"dependencies": {
 		"@fovea/core": "^1.0.133",
 		"@fovea/lib": "^1.0.133",
+		"@fovea/common": "^1.0.133",
 		"@fovea/scheduler": "^1.0.133",
 		"path-parser": "^4.2.0"
 	},

@@ -1,8 +1,9 @@
 import {ICompressorService} from "./i-compressor-service";
 import {gzip, ZlibOptions} from "zlib";
 import {BrotliEncodeParams, compress as brotliCompress} from "iltorb";
-import {ICompressorServiceCompressResult} from "./i-compressor-service-compress-result";
+import {CompressorServiceResult} from "./i-compressor-service-compress-result";
 import {IFileSaver} from "@wessberg/filesaver";
+import {ICompressionAlgorithmOptions} from "./compression-algorithm-options";
 
 /**
  * A class that helps with compressing files with Brotli and Zlib
@@ -29,12 +30,13 @@ export class CompressorService implements ICompressorService {
 	/**
 	 * Compresses the given code based on the given options
 	 * @param {Buffer} content
-	 * @returns {Promise<ICompressorServiceCompressResult>}
+	 * @param {ICompressionAlgorithmOptions} options
+	 * @returns {Promise<*>}
 	 */
-	public async compress (content: Buffer): Promise<ICompressorServiceCompressResult> {
+	public async compress (content: Buffer, options: ICompressionAlgorithmOptions): Promise<CompressorServiceResult<typeof options["brotli"], typeof options["gzip"]>> {
 		return {
-			brotli: await this.compressWithBrotli(content),
-			zlib: await this.compressWithZlib(content)
+			...(options.brotli !== true ? {} : {brotli: await this.compressWithBrotli(content)}),
+			...(options.gzip !== true ? {} : {gzip: await this.compressWithZlib(content)})
 		};
 	}
 
@@ -42,14 +44,15 @@ export class CompressorService implements ICompressorService {
 	 * Compresses the given content and writes it to the given path, including relevant prioritizedExtensions
 	 * @param {Buffer} content
 	 * @param {string} writePath
+	 * @param {ICompressionAlgorithmOptions} options
 	 * @returns {Promise<void>}
 	 */
-	public async compressAndWrite (content: Buffer, writePath: string): Promise<void> {
-		const {brotli, zlib} = await this.compress(content);
+	public async compressAndWrite (content: Buffer, writePath: string, options: ICompressionAlgorithmOptions): Promise<void> {
+		const response = await this.compress(content, options);
 
 		await Promise.all([
-			this.fileSaver.save(`${writePath}${this.BROTLI_EXTENSION}`, brotli),
-			this.fileSaver.save(`${writePath}${this.ZLIB_EXTENSION}`, zlib)
+			!("brotli" in response) ? Promise.resolve() : this.fileSaver.save(`${writePath}${this.BROTLI_EXTENSION}`, response.brotli),
+			!("gzip" in response) ? Promise.resolve() : this.fileSaver.save(`${writePath}${this.ZLIB_EXTENSION}`, response.gzip)
 		]);
 	}
 

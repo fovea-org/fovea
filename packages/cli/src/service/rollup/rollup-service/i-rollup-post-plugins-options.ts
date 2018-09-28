@@ -1,8 +1,8 @@
-import {FirstArgumentType} from "../../cache-registry/i-cache-registry-get-result";
+import {BabelOptions} from "../../../fovea-cli-config/i-fovea-cli-config";
 
 export interface IRollupPostPluginsOptions {
 	tsconfig?: string;
 	browserslist?: string[];
-	babel?: Exclude<FirstArgumentType<typeof import("@wessberg/rollup-plugin-ts").default>, undefined>["babel"];
+	babel?: BabelOptions;
 	root: string;
 }

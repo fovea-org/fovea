@@ -1,6 +1,22 @@
 import {FirstArgumentType} from "../service/cache-registry/i-cache-registry-get-result";
+import {IBabelMinifyOptions} from "../service/minify/i-babel-minify-options";
+import {ICompressionAlgorithmOptions} from "../service/compression/compression-algorithm-options";
+import {OutputOptions} from "rollup";
+
+export type BabelOptions = Exclude<Exclude<FirstArgumentType<typeof import("@wessberg/rollup-plugin-ts").default>, undefined>["babel"], undefined>;
+export type PostCSSPlugin = import("postcss").Plugin<{}>;
 
 export interface IFoveaCliBundleOptimizationConfig {
+	// Whether or not to print comments, or a callback that will be invoked with each one and return true if it should be preserved
+	comments: boolean|((value: string) => boolean);
+
+	// Whether or not to minify builds, or optionally an object of configuration options
+	minify: boolean|IBabelMinifyOptions;
+
+	// Whether or not to compress builds, or optionally an object of configuration options
+	compress: boolean|ICompressionAlgorithmOptions;
+
+	// Treeshaking options
 	treeshake: boolean | Partial<{
 		assignedTopLevelCallExpressionsHasNoSideEffects: boolean;
 		readingPropertiesOfObjectsHasNoSideEffects: boolean;
@@ -13,13 +29,28 @@ export interface IFoveaCliOutputConfig {
 	directory: string;
 	serve: IFoveaCliServeConfig;
 	postcss?: Partial<{
-		additionalPlugins: import("postcss").Plugin<{}>[];
+		additionalPlugins: PostCSSPlugin[];
 	}>;
-	babel?: Exclude<FirstArgumentType<typeof import("@wessberg/rollup-plugin-ts").default>, undefined>["babel"];
+	babel?: Pick<BabelOptions, "additionalPlugins"|"additionalPresets">;
 	browserslist?: string[];
 	disable: boolean|"watch";
 	match (userAgent: string): boolean;
 	optimization?: Partial<IFoveaCliBundleOptimizationConfig>;
+
+	// Whether or not to generate sourcemaps, or optionally "inline" if a sourcemap should be appended to the generated files
+	sourcemap?: OutputOptions["sourcemap"];
+
+	// A string to prepend to the bundle.
+	banner?: OutputOptions["banner"];
+
+	// A string to append to the bundle.
+	footer?: OutputOptions["footer"];
+
+	// A string to prepend to the bundle. Like banner, but will go inside any module wrapper that may be.
+	intro?: OutputOptions["intro"];
+
+	// A string to append to the bundle. Like banner, but will go inside any module wrapper that may be.
+	outro?: OutputOptions["outro"];
 }
 
 export declare type FoveaCliOutputConfigs = IFoveaCliOutputConfig[]|IFoveaCliOutputConfig;

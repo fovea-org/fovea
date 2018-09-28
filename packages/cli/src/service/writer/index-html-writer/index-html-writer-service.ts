@@ -16,15 +16,15 @@ export class IndexHtmlWriterService extends WriterService<string> implements IIn
 	 * @param {IWriterServiceWriteOptions} options
 	 * @returns {Promise<void>}
 	 */
-	protected async writeFile ([path, indexHtml]: WriterServiceEntry<string>, options: IWriterServiceWriteOptions): Promise<void> {
+	protected async writeFile ([path, indexHtml]: WriterServiceEntry<string>,  {compress, ...compressionAlgorithmOptions}: IWriterServiceWriteOptions): Promise<void> {
 		const formatted = indexHtml;
 		await this.fileSaver.save(
 			path,
 			formatted
 		);
 
-		if (options.production) {
-			await this.compressor.compressAndWrite(Buffer.from(formatted), path);
+		if (compress) {
+			await this.compressor.compressAndWrite(Buffer.from(formatted), path, compressionAlgorithmOptions);
 		}
 	}
 }

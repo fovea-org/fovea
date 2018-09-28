@@ -14,14 +14,14 @@ export class AssetWriterService extends WriterService<Buffer> implements IAssetW
 	 * @param {IWriterServiceWriteOptions} options
 	 * @returns {Promise<void>}
 	 */
-	protected async writeFile ([path, buffer]: WriterServiceEntry<Buffer>, options: IWriterServiceWriteOptions): Promise<void> {
+	protected async writeFile ([path, buffer]: WriterServiceEntry<Buffer>, {compress, ...compressionAlgorithmOptions}: IWriterServiceWriteOptions): Promise<void> {
 		await this.fileSaver.save(
 			path,
 			buffer
 		);
 
-		if (options.production) {
-			await this.compressor.compressAndWrite(buffer, path);
+		if (compress) {
+			await this.compressor.compressAndWrite(buffer, path, compressionAlgorithmOptions);
 		}
 	}
 }

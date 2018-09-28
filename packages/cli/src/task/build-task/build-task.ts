@@ -58,6 +58,7 @@ import {IEnvironmentDefaults} from "../../environment/i-environment-defaults";
 import {buildEnvironment} from "../../build-environment/build-environment";
 import {IRollupPostPluginsOptions} from "../../service/rollup/rollup-service/i-rollup-post-plugins-options";
 import {IRollupServiceGenerateOptions} from "../../service/rollup/rollup-service/i-rollup-service-generate-options";
+import {ICompressionAlgorithmOptions} from "../../service/compression/compression-algorithm-options";
 
 // tslint:disable:no-any
 
@@ -104,6 +105,7 @@ export class BuildTask implements IBuildTask {
 							 private readonly assetWriter: IAssetWriterService,
 							 private readonly minifyOptions: IBabelMinifyOptions,
 							 private readonly compressor: ICompressorService,
+							 private readonly compressionAlgorithmOptions: ICompressionAlgorithmOptions,
 							 private readonly polyfillService: IPolyfillService,
 							 private readonly devServer: IDevServerService,
 							 private readonly cacheService: IDiskCacheRegistryService) {
@@ -582,7 +584,7 @@ export class BuildTask implements IBuildTask {
 				Object.assign({},
 					...Object.entries(outputPaths.asset.appIcon).map(([key, path]) => ({[path.absolute]: assets.appIconMap[key]})),
 					...Object.entries(outputPaths.asset.other).map(([key, path]) => ({[path.absolute]: assets.assetMap[key]}))
-				), {production: buildTaskOptions.production});
+				), {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
 
 			this.logger.verboseTag(output.tag, `Successfully wrote all assets to disk!`);
 
@@ -734,6 +736,57 @@ export class BuildTask implements IBuildTask {
 	}
 
 	/**
+	 * Returns true if minification should be applied to generated bundles
+	 * @param {IFoveaCliOutputConfig} output
+	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
+	 * @returns {boolean}
+	 */
+	private shouldMinify (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): boolean {
+		const userProvidedOption = output.optimization == null || output.optimization.minify == null ? undefined : output.optimization.minify;
+		if (userProvidedOption == null) {
+			// When nothing else is given, only minify in production
+			return buildTaskOptions.production;
+		} else {
+			// Otherwise, use whatever option was given by the user
+			return userProvidedOption !== false;
+		}
+	}
+
+	/**
+	 * Returns true if compression should be applied to generated bundles
+	 * @param {IFoveaCliOutputConfig} output
+	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
+	 * @returns {boolean}
+	 */
+	private shouldCompress (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): boolean {
+		const userProvidedOption = output.optimization == null || output.optimization.compress == null ? undefined : output.optimization.compress;
+		if (userProvidedOption == null) {
+			// When nothing else is given, only compress in production
+			return buildTaskOptions.production;
+		} else {
+			// Otherwise, use whatever option was given by the user
+			return userProvidedOption !== false;
+		}
+	}
+
+	/**
+	 * Returns whatever option should be provided to Rollup in terms of whether or not to generate sourcemaps
+	 * @param {IFoveaCliOutputConfig} output
+	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
+	 * @returns {IFoveaCliBundleOptimizationConfig["sourcemap"]}
+	 */
+	private shouldGenerateSourcemaps (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): IFoveaCliOutputConfig["sourcemap"] {
+		const userProvidedSourceMapOption = output.sourcemap == null ? undefined : output.sourcemap;
+		if (userProvidedSourceMapOption == null) {
+			// When nothing else is given, only generate sourcemaps in development
+			return !buildTaskOptions.production;
+		} else {
+			// Otherwise, use whatever option was given by the user
+			return userProvidedSourceMapOption;
+		}
+	}
+
+	/**
 	 * Builds the bundle for an output
 	 * @param {IBuildOutputBundleOptions} options
 	 * @param {ISubscriber<void>} subscriber
@@ -758,16 +811,20 @@ export class BuildTask implements IBuildTask {
 				outputPaths,
 				bundleName: output.tag,
 				hash,
-				sourcemap: !buildTaskOptions.production,
+				sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
 				context: "window",
 				browserslist: output.browserslist,
 				treeshake: this.getTreeshakingOptions(output),
 				babel: this.getBabelOptions(output, buildTaskOptions),
 				format: moduleKind,
 				watch: buildTaskOptions.watch,
+				banner: output.banner,
+				footer: output.footer,
+				intro: output.intro,
+				outro: output.outro,
 				plugins: [
 					Fovea({
-						production: buildTaskOptions.production,
+						production: this.shouldMinify(output, buildTaskOptions),
 						exclude: foveaCliConfig.exclude,
 						onDiagnostics: diagnostics => {
 							// Only proceed if there are any relevant diagnostics
@@ -814,10 +871,11 @@ export class BuildTask implements IBuildTask {
 							}
 						}
 					}),
-					...(buildTaskOptions.production ? [
+					...(this.shouldCompress(output, buildTaskOptions) ? [
 						// Apply Brotli and Zlib compression
 						compressRollupPlugin({
-							compressor: this.compressor
+							compressor: this.compressor,
+							...this.getCompressOptions(output)
 						})
 					] : [])
 				],
@@ -924,7 +982,7 @@ export class BuildTask implements IBuildTask {
 					if (returnObserver.unobserved) {
 						return;
 					}
-					await this.manifestJsonWriter.write({[outputPaths.manifestJson.absolute]: manifestJson.result}, {production: buildTaskOptions.production});
+					await this.manifestJsonWriter.write({[outputPaths.manifestJson.absolute]: manifestJson.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
 
 					builtManifest = true;
 					if (builtIndex) {
@@ -951,7 +1009,7 @@ export class BuildTask implements IBuildTask {
 					if (returnObserver.unobserved) {
 						return;
 					}
-					await this.indexHtmlWriter.write({[outputPaths.indexHtml.absolute]: indexHtml.result}, {production: buildTaskOptions.production});
+					await this.indexHtmlWriter.write({[outputPaths.indexHtml.absolute]: indexHtml.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
 
 					builtIndex = true;
 					if (builtManifest) {
@@ -1096,21 +1154,59 @@ export class BuildTask implements IBuildTask {
 	}
 
 	/**
+	 * Returns the minify options to use
+	 * @param {IFoveaCliOutputConfig} output
+	 * @returns {IBabelMinifyOptions}
+	 */
+	private getMinifyOptions (output: IFoveaCliOutputConfig): IBabelMinifyOptions {
+		return output.optimization != null && output.optimization.minify != null && typeof output.optimization.minify !== "boolean"
+			? output.optimization.minify
+			: this.minifyOptions;
+	}
+
+	/**
+	 * Returns the compress options to use
+	 * @param {IFoveaCliOutputConfig} output
+	 * @returns {ICompressionAlgorithmOptions}
+	 */
+	private getCompressOptions (output: IFoveaCliOutputConfig): ICompressionAlgorithmOptions {
+		return output.optimization != null && output.optimization.compress != null && typeof output.optimization.compress !== "boolean"
+			? output.optimization.compress
+			: this.compressionAlgorithmOptions;
+	}
+
+	/**
 	 * Gets the options to use with Babel
 	 * @param {IFoveaCliOutputConfig} output
 	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
 	 * @returns {IRollupPostPluginsOptions["babel"]}
 	 */
 	private getBabelOptions (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): IRollupPostPluginsOptions["babel"] {
+		const shouldMinify = this.shouldMinify(output, buildTaskOptions);
+
+		/**
+		 * Defines the comments configuration option for Babel. Will either set 'comments' or 'shouldPrintComment', depending on the type of the user-provided function
+		 */
+		const commentConfig = (
+			output.optimization == null || output.optimization.comments == null
+				// Default to not showing comments
+				? {comments: false}
+				: typeof output.optimization.comments === "boolean"
+				? {comments: output.optimization.comments}
+				: {shouldPrintComment: output.optimization.comments}
+		);
+
 		return {
-			// Default to not displaying comments, and otherwise use the user-provided value
-			comments: output.babel == null || output.babel.comments == null ? false : output.babel.comments,
-			// Default to minifying the build if building for production, and otherwise use the user-provided value
-			minified: output.babel == null || output.babel.minified == null ? buildTaskOptions.production : output.babel.minified,
+			...commentConfig,
+			// Default to minifying the build if building for production. If the user has explicitly opted out of minification, do nothing
+			minified: shouldMinify,
+
+			// Default to being compact only in production
+			compact: shouldMinify,
 
 			additionalPresets: [
-				// Minify builds for production
-				...(buildTaskOptions.production ? [["minify", this.minifyOptions]] : []),
+				// Minify builds for production unless the user wants to opt-out of it. Use the user-provided minification options if given, otherwise fallback to the ones provided by the CLI
+				...(this.shouldMinify ? [["minify", this.getMinifyOptions(output)]] : []),
 
 				// Use all extra presets provided by the user
 				...(output.babel != null && output.babel.additionalPresets != null ? output.babel.additionalPresets : [])
@@ -1141,20 +1237,24 @@ export class BuildTask implements IBuildTask {
 					[this.config.serviceWorkerName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.serviceWorker)
 				},
 				outputPaths,
-				sourcemap: !buildTaskOptions.production,
+				sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
 				bundleName: `${this.config.serviceWorkerChunkPrefix}${output.tag}`,
 				hash,
 				format: moduleKind,
 				// Add the Worker polyfills as the intro to the ServiceWorker
 				banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
+				footer: output.footer,
+				intro: output.intro,
+				outro: output.outro,
 				browserslist: output.browserslist,
 				treeshake: this.getTreeshakingOptions(output),
 				babel: this.getBabelOptions(output, buildTaskOptions),
 				plugins: [
-					...(buildTaskOptions.production ? [
+					...(this.shouldCompress(output, buildTaskOptions) ? [
 						// Apply Brotli and Zlib compression
 						compressRollupPlugin({
-							compressor: this.compressor
+							compressor: this.compressor,
+							...this.getCompressOptions(output)
 						})
 					] : [])
 				],

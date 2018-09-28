@@ -130,6 +130,7 @@ import {IAssetParserService} from "./service/parser/asset-parser/i-asset-parser-
 import {AssetParserService} from "./service/parser/asset-parser/asset-parser-service";
 import {IDiskCacheRegistryService} from "./service/cache-registry/disk-cache-registry/i-disk-cache-registry-service";
 import {DiskCacheRegistryService} from "./service/cache-registry/disk-cache-registry/disk-cache-registry-service";
+import {compressionAlgorithmOptions, ICompressionAlgorithmOptions} from "./service/compression/compression-algorithm-options";
 
 // Utilities
 DIContainer.registerSingleton<IProjectPathUtil, ProjectPathUtil>();
@@ -174,6 +175,7 @@ DIContainer.registerSingleton<IBuildConfig, IBuildConfig>(() => buildConfig);
 DIContainer.registerSingleton<IBabelMinifyOptions, IBabelMinifyOptions>(() => babelMinifyOptions);
 DIContainer.registerSingleton<BrotliEncodeParams, BrotliEncodeParams>(() => brotliCompressionOptions);
 DIContainer.registerSingleton<ZlibOptions, ZlibOptions>(() => zlibCompressionOptions);
+DIContainer.registerSingleton<ICompressionAlgorithmOptions, ICompressionAlgorithmOptions>(() => compressionAlgorithmOptions);
 
 // Generators
 DIContainer.registerSingleton<IPackageJsonGenerator, PackageJsonGenerator>();

@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@fovea/compiler": "^1.0.133",
+    "@fovea/common": "^1.0.133",
     "@fovea/rollup-plugin-fovea": "^1.0.133",
     "@fovea/style": "^1.0.133",
     "@types/chokidar": "^1.7.5",

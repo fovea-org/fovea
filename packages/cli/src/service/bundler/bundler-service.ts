@@ -3,9 +3,9 @@ import {IBundlerServiceOptions} from "./i-bundler-service-options";
 import {IFileSaver} from "@wessberg/filesaver";
 import {IBuildConfig} from "../../build-config/i-build-config";
 import {join} from "path";
-import {SourceMap} from "rollup";
 import {IRollupService} from "../rollup/rollup-service/i-rollup-service";
 import {IObserver} from "../../observable/i-observer";
+import {IBundlerServiceWriteBundleToDiskOptions} from "./i-bundler-service-write-bundle-to-disk-options";
 
 /**
  * A class that can generate a bundle
@@ -24,7 +24,7 @@ export class BundlerService implements IBundlerService {
 	 */
 	public generate (options: IBundlerServiceOptions): IObserver {
 		let rollupObserver: IObserver|null = null;
-		const {outputPaths, bundleName, sourcemap, hash, paths, globals, format, banner, watch, observer, resource, config, ...optionsRest} = options;
+		const {outputPaths, bundleName, sourcemap, hash, paths, globals, format, banner, footer, intro, outro, watch, observer, resource, config, ...optionsRest} = options;
 		const dir = outputPaths.directory.absolute;
 
 		(async () => {
@@ -37,6 +37,9 @@ export class BundlerService implements IBundlerService {
 					dir,
 					format,
 					banner,
+					footer,
+					intro,
+					outro,
 					sourcemap,
 					entryFileNames: `[name].${hash}.${bundleName}.${this.config.defaultDestinationScriptExtension}`,
 					chunkFileNames: `chunk-[hash].${hash}.${bundleName}.${this.config.defaultDestinationScriptExtension}`,
@@ -51,7 +54,13 @@ export class BundlerService implements IBundlerService {
 
 							// Make sure to only write actual chunks to disk
 							if (typeof outputFile !== "string" && "code" in outputFile) {
-								await this.writeBundleToDisk(id, join(dir, id), outputFile.code, outputFile.map);
+								await this.writeBundleToDisk({
+									relativePath: id,
+									absolutePath: join(dir, id),
+									code: outputFile.code,
+									map: outputFile.map,
+									emitSourceMap: sourcemap
+								});
 							}
 						}
 
@@ -76,20 +85,25 @@ export class BundlerService implements IBundlerService {
 
 	/**
 	 * Write the given bundle to disk
-	 * @param {string} relativePath
-	 * @param {string} absolutePath
-	 * @param {string} code
-	 * @param {SourceMap} map
+	 * @param {IBundlerServiceWriteBundleToDiskOptions} options
 	 * @returns {Promise<void>}
 	 */
-	// @ts-ignore
-	private async writeBundleToDisk (relativePath: string, absolutePath: string, code: string, map?: SourceMap) {
-		// The external reference to add to the code if a map has been generated.
-		const sourceMapExtension = map == null ? "" : `\n//# sourceMappingURL=${relativePath}.map`;
+	private async writeBundleToDisk ({absolutePath, code, emitSourceMap, map, relativePath}: IBundlerServiceWriteBundleToDiskOptions) {
+
+		// The external reference to add to the code if a map has been generated and should be included
+		const sourceMapExtension = map == null || emitSourceMap === false
+			? ""
+			: `\n` + (emitSourceMap === true
+				// Refer to the file containing the map
+				? `//# sourceMappingURL=${relativePath}.map`
+				// URL-encode the map and inline it
+				: `//# sourceMappingURL=${map.toUrl()}`
+		);
 
 		await Promise.all([
 			this.fileSaver.save(absolutePath, `${code}${sourceMapExtension}`),
-			map != null ? this.fileSaver.save(`${absolutePath}.map`, map.toString()) : Promise.resolve()
+			// Don't write the map to disk if it wasn't generated, or if it shouldn't be, or if it is already inlined
+			map == null || emitSourceMap !== true ? Promise.resolve () : this.fileSaver.save(`${absolutePath}.map`, map.toString())
 		]);
 	}
 }

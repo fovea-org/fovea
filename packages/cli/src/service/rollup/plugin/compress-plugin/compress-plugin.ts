@@ -12,7 +12,7 @@ const MAP_EXTENSION = ".map";
  * @param {ICompressPluginOptions} options
  */
 // @ts-ignore
-export function compressRollupPlugin ({compressor}: ICompressPluginOptions): Plugin {
+export function compressRollupPlugin ({compressor, ...compressionAlgorithmOptions}: ICompressPluginOptions): Plugin {
 
 	return {
 		name: "Compress Rollup Plugin",
@@ -29,8 +29,8 @@ export function compressRollupPlugin ({compressor}: ICompressPluginOptions): Plu
 				const codeBuffer = typeof chunk === "string" ? Buffer.from(chunk) : chunk instanceof Buffer ? chunk : Buffer.from(chunk.code);
 				const mapBuffer = typeof chunk === "string" || chunk instanceof Buffer || chunk.map == null ? null : Buffer.from(chunk.map.toString());
 				return await Promise.all([
-					compressor.compressAndWrite(codeBuffer, join(destinationDirectory, chunkName)),
-					mapBuffer == null ? Promise.resolve() : compressor.compressAndWrite(mapBuffer, join(destinationDirectory, `${chunkName}${MAP_EXTENSION}`))
+					compressor.compressAndWrite(codeBuffer, join(destinationDirectory, chunkName), compressionAlgorithmOptions),
+					mapBuffer == null ? Promise.resolve() : compressor.compressAndWrite(mapBuffer, join(destinationDirectory, `${chunkName}${MAP_EXTENSION}`), compressionAlgorithmOptions)
 				]);
 			}));
 		}

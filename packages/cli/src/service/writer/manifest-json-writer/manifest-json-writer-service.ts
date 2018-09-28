@@ -15,7 +15,7 @@ export class ManifestJsonWriterService extends WriterService<IManifestJson> impl
 	 * @param {IWriterServiceWriteOptions} options
 	 * @returns {Promise<void>}
 	 */
-	protected async writeFile ([path, manifest]: WriterServiceEntry<IManifestJson>, options: IWriterServiceWriteOptions): Promise<void> {
+	protected async writeFile ([path, manifest]: WriterServiceEntry<IManifestJson>,  {compress, ...compressionAlgorithmOptions}: IWriterServiceWriteOptions): Promise<void> {
 		const formatted = this.formatter.format(JSON.stringify(manifest), {...this.config.formatOptions, parser: "json"});
 
 		await this.fileSaver.save(
@@ -23,8 +23,8 @@ export class ManifestJsonWriterService extends WriterService<IManifestJson> impl
 			formatted
 		);
 
-		if (options.production) {
-			await this.compressor.compressAndWrite(Buffer.from(formatted), path);
+		if (compress) {
+			await this.compressor.compressAndWrite(Buffer.from(formatted), path, compressionAlgorithmOptions);
 		}
 	}
 }
