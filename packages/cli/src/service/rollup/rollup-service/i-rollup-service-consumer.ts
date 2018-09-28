@@ -3,7 +3,7 @@ import {IRollupPostPluginsOptions} from "./i-rollup-post-plugins-options";
 import {IPackageJson} from "../../../package-json/i-package-json";
 import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
 import {IResource} from "../../../resource/i-resource";
-import {RollupCache} from "rollup";
+import {RollupCache, InputOptions} from "rollup";
 
 export interface IRollupServiceConsumer extends IRollupPrePluginsOptions, IRollupPostPluginsOptions {
 	paths: {[key: string]: string};
@@ -11,5 +11,6 @@ export interface IRollupServiceConsumer extends IRollupPrePluginsOptions, IRollu
 	config: IFoveaCliConfig;
 	packageJson: IPackageJson;
 	cache?: RollupCache;
+	treeshake?: InputOptions["treeshake"];
 	globals?: {[key: string]: string};
 }

@@ -1,4 +1,4 @@
-import {OutputOptions} from "rollup";
+import {OutputOptions, InputOptions} from "rollup";
 import {IRollupServiceGenerateBaseOptions} from "./i-rollup-service-generate-base-options";
 import {IRollupPrePluginsOptions} from "./i-rollup-pre-plugins-options";
 import {IRollupPostPluginsOptions} from "./i-rollup-post-plugins-options";
@@ -9,5 +9,6 @@ export interface IRollupServiceGenerateOptions extends IRollupServiceGenerateBas
 	output: OutputOptions;
 	bundleExternals?: boolean;
 	watch?: boolean;
+	treeshake?: InputOptions["treeshake"];
 	observer: ISubscriber<IRollupServiceGenerateObserverPayload>;
 }

@@ -57,6 +57,7 @@ import {ISubscriberError} from "../../observable/i-subscriber-error";
 import {IEnvironmentDefaults} from "../../environment/i-environment-defaults";
 import {buildEnvironment} from "../../build-environment/build-environment";
 import {IRollupPostPluginsOptions} from "../../service/rollup/rollup-service/i-rollup-post-plugins-options";
+import {IRollupServiceGenerateOptions} from "../../service/rollup/rollup-service/i-rollup-service-generate-options";
 
 // tslint:disable:no-any
 
@@ -760,6 +761,7 @@ export class BuildTask implements IBuildTask {
 				sourcemap: !buildTaskOptions.production,
 				context: "window",
 				browserslist: output.browserslist,
+				treeshake: this.getTreeshakingOptions(output),
 				babel: this.getBabelOptions(output, buildTaskOptions),
 				format: moduleKind,
 				watch: buildTaskOptions.watch,
@@ -1079,6 +1081,21 @@ export class BuildTask implements IBuildTask {
 	}
 
 	/**
+	 * Gets the treeshaking options to pass on to Rollup
+	 * @param {IFoveaCliOutputConfig} output
+	 * @returns {IRollupServiceGenerateOptions["treeshake"]}
+	 */
+	private getTreeshakingOptions (output: IFoveaCliOutputConfig): IRollupServiceGenerateOptions["treeshake"] {
+		if (output.optimization == null || output.optimization.treeshake == null) return undefined;
+		if (typeof output.optimization.treeshake === "boolean") return output.optimization.treeshake;
+
+		return {
+			pureExternalModules: output.optimization.treeshake.externalDependenciesHasNoSideEffects != null ? output.optimization.treeshake.externalDependenciesHasNoSideEffects : false,
+			propertyReadSideEffects: output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects != null ? output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects : false
+		};
+	}
+
+	/**
 	 * Gets the options to use with Babel
 	 * @param {IFoveaCliOutputConfig} output
 	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
@@ -1088,13 +1105,22 @@ export class BuildTask implements IBuildTask {
 		return {
 			// Default to not displaying comments, and otherwise use the user-provided value
 			comments: output.babel == null || output.babel.comments == null ? false : output.babel.comments,
+			// Default to minifying the build if building for production, and otherwise use the user-provided value
 			minified: output.babel == null || output.babel.minified == null ? buildTaskOptions.production : output.babel.minified,
+
 			additionalPresets: [
+				// Minify builds for production
 				...(buildTaskOptions.production ? [["minify", this.minifyOptions]] : []),
+
+				// Use all extra presets provided by the user
 				...(output.babel != null && output.babel.additionalPresets != null ? output.babel.additionalPresets : [])
 			],
+
 			additionalPlugins: [
-				...(output.babel != null && output.babel.additionalPlugins != null ? output.babel.additionalPlugins : [])
+				// Use all extra plugins provided by the user
+				...(output.babel != null && output.babel.additionalPlugins != null ? output.babel.additionalPlugins : []),
+				// Use the "annotate-pure-calls" plugin if the user has set the 'assignedTopLevelCallExpressionsHasNoSideEffects' flag to true
+				...(output.optimization != null && output.optimization.treeshake != null && typeof output.optimization.treeshake !== "boolean" && output.optimization.treeshake.assignedTopLevelCallExpressionsHasNoSideEffects === true ? ["annotate-pure-calls"] : [])
 			]
 		};
 	}
@@ -1122,6 +1148,7 @@ export class BuildTask implements IBuildTask {
 				// Add the Worker polyfills as the intro to the ServiceWorker
 				banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
 				browserslist: output.browserslist,
+				treeshake: this.getTreeshakingOptions(output),
 				babel: this.getBabelOptions(output, buildTaskOptions),
 				plugins: [
 					...(buildTaskOptions.production ? [

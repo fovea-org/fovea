@@ -61,13 +61,7 @@ export default <Partial<IFoveaCliConfig>>{
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
 			serve: {host, port},
-			disable: false,
-			babel: {
-				comments: true,
-				additionalPlugins: [
-					"annotate-pure-calls"
-				]
-			}
+			disable: false
 		},
 		{
 			tag: "modern",

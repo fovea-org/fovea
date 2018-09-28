@@ -49,7 +49,7 @@ export class RollupService implements IRollupService {
 	 * @returns {Promise<IObserver>}
 	 */
 	public async generate (options: IRollupServiceGenerateOptions): Promise<IObserver> {
-		const {output, input, observer, context, bundleExternals = false, packageJson, cache, plugins = []} = options;
+		const {output, input, observer, context, treeshake, bundleExternals = false, packageJson, cache, plugins = []} = options;
 		let rollupOptions: RollupDirOptions|null = {
 			input,
 			plugins: [
@@ -58,6 +58,7 @@ export class RollupService implements IRollupService {
 				...this.getDefaultPostPlugins(options)
 			],
 			context,
+			treeshake,
 			external: bundleExternals ? [] : [
 				...(packageJson.dependencies != null ? Object.keys(packageJson.dependencies) : []),
 				...(packageJson.devDependencies != null ? Object.keys(packageJson.devDependencies) : []),

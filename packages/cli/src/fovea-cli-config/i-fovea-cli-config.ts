@@ -1,5 +1,13 @@
 import {FirstArgumentType} from "../service/cache-registry/i-cache-registry-get-result";
 
+export interface IFoveaCliBundleOptimizationConfig {
+	treeshake: boolean | Partial<{
+		assignedTopLevelCallExpressionsHasNoSideEffects: boolean;
+		readingPropertiesOfObjectsHasNoSideEffects: boolean;
+		externalDependenciesHasNoSideEffects: boolean;
+	}>;
+}
+
 export interface IFoveaCliOutputConfig {
 	tag: string;
 	directory: string;
@@ -11,6 +19,7 @@ export interface IFoveaCliOutputConfig {
 	browserslist?: string[];
 	disable: boolean|"watch";
 	match (userAgent: string): boolean;
+	optimization?: Partial<IFoveaCliBundleOptimizationConfig>;
 }
 
 export declare type FoveaCliOutputConfigs = IFoveaCliOutputConfig[]|IFoveaCliOutputConfig;
