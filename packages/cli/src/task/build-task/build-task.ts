@@ -1091,7 +1091,7 @@ export class BuildTask implements IBuildTask {
 
 		return {
 			pureExternalModules: output.optimization.treeshake.externalDependenciesHasNoSideEffects != null ? output.optimization.treeshake.externalDependenciesHasNoSideEffects : false,
-			propertyReadSideEffects: output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects != null ? output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects : false
+			propertyReadSideEffects: output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects != null ? !output.optimization.treeshake.readingPropertiesOfObjectsHasNoSideEffects : true
 		};
 	}
 
