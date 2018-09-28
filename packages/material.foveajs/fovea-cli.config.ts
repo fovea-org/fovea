@@ -61,7 +61,14 @@ export default <Partial<IFoveaCliConfig>>{
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
 			serve: {host, port},
-			disable: false
+			disable: false,
+			optimization: {
+				treeshake: {
+					assignedTopLevelCallExpressionsHasNoSideEffects: true,
+					readingPropertiesOfObjectsHasNoSideEffects: true,
+					externalDependenciesHasNoSideEffects: true
+				}
+			}
 		},
 		{
 			tag: "modern",
