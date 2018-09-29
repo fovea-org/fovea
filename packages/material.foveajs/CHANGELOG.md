@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.134"></a>
+## [1.0.134](https://github.com/fovea-org/fovea/compare/v1.0.133...v1.0.134) (2018-09-29)
+
+
+### Features
+
+* Improved minification for production builds ([84c3995](https://github.com/fovea-org/fovea/commit/84c3995))
+* Made advanced treeshaking customization customizable from a new 'optimization' property of outputs declared in fovea-cli.config files ([f3db25e](https://github.com/fovea-org/fovea/commit/f3db25e))
+
+
+
+
+
 <a name="1.0.133"></a>
 ## [1.0.133](https://github.com/fovea-org/fovea/compare/v1.0.132...v1.0.133) (2018-09-27)
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.134"></a>
+## [1.0.134](https://github.com/fovea-org/fovea/compare/v1.0.133...v1.0.134) (2018-09-29)
+
+
+### Features
+
+* Made the fovea-cli.config format allow for even more customization of the build pipeline, including compression, minification, comment preserving/removal logic, advanced treeshaking, intro/outro/banner/footer appending/prepending, as well as sourcemap handling. ([6d5ff05](https://github.com/fovea-org/fovea/commit/6d5ff05))
+
+
+
+
+
 <a name="1.0.133"></a>
 ## [1.0.133](https://github.com/fovea-org/fovea/compare/v1.0.132...v1.0.133) (2018-09-27)
 
