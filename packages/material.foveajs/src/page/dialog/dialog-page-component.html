@@ -15,8 +15,8 @@
 			When a dialog include action buttons, they will appear next to one another.
 		</article>
 		<footer>
-			<button-component dialog-action="cancel">Cancel</button-component>
-			<button-component dialog-action="confirm">Accept</button-component>
+			<button-component [dialog-action]="cancel">Cancel</button-component>
+			<button-component [dialog-action]="confirm">Accept</button-component>
 		</footer>
 	</dialog-component>
 
@@ -28,8 +28,8 @@
 			When the action buttons include longer button text, they will appear stacked. Confirming actions appear above dismissive actions.
 		</article>
 		<footer>
-			<button-component dialog-action="confirm">This is a long action</button-component>
-			<button-component dialog-action="cancel">Cancel</button-component>
+			<button-component [dialog-action]="confirm">This is a long action</button-component>
+			<button-component [dialog-action]="cancel">Cancel</button-component>
 		</footer>
 	</dialog-component>
 
@@ -38,7 +38,7 @@
 			This dialog has no header
 		</article>
 		<footer>
-			<button-component dialog-action="confirm">ok</button-component>
+			<button-component [dialog-action]="confirm">ok</button-component>
 		</footer>
 	</dialog-component>
 
@@ -78,8 +78,8 @@
 			</div>
 		</article>
 		<footer>
-			<button-component dialog-action="cancel">Cancel</button-component>
-			<button-component dialog-action="confirm" disabled="${!selectedScrollingDialogOption}">Accept</button-component>
+			<button-component [dialog-action]="cancel">Cancel</button-component>
+			<button-component [dialog-action]="confirm" disabled="${!selectedScrollingDialogOption}">Accept</button-component>
 		</footer>
 	</dialog-component>
 
@@ -117,7 +117,7 @@
 			This dialog takes up the entire available space
 		</article>
 		<footer>
-			<icon-button-component dialog-action="cancel" icon="close"></icon-button-component>
+			<icon-button-component [dialog-action]="cancel" icon="close"></icon-button-component>
 		</footer>
 	</dialog-component>
 
@@ -195,8 +195,8 @@
 			This is the explainer text of the dialog
 		</article>
 		<footer>
-			<button-component dialog-action="cancel">CANCEL</button-component>
-			<button-component dialog-action="confirm">CONFIRM</button-component>
+			<button-component [dialog-action]="cancel">CANCEL</button-component>
+			<button-component [dialog-action]="confirm">CONFIRM</button-component>
 		</footer>
 	</dialog-component>
 </showcase-component>
@@ -223,15 +223,15 @@
 
 <showcase-component caption="The output of the above code example">
 	<dialog-component open autoClose="false" style="position: relative" dismissable="false">
-		<div dialog-header>
+		<div [dialog-header]>
 			This is the dialog header
 		</div>
-		<div dialog-article>
+		<div [dialog-article]>
 			This is the explainer text of the dialog
 		</div>
-		<div dialog-footer>
-			<button-component dialog-action="cancel">CANCEL</button-component>
-			<button-component dialog-action="confirm">CONFIRM</button-component>
+		<div [dialog-footer]>
+			<button-component [dialog-action]="cancel">CANCEL</button-component>
+			<button-component [dialog-action]="confirm">CONFIRM</button-component>
 		</div>
 	</dialog-component>
 </showcase-component>
