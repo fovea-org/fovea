@@ -5,6 +5,7 @@ import {IRawExpressionChainBindableDict} from "../../expression/i-raw-expression
 export interface IFoveaDOMAstAttribute {
 	name: string;
 	value: RawExpressionChainBindable|IRawExpressionChainBindableDict;
+	isForcedAttribute: boolean;
 }
 
 export interface IFoveaDOMAstListener {

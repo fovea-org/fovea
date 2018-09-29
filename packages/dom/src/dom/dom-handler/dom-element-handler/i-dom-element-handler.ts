@@ -9,8 +9,8 @@ export interface IDOMElementHandler extends IDOMHandler {
 	addCustomAttribute (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstCustomAttribute, context: IContext): string;
 	addAttribute (element: NodeUuid|FoveaDOMAstElement, attribute: IFoveaDOMAstAttribute, context: IContext): string;
 	addAttributes (element: NodeUuid|FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[], context: IContext): string;
-	addValue (element: NodeUuid|FoveaDOMAstElement, attribute: IFoveaDOMAstAttribute, context: IContext): string;
-	addValues (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[], context: IContext): string;
+	addProperty (element: NodeUuid|FoveaDOMAstElement, attribute: IFoveaDOMAstAttribute, context: IContext): string;
+	addProperties (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[], context: IContext): string;
 	addRef (child: FoveaDOMAstElement, context: IContext): IDOMElementHandlerAddSelectorResult|null;
 	addListener (element: NodeUuid|FoveaDOMAstElement, listener: IFoveaDOMAstListener, context: IContext): IDOMElementHandlerAddListenerResult;
 }

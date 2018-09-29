@@ -76,7 +76,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addValue (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute, context: IContext): string {
+	public addProperty (element: NodeUuid|FoveaDOMAstElement, {name, value}: IFoveaDOMAstAttribute, context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// Prepare the 'value' argument. If it is null or the empty string, set the property value to 'true'. Otherwise, assign the literal value to the property.
@@ -94,7 +94,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @param {IContext} context
 	 * @returns {string}
 	 */
-	public addValues (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[], context: IContext): string {
+	public addProperties (element: NodeUuid|FoveaDOMAstElement, properties: IFoveaDOMAstAttribute[], context: IContext): string {
 		const {nodeUuid, node} = this.getNodeDict(element);
 
 		// Prepare the 'value' argument. Give it tuples of key-value pairs as REST arguments
@@ -104,7 +104,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 
 	/**
 	 * Handles an Element.
-	 * @param {FoveaDOMAstElement} node
+	 * @param {IDOMElementHandlerOptions} options
 	 * @returns {IDOMElementHandlerResult}
 	 */
 	public handle ({node, context}: IDOMElementHandlerOptions): IDOMElementHandlerResult {
@@ -289,18 +289,18 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * the key is included in the set of required attributes (for example, 'class' is a required attribute).
 	 * @param {FoveaDOMAstElement} element
 	 * @param {IContext} context
-	 * @param {string} key
+	 * @param {IFoveaDOMAstAttribute} attribute
 	 * @returns {PropertyPosition}
 	 */
-	protected getPropertyPosition (element: FoveaDOMAstElement, context: IContext, key: string): PropertyPosition {
-		if (context.mode === "hostAttributes") return "attribute";
+	protected getPropertyPosition (element: FoveaDOMAstElement, context: IContext, attribute: IFoveaDOMAstAttribute): PropertyPosition {
+		if (context.mode === "hostAttributes" || attribute.isForcedAttribute) return "attribute";
 
-		else if (!isFoveaDOMAstCustomElement(element) && isRequiredPropertyOnBuiltInElement(element.name, key)) {
+		else if (!isFoveaDOMAstCustomElement(element) && isRequiredPropertyOnBuiltInElement(element.name, attribute.name)) {
 			return "property";
 		}
 
 		else if (
-			(isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(key)) || !isFoveaDOMAstCustomElement(element)) {
+			(isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(attribute.name)) || !isFoveaDOMAstCustomElement(element)) {
 			return "attribute";
 		}
 
@@ -411,7 +411,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @returns {IDOMHandlerAddPropertyResult[]}
 	 */
 	private handleAttributes (node: FoveaDOMAstElement, context: IContext): IDOMHandlerAddPropertyResult[] {
-		return this.addProperties(node, node.attributes, context);
+		return this.addValues(node, node.attributes, context);
 	}
 
 	/**
@@ -435,13 +435,13 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 * @param {IContext} context
 	 * @returns {IDOMHandlerAddPropertyResult[]}
 	 */
-	private addProperties (node: FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[], context: IContext): IDOMHandlerAddPropertyResult[] {
+	private addValues (node: FoveaDOMAstElement, attributes: IFoveaDOMAstAttribute[], context: IContext): IDOMHandlerAddPropertyResult[] {
 		const attributeProperties: IFoveaDOMAstAttribute[] = [];
 		const propertyProperties: IFoveaDOMAstAttribute[] = [];
 
 		attributes.forEach(attribute => {
 			// Figure out the position for the property
-			const position = this.getPropertyPosition(node, context, attribute.name);
+			const position = this.getPropertyPosition(node, context, attribute);
 
 			// Append it to the array of attributes or properties, depending on where to place it
 			if (position === "attribute") attributeProperties.push(attribute);
@@ -457,7 +457,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		// Prepare instructions for the properties, if any exists
 		const propertiesResult: IDOMHandlerAddPropertyResult[]|(never[]) = propertyProperties.length === 0 ? [] : [{
 			kind: "property",
-			instruction: propertyProperties.length === 1 ? this.addValue(node, propertyProperties[0], context) : this.addValues(node, propertyProperties, context)
+			instruction: propertyProperties.length === 1 ? this.addProperty(node, propertyProperties[0], context) : this.addProperties(node, propertyProperties, context)
 		}];
 		return [
 			...attributesResult,

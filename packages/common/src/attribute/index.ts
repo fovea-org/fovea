@@ -1,1 +1,3 @@
-export {CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES} from "./custom-element/required-attributes";
+export * from "./custom-element/required-attributes";
+export * from "./forced-attribute";
+export * from "./append-attribute";

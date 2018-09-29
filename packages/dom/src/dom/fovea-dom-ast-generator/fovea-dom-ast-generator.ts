@@ -2,7 +2,7 @@ import {IFoveaDOMAstGenerator} from "./i-fovea-dom-ast-generator";
 import {IFoveaDOMAstGeneratorOptions} from "./i-fovea-dom-ast-generator-options";
 import {FoveaDOMAst, FoveaDOMAstElement, FoveaDOMAstKind, FoveaDOMAstNode, IFoveaDOMAstAttribute, IFoveaDOMAstCustomAttribute, IFoveaDOMAstListener, IFoveaDOMAstTextNode} from "../fovea-dom-ast/i-fovea-dom-ast";
 import {DOMAstNodeRaw, DOMAstRaw, IDOMAstNodeRaw} from "../dom-ast-implementation/i-dom-ast-raw";
-import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression} from "@fovea/common";
+import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression, matchesAppendAttributeQualifier, matchesForcedAttributeQualifier, normalizeAppendAttribute, normalizeForcedAttribute} from "@fovea/common";
 import {IFoveaDOMAstGeneratorPartsResult} from "./i-fovea-dom-ast-generator-parts-result";
 import {IExpressionUtil} from "../../util/expression-util/i-expression-util";
 import {IFoveaDOMAstGeneratorGenerateResult} from "./i-fovea-dom-ast-generator-generate-result";
@@ -410,12 +410,21 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 	 */
 	private mapRawEntryToFoveaDOMAttribute (entry: [string, string], context: IContext, keyValueSeparated: boolean): IFoveaDOMAstAttribute {
 		let [name, value] = entry;
+
+		// If the key is wrapped with "[" and "]", it should be set as an attribute at all times, no matter what
+		const isForcedAttribute = matchesForcedAttributeQualifier(name);
+
+		if (isForcedAttribute) {
+			// Remove the "[" and "]" parts from the attribute name
+			name = normalizeForcedAttribute(name);
+		}
+
 		// If the key ends with a +, it means that the value should be appended to whatever value is given already
-		const isAppend = name.endsWith("+");
+		const isAppend = matchesAppendAttributeQualifier(name);
 
 		if (isAppend) {
 			// Remove the ending "+" from the name
-			name = name.slice(0, -1);
+			name = normalizeAppendAttribute(name);
 		}
 
 		let returnValue: RawExpressionChainBindable|IRawExpressionChainBindableDict|null = null;
@@ -440,7 +449,8 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 
 		return {
 			name,
-			value: returnValue
+			value: returnValue,
+			isForcedAttribute
 		};
 	}
 
