@@ -81,7 +81,7 @@ test("playground", async t => {
 	await work(path4, {printCode: false});
 	await work(path5, {printCode: false, printDiagnostics: false, printStats: false});
 	await work(path1, {printCode: false});
-	await work(path2, {printCode: false, printDiagnostics: true, printStats: false});
+	await work(path2, {printCode: false, printDiagnostics: false, printStats: false});
 
 	t.true(true);
 });
@@ -140,14 +140,14 @@ test("Will automatically add dependencies for a component when a @dependsOn deco
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-6.ts");
 	const result = await work(path, {printCode: false});
 
-	t.true(result.hasChanged && result.code.includes(`__dependsOn(<any>FooComponent)`));
+	t.true(result.hasChanged && result.code.includes(`__dependsOn(FooComponent)`));
 });
 
 test("Will remove a @dependsOn decorator and convert it into a call to the ___dependsOn helper from @fovea/lib", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-7.ts");
 	const result = await work(path, {printCode: false});
 
-	t.true(result.hasChanged && result.code.includes(`__dependsOn(<any>BarComponent`) && !result.code.includes(`@dependsOn(BarComponent)`));
+	t.true(result.hasChanged && result.code.includes(`__dependsOn(BarComponent`) && !result.code.includes(`@dependsOn(BarComponent)`));
 });
 
 test("Will detect precompiled components correctly when they are compiled to Javascript", async t => {
@@ -184,13 +184,13 @@ test("Can handle multiple @listener() annotations for the same methods", async t
 	// @ts-ignore
 	const result = await work(path, {printCode: true});
 
-	t.true(result.hasChanged && allIndexesOf(result.code, /__registerHostListener/).length > 1);
+	t.true(result.hasChanged && allIndexesOf(result.code, /___registerListener/).length > 1);
 });
 
-test.only("Will correctly register attribute change observers", async t => {
+test("Will correctly register attribute change observers", async t => {
 	const path = join(process.cwd(), "test/demo/demo-component/demo-component-13.ts");
 	// @ts-ignore
-	const result = await work(path, {printCode: true, printDiagnostics: true});
+	const result = await work(path, {printCode: true, printDiagnostics: false});
 
 	t.true(result.hasChanged && result.code.includes("___registerAttributeChangeObserver"));
 });

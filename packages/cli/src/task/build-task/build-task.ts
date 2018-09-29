@@ -1206,7 +1206,7 @@ export class BuildTask implements IBuildTask {
 
 			additionalPresets: [
 				// Minify builds for production unless the user wants to opt-out of it. Use the user-provided minification options if given, otherwise fallback to the ones provided by the CLI
-				...(this.shouldMinify ? [["minify", this.getMinifyOptions(output)]] : []),
+				...(shouldMinify ? [["minify", this.getMinifyOptions(output)]] : []),
 
 				// Use all extra presets provided by the user
 				...(output.babel != null && output.babel.additionalPresets != null ? output.babel.additionalPresets : [])
