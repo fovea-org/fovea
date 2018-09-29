@@ -6,6 +6,7 @@ export interface IFoveaDOMAstAttribute {
 	name: string;
 	value: RawExpressionChainBindable|IRawExpressionChainBindableDict;
 	isForcedAttribute: boolean;
+	isForcedProperty: boolean;
 }
 
 export interface IFoveaDOMAstListener {

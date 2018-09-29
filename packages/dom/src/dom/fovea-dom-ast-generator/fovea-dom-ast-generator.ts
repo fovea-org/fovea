@@ -2,7 +2,7 @@ import {IFoveaDOMAstGenerator} from "./i-fovea-dom-ast-generator";
 import {IFoveaDOMAstGeneratorOptions} from "./i-fovea-dom-ast-generator-options";
 import {FoveaDOMAst, FoveaDOMAstElement, FoveaDOMAstKind, FoveaDOMAstNode, IFoveaDOMAstAttribute, IFoveaDOMAstCustomAttribute, IFoveaDOMAstListener, IFoveaDOMAstTextNode} from "../fovea-dom-ast/i-fovea-dom-ast";
 import {DOMAstNodeRaw, DOMAstRaw, IDOMAstNodeRaw} from "../dom-ast-implementation/i-dom-ast-raw";
-import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression, matchesAppendAttributeQualifier, matchesForcedAttributeQualifier, normalizeAppendAttribute, normalizeForcedAttribute} from "@fovea/common";
+import {containsExpression, CUSTOM_ATTRIBUTE_QUALIFIER, HTML_TAG_NAMES, HtmlTagName, LISTENER_QUALIFIER, LISTENER_QUALIFIER_REGEX, Ref, REF_QUALIFIER, splitByExpressions, takeInnerExpression, matchesAppendAttributeQualifier, matchesForcedAttributeQualifier, normalizeAppendAttribute, normalizeForcedAttribute, matchesForcedPropertyQualifier, normalizeForcedProperty} from "@fovea/common";
 import {IFoveaDOMAstGeneratorPartsResult} from "./i-fovea-dom-ast-generator-parts-result";
 import {IExpressionUtil} from "../../util/expression-util/i-expression-util";
 import {IFoveaDOMAstGeneratorGenerateResult} from "./i-fovea-dom-ast-generator-generate-result";
@@ -419,6 +419,14 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 			name = normalizeForcedAttribute(name);
 		}
 
+		// If the key is wrapped with "{" and "}", it should be set as a property at all times, no matter what
+		const isForcedProperty = matchesForcedPropertyQualifier(name);
+
+		if (isForcedProperty) {
+			// Remove the "{" and "}" parts from the attribute name
+			name = normalizeForcedProperty(name);
+		}
+
 		// If the key ends with a +, it means that the value should be appended to whatever value is given already
 		const isAppend = matchesAppendAttributeQualifier(name);
 
@@ -450,7 +458,8 @@ export class FoveaDOMAstGenerator implements IFoveaDOMAstGenerator {
 		return {
 			name,
 			value: returnValue,
-			isForcedAttribute
+			isForcedAttribute,
+			isForcedProperty
 		};
 	}
 

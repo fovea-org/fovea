@@ -18,7 +18,7 @@ import {RawExpressionBindable} from "../../../expression/raw-expression-bindable
 import {IDOMHandlerCreateResult} from "../dom-handler/i-dom-handler-create-result";
 import {IDOMElementHandlerCreateBaseOptions} from "./i-dom-element-handler-create-base-options";
 import {IRawExpressionChainBindableDict} from "../../../expression/i-raw-expression-chain-bindable-dict/i-raw-expression-chain-bindable-dict";
-import {camelCase, isInCamelCase, isInPascalCase, kebabCase} from "@wessberg/stringutil";
+import {isInCamelCase, isInPascalCase, kebabCase} from "@wessberg/stringutil";
 import {IContext} from "../../../util/context-util/i-context";
 import {isRequiredPropertyOnBuiltInElement} from "../../built-in-elements-required-properties-map/is-required-property-on-built-in-element";
 
@@ -83,8 +83,7 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 		const valueArgument = valueIsEmpty(value) ? "" : `, ${this.stringifyExpressionChain(node, value)}`;
 
 		// Make sure that the key is camelCased.
-		const propertyKey = camelCase(name);
-		return this.format(`${this.useHelper(node, "addProperty")}(${nodeUuid}, ${this.quote(propertyKey)}${valueArgument})`, context);
+		return this.format(`${this.useHelper(node, "addProperty")}(${nodeUuid}, ${this.quote(name)}${valueArgument})`, context);
 	}
 
 	/**
@@ -294,12 +293,11 @@ export abstract class DOMElementHandler extends DOMHandler implements IDOMElemen
 	 */
 	protected getPropertyPosition (element: FoveaDOMAstElement, context: IContext, attribute: IFoveaDOMAstAttribute): PropertyPosition {
 		if (context.mode === "hostAttributes" || attribute.isForcedAttribute) return "attribute";
+		else if (attribute.isForcedProperty) return "property";
 
 		else if (!isFoveaDOMAstCustomElement(element) && isRequiredPropertyOnBuiltInElement(element.name, attribute.name)) {
 			return "property";
-		}
-
-		else if (
+		} else if (
 			(isFoveaDOMAstCustomElement(element) && CUSTOM_ELEMENT_REQUIRED_ATTRIBUTES.has(attribute.name)) || !isFoveaDOMAstCustomElement(element)) {
 			return "attribute";
 		}

@@ -12,7 +12,7 @@ export function matchesForcedAttributeQualifier (name: string): boolean {
 }
 
 /**
- * Makes an append attribute normalized (e.g. look like a proper attribute)
+ * Makes a forced attribute normalized (e.g. look like a proper attribute)
  * @param {string} name
  * @returns {boolean}
  */
