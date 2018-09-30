@@ -30,7 +30,6 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 	const normalizedFoveaOptions: IFoveaOptions = {
 		dryRun: inputFoveaOptions.dryRun == null ? false : inputFoveaOptions.dryRun,
 		exclude: inputFoveaOptions.exclude == null ? [] : inputFoveaOptions.exclude,
-		optimize: inputFoveaOptions.optimize == null ? true : inputFoveaOptions.optimize,
 		compiler: inputFoveaOptions.compiler == null ? new FoveaCompiler() : inputFoveaOptions.compiler,
 		production: inputFoveaOptions.production == null ? nodeEnv == null ? false : nodeEnv.toLowerCase() === "production" : inputFoveaOptions.production,
 		postcss: inputFoveaOptions.postcss == null ? {} : inputFoveaOptions.postcss

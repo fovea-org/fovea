@@ -180,6 +180,31 @@ const profileRoute = {
 The paths of child routes will be appended to the path of their parent route.
 In the above example, the child route with the name `profile.posts` will match the pattern: `/profile/:userId/posts`.
 
+### Default children
+
+If a route contains nested children, you may want one to decide which child to default to, even if it isn't strictly matched by the URL.
+In the example [above](#nestedchild-routes), let's say we always want the `posts-list-component` to load by default if none of the other children are matched by the URL.
+This way, navigating to the `/profile` route will always display some content.
+
+To do this, use the `defaultChild` property for a route that has children:
+
+```typescript
+const profileRoute = {
+  // ...
+  defaultChild: "profile.posts",
+  children: [
+    {
+      // ...
+      name: "profile.posts",
+      // ...
+    }
+    // ...
+  ]
+};
+```
+
+The `defaultChild` should be given a `name` for a child route.
+
 ## Named routes
 
 Sometimes it is convenient to associate a name with a route, for example if the path is complex, include several `Params`, or if the route should receive a specific combination of query parameters.

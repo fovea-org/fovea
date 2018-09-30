@@ -26,7 +26,12 @@ export interface IAliasRouteBase extends IRouteBase {
 
 export interface IStandardRouteInput extends IStandardRouteBase {
 	path: string;
-	children?: RouteInput[];
+}
+
+export interface IStandardRouteWithChildrenInput extends IStandardRouteBase {
+	path: string;
+	defaultChild?: string;
+	children: RouteInput[];
 }
 
 export interface IRedirectRouteInput extends IRedirectRouteBase {
@@ -39,11 +44,17 @@ export interface IAliasRouteInput extends IAliasRouteBase {
 	alias: RouteReferenceOptions;
 }
 
-export declare type RouteInput = IStandardRouteInput|IRedirectRouteInput|IAliasRouteInput;
+export declare type RouteInput = IStandardRouteInput|IStandardRouteWithChildrenInput|IRedirectRouteInput|IAliasRouteInput;
 
 export interface IStandardRoute extends IStandardRouteBase {
 	parent?: IStandardRoute;
 	path: Path;
+}
+
+export interface IStandardRouteWithChildren extends IStandardRouteBase {
+	parent?: IStandardRoute;
+	path: Path;
+	defaultChild?: string;
 	children: Route[];
 }
 
@@ -63,4 +74,4 @@ export interface IInstantiatedRoute extends IRouteMatch {
 	instance: IRouterTarget;
 }
 
-export declare type Route = IStandardRoute|IRedirectRoute|IAliasRoute;
+export declare type Route = IStandardRoute|IStandardRouteWithChildren|IRedirectRoute|IAliasRoute;

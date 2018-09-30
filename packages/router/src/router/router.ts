@@ -88,7 +88,8 @@ export class Router {
 	 */
 	private static readonly nameToPathMap: Map<string, string> = new Map();
 
-	private constructor () {}
+	private constructor () {
+	}
 
 	/**
 	 * Gets the size of the session history
@@ -168,42 +169,6 @@ export class Router {
 	}
 
 	/**
-	 * Returns true if any route is blocked by guards
-	 * @param {Route} route
-	 * @param {IStateInput} stateInput
-	 * @returns {Promise<boolean|RouterPushOptions>}
-	 */
-	private static async checkGuards (route: Route, stateInput: IStateInput): Promise<boolean|RouterPushOptions> {
-		const parentChain = this.getParentToChildArrayFromRoute(route);
-
-		// Walk through each route from the parent and down
-		for (const currentRoute of parentChain) {
-
-			// Merge all global guards with the guards for this specific route
-			const mergedGuards = [
-				...(this.globalGuards != null ? this.globalGuards : []),
-				...("guards" in currentRoute && currentRoute.guards != null ? currentRoute.guards : [])
-			];
-
-			// Check all guards
-			for (const guard of mergedGuards) {
-				const guardResult = await guard(stateInput, this.sessionHistory.current);
-				// If any guard fails, return true
-				if (guardResult === false) {
-					return false;
-				}
-
-				// If a different route is returned, use that instead
-				else if (guardResult !== true) {
-					return guardResult;
-				}
-			}
-		}
-		// All guard checks were okay!
-		return true;
-	}
-
-	/**
 	 * Attempts to parse the initial route based on the URL
 	 * @returns {RouterPushOptions}
 	 */
@@ -242,6 +207,42 @@ export class Router {
 	}
 
 	/**
+	 * Returns true if any route is blocked by guards
+	 * @param {Route} route
+	 * @param {IStateInput} stateInput
+	 * @returns {Promise<boolean|RouterPushOptions>}
+	 */
+	private static async checkGuards (route: Route, stateInput: IStateInput): Promise<boolean|RouterPushOptions> {
+		const parentChain = this.getParentToChildArrayFromRoute(route);
+
+		// Walk through each route from the parent and down
+		for (const currentRoute of parentChain) {
+
+			// Merge all global guards with the guards for this specific route
+			const mergedGuards = [
+				...(this.globalGuards != null ? this.globalGuards : []),
+				...("guards" in currentRoute && currentRoute.guards != null ? currentRoute.guards : [])
+			];
+
+			// Check all guards
+			for (const guard of mergedGuards) {
+				const guardResult = await guard(stateInput, this.sessionHistory.current);
+				// If any guard fails, return true
+				if (guardResult === false) {
+					return false;
+				}
+
+				// If a different route is returned, use that instead
+				else if (guardResult !== true) {
+					return guardResult;
+				}
+			}
+		}
+		// All guard checks were okay!
+		return true;
+	}
+
+	/**
 	 * Gets a path in which the given params are replaced in it
 	 * @param {string} path
 	 * @param {IParams} params
@@ -272,9 +273,7 @@ export class Router {
 			if (paramMatch != null) {
 				rawPathParams = normalizeParams(<{ [key: string]: string }> paramMatch);
 			}
-		}
-
-		else {
+		} else {
 			rawPathParams = options.params;
 		}
 
@@ -457,6 +456,20 @@ export class Router {
 							query: state.query
 						},
 						route: resolvedResult.route
+					};
+				} else if ("defaultChild" in routeToTest && routeToTest.defaultChild != null) {
+					const resolvedRoute = this.deepResolveRoute("name", routeToTest.defaultChild, state.params, "true");
+
+					// If no route matches the route, return null
+					if (resolvedRoute == null) return null;
+
+					return {
+						state: {
+							...state,
+							params: {...resolvedRoute.params, ...state.params},
+							query: state.query
+						},
+						route: resolvedRoute.route
 					};
 				}
 
@@ -655,7 +668,7 @@ export class Router {
 					}
 					poppedInstance.instance.parentNode.removeChild(poppedInstance.instance);
 				}
-			}, {instantIfFlushing: true});
+			}, {instantIfFlushing: true}).then();
 		}
 	}
 
