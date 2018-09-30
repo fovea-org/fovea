@@ -82,7 +82,7 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			disable: "watch",
+			disable: true,
 			serve,
 			optimization
 		},
@@ -93,7 +93,7 @@ export default <Partial<IFoveaCliConfig>>{
 			match: function (userAgent: string) {
 				return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);
 			},
-			disable: "watch",
+			disable: true,
 			serve,
 			optimization
 		}
