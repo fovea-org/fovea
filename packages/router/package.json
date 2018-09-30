@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/router",
-	"version": "1.0.136",
+	"version": "1.0.137",
 	"description": "A modern router built with Fovea",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing,usage,faq",
@@ -40,17 +40,17 @@
 		"watch": "npm run rollup -- --watch"
 	},
 	"dependencies": {
-		"@fovea/common": "^1.0.134",
-		"@fovea/core": "^1.0.134",
-		"@fovea/lib": "^1.0.134",
-		"@fovea/scheduler": "^1.0.134",
+		"@fovea/common": "^1.0.137",
+		"@fovea/core": "^1.0.137",
+		"@fovea/lib": "^1.0.137",
+		"@fovea/scheduler": "^1.0.137",
 		"path-parser": "^4.2.0"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"devDependencies": {
-		"@fovea/rollup-plugin-fovea": "^1.0.135",
+		"@fovea/rollup-plugin-fovea": "^1.0.137",
 		"@wessberg/rollup-plugin-ts": "0.0.43",
 		"@wessberg/scaffold": "^1.0.4",
 		"babel-preset-minify": "^0.5.0",

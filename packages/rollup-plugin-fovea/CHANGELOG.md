@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.137"></a>
+## [1.0.137](https://github.com/fovea-org/fovea/compare/v1.0.136...v1.0.137) (2018-09-30)
+
+**Note:** Version bump only for package @fovea/rollup-plugin-fovea
+
+
+
+
+
 <a name="1.0.135"></a>
 ## [1.0.135](https://github.com/fovea-org/fovea/compare/v1.0.134...v1.0.135) (2018-09-30)
 

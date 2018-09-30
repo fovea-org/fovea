@@ -10,7 +10,7 @@
     "update": "ncu -ua && npm update && npm install"
   },
   "devDependencies": {
-    "@fovea/cli": "^1.0.135",
+    "@fovea/cli": "^1.0.137",
     "@wessberg/browserslist-generator": "^0.0.47",
     "@wessberg/color": "^0.0.2",
     "@wessberg/scaffold": "^1.0.4",
@@ -20,17 +20,17 @@
     "typescript": "^3.1.1"
   },
   "dependencies": {
-    "@fovea/common": "^1.0.134",
-    "@fovea/core": "^1.0.134",
-    "@fovea/lib": "^1.0.134",
-    "@fovea/material": "^1.0.135",
-    "@fovea/router": "^1.0.136",
-    "@fovea/scheduler": "^1.0.134",
+    "@fovea/common": "^1.0.137",
+    "@fovea/core": "^1.0.137",
+    "@fovea/lib": "^1.0.137",
+    "@fovea/material": "^1.0.137",
+    "@fovea/router": "^1.0.137",
+    "@fovea/scheduler": "^1.0.137",
     "@types/node": "^10.11.2",
     "@types/workbox-sw": "^3.2.0",
     "idb-keyval": "^3.1.0"
   },
   "name": "@fovea/material.foveajs.app",
   "description": "The source code for the official website for @fovea/material with demos and documentation",
-  "version": "1.0.136"
+  "version": "1.0.137"
 }
