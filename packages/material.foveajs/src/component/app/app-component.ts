@@ -11,6 +11,10 @@ import {config} from "../../config/config";
 @styleSrc(["../../style/shared.scss", "./app-component.scss"])
 @dependsOn(RouterOutlet, RouterLink, ButtonComponent)
 export class AppComponent extends HTMLElement {
+	/**
+	 * The current version of the app
+	 * @type {string}
+	 */
 	@prop public version: string = config.NPM_PACKAGE_VERSION;
 	/**
 	 * All configured routes
