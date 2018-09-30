@@ -1,4 +1,4 @@
-import {IAliasRoute, IInstantiatedRoute, IRedirectRoute, IStandardRoute, Route, RouteComponent, RouteInput, RouteInstanceConstructor} from "../route/route";
+import {IAliasRoute, IInstantiatedRoute, IRedirectRoute, IRouteInstance, IStandardRoute, Route, RouteComponent, RouteInput, RouteInstanceConstructor} from "../route/route";
 import {SessionHistory} from "../session-history/session-history";
 import {ISessionHistory} from "../session-history/i-session-history";
 import {IStateObserver} from "../session-history/i-state-observer";
@@ -609,6 +609,7 @@ export class Router {
 		const currentPaths: Set<string> = new Set();
 		this.currentPaths = currentPaths;
 		const promises: Promise<boolean>[] = [];
+		let currentParent: IRouteInstance|undefined = undefined;
 
 		for (const route of parentChain) {
 			const instantiatedPathIdentifier = this.getPathWithParams(route.path.path, matchingRoute.state.params);
@@ -618,10 +619,17 @@ export class Router {
 			const existingInstance = this.pathToInstantiatedRouteMap.get(instantiatedPathIdentifier);
 			if (existingInstance != null) continue;
 
+			const currentRouterTarget: IRouteInstance = {
+				instance: await this.getNewRouteInstanceFromRouteComponent(route.component),
+				parent: currentParent
+			};
+
+			currentParent = currentRouterTarget;
+
 			const instantiatedRoute: IInstantiatedRoute = {
 				...matchingRoute,
-				route,
-				instance: await this.getNewRouteInstanceFromRouteComponent(route.component)
+				...currentRouterTarget,
+				route
 			};
 
 			this.pathToInstantiatedRouteMap.set(instantiatedPathIdentifier, instantiatedRoute);

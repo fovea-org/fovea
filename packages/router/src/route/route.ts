@@ -70,8 +70,12 @@ export interface IAliasRoute extends IAliasRouteBase {
 	alias: RouteReferenceOptions;
 }
 
-export interface IInstantiatedRoute extends IRouteMatch {
+export interface IRouteInstance {
 	instance: IRouterTarget;
+	parent?: IRouteInstance;
+}
+
+export interface IInstantiatedRoute extends IRouteMatch, IRouteInstance {
 }
 
 export declare type Route = IStandardRoute|IStandardRouteWithChildren|IRedirectRoute|IAliasRoute;

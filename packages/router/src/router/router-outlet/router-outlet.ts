@@ -1,4 +1,4 @@
-import {IInstantiatedRoute, Route} from "../../route/route";
+import {IInstantiatedRoute, IRouteInstance, Route} from "../../route/route";
 import {IRouterOutlet, RouterViewNavigationAction} from "./i-router-outlet";
 import {styleSrc} from "@fovea/core";
 
@@ -113,14 +113,16 @@ export class RouterOutlet extends HTMLElement implements IRouterOutlet {
 			this.initial = current;
 		}
 
+		const routeInstance: IRouteInstance = {instance: route.instance, parent: route.parent};
+
 		// Invoke the 'onNavigateFrom' and 'onNavigateTo' hooks (if they are defined) and wait for them
 		await Promise.all([
 			previous == null || previous.instance.onNavigateFrom == null
 				? Promise.resolve()
-				: previous.instance.onNavigateFrom({action: isInitial ? "replace" : action}),
+				: previous.instance.onNavigateFrom({action: isInitial ? "replace" : action, ...routeInstance}),
 			current.instance.onNavigateTo == null
 				? Promise.resolve()
-				: current.instance.onNavigateTo({params: route.state.params, query: route.state.query, action: isInitial ? "replace" : action})
+				: current.instance.onNavigateTo({params: route.state.params, query: route.state.query, action: isInitial ? "replace" : action, ...routeInstance})
 		]);
 
 		if (previous != null && previous.instance.parentNode != null) {

@@ -275,6 +275,17 @@ The lifecycle hooks are:
 | `onNavigateTo? (options: IRouteInstanceNavigateToOptions): Promise<void>`                         | Invoked when the component is attached and will replace any existing route. It receives options such as the `Params` and query parameters as an argument. Must return a Promise. The navigation change will be halted until the Promise is resolved, so you can use this hook to animate the entry of the component.   |
 | `onNavigateFrom? (options: IRouteInstanceNavigateOptions): Promise<void>`                         | Invoked when the component is about to become detached. Must return a Promise. The navigation change will be halted until the Promise is resolved, so you can use this hook to animate the exit of the component.                                                                                                      |
 
+The `IRouteInstanceNavigateOptions` options include:
+
+- `action`: Can be either `replace`, `forward` or `back`, describing if the component was triggered from forward navigation, back navigation, or by replacing the current state. If the component is triggered from initial navigation, the action will be `replace`.
+- `instance`: A reference to the component itself.
+- `parent`: If this is a child route, the parent will hold a reference to the instance of the parent route(s) (Optional)
+
+The `IRouteInstanceNavigateToOptions` extends the `IRouteInstanceNavigateOptions`, but also include:
+
+- `params`: The params provided to the route.
+- `query`: The query params provided to the route
+
 ## Receiving and reacting to `Params` within components
 
 The `Params` that is matched by a Route will be provided to the component through the navigation lifecycle hook `onNavigateTo` (see [Navigation lifecycle hooks](#navigation-lifecycle-hooks)).
