@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/router",
-	"version": "1.0.135",
+	"version": "1.0.136",
 	"description": "A modern router built with Fovea",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing,usage,faq",

@@ -24,7 +24,7 @@
     "@fovea/core": "^1.0.134",
     "@fovea/lib": "^1.0.134",
     "@fovea/material": "^1.0.135",
-    "@fovea/router": "^1.0.135",
+    "@fovea/router": "^1.0.136",
     "@fovea/scheduler": "^1.0.134",
     "@types/node": "^10.11.2",
     "@types/workbox-sw": "^3.2.0",
@@ -32,5 +32,5 @@
   },
   "name": "@fovea/material.foveajs.app",
   "description": "The source code for the official website for @fovea/material with demos and documentation",
-  "version": "1.0.135"
+  "version": "1.0.136"
 }
