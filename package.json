@@ -36,9 +36,9 @@
     "bootstrap": "lerna bootstrap --hoist --ignore-scripts",
     "validate": "npm run lint && npm run test",
     "finalize": "NODE_ENV=production npm run bootstrap && NODE_ENV=production npm run build && NODE_ENV=production npm run validate && npm run generate:all && git add . && (git commit -am 'Bumped version' && git push) || true",
-    "publish:patch": "npm run finalize && NODE_ENV=production lerna publish patch --conventional-commits --yes",
-    "publish:minor": "npm run finalize && NODE_ENV=production lerna publish minor --conventional-commits --yes",
-    "publish:major": "npm run finalize && NODE_ENV=production lerna publish major --conventional-commits --yes",
+    "publish:patch": "npm run finalize && NODE_ENV=production lerna publish patch --conventional-commits --yes --force-publish",
+    "publish:minor": "npm run finalize && NODE_ENV=production lerna publish minor --conventional-commits --yes --force-publish",
+    "publish:major": "npm run finalize && NODE_ENV=production lerna publish major --conventional-commits --yes --force-publish",
     "lerna": "lerna"
   },
   "devDependencies": {
