@@ -29,7 +29,7 @@
 	"license": "MIT",
 	"keywords": [],
 	"name": "@fovea/rollup-plugin-fovea",
-	"version": "1.0.134",
+	"version": "1.0.135",
 	"description": "Let's compile the web!",
 	"scripts": {
 		"generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",

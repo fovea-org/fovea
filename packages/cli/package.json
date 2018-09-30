@@ -33,7 +33,7 @@
   },
   "preferGlobal": true,
   "name": "@fovea/cli",
-  "version": "1.0.134",
+  "version": "1.0.135",
   "description": "Let's compile the web!",
   "scripts": {
     "generate:readme": "scaffold readme --blacklist license,backers,maintainers,contributing",
@@ -53,7 +53,7 @@
   "dependencies": {
     "@fovea/common": "^1.0.134",
     "@fovea/compiler": "^1.0.134",
-    "@fovea/rollup-plugin-fovea": "^1.0.134",
+    "@fovea/rollup-plugin-fovea": "^1.0.135",
     "@fovea/style": "^1.0.134",
     "@types/chokidar": "^1.7.5",
     "@types/deep-equal": "^1.0.1",
@@ -78,8 +78,8 @@
     "@wessberg/rollup-plugin-ts": "0.0.43",
     "@wessberg/stringutil": "^1.0.17",
     "babel-minify": "^0.5.0",
-    "babel-preset-minify": "^0.5.0",
     "babel-plugin-annotate-pure-calls": "0.4.0",
+    "babel-preset-minify": "^0.5.0",
     "buffer-serializer": "^1.1.0",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",

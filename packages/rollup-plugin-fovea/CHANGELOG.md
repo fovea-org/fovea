@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.135"></a>
+## [1.0.135](https://github.com/fovea-org/fovea/compare/v1.0.134...v1.0.135) (2018-09-30)
+
+
+### Features
+
+* [[@fovea](https://github.com/fovea)/router]: Routes now support a  property for routes that has children. When no child is matched by the URL, the child matched by the  property will be used. This fixes [#8](https://github.com/fovea-org/fovea/issues/8) ([ab259f7](https://github.com/fovea-org/fovea/commit/ab259f7))
+
+
+
+
+
 <a name="1.0.134"></a>
 ## [1.0.134](https://github.com/fovea-org/fovea/compare/v1.0.133...v1.0.134) (2018-09-29)
 
