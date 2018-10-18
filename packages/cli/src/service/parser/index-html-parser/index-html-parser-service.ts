@@ -1,11 +1,15 @@
 import {IIndexHtmlParserService} from "./i-index-html-parser-service";
 import {IIndexHtmlParserServiceOptions} from "./i-index-html-parser-service-options";
 import {IRollupService} from "../../rollup/rollup-service/i-rollup-service";
-import {IRollupServiceGenerateWithResultResult} from "../../rollup/rollup-service/i-rollup-service-generate-with-result-result";
 import {IIndexHtmlOptions} from "../../../index-html/i-index-html-options";
-import {IObserver} from "../../../observable/i-observer";
-import {IWatchService} from "../../watch/i-watch-service";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {Observable} from "rxjs";
+import {switchMap, tap} from "rxjs/operators";
+import {ILoggerService} from "../../logger/i-logger-service";
+import {IBuildConfig} from "../../../build-config/i-build-config";
+import chalk from "chalk";
+import {IIndexHtmlParserServiceEndResult} from "./i-index-html-parser-service-result";
+import {Operation, OPERATION_START, OperationKind} from "../../../operation/operation";
+import {IFileWatcher} from "../../watch/i-file-watcher";
 
 /**
  * A class that helps with parsing a index.html file
@@ -13,46 +17,51 @@ import {ISubscriber} from "../../../observable/i-subscriber";
 export class IndexHtmlParserService implements IIndexHtmlParserService {
 
 	constructor (private readonly rollupService: IRollupService,
-							 private readonly watchService: IWatchService) {
+							 private readonly fileWatcher: IFileWatcher,
+							 private readonly logger: ILoggerService,
+							 private readonly config: IBuildConfig) {
 	}
 
 	/**
 	 * Parses the config matched by the given options and returns an IManifestJson
 	 * @param {IIndexHtmlParserServiceOptions} options
-	 * @param {ISubscriber<IRollupServiceGenerateWithResultResult<string>>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<IIndexHtmlParserServiceEndResult>>}
 	 */
-	public parse ({paths, resource, additionalEnvironmentVariables, root, tsconfig, packageJson, globalStyles, polyfillContent, polyfillUrl, cache, watch}: IIndexHtmlParserServiceOptions, subscriber: ISubscriber<IRollupServiceGenerateWithResultResult<string>>): IObserver {
+	public parse ({paths, resource, additionalEnvironmentVariables, root, tsconfig, packageJson, globalStyles, polyfillContent, polyfillUrl, cache, tag}: IIndexHtmlParserServiceOptions): Observable<Operation<IIndexHtmlParserServiceEndResult>> {
+
+		this.logger.verboseTag(tag, `Generating ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)}...`);
 
 		// Watch for changes to the index.html.ts file and compile it when it changes
-		const watcher = this.watchService.watch(Object.values(paths), {persistent: watch}, async () => {
-			subscriber.onStart();
-			try {
-				const {result, cache: newCache} = (await this.rollupService.generateWithResult<(options: IIndexHtmlOptions) => string>({
-					additionalEnvironmentVariables,
-					root,
-					cache,
-					tsconfig,
-					packageJson,
-					input: paths
-				}));
+		return this.fileWatcher.watch(Object.values(paths))
+			.pipe(
+				tap(() => this.logger.debugTag(tag, `Found new ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)}`)),
+				switchMap(() => new Observable<Operation<IIndexHtmlParserServiceEndResult>>(subscriber => {
 
-				subscriber.onEnd({
-					result: result({resource, globalStyles, polyfillContent, polyfillUrl}),
-					cache: newCache
-				});
-			} catch (ex) {
-				subscriber.onError({data: ex, fatal: true});
-			}
-		});
+					subscriber.next(OPERATION_START());
 
-		// Return an observer
-		return {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				watcher.unobserve();
-			}
-		};
+					this.rollupService.generateWithResult<(options: IIndexHtmlOptions) => string>({
+						additionalEnvironmentVariables,
+						root,
+						cache,
+						tsconfig,
+						packageJson,
+						input: paths
+					})
+						.then(({result, cache: newCache}) => {
+							this.logger.verboseTag(tag, `Built ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)}!`);
+
+							subscriber.next({
+								kind: OperationKind.END,
+								data: {
+									result: result({resource, globalStyles, polyfillContent, polyfillUrl}),
+									cache: newCache
+								}
+							});
+						});
+
+					return () => {
+					};
+				}))
+			);
 	}
 }

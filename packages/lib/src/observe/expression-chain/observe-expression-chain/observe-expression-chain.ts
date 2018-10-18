@@ -4,7 +4,7 @@ import {evaluateAsyncExpressionChain} from "../evaluate-expression-chain/evaluat
 import {EvaluateExpressionChainResult} from "../evaluate-expression-chain/i-evaluate-expression-chain-result";
 import {Change} from "../../observe/change/change";
 import {AnyHost} from "../../../host/any-host/any-host";
-import {MultiMap} from "../../../multi-map/multi-map";
+import {MultiMap} from "@fovea/common";
 import {IObserver} from "../../i-observer";
 import {evaluateSyncExpressionChain} from "../evaluate-expression-chain/evaluate-sync-expression-chain";
 

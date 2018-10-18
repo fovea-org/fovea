@@ -1,8 +1,8 @@
 import {IProjectParserServiceOptions} from "./i-project-parser-service-options";
-import {IProject} from "./i-project";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {Observable} from "rxjs";
+import {IProjectParserServiceEndResult} from "./i-project-parser-service-result";
+import {Operation} from "../../../operation/operation";
 
 export interface IProjectParserService {
-	parse (options: IProjectParserServiceOptions, subscriber: ISubscriber<IProject>): IObserver;
+	parse (options: IProjectParserServiceOptions): Observable<Operation<IProjectParserServiceEndResult>>;
 }

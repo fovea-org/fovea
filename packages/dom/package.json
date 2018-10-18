@@ -44,21 +44,21 @@
   },
   "dependencies": {
     "@fovea/common": "^1.0.137",
-    "@types/node": "^10.11.2",
+    "@types/node": "^10.11.7",
     "@types/parsimmon": "^1.10.0",
     "@wessberg/codeanalyzer": "^1.0.139",
     "@wessberg/di": "^1.1.0",
     "@wessberg/stringutil": "^1.0.17",
     "parsimmon": "^1.12.0",
     "posthtml-parser": "^0.4.1",
-    "typescript": "^3.1.1"
+    "typescript": "^3.1.2"
   },
   "devDependencies": {
     "@wessberg/rollup-plugin-di": "^1.0.87",
-    "@wessberg/rollup-plugin-ts": "0.0.43",
+    "@wessberg/rollup-plugin-ts": "0.0.44",
     "@wessberg/scaffold": "^1.0.4",
     "ava": "^0.25.0",
-    "rollup": "^0.66.2",
+    "rollup": "^0.66.6",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
     "tslint-sonarts": "^1.8.0"

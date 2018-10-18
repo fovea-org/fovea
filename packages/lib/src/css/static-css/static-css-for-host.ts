@@ -1,5 +1,4 @@
-import {FoveaHostConstructor} from "@fovea/common";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {FoveaHostConstructor, WeakMultiMap} from "@fovea/common";
 
 /**
  * A Map between FoveaHostConstructors and functions that retrieve HTMLTemplateElements for all static CSS that should be appended to them

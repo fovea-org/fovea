@@ -1,4 +1,4 @@
-export interface IStylesParserServiceResult {
+export interface IStylesParserServiceEndResult {
 	themeVariables: {[key: string]: string};
 	globalStyles: string;
 }

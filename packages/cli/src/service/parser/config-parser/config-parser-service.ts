@@ -4,10 +4,13 @@ import {IFoveaCliConfig, IFoveaCliConfigWithAppName} from "../../../fovea-cli-co
 import {IBuildConfig} from "../../../build-config/i-build-config";
 import {NormalizeFunction} from "../../../normalize/normalize-function";
 import {IRollupService} from "../../rollup/rollup-service/i-rollup-service";
-import {IRollupServiceGenerateWithResultResult} from "../../rollup/rollup-service/i-rollup-service-generate-with-result-result";
-import {IWatchService} from "../../watch/i-watch-service";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {Observable} from "rxjs";
+import {switchMap, tap} from "rxjs/operators";
+import {IConfigParserServiceEndResult} from "./i-config-parser-service-result";
+import chalk from "chalk";
+import {ILoggerService} from "../../logger/i-logger-service";
+import {Operation, OPERATION_START, OperationKind} from "../../../operation/operation";
+import {IFileWatcher} from "../../watch/i-file-watcher";
 
 /**
  * A class that helps with parsing a fovea-cli.config file
@@ -17,43 +20,49 @@ export class ConfigParserService implements IConfigParserService {
 	constructor (private readonly config: IBuildConfig,
 							 private readonly rollupService: IRollupService,
 							 private readonly normalizeFunction: NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>,
-							 private readonly watchService: IWatchService) {
+							 private readonly fileWatcher: IFileWatcher,
+							 private readonly logger: ILoggerService) {
 	}
 
 	/**
 	 * Parses the config matched by the given options and returns an IFoveaCliConfig
 	 * @param {IConfigParserServiceOptions} options
-	 * @param {ISubscriber<IRollupServiceGenerateWithResultResult<IFoveaCliConfig>>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<IConfigParserServiceEndResult>>}
 	 */
-	public parse ({root, path, packageJson, cache, watch}: IConfigParserServiceOptions, subscriber: ISubscriber<IRollupServiceGenerateWithResultResult<IFoveaCliConfig>>): IObserver {
+	public parse ({root, path, packageJson, cache}: IConfigParserServiceOptions): Observable<Operation<IConfigParserServiceEndResult>> {
 
 		// Watch for changes to the fovea-cli.config file file and load it when it changes
-		const watcher = this.watchService.watch(path, {persistent: watch}, async () => {
-			// Invoke the 'onStart()' handler
-			subscriber.onStart();
+		return this.fileWatcher.watch(path)
+			.pipe(
+				tap(() => this.logger.debug(`Found changed ${chalk.magenta(`${this.config.foveaCliConfigName}`)}`)),
+				switchMap(() => new Observable<Operation<IConfigParserServiceEndResult>>(subscriber => {
 
-			const {result, cache: newCache} = await this.rollupService.generateWithResult<IFoveaCliConfig>({
-				root,
-				packageJson,
-				cache,
-				input: {path}
-			});
+					subscriber.next(OPERATION_START());
 
-			// Fill potential holes in the user config with the defaults function and invoke the 'onEnd' subscriber
-			subscriber.onEnd({
-				result: (await this.normalizeFunction({config: this.config, options: result})).config,
-				cache: newCache
-			});
-		});
+					(async () => {
+						const {result, cache: newCache} = await this.rollupService.generateWithResult<IFoveaCliConfig>({
+							root,
+							packageJson,
+							cache,
+							input: {path}
+						});
 
-		// Return the observer
-		return {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				watcher.unobserve();
-			}
-		};
+						this.logger.debug(`Parsed ${chalk.magenta(this.config.foveaCliConfigName)}`);
+
+						subscriber.next({
+							kind: OperationKind.END,
+							data: {
+								// Fill potential holes in the user config with the defaults function
+								result: (await this.normalizeFunction({config: this.config, options: result})).config,
+								cache: newCache
+							}
+						});
+
+					})();
+
+					return () => {
+					};
+				}))
+			);
 	}
 }

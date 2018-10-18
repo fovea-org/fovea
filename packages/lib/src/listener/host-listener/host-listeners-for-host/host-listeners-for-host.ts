@@ -1,6 +1,5 @@
-import {FoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor, WeakMultiMap} from "@fovea/common";
 import {IHostListenerOptions} from "../host-listener-options/i-host-listener-options";
-import {WeakMultiMap} from "../../../multi-map/weak-multi-map";
 
 /**
  * A Map between FoveaHostConstructors and the Set of all IHostListenerOptions

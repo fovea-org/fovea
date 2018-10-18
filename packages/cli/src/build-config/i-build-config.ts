@@ -49,6 +49,9 @@ export interface IBuildConfig {
 	colorStylesName: string;
 	fontStylesName: string;
 	foveaCliConfigName: string;
+	packageFileName: string;
+	esmCaniuseFeatureNames: string[];
+	webComponentsCaniuseFeatureNames: string[];
 	sharedStylesName: string;
 	globalStylesName: string;
 	formatOptions: Options;

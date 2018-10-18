@@ -1,8 +1,8 @@
 import {IStylesParserServiceOptions} from "./i-styles-parser-service-options";
-import {IStylesParserServiceResult} from "./i-styles-parser-service-result";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {IStylesParserServiceEndResult} from "./i-styles-parser-service-result";
+import {Observable} from "rxjs";
+import {Operation} from "../../../operation/operation";
 
 export interface IStylesParserService {
-	parse (options: IStylesParserServiceOptions, subscriber: ISubscriber<IStylesParserServiceResult>): IObserver;
+	parse (options: IStylesParserServiceOptions): Observable<Operation<IStylesParserServiceEndResult>>;
 }

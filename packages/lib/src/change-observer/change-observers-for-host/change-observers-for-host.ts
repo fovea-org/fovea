@@ -1,5 +1,4 @@
-import {FoveaHostConstructor} from "@fovea/common";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {FoveaHostConstructor, WeakMultiMap} from "@fovea/common";
 import {IChangeObserver} from "../i-change-observer";
 
 /**

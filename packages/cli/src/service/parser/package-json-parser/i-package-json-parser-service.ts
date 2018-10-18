@@ -1,8 +1,8 @@
 import {IPackageJsonParserServiceOptions} from "./i-package-json-parser-service-options";
-import {IPackageJson} from "../../../package-json/i-package-json";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {Observable} from "rxjs";
+import {IPackageJsonParserServiceEndResult} from "./i-package-json-parser-service-result";
+import {Operation} from "../../../operation/operation";
 
 export interface IPackageJsonParserService {
-	parse (options: IPackageJsonParserServiceOptions, subscriber: ISubscriber<IPackageJson>): IObserver;
+	parse (options: IPackageJsonParserServiceOptions): Observable<Operation<IPackageJsonParserServiceEndResult>>;
 }

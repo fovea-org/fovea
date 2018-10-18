@@ -6,5 +6,4 @@ export interface IConfigParserServiceOptions {
 	path: string;
 	packageJson: IPackageJson;
 	cache?: RollupCache;
-	watch: boolean;
 }

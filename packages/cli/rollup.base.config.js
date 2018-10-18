@@ -6,6 +6,7 @@ export default {
 	external: [
 		...baseConfig.external,
 		...(packageJSON.dependencies == null ? [] : Object.keys(packageJSON.dependencies)),
-		...(packageJSON.devDependencies == null ? [] : Object.keys(packageJSON.devDependencies))
+		...(packageJSON.devDependencies == null ? [] : Object.keys(packageJSON.devDependencies)),
+		"rxjs/operators"
 	]
 };

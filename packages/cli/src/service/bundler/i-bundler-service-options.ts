@@ -1,8 +1,8 @@
 import {IOutputPath} from "../../output-path/i-output-path";
 import {ModuleFormat, Plugin} from "rollup";
 import {IRollupServiceConsumer} from "../rollup/rollup-service/i-rollup-service-consumer";
-import {ISubscriber} from "../../observable/i-subscriber";
-import {IBundlerServiceBundlingEndedData} from "./i-bundler-service-bundling-ended-data";
+import {IRollupErrorObserver} from "../rollup/rollup-service/i-rollup-service-generate-options";
+import {IRollupPrePluginsOptions} from "../rollup/rollup-service/i-rollup-pre-plugins-options";
 
 export interface IBundlerServiceOptions extends IRollupServiceConsumer {
 	outputPaths: IOutputPath;
@@ -12,5 +12,6 @@ export interface IBundlerServiceOptions extends IRollupServiceConsumer {
 	plugins?: Plugin[];
 	format: ModuleFormat;
 	watch?: boolean;
-	observer: ISubscriber<IBundlerServiceBundlingEndedData>;
+	errorObserver: IRollupErrorObserver;
+	progress?: IRollupPrePluginsOptions["progress"];
 }

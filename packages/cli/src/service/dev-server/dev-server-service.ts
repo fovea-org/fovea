@@ -17,6 +17,7 @@ import {IRequestIndexSubscriberResult} from "./i-request-index-subscriber-result
 import {IRequestHandlerOptions, RequestHandlerOptions} from "./request-handler/request-handler-options";
 import * as WebSocket from "ws";
 import {IDevServerServeResult} from "./i-dev-server-serve-result";
+import {BuildError} from "../../error/build-error/build-error";
 
 /**
  * A class that can generate a HTTP2 development server with support for Gzip and Brotli compression
@@ -147,7 +148,8 @@ export class DevServerService implements IDevServerService {
 			http: httpServer,
 			https: httpsServer,
 			tcp: tcpServer,
-			websocket: websocketServer
+			websocket: websocketServer,
+			websocketHttpsServer: websocketHttpsServer
 		}, options);
 
 		// Start listening on the given port
@@ -164,7 +166,10 @@ export class DevServerService implements IDevServerService {
 		return {
 			liveReload: async (): Promise<void> => {
 				if (!options.liveReload.activated || websocketServer == null) {
-					throw new Error(`${this.constructor.name} could not liveReload: 'liveReload.activated' given in the options to '${this.serve.name}'() was false!`);
+					throw new BuildError({
+						message: `${this.constructor.name} could not liveReload: 'liveReload.activated' given in the options to '${this.serve.name}'() was false!`,
+						fatal: true
+					});
 				}
 
 				websocketServer.clients.forEach(client => {
@@ -181,15 +186,20 @@ export class DevServerService implements IDevServerService {
 	 * @returns {Promise<void>}
 	 */
 	public async stop (): Promise<void> {
-		for (const {http, https} of this.serverMap.values()) {
+		for (const {http, https, tcp, websocket, websocketHttpsServer} of this.serverMap.values()) {
 			await Promise.all([
 				this.stopServer(http),
-				this.stopServer(https)
+				this.stopServer(https),
+				this.stopServer(tcp),
+				this.stopServer(websocket),
+				this.stopServer(websocketHttpsServer)
 			]);
 		}
 
 		// Clear all active options
 		this.activeOptions.clear();
+		// Clear all servers
+		this.serverMap.clear();
 	}
 
 	/**
@@ -200,6 +210,7 @@ export class DevServerService implements IDevServerService {
 	private ensureLeadingSlash (path: string): string {
 		return path.startsWith("/") ? path : `/${path}`;
 	}
+
 	/**
 	 * Called when a request happens
 	 * @param {Http2ServerRequest} rawRequest
@@ -263,7 +274,8 @@ export class DevServerService implements IDevServerService {
 			this.stopServer(server.http),
 			this.stopServer(server.https),
 			this.stopServer(server.tcp),
-			server.websocket != null ? this.stopServer(server.websocket) : Promise.resolve()
+			server.websocket != null ? this.stopServer(server.websocket) : Promise.resolve(),
+			server.websocketHttpsServer != null ? this.stopServer(server.websocketHttpsServer) : Promise.resolve()
 		]);
 
 		// Remove the options from the Set of active options
@@ -275,13 +287,18 @@ export class DevServerService implements IDevServerService {
 	 * @param {Http2SecureServer|HttpServer|TCPServer|WebSocket.Server} server
 	 * @returns {Promise<void>}
 	 */
-	private async stopServer (server: Http2SecureServer|HttpServer|TCPServer|WebSocket.Server): Promise<void> {
+	private async stopServer (server: Http2SecureServer|HttpServer|TCPServer|WebSocket.Server|undefined): Promise<void> {
 		return new Promise<void>(resolve => {
 			// If there is not server to stop, do nothing
-			if (server == null) return resolve();
+			if (server == null) {
+				return resolve();
+			}
 
 			(<Http2SecureServer|HttpServer|TCPServer>server).close(() => {
 				resolve();
+
+				// Remove all listeners
+				server.removeAllListeners();
 			});
 		});
 	}

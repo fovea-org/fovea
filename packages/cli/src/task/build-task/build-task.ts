@@ -31,18 +31,13 @@ import {IServeOptions} from "./i-serve-options";
 import {IDevServerServiceServeOptions} from "../../service/dev-server/i-dev-server-service-serve-options";
 import {IDevServerService} from "../../service/dev-server/i-dev-server-service";
 import {IBuildProjectOptions} from "./i-build-project-options";
-import {IObserver} from "../../observable/i-observer";
 import {IBuildStylesOptions} from "./i-build-styles-options";
-import {IStylesParserServiceResult} from "../../service/parser/styles-parser/i-styles-parser-service-result";
 import {IBuildOutputOptions} from "./i-build-output-options";
 import {IBuildOutputFilesOptions} from "./i-build-output-files-options";
 import {IBuildOutputBundleOptions} from "./i-build-output-bundle-options";
 import {IBuildOutputFromStylesOptions} from "./i-build-output-from-styles-options";
-import {IBuildServiceWorkerResult} from "./i-build-service-worker-result";
 import {EventEmitter} from "events";
 import {BuildStatusKind} from "./build-status-kind";
-import {ISubscriber} from "../../observable/i-subscriber";
-import {IBundlerServiceBundlingEndedData} from "../../service/bundler/i-bundler-service-bundling-ended-data";
 import {IBuildOptions} from "./i-build-options";
 import {IBuildAssetsOptions} from "./i-build-assets-options";
 import {IAssetParserService} from "../../service/parser/asset-parser/i-asset-parser-service";
@@ -53,18 +48,21 @@ import {CacheEntryKind} from "../../service/cache-registry/cache-entry-kind";
 import {IAssetOptimizerServiceOptimizeDirectoryOptions} from "../../service/asset-optimizer/i-asset-optimizer-service-optimize-directory-options";
 import {ICacheRegistryGetOptionsMap} from "../../service/cache-registry/i-cache-registry-get-options";
 import {FoveaDiagnosticDegree} from "@fovea/compiler";
-import {ISubscriberError} from "../../observable/i-subscriber-error";
 import {IEnvironmentDefaults} from "../../environment/i-environment-defaults";
 import {buildEnvironment} from "../../build-environment/build-environment";
 import {IRollupPostPluginsOptions} from "../../service/rollup/rollup-service/i-rollup-post-plugins-options";
 import {IRollupServiceGenerateOptions} from "../../service/rollup/rollup-service/i-rollup-service-generate-options";
 import {ICompressionAlgorithmOptions} from "../../service/compression/compression-algorithm-options";
+import {combineLatest, from, merge, Observable, of} from "rxjs";
+import {map, mergeMap, switchMap, tap} from "rxjs/operators";
+import {ensureArray} from "../../util/iterable/iterable-util";
+import {BuildError} from "../../error/build-error/build-error";
+import {IBuildAssetsEndResult} from "./i-build-assets-result";
+import {IOperationEnd, IOperationStart, Operation, OPERATION_END, OPERATION_START, OperationKind} from "../../operation/operation";
+import {IStylesParserServiceEndResult} from "../../service/parser/styles-parser/i-styles-parser-service-result";
+import {IBundlerServiceBundlingEndedResult} from "../../service/bundler/i-bundler-service-bundling-ended-data";
 
 // tslint:disable:no-any
-
-// tslint:disable:prefer-immediate-return
-
-// tslint:disable:no-identical-functions
 
 /**
  * A task used for building a Fovea project
@@ -150,29 +148,30 @@ export class BuildTask implements IBuildTask {
 		// The set of all cleared directories
 		const clearedDirectories: Set<string> = new Set();
 
-		let observer: IObserver|null = this.build(
-			{buildTaskOptions, clearedDirectories},
-			{
-				onError: error => {
-					this.updateStatus(BuildStatusKind.HOLDING, error);
+		const subscription = this.build({buildTaskOptions, clearedDirectories})
+			.subscribe({
 
-					// Unobserve the project immediately if the error is fatal
-					if (error.fatal && observer != null) {
-						observer.unobserve();
-						observer = null;
-					}
-				},
-				onStart: () => {
-					this.updateStatus(BuildStatusKind.BUILDING);
-				},
-				onEnd: () => {
-					// Update the status of the build
-					this.updateStatus(BuildStatusKind.BUILT);
+				// Update the build status to 'holding'
+				error: error => this.updateStatus(BuildStatusKind.HOLDING, error),
 
-					// Unobserve the project immediately if not in watch mode
-					if (!buildTaskOptions.watch && observer != null) {
-						observer.unobserve();
-						observer = null;
+				// Invoked when the next operation emits a value
+				next: (operation) => {
+
+					switch (operation.kind) {
+						case OperationKind.START:
+							// Update the status of the build
+							this.updateStatus(BuildStatusKind.BUILDING);
+							break;
+
+						case OperationKind.END:
+							// Update the status of the build
+							this.updateStatus(BuildStatusKind.BUILT);
+
+							// Unobserve the project immediately if not in watch mode
+							if (!buildTaskOptions.watch) {
+								subscription.unsubscribe();
+							}
+							break;
 					}
 				}
 			});
@@ -181,175 +180,64 @@ export class BuildTask implements IBuildTask {
 	/**
 	 * Begins the built
 	 * @param {IBuildTaskExecuteOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private build (options: IBuildOptions, subscriber: ISubscriber<void>): IObserver {
-		let buildObserver: IObserver|null = null;
-
-		// Subscribe for changes to the project and re-build every time it changes
-		let projectObserver: IObserver|null = this.projectParser.parse(options.buildTaskOptions, {
-			onError: error => {
-				subscriber.onError(error);
-			},
-			onStart: () => {
-				subscriber.onStart();
-			},
-			onEnd: async project => {
-				// Break if the observer has been unobserved in the meantime
-				if (returnObserver.unobserved) {
-					return;
-				}
-
-				// Make sure to unobserve from any existing project observer
-				if (buildObserver != null) {
-					buildObserver.unobserve();
-				}
-
-				this.logger.verbose(`Successfully read ${chalk.magenta(this.config.foveaCliConfigName)} and ${chalk.magenta("package.json")} files!`);
-
-				buildObserver = this.buildProject(
-					{...options, project},
-					{
-						onError: subscriber.onError,
-						onStart: subscriber.onStart,
-						onEnd: subscriber.onEnd
+	private build (options: IBuildOptions): Observable<Operation<void>> {
+		return this.projectParser.parse(options.buildTaskOptions)
+			.pipe(
+				switchMap(project => {
+					if (project.kind === OperationKind.START) {
+						return of(OPERATION_START());
 					}
-				);
-			}
-		});
 
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (projectObserver != null) {
-					projectObserver.unobserve();
-					projectObserver = null;
-				}
-				if (buildObserver != null) {
-					buildObserver.unobserve();
-					buildObserver = null;
-				}
-			}
-		};
-
-		return returnObserver;
+					return this.buildProject({...options, project: project.data});
+				})
+			);
 	}
 
 	/**
 	 * Called each time the project changes
 	 * @param {IBuildProjectOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildProject (options: IBuildProjectOptions, subscriber: ISubscriber<void>): IObserver {
-		let outputsObserver: IObserver|null = null;
-
-		let assetsObserver: IObserver|null = this.buildAssets(
-			options,
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					// Unobserve from child observers immediately when 'onStart()' is called, if any of them is currently active
-					if (outputsObserver != null) {
-						outputsObserver.unobserve();
-						outputsObserver = null;
-					}
-					subscriber.onStart();
-				},
-				onEnd: assets => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
+	private buildProject (options: IBuildProjectOptions): Observable<Operation<void>> {
+		return this.buildAssets(options)
+			.pipe(
+				switchMap((assets) => {
+					if (assets.kind === OperationKind.START) {
+						return of(OPERATION_START());
 					}
 
-					// Make sure to unobserve any potential existing observer for outputs
-					if (outputsObserver != null) {
-						outputsObserver.unobserve();
-						outputsObserver = null;
-					}
-
-					this.logger.verbose(`Successfully built assets!`);
-
-					outputsObserver = this.buildOutputs(
-						{...options, assets},
-						{
-							onError: error => {
-								subscriber.onError(error);
-							},
-							onStart: () => {
-								subscriber.onStart();
-							},
-							onEnd: () => {
-								// Break if the observer has been unobserved in the meantime
-								if (returnObserver.unobserved) {
-									return;
-								}
-
-								this.logger.verbose(`Successfully built all outputs!`);
-								subscriber.onEnd(undefined);
-							}
-						}
-					);
-				}
-			}
-		);
-
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (assetsObserver != null) {
-					assetsObserver.unobserve();
-					assetsObserver = null;
-				}
-				if (outputsObserver != null) {
-					outputsObserver.unobserve();
-					outputsObserver = null;
-				}
-			}
-		};
-		return returnObserver;
+					return this.buildOutputs({...options, assets: assets.data});
+				})
+			);
 	}
 
 	/**
-	 * Builds assets and proceeds with the rest of the build
+	 * Discovers and optimizes assets
 	 * @param {IBuildAssetsOptions} options
-	 * @param {ISubscriber<IAssetOptimizerServiceOptimizeDirectoryResult>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<IBuildAssetsEndResult>>}
 	 */
-	private buildAssets ({project, buildTaskOptions}: IBuildAssetsOptions, subscriber: ISubscriber<IAssetOptimizerServiceOptimizeDirectoryResult>): IObserver {
+	private buildAssets ({project, buildTaskOptions}: IBuildAssetsOptions): Observable<Operation<IBuildAssetsEndResult>> {
 		const {foveaCliConfig, root} = project;
 
-		subscriber.onStart();
-
-		// Parse and watch the assets directory
-		let assetsObserver: IObserver|null = this.assetParser.parse(
-			{project, watch: buildTaskOptions.watch},
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					subscriber.onStart();
-				},
-				onEnd: async ({assetMap, appIcon}) => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
+		return this.assetParser.parse({project})
+			.pipe(
+				switchMap(async (result) => {
+					if (result.kind === OperationKind.START) {
+						return OPERATION_START();
 					}
 
-					this.logger.verbose(`Successfully read assets and app icon!`);
+					this.logger.verbose(`Optimizing assets...`);
+
+					const {data: {assetMap, appIcon}} = result;
 
 					const optimizeOptions: IAssetOptimizerServiceOptimizeDirectoryOptions = {
 						assetMap,
 						appIcon: {...appIcon, sizes: foveaCliConfig.asset.appIcon.sizes},
 						options: {...foveaCliConfig.asset.optimization, assetDir: foveaCliConfig.asset.path}
 					};
+
 					const cacheOptions: ICacheRegistryGetOptionsMap[CacheEntryKind.OPTIMIZED_ASSET_BUFFERS] = {
 						cacheOptions: {
 							root,
@@ -361,125 +249,79 @@ export class BuildTask implements IBuildTask {
 					// Optimize assets and generate app icons
 					let assets: IAssetOptimizerServiceOptimizeDirectoryResult;
 
-					try {
-						// If the cache is not good enough here, run the asset optimizer and update the cache
-						if (await this.cacheService.cacheNeedsUpdate(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions)) {
-							assets = await this.assetOptimizer.optimizeDirectory(optimizeOptions);
-							await this.cacheService.set(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions, assets);
-						}
-
-						// Otherwise, take the already optimized buffers from the cache
-						else {
-							assets = (await this.cacheService.get(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions))!;
-						}
-						subscriber.onEnd(assets);
+					// If the cache is not good enough here, run the asset optimizer and update the cache
+					if (await this.cacheService.cacheNeedsUpdate(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions)) {
+						assets = await this.assetOptimizer.optimizeDirectory(optimizeOptions);
+						await this.cacheService.set(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions, assets);
 					}
 
-						// If any exception happens while optimizing assets, invoke the onError hook
-					catch (ex) {
-						subscriber.onError({data: ex, fatal: true});
+					// Otherwise, take the already optimized buffers from the cache
+					else {
+						assets = (await this.cacheService.get(CacheEntryKind.OPTIMIZED_ASSET_BUFFERS, cacheOptions))!;
 					}
-				}
-			}
-		);
 
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (assetsObserver != null) {
-					assetsObserver.unobserve();
-					assetsObserver = null;
-				}
-			}
-		};
-		return returnObserver;
+					this.logger.verbose(`Successfully optimized assets!`);
+
+					return {
+						kind: <OperationKind.END> OperationKind.END,
+						data: assets
+					};
+				})
+			);
+	}
+
+	/**
+	 * Returns true if the given output should be built
+	 * @param {IFoveaCliOutputConfig} output
+	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
+	 * @returns {boolean}
+	 */
+	private shouldBuildOutput (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): boolean {
+		// Make sure that the output is not disabled
+		if (output.disable === true) return false;
+
+		// If in watch mode, make sure the output is not disabled in watch mode
+		if (buildTaskOptions.watch) return output.disable !== "watch";
+
+		// Accept it!
+		return true;
 	}
 
 	/**
 	 * Builds all outputs
 	 * @param {IBuildProjectOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildOutputs (options: IBuildOutputsOptions, subscriber: ISubscriber<void>): IObserver {
+	private buildOutputs (options: IBuildOutputsOptions): Observable<Operation<void>> {
 		const {foveaCliConfig} = options.project;
-		let outputObservers: IObserver[] = [];
-		// noinspection JSMismatchedCollectionQueryUpdate
-		const builtOutputs: Set<IFoveaCliOutputConfig> = new Set();
-		subscriber.onStart();
-
-		// Normalize the outputs based on the CLI config
-		const outputs: IFoveaCliOutputConfig[] = Array.isArray(foveaCliConfig.output) ? foveaCliConfig.output : [foveaCliConfig.output];
 
 		// Only use those outputs that should not be disabled in watch mode - if this build is for watch mode
-		const filteredOutputs = outputs.filter(output => {
-			// Make sure that the output is not disabled
-			if (typeof output.disable === "boolean") return !output.disable;
-			// If in watch mode, make sure the output is not disabled in watch mode
-			if (options.buildTaskOptions.watch) return output.disable !== "watch";
-			// Accept it!
-			return true;
-		});
+		const filteredOutputs = ensureArray(foveaCliConfig.output)
+			.filter(output => this.shouldBuildOutput(output, options.buildTaskOptions));
 
 		// Loop through all of the outputs in parallel
-		filteredOutputs.forEach((output, index) => {
-			const outputObserver = this.buildOutput(
-				{...options, output, index},
-				{
-					onError: error => {
-						subscriber.onError(error);
-					},
-					onStart: () => {
-						subscriber.onStart();
-					},
-					onEnd: () => {
-						if (returnObserver.unobserved) return;
-
-						this.logger.logTag(output.tag, `Successfully built ${chalk.magenta(output.tag)}!`);
-						builtOutputs.add(output);
-
-						// If all outputs have been built, invoke the callback
-						if (builtOutputs.size === filteredOutputs.length) {
-							// The project was successfully built
-							subscriber.onEnd(undefined);
-						}
-					}
-				}
+		return from(filteredOutputs)
+			.pipe(
+				tap(({tag}) => this.logger.log(`Building output: ${chalk.magenta(tag)}`)),
+				mergeMap((output, index) => this.buildOutput({...options, output, index})
+					.pipe(
+						tap(({kind}) => {
+							if (kind === OperationKind.END) {
+								this.logger.log(`Successfully built ${chalk.magenta(output.tag)}!`);
+							}
+						})
+					))
 			);
-			outputObservers.push(outputObserver);
-		});
-
-		// Prepare a observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				outputObservers.forEach(outputObserver => {
-					outputObserver.unobserve();
-				});
-				outputObservers = [];
-				builtOutputs.clear();
-			}
-		};
-
-		// Return the observer
-		return returnObserver;
 	}
 
 	/**
 	 * Builds an output from an IFoveaCliConfig
 	 * @param {IBuildOutputOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildOutput (options: IBuildOutputOptions, subscriber: ISubscriber<void>): IObserver {
+	private buildOutput (options: IBuildOutputOptions): Observable<Operation<void>> {
 		const {output, assets, clearedDirectories, project} = options;
 		const {foveaCliConfig, root, hash} = project;
-		let restOfBuildObserver: IObserver|null = null;
-		let stylesObserver: IObserver|null = null;
-		subscriber.onStart();
 
 		// Get all output paths
 		const outputPaths = this.projectPathUtil.getOutputPathsForOutput({
@@ -492,119 +334,27 @@ export class BuildTask implements IBuildTask {
 
 		this.clearDestinationDirectory(outputPaths.directory.absolute, clearedDirectories);
 
-		// Generate the theme variables and global styles content
-		stylesObserver = this.buildStyles(
-			options,
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					if (restOfBuildObserver != null) {
-						restOfBuildObserver.unobserve();
-						restOfBuildObserver = null;
-					}
-					subscriber.onStart();
-				},
-				onEnd: styles => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
+		return this.buildStyles(options)
+			.pipe(
+				switchMap(styles => {
+					if (styles.kind === OperationKind.START) {
+						return of(OPERATION_START());
 					}
 
-					// Clear any existing observer for the rest of the build
-					if (restOfBuildObserver != null) {
-						restOfBuildObserver.unobserve();
-					}
-
-					this.logger.verboseTag(output.tag, `Successfully built styles!`);
-					// Prepare a new observer for the rest of the build
-					restOfBuildObserver = this.buildOutputFromStyles(
-						{...options, styles, outputPaths},
-						{
-							onError: error => {
-								subscriber.onError(error);
-							},
-							onStart: () => {
-								subscriber.onStart();
-							},
-							onEnd: value => {
-								// Break if the observer has been unobserved in the meantime
-								if (returnObserver.unobserved) {
-									return;
-								}
-
-								subscriber.onEnd(value);
-							}
-						}
-					);
-				}
-			}
-		);
-
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (stylesObserver != null) {
-					stylesObserver.unobserve();
-					stylesObserver = null;
-				}
-
-				if (restOfBuildObserver != null) {
-					restOfBuildObserver.unobserve();
-					restOfBuildObserver = null;
-				}
-			}
-		};
-		return returnObserver;
-
+					return this.buildOutputFromStyles({...options, styles: styles.data, outputPaths});
+				})
+			);
 	}
 
 	/**
 	 * Builds anything but the styles for a bundle
 	 * @param {IBuildOutputFromStylesOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {Promise<IObserver>}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildOutputFromStyles (options: IBuildOutputFromStylesOptions, subscriber: ISubscriber<void>): IObserver {
+	private buildOutputFromStyles (options: IBuildOutputFromStylesOptions): Observable<Operation<void>> {
 		const {output, outputPaths, project, buildTaskOptions, assets, styles: {globalStyles, themeVariables}} = options;
 		const {foveaCliConfig, hash, root, packageJson} = project;
-		let builtOutputBundle: boolean = false;
-		let builtOutputFiles: boolean = false;
 		let hasServed: boolean = false;
-
-		const beforeEnd = async () => {
-			// Assert that everything has been built
-			if (!builtOutputBundle || !builtOutputFiles) return;
-
-			this.logger.verboseTag(output.tag, `Writing assets to disk`);
-			await this.assetWriter.write(
-				Object.assign({},
-					...Object.entries(outputPaths.asset.appIcon).map(([key, path]) => ({[path.absolute]: assets.appIconMap[key]})),
-					...Object.entries(outputPaths.asset.other).map(([key, path]) => ({[path.absolute]: assets.assetMap[key]}))
-				), {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
-
-			this.logger.verboseTag(output.tag, `Successfully wrote all assets to disk!`);
-
-			// Serve the build if requested and if no development server has been served previously
-			if (!hasServed && buildTaskOptions.serve != null && buildTaskOptions.serve) {
-				hasServed = true;
-				this.logger.verboseTag(output.tag, `Serving bundle...`);
-				await this.serve({
-					index: options.index,
-					buildTaskOptions,
-					output,
-					resource: () => resource.output,
-					outputPaths: () => outputPaths
-				});
-			}
-
-			subscriber.onEnd(undefined);
-		};
-
-		subscriber.onStart();
 
 		// Prepare the IResource
 		const resource: IResource = {
@@ -615,7 +365,8 @@ export class BuildTask implements IBuildTask {
 		};
 
 		// Whether or not to use ES-modules depend on the given browserslist. If none is given, ES modules *will* be used. Otherwise, it will fall back to SystemJS for browsers without support
-		const moduleKind: ModuleFormat = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "es6-module", "es6-module-dynamic-import") ? "es" : "system";
+		const moduleKind: ModuleFormat = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, ...this.config.esmCaniuseFeatureNames) ? "es" : "system";
+
 		// Whether or not to transpile async functions
 		const asyncFunctionKind: FeatureKind = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "async-functions") ? "native" : "polyfill";
 
@@ -655,70 +406,61 @@ export class BuildTask implements IBuildTask {
 			config: foveaCliConfig
 		};
 
-		// Build the bundles and obtain an observer for them
-		let bundleObserver: IObserver|null = this.buildOutputBundle(
-			{...options, workerPolyfills, resource, additionalEnvironmentVariables, moduleKind, sharedRollupOptions},
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					subscriber.onStart();
-				},
-				onEnd: () => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
+		return combineLatest(
+			this.buildOutputBundle({...options, workerPolyfills, resource, additionalEnvironmentVariables, moduleKind, sharedRollupOptions})
+				.pipe(
+					tap(result => {
+						if (result.kind === OperationKind.END) {
+							this.logger.verboseTag(output.tag, `Successfully generated bundle!`);
+						}
+					})
+				),
+			this.buildOutputFiles({...options, polyfills, globalStyles, sharedRollupOptions})
+				.pipe(
+					tap(result => {
+						if (result.kind === OperationKind.END) {
+							this.logger.verboseTag(output.tag, `Successfully built ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)} and ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)} files!`);
+						}
+					})
+				)
+		)
+			.pipe(
+				switchMap(([bundleResult, outputFileResult]): Observable<Operation<void>> => {
+					if (bundleResult.kind === OperationKind.START || outputFileResult.kind === OperationKind.START) {
+						return of(OPERATION_START());
 					}
 
-					this.logger.verboseTag(output.tag, `Successfully generated bundle!`);
-					builtOutputBundle = true;
-					// noinspection JSIgnoredPromiseFromCall
-					beforeEnd();
-				}
-			}
-		);
+					this.logger.verboseTag(output.tag, `Writing assets to disk`);
 
-		// Build all additional output files
-		let outputFilesObserver: IObserver|null = this.buildOutputFiles(
-			{...options, polyfills, globalStyles, sharedRollupOptions},
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					subscriber.onStart();
-				},
-				onEnd: () => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
+					// TODO: Only do this if they have changed. This happens for each and every change to code in watch mode!
+
+					const assetWriterObservable = from(this.assetWriter.write(
+						Object.assign({},
+							...Object.entries(outputPaths.asset.appIcon).map(([key, path]) => ({[path.absolute]: assets.appIconMap[key]})),
+							...Object.entries(outputPaths.asset.other).map(([key, path]) => ({[path.absolute]: assets.assetMap[key]}))
+						), {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)}))
+						.pipe(tap(() => this.logger.verboseTag(output.tag, `Successfully wrote all assets to disk!`)));
+
+					const shouldServe = !hasServed && buildTaskOptions.serve != null && buildTaskOptions.serve;
+					if (!shouldServe) {
+						return assetWriterObservable.pipe(map(() => OPERATION_END()));
+					} else {
+						hasServed = true;
+
+						const serveObservable = this.serve({
+							index: options.index,
+							buildTaskOptions,
+							output,
+							resource: () => resource.output,
+							outputPaths: () => outputPaths
+						});
+
+						return merge(
+							assetWriterObservable,
+							serveObservable
+						).pipe(map(() => OPERATION_END()));
 					}
-
-					this.logger.verboseTag(output.tag, `Successfully built ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)} and ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)} files!`);
-					builtOutputFiles = true;
-					// noinspection JSIgnoredPromiseFromCall
-					beforeEnd();
-				}
-			}
-		);
-
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (bundleObserver != null) {
-					bundleObserver.unobserve();
-					bundleObserver = null;
-				}
-				if (outputFilesObserver != null) {
-					outputFilesObserver.unobserve();
-					outputFilesObserver = null;
-				}
-			}
-		};
-		return returnObserver;
+				}));
 	}
 
 	/**
@@ -789,353 +531,250 @@ export class BuildTask implements IBuildTask {
 	/**
 	 * Builds the bundle for an output
 	 * @param {IBuildOutputBundleOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildOutputBundle (options: IBuildOutputBundleOptions, subscriber: ISubscriber<void>): IObserver {
+	private buildOutputBundle (options: IBuildOutputBundleOptions): Observable<Operation<IBundlerServiceBundlingEndedResult>> {
 		const {sharedRollupOptions, outputPaths, output, buildTaskOptions, moduleKind, additionalEnvironmentVariables, resource, project} = options;
 		const {root, hash, foveaCliConfig} = project;
-		let builtMainBundle: boolean = false;
-		let serviceWorkerObserver: IBuildServiceWorkerResult|null = null;
-		subscriber.onStart();
 
-		let hasPrintedDiagnostics: boolean = false;
-		let hasHadError: boolean = false;
+		return this.bundler.generate({
+			...sharedRollupOptions,
+			paths: {
+				[this.config.entryName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.entry)
+			},
+			outputPaths,
+			bundleName: output.tag,
+			hash,
+			progress: {
+				logger: {
+					color: this.logger.LOG_COLOR,
+					log: this.logger.logTagOnOneLine.bind(this.logger, output.tag),
+					clear: this.logger.clearLastLine.bind(this.logger)
+				}
+			},
+			sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
+			context: "window",
+			browserslist: output.browserslist,
+			treeshake: this.getTreeshakingOptions(output),
+			babel: this.getBabelOptions(output, buildTaskOptions),
+			format: moduleKind,
+			watch: buildTaskOptions.watch,
+			banner: output.banner,
+			footer: output.footer,
+			intro: output.intro,
+			outro: output.outro,
+			plugins: [
+				Fovea({
+					production: this.shouldMinify(output, buildTaskOptions),
+					exclude: foveaCliConfig.exclude,
+					onDiagnostics: diagnostics => {
 
-		// Generate the main bundle
-		let mainBundleObserver: IObserver|null = this.bundler.generate({
-				...sharedRollupOptions,
-				paths: {
-					[this.config.entryName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.entry)
-				},
-				outputPaths,
-				bundleName: output.tag,
-				hash,
-				sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
-				context: "window",
-				browserslist: output.browserslist,
-				treeshake: this.getTreeshakingOptions(output),
-				babel: this.getBabelOptions(output, buildTaskOptions),
-				format: moduleKind,
-				watch: buildTaskOptions.watch,
-				banner: output.banner,
-				footer: output.footer,
-				intro: output.intro,
-				outro: output.outro,
-				plugins: [
-					Fovea({
-						production: this.shouldMinify(output, buildTaskOptions),
-						exclude: foveaCliConfig.exclude,
-						onDiagnostics: diagnostics => {
-							// Only proceed if there are any relevant diagnostics
-							if (!hasPrintedDiagnostics && diagnostics.length > 0) {
-								hasPrintedDiagnostics = true;
+						// Only proceed if there are any relevant diagnostics
+						if (diagnostics.length > 0) {
 
-								// If any of the diagnostics is an error, invoke the 'onError' subscriber
-								if (diagnostics.some(diagnostic => diagnostic.degree === FoveaDiagnosticDegree.ERROR)) {
-									hasHadError = true;
-									subscriber.onError({
-										tag: output.tag,
-										data: diagnostics,
-										fatal: false
-									});
-								}
-
-								// Otherwise, print it
-								else {
-									this.logger.logTag(output.tag, diagnostics.toString());
-								}
+							// If any of the diagnostics is an error, invoke the 'onError' subscriber
+							if (diagnostics.some(diagnostic => diagnostic.degree === FoveaDiagnosticDegree.ERROR)) {
+								throw new BuildError({
+									fatal: false,
+									data: diagnostics,
+									tag: output.tag
+								});
 							}
-						},
-						postcss: {
-							plugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
-							hook: pluginName => {
-								switch (pluginName) {
-									case "postcss-sass": {
-										return {
-											transform: (_file: string, contents: string): string|null => {
-												// Add relevant environment variables to the scss output
-												return this.addEnvironmentVariablesToScss(additionalEnvironmentVariables, contents);
-											}
-										};
-									}
-									case "postcss-preset-env":
-										return {
-											...(output.browserslist == null ? {} : {
-												// Use the Browserslist of the output options
-												browsers: output.browserslist
-											})
-										};
-								}
-								return null;
+
+							// Otherwise, print it
+							else {
+								this.logger.logTag(output.tag, diagnostics.toString());
 							}
 						}
-					}),
-					...(this.shouldCompress(output, buildTaskOptions) ? [
-						// Apply Brotli and Zlib compression
-						compressRollupPlugin({
-							compressor: this.compressor,
-							...this.getCompressOptions(output)
-						})
-					] : [])
-				],
-				observer: {
-					onError: error => {
-						subscriber.onError({...error, tag: output.tag});
 					},
-					onStart: () => {
-						hasPrintedDiagnostics = false;
-						hasHadError = false;
-						subscriber.onStart();
-					},
-					onEnd: async ({generatedChunkNames}) => {
-						// Break if the observer has been unobserved in the meantime
-						if (returnObserver.unobserved || hasHadError) {
-							return;
-						}
-
-						builtMainBundle = true;
-
-						// Refresh the IResource and 'RESOURCE' environment variable
-						resource.output = this.projectPathUtil.getOutputResourceFromOutputPath(outputPaths, generatedChunkNames);
-						additionalEnvironmentVariables.RESOURCE = JSON.stringify(resource);
-
-						if (serviceWorkerObserver == null) {
-							serviceWorkerObserver = this.buildServiceWorker({
-								...options,
-								watch: buildTaskOptions.watch
-							}, {
-								onError: error => {
-									subscriber.onError(error);
-								},
-								onStart: () => {
-									subscriber.onStart();
-								},
-								onEnd: () => {
-									// Break if the observer has been unobserved in the meantime
-									if (returnObserver.unobserved) {
-										return;
-									}
-
-									if (builtMainBundle) {
-										subscriber.onEnd(undefined);
-									}
+					postcss: {
+						plugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
+						hook: pluginName => {
+							switch (pluginName) {
+								case "postcss-sass": {
+									return {
+										transform: (_file: string, contents: string): string|null => {
+											// Add relevant environment variables to the scss output
+											return this.addEnvironmentVariablesToScss(additionalEnvironmentVariables, contents);
+										}
+									};
 								}
-							});
-						} else {
-							// Break if the observer has been unobserved in the meantime
-							if (returnObserver.unobserved) {
-								return;
+								case "postcss-preset-env":
+									return {
+										...(output.browserslist == null ? {} : {
+											// Use the Browserslist of the output options
+											browsers: output.browserslist
+										})
+									};
 							}
-							// Force recompilation of the ServiceWorker observer
-							serviceWorkerObserver.trigger();
+							return null;
 						}
 					}
-				}
+				}),
+				...(this.shouldCompress(output, buildTaskOptions) ? [
+					// Apply Brotli and Zlib compression
+					compressRollupPlugin({
+						compressor: this.compressor,
+						...this.getCompressOptions(output)
+					})
+				] : [])
+			],
+			errorObserver: {
+				error: error => this.updateStatus(BuildStatusKind.HOLDING, error)
 			}
-		);
+		})
+			.pipe(
+				switchMap((payload: IOperationStart|IOperationEnd<IBundlerServiceBundlingEndedResult>) => {
+					if (payload.kind === OperationKind.START) {
+						return of(OPERATION_START());
+					}
 
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (mainBundleObserver != null) {
-					mainBundleObserver.unobserve();
-					mainBundleObserver = null;
-				}
-				if (serviceWorkerObserver != null) {
-					serviceWorkerObserver.unobserve();
-					serviceWorkerObserver = null;
-				}
-			}
-		};
-		return returnObserver;
+					const {data: {generatedChunkNames}} = payload;
+
+					// Refresh the IResource and 'RESOURCE' environment variable
+					resource.output = this.projectPathUtil.getOutputResourceFromOutputPath(outputPaths, generatedChunkNames);
+					additionalEnvironmentVariables.RESOURCE = JSON.stringify(resource);
+					return this.buildServiceWorker({...options, watch: buildTaskOptions.watch});
+				}));
 	}
 
 	/**
 	 * Builds all output files that isn't styles and isn't bundles, such as index.html and manifest.json
 	 * @param {IBuildOutputFilesOptions} options
-	 * @param {ISubscriber<void>} subscriber
-	 * @returns {void}
+	 * @returns {Observable<Operation<void>>}
 	 */
-	private buildOutputFiles ({project: {foveaCliConfig, root}, buildTaskOptions, outputPaths, sharedRollupOptions, globalStyles, polyfills, output}: IBuildOutputFilesOptions, subscriber: ISubscriber<void>): IObserver {
+	private buildOutputFiles ({project: {foveaCliConfig, root}, buildTaskOptions, outputPaths, sharedRollupOptions, globalStyles, polyfills, output}: IBuildOutputFilesOptions): Observable<Operation<void>> {
 		const manifestPath = this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.manifest);
 		const indexPath = this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.index);
-		let builtManifest: boolean = false;
-		let builtIndex: boolean = false;
-		subscriber.onStart();
-
-		// Subscribe to the manifest.json.ts file and write it to disk each time it changes
-		let manifestJsonObserver: IObserver|null = this.manifestJsonParser.parse(
-			{...sharedRollupOptions, paths: {manifestPath}, watch: buildTaskOptions.watch},
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					this.logger.verboseTag(output.tag, `Building ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)}...`);
-					subscriber.onStart();
-				},
-				onEnd: async manifestJson => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
-					}
-					await this.manifestJsonWriter.write({[outputPaths.manifestJson.absolute]: manifestJson.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
-
-					builtManifest = true;
-					if (builtIndex) {
-						subscriber.onEnd(undefined);
-					}
-				}
-			}
-		);
-
-		// Subscribe to the index.html.ts file and write it to disk each time it changes
 		const polyfillUrl = `${this.config.polyfillUrl}?features=${polyfills.join(",")}`;
-		let indexHtmlObserver: IObserver|null = this.indexHtmlParser.parse(
-			{...sharedRollupOptions, paths: {indexPath}, watch: buildTaskOptions.watch, globalStyles, polyfillUrl, polyfillContent: `<script crossorigin="anonymous" src="${polyfillUrl}"></script>`},
-			{
-				onError: error => {
-					subscriber.onError(error);
-				},
-				onStart: () => {
-					this.logger.verboseTag(output.tag, `Building ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)}...`);
-					subscriber.onStart();
-				},
-				onEnd: async indexHtml => {
-					// Break if the observer has been unobserved in the meantime
-					if (returnObserver.unobserved) {
-						return;
-					}
-					await this.indexHtmlWriter.write({[outputPaths.indexHtml.absolute]: indexHtml.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
 
-					builtIndex = true;
-					if (builtManifest) {
-						subscriber.onEnd(undefined);
-					}
-				}
-			}
-		);
+		return combineLatest(
+			this.manifestJsonParser.parse({...sharedRollupOptions, paths: {manifestPath}, tag: output.tag})
+				.pipe(
+					switchMap(async (manifestJson): Promise<Operation<void>> => {
+						if (manifestJson.kind === OperationKind.START) {
+							return OPERATION_START();
+						}
 
-		// Return an observer
-		const returnObserver = {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (manifestJsonObserver != null) {
-					manifestJsonObserver.unobserve();
-					manifestJsonObserver = null;
+						this.logger.debugTag(output.tag, `Writing ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)} to disk...`);
+						await this.manifestJsonWriter.write({[outputPaths.manifestJson.absolute]: manifestJson.data.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
+
+						this.logger.debugTag(output.tag, `Successfully wrote ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)} to disk`);
+						return OPERATION_END();
+					})
+				),
+			this.indexHtmlParser.parse({...sharedRollupOptions, tag: output.tag, paths: {indexPath}, globalStyles, polyfillUrl, polyfillContent: `<script crossorigin="anonymous" src="${polyfillUrl}"></script>`})
+				.pipe(
+					switchMap(async (indexHtml): Promise<Operation<void>> => {
+						if (indexHtml.kind === OperationKind.START) {
+							return OPERATION_START();
+						}
+
+						this.logger.debugTag(output.tag, `Writing ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)} to disk...`);
+						await this.indexHtmlWriter.write({[outputPaths.indexHtml.absolute]: indexHtml.data.result}, {compress: this.shouldCompress(output, buildTaskOptions), ...this.getCompressOptions(output)});
+
+						this.logger.debugTag(output.tag, `Successfully wrote ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)} to disk`);
+						return OPERATION_END();
+					})
+				)
+		)
+			.pipe(map(([manifestObservable, indexHtmlObservable]) => {
+				if (manifestObservable.kind === OperationKind.START || indexHtmlObservable.kind === OperationKind.START) {
+					return OPERATION_START();
 				}
-				if (indexHtmlObserver != null) {
-					indexHtmlObserver.unobserve();
-					indexHtmlObserver = null;
-				}
-			}
-		};
-		return returnObserver;
+
+				return OPERATION_END();
+			}));
 	}
 
 	/**
 	 * Serves the build
 	 * @param {IServeOptions} options
-	 * @returns {Promise<void>}
+	 * @returns {Observable<void>}
 	 */
-	private async serve ({outputPaths, resource, output, buildTaskOptions, index}: IServeOptions): Promise<void> {
+	private serve ({outputPaths, resource, output, buildTaskOptions, index}: IServeOptions): Observable<void> {
+		return new Observable<void>(() => {
 
-		this.devServer.onResponseReady((request, response, localRoot) => {
-			// If the root is not the same, do nothing
-			if (localRoot !== outputPaths().directory.absolute) return;
-			const pathWithoutLeadingSlash = request.url.pathname.slice(1);
+			this.devServer.onResponseReady((request, response, localRoot) => {
+				// If the root is not the same, do nothing
+				if (localRoot !== outputPaths().directory.absolute) return;
+				const pathWithoutLeadingSlash = request.url.pathname.slice(1);
 
-			// If the path is identical to that of the generated service worker, or if in WATCH mode (which will be if the hashes doesn't change, ever) don't set 'immutable' Cache-Control headers
-			if (pathWithoutLeadingSlash === resource().chunk.serviceWorker) {
-				response.cacheControl = "no-cache";
-			}
+				// If the path is identical to that of the generated service worker, or if in WATCH mode (which will be if the hashes doesn't change, ever) don't set 'immutable' Cache-Control headers
+				if (pathWithoutLeadingSlash === resource().chunk.serviceWorker) {
+					response.cacheControl = "no-cache";
+				}
 
-		});
+			});
 
-		// Attempt to match the user agent when 'index' is requested
-		this.devServer.onRequestIndex(index, (userAgent, localRoot) => {
+			// Attempt to match the user agent when 'index' is requested
+			this.devServer.onRequestIndex(index, (userAgent, localRoot) => {
 
-			// If the root is the same and the user agent is matched, return the path to the index.html file from this output
-			if (localRoot === outputPaths().directory.absolute && output.match(userAgent)) {
-				return {
+				// If the root is the same and the user agent is matched, return the path to the index.html file from this output
+				if (localRoot === outputPaths().directory.absolute && output.match(userAgent)) {
+					return {
+						path: outputPaths().indexHtml.relative
+					};
+				}
+				return null;
+			});
+
+			// Prepare the options to use with the dev server
+			const devServerOptions: IDevServerServiceServeOptions = {
+				fallbackIndex: () => ({
 					path: outputPaths().indexHtml.relative
-				};
+				}),
+				host: output.serve.host,
+				port: output.serve.port,
+				root: outputPaths().directory.absolute,
+				logLevel: buildTaskOptions.debug ? 2 : 1,
+				liveReload: {
+					activated: buildTaskOptions.reload,
+					path: this.config.serveConfig.websocket.liveReloadPath
+				},
+				cacheControl: buildTaskOptions.watch != null && buildTaskOptions.watch
+					? this.config.serveConfig.cacheControl.watch
+					: this.config.serveConfig.cacheControl.default
+			};
+
+			// Take all existing servers
+			const existing = this.devServer.getActiveOptions();
+			// Check if there already is a development server for this unique combination of a host, root and directory
+			const existsAlready = [...existing].some(option => option.host === devServerOptions.host && option.root === devServerOptions.root && option.port === devServerOptions.port);
+
+			// If not, serve it!
+			if (!existsAlready) {
+				this.devServer.serve(devServerOptions)
+					.then(serverResult => {
+						this.logger.logTag(output.tag, `Development server is live on https://${output.serve.host}:${output.serve.port}!`);
+
+						// Listen for 'emit' events and call 'liveReload' when the build has finished, if 'reload' is given in the build options
+						if (buildTaskOptions.reload) {
+							this.buildEventEmitter.on(BuildStatusKind.BUILT, async () => serverResult.liveReload());
+						}
+					});
 			}
-			return null;
+
+			return () => {
+				this.devServer.stop().then();
+			};
+
 		});
-
-		// Prepare the options to use with the dev server
-		const devServerOptions: IDevServerServiceServeOptions = {
-			fallbackIndex: () => ({
-				path: outputPaths().indexHtml.relative
-			}),
-			host: output.serve.host,
-			port: output.serve.port,
-			root: outputPaths().directory.absolute,
-			logLevel: buildTaskOptions.debug ? 2 : 1,
-			liveReload: {
-				activated: buildTaskOptions.reload,
-				path: this.config.serveConfig.websocket.liveReloadPath
-			},
-			cacheControl: buildTaskOptions.watch != null && buildTaskOptions.watch
-				? this.config.serveConfig.cacheControl.watch
-				: this.config.serveConfig.cacheControl.default
-		};
-
-		// Take all existing servers
-		const existing = this.devServer.getActiveOptions();
-		// Check if there already is a development server for this unique combination of a host, root and directory
-		const existsAlready = [...existing].some(option => option.host === devServerOptions.host && option.root === devServerOptions.root && option.port === devServerOptions.port);
-
-		// If not, serve it!
-		if (!existsAlready) {
-			const serverResult = await this.devServer.serve(devServerOptions);
-			this.logger.logTag(output.tag, `Development server is live on https://${output.serve.host}:${output.serve.port}!`);
-
-			// Listen for 'emit' events and call 'liveReload' when the build has finished, if 'reload' is given in the build options
-			if (buildTaskOptions.reload) {
-				this.buildEventEmitter.on(BuildStatusKind.BUILT, async () => serverResult.liveReload());
-			}
-		}
 	}
 
 	/**
 	 * Builds theme variables and global styles
 	 * @param {IBuildStylesOptions} options
-	 * @param {ISubscriber<IStylesParserServiceResult>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<IStylesParserServiceEndResult>>}
 	 */
-	private buildStyles ({output, buildTaskOptions, project: {foveaCliConfig, root}}: IBuildStylesOptions, subscriber: ISubscriber<IStylesParserServiceResult>): IObserver {
-		// Generate the theme variables and global styles content
-		const returnObserver = this.stylesParser.parse({
-			watch: buildTaskOptions.watch,
+	private buildStyles ({output, buildTaskOptions, project: {foveaCliConfig, root}}: IBuildStylesOptions): Observable<Operation<IStylesParserServiceEndResult>> {
+		return this.stylesParser.parse({
 			postCSSPlugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
 			root,
 			foveaCliConfig,
+			tag: output.tag,
 			production: buildTaskOptions.production
-		}, {
-			onError: error => {
-				subscriber.onError(error);
-			},
-			onStart: () => {
-				this.logger.verboseTag(output.tag, `Building styles...`);
-				subscriber.onStart();
-			},
-			onEnd: value => {
-				// Break if the observer has been unobserved in the meantime
-				if (returnObserver.unobserved) {
-					return;
-				}
-
-				subscriber.onEnd(value);
-			}
 		});
-
-		return returnObserver;
 	}
 
 	/**
@@ -1224,70 +863,48 @@ export class BuildTask implements IBuildTask {
 	/**
 	 * Builds a ServiceWorker
 	 * @param {IBuildServiceWorkerOptions} options
-	 * @param {ISubscriber<IBundlerServiceBundlingEndedData>} subscriber
-	 * @returns {IBuildServiceWorkerResult}
+	 * @returns {Observable<Operation<IBundlerServiceBundlingEndedResult>>}
 	 */
-	private buildServiceWorker ({moduleKind, watch, output, outputPaths, sharedRollupOptions, workerPolyfills, project: {root, hash, foveaCliConfig}, buildTaskOptions}: IBuildServiceWorkerOptions, subscriber: ISubscriber<IBundlerServiceBundlingEndedData>): IBuildServiceWorkerResult {
-		// Generate the Service Worker
-		const generateBundle = (shouldWatch: boolean): IObserver => {
-			let bundleObserver: IObserver|null = this.bundler.generate({
-				...sharedRollupOptions,
-				watch: shouldWatch,
-				paths: {
-					[this.config.serviceWorkerName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.serviceWorker)
-				},
-				outputPaths,
-				sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
-				bundleName: `${this.config.serviceWorkerChunkPrefix}${output.tag}`,
-				hash,
-				format: moduleKind,
-				// Add the Worker polyfills as the intro to the ServiceWorker
-				banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
-				footer: output.footer,
-				intro: output.intro,
-				outro: output.outro,
-				browserslist: output.browserslist,
-				treeshake: this.getTreeshakingOptions(output),
-				babel: this.getBabelOptions(output, buildTaskOptions),
-				plugins: [
-					...(this.shouldCompress(output, buildTaskOptions) ? [
-						// Apply Brotli and Zlib compression
-						compressRollupPlugin({
-							compressor: this.compressor,
-							...this.getCompressOptions(output)
-						})
-					] : [])
-				],
-				observer: {
-					onError: error => {
-						subscriber.onError(error);
-					},
-					onStart: () => {
-						subscriber.onStart();
-					},
-					onEnd: result => {
-						// Break if the observer has been unobserved in the meantime
-						if (returnObserver.unobserved) {
-							return;
-						}
-
-						subscriber.onEnd(result);
-						if (!shouldWatch && bundleObserver != null) {
-							bundleObserver.unobserve();
-							bundleObserver = null;
-						}
-					}
+	private buildServiceWorker ({moduleKind, watch, output, outputPaths, sharedRollupOptions, workerPolyfills, project: {root, hash, foveaCliConfig}, buildTaskOptions}: IBuildServiceWorkerOptions): Observable<Operation<IBundlerServiceBundlingEndedResult>> {
+		return this.bundler.generate({
+			...sharedRollupOptions,
+			watch,
+			paths: {
+				[this.config.serviceWorkerName]: this.projectPathUtil.getPathFromProjectRoot(root, foveaCliConfig.serviceWorker)
+			},
+			outputPaths,
+			sourcemap: this.shouldGenerateSourcemaps(output, buildTaskOptions),
+			bundleName: `${this.config.serviceWorkerChunkPrefix}${output.tag}`,
+			hash,
+			progress: {
+				logger: {
+					color: this.logger.LOG_COLOR,
+					log: this.logger.logTagOnOneLine.bind(this.logger, output.tag),
+					clear: this.logger.clearLastLine.bind(this.logger)
 				}
-			});
-
-			return bundleObserver;
-		};
-
-		const returnObserver = {
-			...generateBundle(watch),
-			trigger: () => generateBundle(false)
-		};
-		return returnObserver;
+			},
+			format: moduleKind,
+			// Add the Worker polyfills as the intro to the ServiceWorker
+			banner: `importScripts("${this.config.polyfillUrl}?features=${workerPolyfills.join(",")}");`,
+			footer: output.footer,
+			intro: output.intro,
+			outro: output.outro,
+			browserslist: output.browserslist,
+			treeshake: this.getTreeshakingOptions(output),
+			babel: this.getBabelOptions(output, buildTaskOptions),
+			plugins: [
+				...(this.shouldCompress(output, buildTaskOptions) ? [
+					// Apply Brotli and Zlib compression
+					compressRollupPlugin({
+						compressor: this.compressor,
+						...this.getCompressOptions(output)
+					})
+				] : [])
+			],
+			errorObserver: {
+				error: error => this.updateStatus(BuildStatusKind.HOLDING, error)
+			}
+		});
 	}
 
 	/**
@@ -1308,28 +925,21 @@ export class BuildTask implements IBuildTask {
 	/**
 	 * Prints a status change to the console
 	 * @param {BuildStatusKind} status
-	 * @param {ISubscriberError<T>} [error]
+	 * @param {BuildError<T>} [error]
 	 */
-	private printStatusChange<T> (status: BuildStatusKind, error?: ISubscriberError<T>): void {
+	private printStatusChange<T> (status: BuildStatusKind, error?: BuildError<T>): void {
 		switch (status) {
 			case BuildStatusKind.HOLDING:
-				const defaultErrorMessage = `An error occurred:`;
-				let errorMessage = defaultErrorMessage;
-
 				if (error != null) {
-					if (error.data == null) {
-						errorMessage += `\nUnknown error`;
-					} else if ("stack" in error.data) {
-						errorMessage += `\n${(<any>error).data.stack.toString()}}`;
-					} else {
-						errorMessage += `\n${error.data.toString()}}`;
+					this.logger.logMessageForTag("An error occurred:", error.tag);
+					if (error.message != null) {
+						this.logger.logMessageForTag(error.message.toString(), error.tag);
+					}
+
+					if (error.data != null) {
+						this.logger.logMessageForTag(error.data.toString(), error.tag);
 					}
 				}
-
-				// Print the error message
-				error == null || error.tag == null
-					? this.logger.log(errorMessage)
-					: this.logger.logTag(error.tag, errorMessage);
 				break;
 			case BuildStatusKind.BUILDING:
 				this.logger.log(`Building app...`);
@@ -1343,9 +953,9 @@ export class BuildTask implements IBuildTask {
 	/**
 	 * Updates the status of the build
 	 * @param {BuildStatusKind} status
-	 * @param {ISubscriberError<T>>} [error]
+	 * @param {BuildError<T>>} [error]
 	 */
-	private updateStatus<T> (status: BuildStatusKind, error?: ISubscriberError<T>): void {
+	private updateStatus<T> (status: BuildStatusKind, error?: BuildError<T>): void {
 		if (this.buildStatus === status) return;
 
 		this.printStatusChange(status, error);
@@ -1353,5 +963,10 @@ export class BuildTask implements IBuildTask {
 
 		this.buildStatus = status;
 		this.buildEventEmitter.emit(status);
+
+		// (Re)throw the error if it is considered fatal
+		if (error != null && (!("fatal" in error) || error.fatal)) {
+			throw error;
+		}
 	}
 }

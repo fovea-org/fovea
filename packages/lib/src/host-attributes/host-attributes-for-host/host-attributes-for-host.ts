@@ -1,6 +1,5 @@
-import {FoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor, WeakMultiMap} from "@fovea/common";
 import {HostAttributesCallback} from "../host-attributes-callback/host-attributes-callback";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
 
 /**
  * A map between hosts and their host attributes

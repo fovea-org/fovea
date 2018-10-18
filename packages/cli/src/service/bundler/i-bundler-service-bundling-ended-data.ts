@@ -1,6 +1,6 @@
 import {RollupCache} from "rollup";
 
-export interface IBundlerServiceBundlingEndedData {
+export interface IBundlerServiceBundlingEndedResult {
 	cache: RollupCache;
 	generatedChunkNames: string[];
 }

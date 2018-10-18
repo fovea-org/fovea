@@ -71,6 +71,7 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 
 			if (diagnostics != null) {
 				const diags = diagnostics();
+
 				// Invoke the 'onDiagnostics' callback with the diagnostics
 				if (inputFoveaOptions.onDiagnostics != null) {
 					inputFoveaOptions.onDiagnostics(diags);
@@ -90,8 +91,7 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 		 * @returns {Promise<TransformSourceDescription|void>}
 		 */
 		async transform (code: string, file: string): Promise<TransformSourceDescription|void> {
-
-			// For anything else than @fovea/lib, compile the source code
+			// Compile the source code
 			const fileResult = await normalizedFoveaOptions.compiler.compile({file, code, options: normalizedFoveaOptions});
 
 			// Lazy-bind a reference to the diagnostics of the result

@@ -2,5 +2,5 @@ import {IRollupServiceConsumer} from "../../rollup/rollup-service/i-rollup-servi
 import {IIndexHtmlOptions} from "../../../index-html/i-index-html-options";
 
 export interface IIndexHtmlParserServiceOptions extends IRollupServiceConsumer, IIndexHtmlOptions {
-	watch: boolean;
+	tag: string;
 }

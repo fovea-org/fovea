@@ -6,6 +6,7 @@ import {IBuildConfig} from "../../build-config/i-build-config";
 import {IOutputPath} from "../../output-path/i-output-path";
 import {IGetOutputPathsForOutputOptions} from "./i-get-output-paths-for-output-options";
 import {IOutputResource} from "../../resource/i-resource";
+import {BuildError} from "../../error/build-error/build-error";
 
 /**
  * A utility class that helps with resolving paths within the project folder
@@ -52,7 +53,10 @@ export class ProjectPathUtil implements IProjectPathUtil {
 			currentDir = join(currentDir, "../");
 		}
 
-		throw new ReferenceError(`FoveaCLI could not find a project root from location: ${process.cwd()}`);
+		throw new BuildError({
+			message: "`FoveaCLI could not find a project root from location: ${process.cwd()}`",
+			fatal: true
+		});
 	}
 
 	/**

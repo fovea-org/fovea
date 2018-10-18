@@ -1,5 +1,4 @@
-import {FoveaHostConstructor, IProp} from "@fovea/common";
-import {WeakMultiMap} from "../../../multi-map/weak-multi-map";
+import {FoveaHostConstructor, IProp, WeakMultiMap} from "@fovea/common";
 
 /**
  * A map between hosts and their IProps

@@ -1,5 +1,4 @@
-import {FoveaHost} from "@fovea/common";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {FoveaHost, WeakMultiMap} from "@fovea/common";
 import {IDisposable} from "../../disposable/i-disposable";
 import {IDestroyable} from "../../destroyable/i-destroyable";
 

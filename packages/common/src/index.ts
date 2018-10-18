@@ -4,6 +4,8 @@ export * from "./uuid";
 export * from "./optional";
 export * from "./attribute";
 export * from "./host-attributes";
+export * from "./multi-map";
+export * from "./maybe-array";
 export * from "./node-extension";
 export * from "./custom-element";
 export * from "./custom-attribute";

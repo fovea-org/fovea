@@ -1,6 +1,5 @@
-import {FoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor, WeakMultiMap} from "@fovea/common";
 import {IEventEmitterOptions} from "../event-emitter/i-event-emitter-options";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
 
 /**
  * A Map between FoveaHostConstructors and the Set of all events that should be fired when the associated prop changes

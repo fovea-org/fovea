@@ -1,4 +1,4 @@
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {WeakMultiMap} from "@fovea/common";
 
 /**
  * A Map between roots and the HTMLTemplateElements containing static styles that has been added to them

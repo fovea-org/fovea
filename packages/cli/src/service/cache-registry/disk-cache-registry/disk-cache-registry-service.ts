@@ -11,6 +11,7 @@ import {IFileSaver} from "@wessberg/filesaver";
 import {IFileLoader} from "@wessberg/fileloader";
 import {IChecksumCacheMap} from "./i-checksum-cache-map";
 import {createHash} from "crypto";
+import {BuildError} from "../../../error/build-error/build-error";
 
 /**
  * A cache registry that writes to and reads from disk
@@ -93,7 +94,10 @@ export class DiskCacheRegistryService implements IDiskCacheRegistryService {
 				);
 
 			default:
-				throw new TypeError(`Unknown kind: ${CacheEntryKind[kind]}`);
+				throw new BuildError({
+					message: `Unknown kind: ${CacheEntryKind[kind]}`,
+					fatal: true
+				});
 		}
 	}
 
@@ -111,7 +115,10 @@ export class DiskCacheRegistryService implements IDiskCacheRegistryService {
 				return this.getHashFromContent(`[${kind}]}`);
 
 			default:
-				throw new TypeError(`Unknown kind: ${CacheEntryKind[kind]}`);
+				throw new BuildError({
+					message: `Unknown kind: ${CacheEntryKind[kind]}`,
+					fatal: true
+				});
 		}
 	}
 

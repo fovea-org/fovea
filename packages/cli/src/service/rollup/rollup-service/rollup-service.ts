@@ -1,5 +1,5 @@
 import {IRollupService} from "./i-rollup-service";
-import {IRollupServiceGenerateOptions} from "./i-rollup-service-generate-options";
+import {IRollupErrorObserver, IRollupServiceGenerateOptions} from "./i-rollup-service-generate-options";
 import {IRollupServiceGenerateWithResultOptions} from "./i-rollup-service-generate-with-result-options";
 import {OutputChunk, OutputOptions, Plugin, rollup, RollupBuild, RollupDirOptions, watch, Watcher} from "rollup";
 import {IRollupPrePluginsOptions} from "./i-rollup-pre-plugins-options";
@@ -9,11 +9,15 @@ import {IRollupServiceGenerateWithResultResult} from "./i-rollup-service-generat
 import {sync} from "resolve";
 import {envRollupPlugin} from "../plugin/env-plugin/env-plugin";
 import {resolvePlugin} from "../plugin/resolve-plugin/resolve-plugin";
+import progressRollupPlugin from "../plugin/progress-plugin/progress-plugin";
 import {IRollupServiceGenerateObserverPayload} from "./i-rollup-service-generate-observer-payload";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
 // @ts-ignore
 import {builtinModules} from "module";
+import {Observable, Subscriber} from "rxjs";
+import {filter, take} from "rxjs/operators";
+import {BuildError} from "../../../error/build-error/build-error";
+import {IOperationEnd, Operation, OperationKind} from "../../../operation/operation";
+import {FSWatcher} from "chokidar";
 
 // tslint:disable:no-any
 
@@ -23,34 +27,14 @@ import {builtinModules} from "module";
 export class RollupService implements IRollupService {
 
 	/**
-	 * A handler for events triggered by Rollup
-	 * @param ex
-	 * @param {OutputOptions} output
-	 * @param {ISubscriber<IRollupServiceGenerateObserverPayload>} observer
-	 * @returns {Promise<void>}
-	 */
-	private async eventHandler (ex: any, output: OutputOptions, observer: ISubscriber<IRollupServiceGenerateObserverPayload>): Promise<void> {
-		const {code, result, error} = ex;
-		switch (code) {
-			case "START":
-				return await this.didStartBundling(observer);
-			case "ERROR":
-				return observer.onError({data: error, fatal: false});
-			case "FATAL":
-				return observer.onError({data: error, fatal: true});
-			case "BUNDLE_END":
-				return await this.didEndBundling(result, output, observer);
-		}
-	}
-
-	/**
 	 * Generates a bundle with Rollup
 	 * @param {IRollupServiceGenerateOptions} options
-	 * @returns {Promise<IObserver>}
+	 * @returns {Observable<IRollupServiceGenerateObserverPayload>}
 	 */
-	public async generate (options: IRollupServiceGenerateOptions): Promise<IObserver> {
-		const {output, input, observer, context, treeshake, bundleExternals = false, packageJson, cache, plugins = []} = options;
-		let rollupOptions: RollupDirOptions|null = {
+	public generate (options: IRollupServiceGenerateOptions): Observable<Operation<IRollupServiceGenerateObserverPayload>> {
+		const {output, input, context, treeshake, bundleExternals = false, packageJson, cache, plugins = [], errorObserver} = options;
+
+		const rollupOptions: RollupDirOptions|null = {
 			input,
 			plugins: [
 				...this.getDefaultPrePlugins(options),
@@ -59,6 +43,7 @@ export class RollupService implements IRollupService {
 			],
 			context,
 			treeshake,
+			perf: true,
 			external: bundleExternals ? [] : [
 				...(packageJson.dependencies != null ? Object.keys(packageJson.dependencies) : []),
 				...(packageJson.devDependencies != null ? Object.keys(packageJson.devDependencies) : []),
@@ -71,62 +56,7 @@ export class RollupService implements IRollupService {
 			inlineDynamicImports: false
 		};
 
-		// If watch mode should be active
-		if (options.watch != null && options.watch) {
-			process.env.ROLLUP_WATCH = "true";
-			let watcher: Watcher|null = watch([{
-				...rollupOptions,
-				output
-			}]);
-
-			let evHandler: any|null = async (ex: any) => this.eventHandler(ex, output, observer);
-
-			// Listen for Rollup events
-			watcher.on("event", evHandler);
-
-			// Return a hook to stop listening for Rollup events
-			return {
-				unobserved: false,
-				unobserve () {
-					this.unobserved = true;
-					if (watcher != null) {
-						watcher.off("event", evHandler);
-
-						// Rollup extends the Chokidar watcher with a "close" command.
-						if ("close" in watcher) {
-							(<any>watcher).close();
-						}
-
-						// Otherwise, if for some reason it wasn't found, manually call 'removeAllListeners'
-						else {
-							watcher.removeAllListeners();
-						}
-						watcher = null;
-						rollupOptions = null;
-						evHandler = null;
-					}
-				}
-			};
-		}
-
-		// Otherwise, bundle once and write to disk
-		else {
-			// Generate a bundle from the result
-			this.didStartBundling(observer).then();
-			try {
-				this.didEndBundling(await rollup(rollupOptions), output, observer).then();
-			} catch (ex) {
-				observer.onError({data: ex, fatal: true});
-			}
-
-			// Return a Noop
-			return {
-				unobserved: false,
-				unobserve () {
-					this.unobserved = true;
-				}
-			};
-		}
+		return this.run(rollupOptions, output, errorObserver, options.watch === true);
 	}
 
 	/**
@@ -135,21 +65,19 @@ export class RollupService implements IRollupService {
 	 * @returns {Promise<IRollupServiceGenerateWithResultResult<T>>}
 	 */
 	public async generateWithResult<T> (options: IRollupServiceGenerateWithResultOptions): Promise<IRollupServiceGenerateWithResultResult<T>> {
-		const {outputBundle, cache} = await new Promise<IRollupServiceGenerateObserverPayload>(async resolve => {
-			const observer = await this.generate({
-				...options,
-				context: "global",
-				output: {format: "cjs"},
-				observer: {
-					onError: () => {},
-					onStart: () => {},
-					onEnd: payload => {
-						resolve(payload);
-						observer.unobserve();
-					}
+		const {data: {outputBundle, cache}} = <IOperationEnd<IRollupServiceGenerateObserverPayload>> await this.generate({
+			...options,
+			context: "global",
+			output: {format: "cjs"},
+			errorObserver: {
+				error: error => {
+					throw error;
 				}
-			});
-		});
+			}
+		})
+			.pipe(filter(({kind}) => kind === OperationKind.END))
+			.pipe(take(1))
+			.toPromise();
 
 		const resultObject = <{ exports: T }><any> {exports: {}};
 		const {code} = <OutputChunk> Object.values(outputBundle)[0];
@@ -163,33 +91,147 @@ export class RollupService implements IRollupService {
 	}
 
 	/**
-	 * Invoked when bundling has started
-	 * @param {ISubscriber<IRollupServiceGenerateObserverPayload>} subscriber
-	 * @returns {Promise<void>}
+	 * Runs Rollup once and returns an Observable
+	 * @param {RollupDirOptions} options
+	 * @param {OutputOptions} output
+	 * @param {IRollupErrorObserver} errorObserver
+	 * @returns {Observable<Operation<IRollupServiceGenerateObserverPayload>>}
 	 */
-	private async didStartBundling (subscriber: ISubscriber<IRollupServiceGenerateObserverPayload>): Promise<void> {
-		// Generate a bundle from the result and invoke the listener
-		subscriber.onStart();
+	private runOnce (options: RollupDirOptions, output: OutputOptions, errorObserver: IRollupErrorObserver): Observable<Operation<IRollupServiceGenerateObserverPayload>> {
+		return new Observable<Operation<IRollupServiceGenerateObserverPayload>>(subscriber => {
+			let isCanceled: boolean = false;
+
+			this.didStartBundling(subscriber);
+
+			rollup(options)
+				.then(async bundleSet => {
+					if (isCanceled) return;
+
+					await this.didEndBundling(bundleSet, output, subscriber, errorObserver);
+				})
+				.catch(error => {
+					this.didErrorBundling(error, true, errorObserver);
+				});
+
+			return () => {
+				isCanceled = true;
+			};
+		});
+	}
+
+	/**
+	 * Runs Rollup in watch mode and returns an Observable
+	 * @param {RollupDirOptions} options
+	 * @param {OutputOptions} output
+	 * @param {IRollupErrorObserver} errorObserver
+	 * @returns {Observable<Operation<IRollupServiceGenerateObserverPayload>>}
+	 */
+	private runInWatchMode (options: RollupDirOptions, output: OutputOptions, errorObserver: IRollupErrorObserver): Observable<Operation<IRollupServiceGenerateObserverPayload>> {
+		return new Observable<Operation<IRollupServiceGenerateObserverPayload>>(subscriber => {
+			// Otherwise, create a new Observable from Chokidar events and handle their values
+			process.env.ROLLUP_WATCH = "true";
+			let watcher: Watcher|undefined = watch([{...options, output}]);
+			const eventListener = (event: any) => this.didReceiveRollupEvent(event, output, subscriber, errorObserver);
+			watcher.on("event", eventListener);
+
+			return () => {
+
+				if (watcher != null) {
+
+					watcher.off("event", eventListener);
+					(<FSWatcher>watcher).close();
+
+					watcher = undefined;
+				}
+			};
+		});
+	}
+
+	/**
+	 * Runs Rollup based on the given configuration and returns an Observable of the results over time
+	 * @param {RollupDirOptions} options
+	 * @param {OutputOptions} output
+	 * @param {IRollupErrorObserver} errorObserver
+	 * @param {boolean} watchMode
+	 * @returns {Observable<Operation<IRollupServiceGenerateObserverPayload>>}
+	 */
+	private run (options: RollupDirOptions, output: OutputOptions, errorObserver: IRollupErrorObserver, watchMode: boolean): Observable<Operation<IRollupServiceGenerateObserverPayload>> {
+		return watchMode
+			? this.runInWatchMode(options, output, errorObserver)
+			: this.runOnce(options, output, errorObserver);
+	}
+
+	/**
+	 * Invoked when an event is received from Rollup
+	 * @param event
+	 * @param {OutputOptions} output
+	 * @param {Subscriber<Operation<IRollupServiceGenerateObserverPayload>>} subscriber
+	 * @param {IRollupErrorObserver} errorObserver
+	 */
+	private didReceiveRollupEvent (event: any, output: OutputOptions, subscriber: Subscriber<Operation<IRollupServiceGenerateObserverPayload>>, errorObserver: IRollupErrorObserver): void {
+		const {code, result, error} = event;
+
+		switch (code) {
+			case "START":
+				this.didStartBundling(subscriber);
+				break;
+			case "ERROR":
+			case "FATAL":
+				this.didErrorBundling(error, code === "FATAL", errorObserver);
+				break;
+			case "BUNDLE_END":
+				this.didEndBundling(result, output, subscriber, errorObserver).then();
+				break;
+		}
+	}
+
+	/**
+	 * Invoked when an Error occurred during bundling
+	 * @param {Error} error
+	 * @param {boolean} fatal
+	 * @param {IRollupErrorObserver} errorObserver
+	 * @returns {void}
+	 */
+	private didErrorBundling (error: Error, fatal: boolean, errorObserver: IRollupErrorObserver): void {
+		errorObserver.error(error instanceof BuildError ? error : new BuildError({
+			data: error,
+			fatal
+		}));
+	}
+
+	/**
+	 * Invoked when a bundle set has been generated
+	 * @param {Subscriber<Operation<IRollupServiceGenerateObserverPayload>>} subscriber
+	 * @returns {void}
+	 */
+	private didStartBundling (subscriber: Subscriber<Operation<IRollupServiceGenerateObserverPayload>>): void {
+		subscriber.next({
+			kind: OperationKind.START
+		});
 	}
 
 	/**
 	 * Invoked when a bundle set has been generated
 	 * @param {RollupBuild} bundleSet
 	 * @param {OutputOptions} outputOptions
-	 * @param {ISubscriber<IRollupServiceGenerateObserverPayload>} subscriber
+	 * @param {Subscriber<Operation<IRollupServiceGenerateObserverPayload>>} subscriber
+	 * @param {IRollupErrorObserver} errorObserver
 	 * @returns {Promise<void>}
 	 */
-	private async didEndBundling (bundleSet: RollupBuild, outputOptions: OutputOptions, subscriber: ISubscriber<IRollupServiceGenerateObserverPayload>): Promise<void> {
+	private async didEndBundling (bundleSet: RollupBuild, outputOptions: OutputOptions, subscriber: Subscriber<Operation<IRollupServiceGenerateObserverPayload>>, errorObserver: IRollupErrorObserver): Promise<void> {
 		try {
-			const emitResult: IRollupServiceGenerateObserverPayload = {
-				outputBundle: (await bundleSet.generate(outputOptions)).output,
-				cache: bundleSet.cache
-			};
-
-			// Generate a bundle from the result and invoke the listener
-			subscriber.onEnd(emitResult);
-		} catch (error) {
-			subscriber.onError({data: error, fatal: false});
+			subscriber.next({
+				kind: OperationKind.END,
+				data: {
+					outputBundle: (await bundleSet.generate(outputOptions)).output,
+					cache: bundleSet.cache
+				}
+			});
+		} catch (ex) {
+			errorObserver.error(new BuildError({
+				data: ex,
+				fatal: true
+			}));
 		}
 	}
 
@@ -198,8 +240,9 @@ export class RollupService implements IRollupService {
 	 * @param {IRollupPrePluginsOptions} options
 	 * @returns {Plugin[]}
 	 */
-	private getDefaultPrePlugins ({root, additionalEnvironmentVariables = {}}: IRollupPrePluginsOptions): Plugin[] {
+	private getDefaultPrePlugins ({root, progress, additionalEnvironmentVariables = {}}: IRollupPrePluginsOptions): Plugin[] {
 		return [
+			...(progress != null && progress !== false ? [progressRollupPlugin({root, ...progress})] : []),
 			envRollupPlugin({
 				additional: additionalEnvironmentVariables
 			}),

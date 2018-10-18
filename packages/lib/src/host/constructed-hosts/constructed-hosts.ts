@@ -1,4 +1,4 @@
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {WeakMultiMap} from "@fovea/common";
 import {ConstructedHostsMap} from "./constructed-hosts-map";
 
 /**

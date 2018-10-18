@@ -1,14 +1,16 @@
 import {IProjectParserService} from "./i-project-parser-service";
 import {IProjectParserServiceOptions} from "./i-project-parser-service-options";
-import {IProject} from "./i-project";
 import {IConfigParserService} from "../config-parser/i-config-parser-service";
 import {IPackageJsonParserService} from "../package-json-parser/i-package-json-parser-service";
 import {IProjectPathUtil} from "../../../util/project-path-util/i-project-path-util";
-import {IPackageJson} from "../../../package-json/i-package-json";
-import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
 import {IHasherService} from "../../hasher/i-hasher-service";
-import {IObserver} from "../../../observable/i-observer";
-import {ISubscriber} from "../../../observable/i-subscriber";
+import {from, Observable, of} from "rxjs";
+import {map, switchMap, tap} from "rxjs/operators";
+import {ILoggerService} from "../../logger/i-logger-service";
+import chalk from "chalk";
+import {IBuildConfig} from "../../../build-config/i-build-config";
+import {Operation, OPERATION_START, OperationKind} from "../../../operation/operation";
+import {IProjectParserServiceEndResult} from "./i-project-parser-service-result";
 
 /**
  * A class that helps with retrieving things that are relevant to the configuration of a Fovea project
@@ -18,85 +20,57 @@ export class ProjectParserService implements IProjectParserService {
 	constructor (private readonly configParser: IConfigParserService,
 							 private readonly packageJsonParser: IPackageJsonParserService,
 							 private readonly projectPathUtil: IProjectPathUtil,
-							 private readonly hasherService: IHasherService) {
+							 private readonly hasherService: IHasherService,
+							 private readonly logger: ILoggerService,
+							 private readonly config: IBuildConfig) {
 	}
 
 	/**
 	 * Retrieves the IFoveaCliConfig for a project as well as its' root
 	 * @param {IProjectParserServiceOptions} options
-	 * @param {ISubscriber<IProject>} subscriber
-	 * @returns {IObserver}
+	 * @returns {Observable<Operation<IProjectParserServiceEndResult>>}
 	 */
-	public parse ({config, watch}: IProjectParserServiceOptions, subscriber: ISubscriber<IProject>): IObserver {
-		let foveaCliConfigObserver: IObserver|null = null;
-		let packageJsonObserver: IObserver|null = null;
+	public parse ({config}: IProjectParserServiceOptions): Observable<Operation<IProjectParserServiceEndResult>> {
+		this.logger.verbose(`Finding project root...`);
 
-		(async () => {
-			let packageJson: IPackageJson|null;
-			let foveaCliConfig: IFoveaCliConfig|null;
-			const root = await this.projectPathUtil.findProjectRoot(config);
-			const hash = this.hasherService.generate();
+		// Compute a new hash
+		const hash = this.hasherService.generate();
 
-			// Subscribe to changes to the package.json file
-			packageJsonObserver = this.packageJsonParser.parse(
-				{path: this.projectPathUtil.getPathFromProjectRoot(root, "package.json"), watch},
-				{
-					onError: subscriber.onError,
-					onStart: subscriber.onStart,
-					onEnd: newPackageJson => {
-						packageJson = newPackageJson;
-						this.onProjectUpdated(root, hash, foveaCliConfig, packageJson, subscriber);
+		// Find the project root and then observe the package.json and fovea-cli.config files within that directory
+		return from(this.projectPathUtil.findProjectRoot(config))
+			.pipe(
+				tap(root => this.logger.debug(`Found project root: ${chalk.magenta(root)}`)),
+				tap(() => this.logger.verbose(`Finding and parsing ${chalk.magenta(this.config.foveaCliConfigName)} and ${chalk.magenta(this.config.packageFileName)} files...`)),
 
-						// Remove any existing observer for the fovea-cli.config
-						if (foveaCliConfigObserver != null) foveaCliConfigObserver.unobserve();
-
-						// Subscribe to changes to the fovea-cli.config file
-						foveaCliConfigObserver = this.configParser.parse(
-							{packageJson, watch, root, path: this.projectPathUtil.getPathFromProjectRoot(root, config)},
-							{
-								onError: subscriber.onError,
-								onStart: subscriber.onStart,
-								onEnd: newFoveaCliConfig => {
-									foveaCliConfig = newFoveaCliConfig.result;
-									this.onProjectUpdated(root, hash, foveaCliConfig, packageJson, subscriber);
-								}
+				switchMap(root => this.packageJsonParser.parse({path: this.projectPathUtil.getPathFromProjectRoot(root, this.config.packageFileName)})
+					.pipe(
+						switchMap((packageJsonResult): Observable<Operation<IProjectParserServiceEndResult>> => {
+							if (packageJsonResult.kind === OperationKind.START) {
+								return of(OPERATION_START());
 							}
-						);
-					}
-				}
+
+							return this.configParser.parse({packageJson: packageJsonResult.data, root, path: this.projectPathUtil.getPathFromProjectRoot(root, config)})
+								.pipe(
+									map(foveaCliConfigResult => {
+										if (foveaCliConfigResult.kind === OperationKind.START) {
+											return OPERATION_START();
+										}
+
+										this.logger.verbose(`Successfully parsed ${chalk.magenta(this.config.foveaCliConfigName)} and ${chalk.magenta(this.config.packageFileName)} files!`);
+
+										return {
+											kind: <OperationKind.END> OperationKind.END,
+											data: {
+												root,
+												hash,
+												packageJson: packageJsonResult.data,
+												foveaCliConfig: foveaCliConfigResult.data.result
+											}
+										};
+
+									}));
+						}))
+				)
 			);
-		})();
-
-		return {
-			unobserved: false,
-			unobserve () {
-				this.unobserved = true;
-				if (packageJsonObserver != null) {
-					packageJsonObserver.unobserve();
-				}
-
-				if (foveaCliConfigObserver != null) {
-					foveaCliConfigObserver.unobserve();
-				}
-			}
-		};
-	}
-
-	/**
-	 * Called each time something within the project is updated
-	 * @param {string} root
-	 * @param {string} hash
-	 * @param {IFoveaCliConfig | null} foveaCliConfig
-	 * @param {IPackageJson | null} packageJson
-	 * @param {ISubscriber<IProject>} subscriber
-	 */
-	private onProjectUpdated (root: string, hash: string, foveaCliConfig: IFoveaCliConfig|null, packageJson: IPackageJson|null, subscriber: ISubscriber<IProject>): void {
-		if (foveaCliConfig == null || packageJson == null) return;
-		subscriber.onEnd({
-			root,
-			foveaCliConfig,
-			packageJson,
-			hash
-		});
 	}
 }

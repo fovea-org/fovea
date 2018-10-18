@@ -1,6 +1,5 @@
 import {IListenResult} from "../../listen/i-listen-result";
-import {FoveaHost} from "@fovea/common";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {FoveaHost, WeakMultiMap} from "@fovea/common";
 
 /**
  * A Map of all active host listeners for the given host

@@ -3,6 +3,7 @@ import {IImageOptimizerOptions} from "../i-image-optimizer-options";
 import {ImageFormatKind} from "../../../../format/image-format-kind";
 import {ISharpImageOptimizer} from "./i-sharp-image-optimizer";
 import {OptimizerResult} from "../../i-optimizer-result";
+import {BuildError} from "../../../../error/build-error/build-error";
 
 /**
  * An ImageEncoder that uses Sharp as its' underlying implementation
@@ -161,7 +162,10 @@ export class SharpImageOptimizer implements ISharpImageOptimizer {
 					)
 				);
 			default:
-				throw new TypeError(`${this.normalizeQualityLevel.name} could not compute the quality to use for an image of kind: ${ImageFormatKind[outputFormat]}`);
+				throw new BuildError({
+					message: `${this.normalizeQualityLevel.name} could not compute the quality to use for an image of kind: ${ImageFormatKind[outputFormat]}`,
+					fatal: true
+				});
 		}
 	}
 

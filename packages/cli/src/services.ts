@@ -124,13 +124,13 @@ import {IRequestHandler} from "./service/dev-server/request-handler/i-request-ha
 import {IPolyfillService} from "./service/polyfill/i-polyfill-service";
 import {PolyfillService} from "./service/polyfill/polyfill-service";
 import {Commands} from "./command/commands";
-import {IWatchService} from "./service/watch/i-watch-service";
-import {WatchService} from "./service/watch/watch-service";
 import {IAssetParserService} from "./service/parser/asset-parser/i-asset-parser-service";
 import {AssetParserService} from "./service/parser/asset-parser/asset-parser-service";
 import {IDiskCacheRegistryService} from "./service/cache-registry/disk-cache-registry/i-disk-cache-registry-service";
 import {DiskCacheRegistryService} from "./service/cache-registry/disk-cache-registry/disk-cache-registry-service";
 import {compressionAlgorithmOptions, ICompressionAlgorithmOptions} from "./service/compression/compression-algorithm-options";
+import {IFileWatcher} from "./service/watch/i-file-watcher";
+import {FileWatcher} from "./service/watch/file-watcher";
 
 // Utilities
 DIContainer.registerSingleton<IProjectPathUtil, ProjectPathUtil>();
@@ -148,7 +148,7 @@ DIContainer.registerSingleton<IBundlerService, BundlerService>();
 DIContainer.registerSingleton<ICompressorService, CompressorService>();
 DIContainer.registerSingleton<IBufferSerializer, IBufferSerializer>(() => new BufferSerializer());
 DIContainer.registerSingleton<IPolyfillService, PolyfillService>();
-DIContainer.registerSingleton<IWatchService, WatchService>();
+DIContainer.registerSingleton<IFileWatcher, FileWatcher>();
 DIContainer.registerSingleton<IDiskCacheRegistryService, DiskCacheRegistryService>();
 
 // Writers

@@ -1,6 +1,7 @@
 import {IHasherService} from "./i-hasher-service";
 import {createHmac, getHashes, HexBase64Latin1Encoding} from "crypto";
 import {IBuildConfig} from "../../build-config/i-build-config";
+import {BuildError} from "../../error/build-error/build-error";
 
 // tslint:disable:no-magic-numbers
 
@@ -41,7 +42,10 @@ export class HasherService implements IHasherService {
 		}
 
 		// Throw an error if none of the preferred hashing algorithms were available
-		throw new ReferenceError(`None of the preferred Hash algorithms were available. All algorithms: ${JSON.stringify(Array.from(HasherService.HASH_ALGORITHMS))} `);
+		throw new BuildError({
+			message: `None of the preferred Hash algorithms were available. All algorithms: ${JSON.stringify(Array.from(HasherService.HASH_ALGORITHMS))} `,
+			fatal: true
+		});
 	})();
 
 	/**

@@ -58,7 +58,7 @@ export const foveaCliConfigNormalizeFunction: NormalizeFunction<IFoveaCliConfig,
 				{
 					tag: "latest",
 					directory: `${config.distFolderName}`,
-					browserslist: <string[]><any>`browsersWithSupportForFeatures("es6-module", "es6-module-dynamic-import", "shadowdomv1", "custom-elementsv1")`,
+					browserslist: <string[]><any>`browsersWithSupportForFeatures(${[...config.esmCaniuseFeatureNames, ...config.webComponentsCaniuseFeatureNames].map(name => `"${name}"`).join(", ")})`,
 					match: <(userAgent: string) => boolean><any>`function (userAgent: string) {return matchBrowserslistOnUserAgent(userAgent, this.browserslist!);}`,
 					serve: {host, port: 8000},
 					disable: false

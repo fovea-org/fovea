@@ -1,5 +1,5 @@
 import {UpgradedHostsMap} from "./upgraded-hosts-map";
-import {WeakMultiMap} from "../../multi-map/weak-multi-map";
+import {WeakMultiMap} from "@fovea/common";
 
 /**
  * A Set of all FoveaHosts that has been upgraded.
