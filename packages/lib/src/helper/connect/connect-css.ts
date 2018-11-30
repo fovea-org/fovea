@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor, Json} from "@fovea/common";
 import {STATIC_CSS_FOR_HOST} from "../../css/static-css/static-css-for-host";
 import {rootHasStaticCSSTemplate} from "../../css/static-css/root-has-static-css-template";
 import {setStaticCSSTemplateForRoot} from "../../css/static-css/set-static-css-template-for-root";
@@ -8,11 +8,11 @@ import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-roo
 
 /**
  * Connects all CSS for the given host
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___connectCSS (host: FoveaHost): void {
-
-	const constructor = <FoveaHostConstructor> host.constructor;
+export function ___connectCSS (_host: Json): void {
+	const host = _host as FoveaHost;
+	const constructor = host.constructor as FoveaHostConstructor;
 	const styles = STATIC_CSS_FOR_HOST.get(constructor);
 	const root = getRootForNode(host.___hostElement);
 	styles.forEach(templateFunction => {

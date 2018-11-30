@@ -1,13 +1,14 @@
-import {FoveaHost} from "@fovea/common";
+import {FoveaHost, Json} from "@fovea/common";
 import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
 import {disposeOrDestroyShared} from "../dispose/dispose-or-destroy-shared";
 
 /**
  * Destroys a host
- * @param {FoveaHost} host
+ * @param {Json} _host
  * @private
  */
-export function ___destroy (host: FoveaHost): void {
+export function ___destroy (_host: Json): void {
+	const host = _host as FoveaHost;
 	disposeOrDestroyShared(host);
 	if (host.___destroyTemplates != null) host.___destroyTemplates();
 

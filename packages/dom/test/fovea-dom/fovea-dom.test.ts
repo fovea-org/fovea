@@ -1,12 +1,11 @@
-import "../../src/services";
+import {container} from "../../src/services";
 
 import {test} from "ava";
 import {join} from "path";
 import {readFileSync} from "fs";
-import {DIContainer} from "@wessberg/di";
 import {IFoveaDOMHost} from "../../src/fovea-dom/i-fovea-dom-host";
 
-const foveaDOM = DIContainer.get<IFoveaDOMHost>();
+const foveaDOM = container.get<IFoveaDOMHost>();
 
 test("generate () => returns the compiled source code for a module", async t => {
 	const printInstructions = true;

@@ -68,7 +68,7 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 		if (registerSetOnHostCalls.length > 0) {
 
 			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerSetOnHostCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerSetOnHostPropsMethodName} != null) super.${this.configuration.postCompile.registerSetOnHostPropsMethodName}();` +
@@ -80,7 +80,7 @@ export class SetOnHostExtractor implements ISetOnHostExtractor {
 				// Create the static method
 				context.container.appendLeft(
 					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerSetOnHostPropsMethodName} (): void {` +
+					`\n	public static ${this.configuration.postCompile.registerSetOnHostPropsMethodName} (): void {` +
 					`${body}` +
 					`\n	}`
 				);

@@ -1,5 +1,4 @@
 import {IFoveaStyles} from "./i-fovea-styles";
-import {DIContainer} from "@wessberg/di";
 import {IFoveaStylesResult} from "./i-fovea-styles-result";
 import {IFoveaStylesOptions} from "./i-fovea-styles-options";
 import {IFoveaStylesHost} from "./i-fovea-styles-host";
@@ -7,6 +6,7 @@ import {IFoveaStylesTakeVariablesOptions} from "./i-fovea-styles-take-variables-
 import {IFoveaStylesTakeVariablesResult} from "./i-fovea-styles-take-variables-result";
 import {IFoveaStylesTakeImportPathsOptions} from "./i-fovea-styles-take-import-paths-options";
 import {IFoveaStylesTakeImportPathsResult} from "./i-fovea-styles-take-import-paths-result";
+import {container} from "../services";
 
 /**
  * A FoveaStyles class meant for public consumption. This shadows the actual FoveaStylesHost class to ensure
@@ -14,7 +14,7 @@ import {IFoveaStylesTakeImportPathsResult} from "./i-fovea-styles-take-import-pa
  */
 export class FoveaStyles implements IFoveaStyles {
 	constructor () {
-		return DIContainer.get<IFoveaStylesHost>();
+		return container.get<IFoveaStylesHost>();
 	}
 
 	/**

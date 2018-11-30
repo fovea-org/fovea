@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {Json, FoveaHost, FoveaHostConstructor} from "@fovea/common";
 import {BOUND_HOST_ATTRIBUTES_FOR_HOST} from "../../host-attributes/bound-host-attributes-for-host/bound-host-attributes-for-host";
 import {HOST_ATTRIBUTES_FOR_HOST} from "../../host-attributes/host-attributes-for-host/host-attributes-for-host";
 import {HostAttributesCallback} from "../../host-attributes/host-attributes-callback/host-attributes-callback";
@@ -6,9 +6,10 @@ import {hostAttributesHelperMap} from "../../host-attributes/host-attributes-hel
 
 /**
  * Connects all host attributes for the given host
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___connectHostAttributes (host: FoveaHost): void {
+export function ___connectHostAttributes (_host: Json): void {
+	const host = _host as FoveaHost;
 
 	const constructor = <FoveaHostConstructor> host.constructor;
 

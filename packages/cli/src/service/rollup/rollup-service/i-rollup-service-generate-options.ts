@@ -8,10 +8,10 @@ export interface IRollupErrorObserver {
 	error (error: BuildError<{}>): void;
 }
 
-export interface IRollupServiceGenerateOptions extends IRollupServiceGenerateBaseOptions, IRollupPrePluginsOptions, IRollupPostPluginsOptions {
+export type IRollupServiceGenerateOptions = IRollupServiceGenerateBaseOptions & IRollupPrePluginsOptions & IRollupPostPluginsOptions & {
 	output: OutputOptions;
 	bundleExternals?: boolean;
 	watch?: boolean;
 	treeshake?: InputOptions["treeshake"];
 	errorObserver: IRollupErrorObserver;
-}
+};

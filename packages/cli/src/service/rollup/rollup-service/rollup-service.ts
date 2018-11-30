@@ -83,7 +83,7 @@ export class RollupService implements IRollupService {
 		const {code} = <OutputChunk> Object.values(outputBundle)[0];
 
 		// Execute the file and return the result. Resolve all required modules relative to the project root
-		new Function("module", "exports", "require", `${code}`)(resultObject, resultObject.exports, (id: string) => require(sync(id, {basedir: options.root})));
+		new Function("module", "exports", "require", `${code}`)(resultObject, resultObject.exports, (id: string) => require(sync(id, {basedir: options.cwd})));
 		return {
 			result: "default" in resultObject.exports ? (<any>resultObject).exports.default : resultObject.exports,
 			cache
@@ -240,13 +240,13 @@ export class RollupService implements IRollupService {
 	 * @param {IRollupPrePluginsOptions} options
 	 * @returns {Plugin[]}
 	 */
-	private getDefaultPrePlugins ({root, progress, additionalEnvironmentVariables = {}}: IRollupPrePluginsOptions): Plugin[] {
+	private getDefaultPrePlugins ({cwd, progress, additionalEnvironmentVariables = {}}: IRollupPrePluginsOptions): Plugin[] {
 		return [
-			...(progress != null && progress !== false ? [progressRollupPlugin({root, ...progress})] : []),
+			...(progress != null && progress !== false ? [progressRollupPlugin({cwd, ...progress})] : []),
 			envRollupPlugin({
 				additional: additionalEnvironmentVariables
 			}),
-			resolvePlugin({root})
+			resolvePlugin({cwd})
 		];
 	}
 
@@ -255,9 +255,9 @@ export class RollupService implements IRollupService {
 	 * @param {IRollupPostPluginsOptions} options
 	 * @returns {Plugin[]}
 	 */
-	private getDefaultPostPlugins ({root, tsconfig, browserslist, babel}: IRollupPostPluginsOptions): Plugin[] {
+	private getDefaultPostPlugins (options: IRollupPostPluginsOptions): Plugin[] {
 		return [
-			typescriptRollupPlugin({root, tsconfig, browserslist, babel})
+			typescriptRollupPlugin(options)
 		];
 	}
 

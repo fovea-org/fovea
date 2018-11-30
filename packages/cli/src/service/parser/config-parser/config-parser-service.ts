@@ -29,7 +29,7 @@ export class ConfigParserService implements IConfigParserService {
 	 * @param {IConfigParserServiceOptions} options
 	 * @returns {Observable<Operation<IConfigParserServiceEndResult>>}
 	 */
-	public parse ({root, path, packageJson, cache}: IConfigParserServiceOptions): Observable<Operation<IConfigParserServiceEndResult>> {
+	public parse ({cwd, path, packageJson, cache}: IConfigParserServiceOptions): Observable<Operation<IConfigParserServiceEndResult>> {
 
 		// Watch for changes to the fovea-cli.config file file and load it when it changes
 		return this.fileWatcher.watch(path)
@@ -41,7 +41,8 @@ export class ConfigParserService implements IConfigParserService {
 
 					(async () => {
 						const {result, cache: newCache} = await this.rollupService.generateWithResult<IFoveaCliConfig>({
-							root,
+							cwd,
+							browserslist: false,
 							packageJson,
 							cache,
 							input: {path}

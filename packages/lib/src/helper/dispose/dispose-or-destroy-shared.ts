@@ -1,11 +1,12 @@
-import {FoveaHost} from "@fovea/common";
+import {FoveaHost, Json} from "@fovea/common";
 
 /**
  * Shared logic for when a host is disposed or destroyed
- * @param {FoveaHost} host
+ * @param {Json} _host
  * @private
  */
-export function disposeOrDestroyShared (host: FoveaHost): void {
+export function disposeOrDestroyShared (_host: Json): void {
+	const host = _host as FoveaHost;
 	if (host.___disposeProps != null) host.___disposeProps();
 	if (host.___disposeListeners != null) host.___disposeListeners();
 	if (host.___disposeVisibilityObservers != null) host.___disposeVisibilityObservers();

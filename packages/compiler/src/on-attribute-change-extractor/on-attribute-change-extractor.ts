@@ -79,7 +79,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 		if (registerAttributeChangeObserverCalls.length > 0 && !compilerOptions.dryRun) {
 
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerAttributeChangeObserverCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerAttributeChangeObserversMethodName}();` +
@@ -97,7 +97,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 			// Create the register method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerAttributeChangeObserversMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);
@@ -105,7 +105,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 			// Create the connect method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.connectAttributeChangeObserversMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -113,7 +113,7 @@ export class OnAttributeChangeExtractor implements IOnAttributeChangeExtractor {
 			// Create the dispose method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.disposeAttributeChangeObserversMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);

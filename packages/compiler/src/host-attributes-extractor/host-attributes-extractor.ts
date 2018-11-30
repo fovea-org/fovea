@@ -123,7 +123,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				const expression = `${this.libUser.use("registerHostAttributes", compilerOptions, context)}((host, {${[...requiredHelpers].map(requiredHelper => libHelperName[requiredHelper]).join(", ")}}) => {\n		${instructions.split("\n").map(line => `	${line}`).join("\n		")}\n		}, this);`;
 
 				const registerBody = (
-					this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+					this.foveaHostUtil.isBaseClass(mark.classDeclaration) || this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
 						? `\n		${expression}`
 						: `\n		// ts-ignore` +
 						`\n		if (super.${this.configuration.postCompile.registerHostAttributesMethodName} != null) super.${this.configuration.postCompile.registerHostAttributesMethodName}();` +
@@ -141,7 +141,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				// Create the register method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerHostAttributesMethodName} (): void {` +
+					`\n	public static ${this.configuration.postCompile.registerHostAttributesMethodName} (): void {` +
 					`${registerBody}` +
 					`\n	}`
 				);
@@ -149,7 +149,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				// Create the connect method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.connectHostAttributesMethodName} (): void {` +
+					`\n	public ${this.configuration.postCompile.connectHostAttributesMethodName} (): void {` +
 					`${connectBody}` +
 					`\n	}`
 				);
@@ -157,7 +157,7 @@ export class HostAttributesExtractor implements IHostAttributesExtractor {
 				// Create the dispose method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
-					`\n	protected ${this.configuration.postCompile.disposeHostAttributesMethodName} (): void {` +
+					`\n	public ${this.configuration.postCompile.disposeHostAttributesMethodName} (): void {` +
 					`${disposeBody}` +
 					`\n	}`
 				);

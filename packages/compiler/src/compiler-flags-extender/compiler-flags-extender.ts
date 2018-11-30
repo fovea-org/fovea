@@ -26,7 +26,7 @@ export class CompilerFlagsExtender implements ICompilerFlagsExtender {
 		if (!compilerOptions.dryRun) {
 			context.container.appendLeft(
 				mark.classDeclaration.members.end,
-				`\n	public static readonly ${this.configuration.postCompile.compilerFlagsPropName} = "${this.getCompilerFlags(options.context.container.file)}";`
+				`\n	public static readonly ${this.configuration.postCompile.compilerFlagsPropName}: string = "${this.getCompilerFlags(options.context.container.file)}";`
 			);
 		}
 	}

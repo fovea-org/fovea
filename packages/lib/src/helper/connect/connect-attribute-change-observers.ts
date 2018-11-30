@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor, Json} from "@fovea/common";
 import {takeRelevantHost} from "../../host/take-relevant-host/take-relevant-host";
 import {parseTarget} from "../../target/parse-target";
 import {BOUND_ATTRIBUTE_CHANGE_OBSERVERS} from "../../dom-mutation/attribute-change-observers-for-host/bound-attribute-change-observers";
@@ -25,11 +25,12 @@ function invokeBoundAttributeChangeObserverCallback (bound: Function, attributes
 
 /**
  * Connects the given attribute change observer to the host
- * @param {FoveaHost} host
+ * @param {FoveaHost} _host
  * @param {IAttributeChangeObserver} observer
  * @returns {IAttributeChangeObserverResult}
  */
-function connectAttributeChangeObserver (host: FoveaHost, {method, attributes, target}: IAttributeChangeObserver): IAttributeChangeObserverResult {
+function connectAttributeChangeObserver (_host: Json, {method, attributes, target}: IAttributeChangeObserver): IAttributeChangeObserverResult {
+	const host = _host as FoveaHost;
 	const relevantHost = takeRelevantHost(host, method.isStatic);
 	const bound = (<any>relevantHost)[method.name].bind(relevantHost);
 	const targetNode = target != null ? <Element> parseTarget(host, target) : host.___hostElement;

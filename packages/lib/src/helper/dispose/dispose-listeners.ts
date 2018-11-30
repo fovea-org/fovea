@@ -1,12 +1,13 @@
-import {FoveaHost} from "@fovea/common";
+import {FoveaHost, Json} from "@fovea/common";
 import {BOUND_HOST_LISTENERS} from "../../listener/host-listener/bound-host-listeners";
 import {ricScheduler} from "@fovea/scheduler";
 
 /**
  * Disposes all host listeners for the given host some time in the future
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___disposeListeners (host: FoveaHost): void {
+export function ___disposeListeners (_host: Json): void {
+	const host = _host as FoveaHost;
 	ricScheduler.mutate(disposeListeners.bind(null, host)).then();
 }
 

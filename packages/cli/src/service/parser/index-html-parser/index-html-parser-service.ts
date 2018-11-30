@@ -27,7 +27,7 @@ export class IndexHtmlParserService implements IIndexHtmlParserService {
 	 * @param {IIndexHtmlParserServiceOptions} options
 	 * @returns {Observable<Operation<IIndexHtmlParserServiceEndResult>>}
 	 */
-	public parse ({paths, resource, additionalEnvironmentVariables, root, tsconfig, packageJson, globalStyles, polyfillContent, polyfillUrl, cache, tag}: IIndexHtmlParserServiceOptions): Observable<Operation<IIndexHtmlParserServiceEndResult>> {
+	public parse ({paths, resource, additionalEnvironmentVariables, cwd, tsconfig, packageJson, globalStyles, polyfillContent, polyfillUrl, cache, tag}: IIndexHtmlParserServiceOptions): Observable<Operation<IIndexHtmlParserServiceEndResult>> {
 
 		this.logger.verboseTag(tag, `Generating ${chalk.magenta(`${this.config.indexName}.${this.config.defaultXMLScriptExtension}`)}...`);
 
@@ -41,7 +41,8 @@ export class IndexHtmlParserService implements IIndexHtmlParserService {
 
 					this.rollupService.generateWithResult<(options: IIndexHtmlOptions) => string>({
 						additionalEnvironmentVariables,
-						root,
+						cwd,
+						browserslist: false,
 						cache,
 						tsconfig,
 						packageJson,

@@ -35,7 +35,7 @@ export class ButtonComponent extends FormItemComponent {
 	/**
 	 * Invoked when the button is connected to the DOM
 	 */
-	protected connectedCallback (): void {
+	public connectedCallback (): void {
 		super.connectedCallback();
 		this.refresh().then();
 	}

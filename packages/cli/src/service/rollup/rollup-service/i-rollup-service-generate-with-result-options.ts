@@ -2,5 +2,4 @@ import {IRollupServiceGenerateBaseOptions} from "./i-rollup-service-generate-bas
 import {IRollupPrePluginsOptions} from "./i-rollup-pre-plugins-options";
 import {IRollupPostPluginsOptions} from "./i-rollup-post-plugins-options";
 
-export interface IRollupServiceGenerateWithResultOptions extends IRollupServiceGenerateBaseOptions, IRollupPrePluginsOptions, IRollupPostPluginsOptions {
-}
+export type IRollupServiceGenerateWithResultOptions = IRollupServiceGenerateBaseOptions & IRollupPrePluginsOptions & IRollupPostPluginsOptions;

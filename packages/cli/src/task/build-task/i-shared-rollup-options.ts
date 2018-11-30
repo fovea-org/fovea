@@ -3,8 +3,8 @@ import {IResource} from "../../resource/i-resource";
 import {IFoveaCliConfig} from "../../fovea-cli-config/i-fovea-cli-config";
 
 export interface ISharedRollupOptions {
-	root: string;
-	tsconfig: string;
+	cwd: string;
+	tsconfig: IFoveaCliConfig["tsconfig"];
 	additionalEnvironmentVariables: { [key: string]: string };
 	packageJson: IPackageJson;
 	resource: IResource;

@@ -382,7 +382,7 @@ export class LoggerService implements ILoggerService {
 	 * @param {string} output
 	 */
 	private printOnOneLine (output: string): void {
-		if (process.stdin.isTTY) {
+		if (process.stdin.isTTY === true) {
 			(<any>process).stdout.clearLine();
 			(<any>process).stdout.cursorTo(0);
 			if (process.stdout.columns == null || output.length < process.stdout.columns) {
@@ -399,7 +399,7 @@ export class LoggerService implements ILoggerService {
 	 * Clears the last line of stdout, if possible
 	 */
 	public clearLastLine (): void {
-		if (process.stdin.isTTY) {
+		if (process.stdin.isTTY === true) {
 			(<any>process).stdout.clearLine();
 			(<any>process).stdout.cursorTo(0);
 		}

@@ -28,7 +28,7 @@ export class ManifestJsonParserService implements IManifestJsonParserService {
 	 * @param {IManifestJsonParserServiceOptions} options
 	 * @returns {Observable<Operation<IManifestJsonParserServiceEndResult>>}
 	 */
-	public parse ({paths, resource, additionalEnvironmentVariables, root, tsconfig, packageJson, cache, tag}: IManifestJsonParserServiceOptions): Observable<Operation<IManifestJsonParserServiceEndResult>> {
+	public parse ({paths, resource, additionalEnvironmentVariables, cwd, tsconfig, packageJson, cache, tag}: IManifestJsonParserServiceOptions): Observable<Operation<IManifestJsonParserServiceEndResult>> {
 		this.logger.verboseTag(tag, `Generating ${chalk.magenta(`${this.config.manifestName}.${this.config.defaultJsonExtension}`)}...`);
 
 		// Watch for changes to the manifest.json.ts file and compile it when it changes
@@ -41,7 +41,8 @@ export class ManifestJsonParserService implements IManifestJsonParserService {
 
 					this.rollupService.generateWithResult<(config: IResource) => IManifestJson>({
 						additionalEnvironmentVariables,
-						root,
+						cwd,
+						browserslist: false,
 						tsconfig,
 						cache,
 						packageJson,

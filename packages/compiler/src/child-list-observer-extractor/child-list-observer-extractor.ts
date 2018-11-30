@@ -93,7 +93,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 		if (registerChildListObserverCalls.length > 0 && !compilerOptions.dryRun) {
 
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerChildListObserverCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerChildListObserversMethodName} != null) super.${this.configuration.postCompile.registerChildListObserversMethodName}();` +
@@ -111,7 +111,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 			// Create the register method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerChildListObserversMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerChildListObserversMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);
@@ -119,7 +119,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 			// Create the connect method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.connectChildListObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.connectChildListObserversMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -127,7 +127,7 @@ export class ChildListObserverExtractor implements IChildListObserverExtractor {
 			// Create the dispose method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.disposeChildListObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.disposeChildListObserversMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);

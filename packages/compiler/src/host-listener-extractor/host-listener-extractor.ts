@@ -80,7 +80,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 		// If there is at least 1 host listener, add the prototype method
 		if (registerListenerCalls.length > 0 && !compilerOptions.dryRun) {
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerListenerCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerListenersMethodName} != null) super.${this.configuration.postCompile.registerListenersMethodName}();` +
@@ -99,7 +99,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 			// Create the register method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerListenersMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerListenersMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);
@@ -107,7 +107,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 			// Create the connect method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.connectListenersMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.connectListenersMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -115,7 +115,7 @@ export class HostListenerExtractor implements IHostListenerExtractor {
 			// Create the dispose method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.disposeListenersMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);

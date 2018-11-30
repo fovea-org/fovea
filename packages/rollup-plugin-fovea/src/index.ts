@@ -1,7 +1,7 @@
 /* tslint:disable:no-default-export */
 
 import {FoveaCompiler, FoveaDiagnostic, IFoveaOptions} from "@fovea/compiler";
-import {Plugin, RollupDirOptions, RollupFileOptions, TransformSourceDescription} from "rollup";
+import {Plugin, RollupDirOptions, RollupFileOptions, TransformSourceDescription, ExistingRawSourceMap} from "rollup";
 import {IFoveaRollupPluginOptions} from "./i-fovea-rollup-plugin-options";
 
 /**
@@ -103,7 +103,7 @@ function Fovea (inputFoveaOptions: Partial<IFoveaRollupPluginOptions> = {}): Plu
 			// Finally, return the changed code, the sourcemap (if any), as well as the file dependencies
 			return {
 				code: fileResult.code,
-				map: fileResult.map,
+				map: <ExistingRawSourceMap><unknown> fileResult.map,
 				dependencies: fileResult.statsForFile.fileDependencies
 			};
 		}

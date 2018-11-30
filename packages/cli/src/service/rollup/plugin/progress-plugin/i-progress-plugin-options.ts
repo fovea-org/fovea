@@ -7,6 +7,6 @@ export interface IProgressPluginLogger {
 }
 
 export interface IProgressPluginOptions {
-	root: string;
+	cwd: string;
 	logger: IProgressPluginLogger;
 }

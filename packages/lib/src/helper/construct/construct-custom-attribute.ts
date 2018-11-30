@@ -1,4 +1,4 @@
-import {ICustomAttribute} from "@fovea/common";
+import {ICustomAttribute, Json} from "@fovea/common";
 import {upgradeCustomAttribute} from "../../custom-attribute/upgrade-custom-attribute";
 import {CONSTRUCTED_HOSTS} from "../../host/constructed-hosts/constructed-hosts";
 import {IDestroyable} from "../../destroyable/i-destroyable";
@@ -6,11 +6,12 @@ import {construct} from "./construct";
 
 /**
  * Constructs a new ICustomAttribute
- * @param {ICustomAttribute} host
+ * @param {ICustomAttribute} _host
  * @param {Element} hostElement
  * @private
  */
-export function ___constructCustomAttribute (host: ICustomAttribute, hostElement: Element): void {
+export function ___constructCustomAttribute (_host: Json, hostElement: Element): void {
+	const host = _host as ICustomAttribute;
 	// Invoke the common construct functionality
 	const baseConstructResult = construct(host, hostElement);
 

@@ -30,20 +30,22 @@ import {KeyValueParser} from "./service/key-value-parser/key-value-parser";
 import {IKeyValueParserConfig} from "./service/key-value-parser/i-key-value-parser-config";
 import {keyValueParserConfig} from "./service/key-value-parser/key-value-parser-config";
 
-DIContainer.registerSingleton<ITokenizerConstructor, ITokenizerConstructor>(() => Tokenizer);
-DIContainer.registerSingleton<IDOMASTImplementation, IDOMASTImplementation>(() => PostHTMLParser);
-DIContainer.registerSingleton<IFoveaDOMAstGenerator, FoveaDOMAstGenerator>();
-DIContainer.registerSingleton<IDOMTemplator, DOMTemplator>();
-DIContainer.registerSingleton<IDOMNodeHandler, DOMNodeHandler>();
-DIContainer.registerSingleton<IDOMHTMLElementHandler, DOMHTMLElementHandler>();
-DIContainer.registerSingleton<IDOMSVGElementHandler, DOMSVGElementHandler>();
-DIContainer.registerSingleton<IDOMGenerator, DOMGenerator>();
-DIContainer.registerSingleton<IFoveaDOMHost, FoveaDOMHost>();
-DIContainer.registerSingleton<IKeyValueParserConfig, IKeyValueParserConfig>(() => keyValueParserConfig);
-DIContainer.registerSingleton<IKeyValueParser, KeyValueParser>();
+export const container = new DIContainer();
+
+container.registerSingleton<ITokenizerConstructor>(() => Tokenizer);
+container.registerSingleton<IDOMASTImplementation>(() => PostHTMLParser);
+container.registerSingleton<IFoveaDOMAstGenerator, FoveaDOMAstGenerator>();
+container.registerSingleton<IDOMTemplator, DOMTemplator>();
+container.registerSingleton<IDOMNodeHandler, DOMNodeHandler>();
+container.registerSingleton<IDOMHTMLElementHandler, DOMHTMLElementHandler>();
+container.registerSingleton<IDOMSVGElementHandler, DOMSVGElementHandler>();
+container.registerSingleton<IDOMGenerator, DOMGenerator>();
+container.registerSingleton<IFoveaDOMHost, FoveaDOMHost>();
+container.registerSingleton<IKeyValueParserConfig, IKeyValueParserConfig>(() => keyValueParserConfig);
+container.registerSingleton<IKeyValueParser, KeyValueParser>();
 
 // Utilities
-DIContainer.registerSingleton<IExpressionUtil, ExpressionUtil>();
-DIContainer.registerSingleton<IDOMUtil, DOMUtil>();
-DIContainer.registerSingleton<IContextUtil, ContextUtil>();
-DIContainer.registerSingleton<ICodeAnalyzer, CodeAnalyzer>();
+container.registerSingleton<IExpressionUtil, ExpressionUtil>();
+container.registerSingleton<IDOMUtil, DOMUtil>();
+container.registerSingleton<IContextUtil, ContextUtil>();
+container.registerSingleton<ICodeAnalyzer, CodeAnalyzer>();

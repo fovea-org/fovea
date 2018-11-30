@@ -1,7 +1,7 @@
 import {IBuildTask} from "./i-build-task";
 import {IBuildTaskExecuteOptions} from "./i-build-task-execute-options";
 import {IProjectPathUtil} from "../../util/project-path-util/i-project-path-util";
-import {IFoveaCliOutputConfig} from "../../fovea-cli-config/i-fovea-cli-config";
+import {IFoveaCliOutputConfig, IFoveaCliOutputConfigNormalized} from "../../fovea-cli-config/i-fovea-cli-config";
 import {ILoggerService} from "../../service/logger/i-logger-service";
 import {IBundlerService} from "../../service/bundler/i-bundler-service";
 import chalk from "chalk";
@@ -17,7 +17,6 @@ import {IBabelMinifyOptions} from "../../service/minify/i-babel-minify-options";
 import {ICompressorService} from "../../service/compression/i-compressor-service";
 import {browserslistSupportsFeatures} from "@wessberg/browserslist-generator";
 import {ModuleFormat} from "rollup";
-import {FeatureKind} from "../../feature-kind/feature-kind";
 import {IProjectParserService} from "../../service/parser/project-parser/i-project-parser-service";
 import {IStylesParserService} from "../../service/parser/styles-parser/i-styles-parser-service";
 import {IIndexHtmlParserService} from "../../service/parser/index-html-parser/i-index-html-parser-service";
@@ -50,7 +49,6 @@ import {ICacheRegistryGetOptionsMap} from "../../service/cache-registry/i-cache-
 import {FoveaDiagnosticDegree} from "@fovea/compiler";
 import {IEnvironmentDefaults} from "../../environment/i-environment-defaults";
 import {buildEnvironment} from "../../build-environment/build-environment";
-import {IRollupPostPluginsOptions} from "../../service/rollup/rollup-service/i-rollup-post-plugins-options";
 import {IRollupServiceGenerateOptions} from "../../service/rollup/rollup-service/i-rollup-service-generate-options";
 import {ICompressionAlgorithmOptions} from "../../service/compression/compression-algorithm-options";
 import {combineLatest, from, merge, Observable, of} from "rxjs";
@@ -61,6 +59,8 @@ import {IBuildAssetsEndResult} from "./i-build-assets-result";
 import {IOperationEnd, IOperationStart, Operation, OPERATION_END, OPERATION_START, OperationKind} from "../../operation/operation";
 import {IStylesParserServiceEndResult} from "../../service/parser/styles-parser/i-styles-parser-service-result";
 import {IBundlerServiceBundlingEndedResult} from "../../service/bundler/i-bundler-service-bundling-ended-data";
+import {normalizeBrowserslist} from "../../util/browserslist/normalize-browserslist";
+import {ITypescriptPluginBabelOptions} from "@wessberg/rollup-plugin-ts";
 
 // tslint:disable:no-any
 
@@ -263,7 +263,9 @@ export class BuildTask implements IBuildTask {
 					this.logger.verbose(`Successfully optimized assets!`);
 
 					return {
+						// tslint:disable
 						kind: <OperationKind.END> OperationKind.END,
+						// tslint:enable
 						data: assets
 					};
 				})
@@ -288,6 +290,19 @@ export class BuildTask implements IBuildTask {
 	}
 
 	/**
+	 * Normalizes he provided Output configuration
+	 * @param {string} cwd
+	 * @param {IFoveaCliOutputConfig} output
+	 * @returns {IFoveaCliOutputConfigNormalized}
+	 */
+	private normalizeOutput (cwd: string, output: IFoveaCliOutputConfig): IFoveaCliOutputConfigNormalized {
+		return {
+			...output,
+			browserslist: normalizeBrowserslist(cwd, output.browserslist)
+		};
+	}
+
+	/**
 	 * Builds all outputs
 	 * @param {IBuildProjectOptions} options
 	 * @returns {Observable<Operation<void>>}
@@ -303,7 +318,7 @@ export class BuildTask implements IBuildTask {
 		return from(filteredOutputs)
 			.pipe(
 				tap(({tag}) => this.logger.log(`Building output: ${chalk.magenta(tag)}`)),
-				mergeMap((output, index) => this.buildOutput({...options, output, index})
+				mergeMap((output, index) => this.buildOutput({...options, output: this.normalizeOutput(options.project.root, output), index})
 					.pipe(
 						tap(({kind}) => {
 							if (kind === OperationKind.END) {
@@ -365,19 +380,14 @@ export class BuildTask implements IBuildTask {
 		};
 
 		// Whether or not to use ES-modules depend on the given browserslist. If none is given, ES modules *will* be used. Otherwise, it will fall back to SystemJS for browsers without support
-		const moduleKind: ModuleFormat = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, ...this.config.esmCaniuseFeatureNames) ? "es" : "system";
-
-		// Whether or not to transpile async functions
-		const asyncFunctionKind: FeatureKind = output.browserslist == null || browserslistSupportsFeatures(output.browserslist, "async-functions") ? "native" : "polyfill";
+		const moduleKind: ModuleFormat = !output.browserslist || browserslistSupportsFeatures(output.browserslist, ...this.config.esmCaniuseFeatureNames) ? "es" : "system";
 
 		// Prepare polyfills. If the output format is not ES modules, we have to apply a module loader such as SystemJS.
 		// And, if async functions are transpiled, we have to be able to execute them anyway
 		const polyfills = [
 			...foveaCliConfig.polyfills,
-			// Add a polyfill for modules (using SystemJS) if format of the build is not ES modules
-			...(moduleKind !== "es" ? ["systemjs"] : []),
-			// Add the regenerator runtime for executing async functions if async/await and/or generator functions has been transpiled
-			...(asyncFunctionKind !== "native" ? ["regenerator-runtime"] : [])
+			// Add a polyfill for modules (using SystemJS) if the format of the build is not ES modules. Use the minimal 's' variant
+			...(moduleKind !== "es" ? ["systemjs|variant=s"] : [])
 		];
 
 		// Prepare polyfills for workers. These are like for the main thread, except only those that are compatible with Workers are accepted
@@ -398,7 +408,7 @@ export class BuildTask implements IBuildTask {
 
 		// The options to provide to rollup service consumers
 		const sharedRollupOptions: ISharedRollupOptions = {
-			root,
+			cwd: root,
 			tsconfig: foveaCliConfig.tsconfig,
 			additionalEnvironmentVariables,
 			packageJson,
@@ -546,6 +556,7 @@ export class BuildTask implements IBuildTask {
 			bundleName: output.tag,
 			hash,
 			progress: {
+				cwd: root,
 				logger: {
 					color: this.logger.LOG_COLOR,
 					log: this.logger.logTagOnOneLine.bind(this.logger, output.tag),
@@ -556,7 +567,7 @@ export class BuildTask implements IBuildTask {
 			context: "window",
 			browserslist: output.browserslist,
 			treeshake: this.getTreeshakingOptions(output),
-			babel: this.getBabelOptions(output, buildTaskOptions),
+			babelConfig: this.getBabelOptions(output, buildTaskOptions),
 			format: moduleKind,
 			watch: buildTaskOptions.watch,
 			banner: output.banner,
@@ -588,7 +599,7 @@ export class BuildTask implements IBuildTask {
 						}
 					},
 					postcss: {
-						plugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
+						plugins: output.postcss == null || output.postcss.plugins == null ? [] : output.postcss.plugins,
 						hook: pluginName => {
 							switch (pluginName) {
 								case "postcss-sass": {
@@ -769,7 +780,7 @@ export class BuildTask implements IBuildTask {
 	 */
 	private buildStyles ({output, buildTaskOptions, project: {foveaCliConfig, root}}: IBuildStylesOptions): Observable<Operation<IStylesParserServiceEndResult>> {
 		return this.stylesParser.parse({
-			postCSSPlugins: output.postcss == null || output.postcss.additionalPlugins == null ? [] : output.postcss.additionalPlugins,
+			postCSSPlugins: output.postcss == null || output.postcss.plugins == null ? [] : output.postcss.plugins,
 			root,
 			foveaCliConfig,
 			tag: output.tag,
@@ -818,9 +829,9 @@ export class BuildTask implements IBuildTask {
 	 * Gets the options to use with Babel
 	 * @param {IFoveaCliOutputConfig} output
 	 * @param {IBuildTaskExecuteOptions} buildTaskOptions
-	 * @returns {IRollupPostPluginsOptions["babel"]}
+	 * @returns {ITypescriptPluginBabelOptions["babel"]}
 	 */
-	private getBabelOptions (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): IRollupPostPluginsOptions["babel"] {
+	private getBabelOptions (output: IFoveaCliOutputConfig, buildTaskOptions: IBuildTaskExecuteOptions): ITypescriptPluginBabelOptions["babelConfig"] {
 		const shouldMinify = this.shouldMinify(output, buildTaskOptions);
 
 		/**
@@ -843,17 +854,17 @@ export class BuildTask implements IBuildTask {
 			// Default to being compact only in production
 			compact: shouldMinify,
 
-			additionalPresets: [
+			presets: [
 				// Minify builds for production unless the user wants to opt-out of it. Use the user-provided minification options if given, otherwise fallback to the ones provided by the CLI
 				...(shouldMinify ? [["minify", this.getMinifyOptions(output)]] : []),
 
 				// Use all extra presets provided by the user
-				...(output.babel != null && output.babel.additionalPresets != null ? output.babel.additionalPresets : [])
+				...(output.babel != null && output.babel.presets != null ? output.babel.presets : [])
 			],
 
-			additionalPlugins: [
+			plugins: [
 				// Use all extra plugins provided by the user
-				...(output.babel != null && output.babel.additionalPlugins != null ? output.babel.additionalPlugins : []),
+				...(output.babel != null && output.babel.plugins != null ? output.babel.plugins : []),
 				// Use the "annotate-pure-calls" plugin if the user has set the 'assignedTopLevelCallExpressionsHasNoSideEffects' flag to true
 				...(output.optimization != null && output.optimization.treeshake != null && typeof output.optimization.treeshake !== "boolean" && output.optimization.treeshake.assignedTopLevelCallExpressionsHasNoSideEffects === true ? ["annotate-pure-calls"] : [])
 			]
@@ -877,6 +888,7 @@ export class BuildTask implements IBuildTask {
 			bundleName: `${this.config.serviceWorkerChunkPrefix}${output.tag}`,
 			hash,
 			progress: {
+				cwd: root,
 				logger: {
 					color: this.logger.LOG_COLOR,
 					log: this.logger.logTagOnOneLine.bind(this.logger, output.tag),
@@ -891,7 +903,7 @@ export class BuildTask implements IBuildTask {
 			outro: output.outro,
 			browserslist: output.browserslist,
 			treeshake: this.getTreeshakingOptions(output),
-			babel: this.getBabelOptions(output, buildTaskOptions),
+			babelConfig: this.getBabelOptions(output, buildTaskOptions),
 			plugins: [
 				...(this.shouldCompress(output, buildTaskOptions) ? [
 					// Apply Brotli and Zlib compression

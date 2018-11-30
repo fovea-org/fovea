@@ -71,7 +71,7 @@ export class EmitExtractor implements IEmitExtractor {
 		if (registerEmitterCalls.length > 0 && !compilerOptions.dryRun) {
 
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerEmitterCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerEmittersMethodName} != null) super.${this.configuration.postCompile.registerEmittersMethodName}();` +
@@ -81,7 +81,7 @@ export class EmitExtractor implements IEmitExtractor {
 			// Create the static method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerEmittersMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);

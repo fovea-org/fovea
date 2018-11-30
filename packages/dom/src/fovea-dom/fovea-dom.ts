@@ -1,8 +1,8 @@
 import {IFoveaDOM} from "./i-fovea-dom";
-import {DIContainer} from "@wessberg/di";
 import {IFoveaDOMResult} from "./i-fovea-dom-result";
 import {IFoveaDOMHost} from "./i-fovea-dom-host";
 import {FoveaDOMOptions} from "./i-fovea-dom-options";
+import {container} from "../services";
 
 /**
  * A FoveaDOM class meant for public consumption. This shadows the actual FoveaDOMHost class to ensure
@@ -10,7 +10,7 @@ import {FoveaDOMOptions} from "./i-fovea-dom-options";
  */
 export class FoveaDOM implements IFoveaDOM {
 	constructor () {
-		return DIContainer.get<IFoveaDOMHost>();
+		return container.get<IFoveaDOMHost>();
 	}
 
 	/**

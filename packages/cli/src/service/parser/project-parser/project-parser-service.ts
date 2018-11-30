@@ -39,17 +39,17 @@ export class ProjectParserService implements IProjectParserService {
 		// Find the project root and then observe the package.json and fovea-cli.config files within that directory
 		return from(this.projectPathUtil.findProjectRoot(config))
 			.pipe(
-				tap(root => this.logger.debug(`Found project root: ${chalk.magenta(root)}`)),
+				tap(cwd => this.logger.debug(`Found project root: ${chalk.magenta(cwd)}`)),
 				tap(() => this.logger.verbose(`Finding and parsing ${chalk.magenta(this.config.foveaCliConfigName)} and ${chalk.magenta(this.config.packageFileName)} files...`)),
 
-				switchMap(root => this.packageJsonParser.parse({path: this.projectPathUtil.getPathFromProjectRoot(root, this.config.packageFileName)})
+				switchMap(cwd => this.packageJsonParser.parse({path: this.projectPathUtil.getPathFromProjectRoot(cwd, this.config.packageFileName)})
 					.pipe(
 						switchMap((packageJsonResult): Observable<Operation<IProjectParserServiceEndResult>> => {
 							if (packageJsonResult.kind === OperationKind.START) {
 								return of(OPERATION_START());
 							}
 
-							return this.configParser.parse({packageJson: packageJsonResult.data, root, path: this.projectPathUtil.getPathFromProjectRoot(root, config)})
+							return this.configParser.parse({packageJson: packageJsonResult.data, cwd, path: this.projectPathUtil.getPathFromProjectRoot(cwd, config)})
 								.pipe(
 									map(foveaCliConfigResult => {
 										if (foveaCliConfigResult.kind === OperationKind.START) {
@@ -59,9 +59,11 @@ export class ProjectParserService implements IProjectParserService {
 										this.logger.verbose(`Successfully parsed ${chalk.magenta(this.config.foveaCliConfigName)} and ${chalk.magenta(this.config.packageFileName)} files!`);
 
 										return {
+											// tslint:disable
 											kind: <OperationKind.END> OperationKind.END,
+											// tslint:enable
 											data: {
-												root,
+												root: cwd,
 												hash,
 												packageJson: packageJsonResult.data,
 												foveaCliConfig: foveaCliConfigResult.data.result

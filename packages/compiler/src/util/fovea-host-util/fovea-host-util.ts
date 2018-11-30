@@ -23,6 +23,15 @@ export class FoveaHostUtil implements IFoveaHostUtil {
 	}
 
 	/**
+	 * Returns true if the given class is a base class
+	 * @param {ClassDeclaration|ClassExpression} classDeclaration
+	 * @returns {boolean}
+	 */
+	public isBaseClass (classDeclaration: ClassDeclaration|ClassExpression): boolean {
+		return this.codeAnalyzer.classService.isBaseClass(classDeclaration);
+	}
+
+	/**
 	 * Gets the name of the lowest inherited class
 	 * @param {ClassDeclaration | ClassExpression} classDeclaration
 	 * @returns {string | undefined}

@@ -105,7 +105,9 @@ export class AssetParserService implements IAssetParserService {
 					this.logger.verbose(`Successfully read assets and app icon!`);
 
 					return {
+						// tslint:disable
 						kind: <OperationKind.END> OperationKind.END,
+						// tslint:enable
 						data: {
 							assetMap: assetResult.data,
 							appIcon: appIconResult.data

@@ -249,7 +249,7 @@ export abstract class TextFieldBaseComponent extends FormItemComponent {
 	/**
 	 * Invoked when the Switch is attached to the DOM
 	 */
-	protected connectedCallback () {
+	public connectedCallback () {
 		super.connectedCallback();
 
 		rafScheduler.mutate(() => {

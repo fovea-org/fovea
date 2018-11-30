@@ -1,8 +1,3 @@
-import {BabelOptions} from "../../../fovea-cli-config/i-fovea-cli-config";
+import {TypescriptPluginOptions} from "@wessberg/rollup-plugin-ts";
 
-export interface IRollupPostPluginsOptions {
-	tsconfig?: string;
-	browserslist?: string[];
-	babel?: BabelOptions;
-	root: string;
-}
+export type IRollupPostPluginsOptions = Partial<TypescriptPluginOptions>;

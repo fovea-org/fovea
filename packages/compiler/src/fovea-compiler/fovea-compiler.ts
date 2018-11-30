@@ -1,9 +1,9 @@
-import {DIContainer} from "@wessberg/di";
 import {IFoveaCompilerCompileOptions} from "./i-fovea-compiler-compile-options";
 import {IFoveaCompilerBase} from "./i-fovea-compiler-base";
 import {FoveaCompilerCompileResult} from "./i-fovea-compiler-compile-result";
 import {IImmutableFoveaStats} from "../stats/i-fovea-stats";
 import {FoveaDiagnostic} from "../diagnostics/fovea-diagnostic";
+import {container} from "../services";
 
 /**
  * A FoveaCompiler class meant for public consumption. This shadows the actual FoveaCompilerBase class to ensure
@@ -12,7 +12,7 @@ import {FoveaDiagnostic} from "../diagnostics/fovea-diagnostic";
 export class FoveaCompiler implements IFoveaCompilerBase {
 
 	constructor () {
-		return DIContainer.get<IFoveaCompilerBase>();
+		return container.get<IFoveaCompilerBase>();
 	}
 
 	/**

@@ -76,7 +76,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 		if (registerChangeObserverCalls.length > 0) {
 
 			const body = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerChangeObserverCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerChangeObserversMethodName} != null) super.${this.configuration.postCompile.registerChangeObserversMethodName}();` +
@@ -88,7 +88,7 @@ export class OnChangeExtractor implements IOnChangeExtractor {
 				// Create the static method
 				context.container.appendLeft(
 					classDeclaration.members.end,
-					`\n	protected static ${this.configuration.postCompile.registerChangeObserversMethodName} (): void {` +
+					`\n	public static ${this.configuration.postCompile.registerChangeObserversMethodName} (): void {` +
 					`${body}` +
 					`\n	}`
 				);

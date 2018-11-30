@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor, Json} from "@fovea/common";
 import {listen} from "../../listen/listen";
 import {parseTarget} from "../../target/parse-target";
 import {BOUND_HOST_LISTENERS} from "../../listener/host-listener/bound-host-listeners";
@@ -6,9 +6,10 @@ import {HOST_LISTENERS_FOR_HOST} from "../../listener/host-listener/host-listene
 
 /**
  * Connects all listeners for the given host
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___connectListeners (host: FoveaHost): void {
+export function ___connectListeners (_host: Json): void {
+	const host = _host as FoveaHost;
 
 	const constructor = <FoveaHostConstructor> host.constructor;
 

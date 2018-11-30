@@ -1,12 +1,13 @@
-import {FoveaHost} from "@fovea/common";
+import {FoveaHost, Json} from "@fovea/common";
 import {BOUND_CHILD_LIST_OBSERVERS} from "../../dom-mutation/child-list-observers-for-host/bound-child-list-observers";
 import {ricScheduler} from "@fovea/scheduler";
 
 /**
  * Disposes all child list observers for the given host some time in the future
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___disposeChildListObservers (host: FoveaHost): void {
+export function ___disposeChildListObservers (_host: Json): void {
+	const host = _host as FoveaHost;
 	ricScheduler.mutate(disposeChildListObservers.bind(null, host)).then();
 }
 

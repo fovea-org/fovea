@@ -1,4 +1,4 @@
-import {FoveaHostConstructor, IType} from "@fovea/common";
+import {FoveaHostConstructor, IType, Json} from "@fovea/common";
 import {addPropsForHost} from "../../prop/props-for-host/add-props-for-host/add-props-for-host";
 
 /**
@@ -6,9 +6,10 @@ import {addPropsForHost} from "../../prop/props-for-host/add-props-for-host/add-
  * @param {string} name
  * @param {IType} type
  * @param {boolean} isStatic
- * @param {FoveaHostConstructor} host
+ * @param {Json} _host
  */
-export function ___registerProp (name: string, type: IType, isStatic: boolean, host: FoveaHostConstructor): void {
+export function ___registerProp (name: string, type: IType, isStatic: boolean, _host: Json): void {
+	const host = _host as FoveaHostConstructor;
 	// Add the prop to the set of props for the host
 	addPropsForHost(host, {name, type, isStatic});
 }

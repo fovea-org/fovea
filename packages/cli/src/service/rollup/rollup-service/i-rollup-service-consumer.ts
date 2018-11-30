@@ -5,7 +5,7 @@ import {IFoveaCliConfig} from "../../../fovea-cli-config/i-fovea-cli-config";
 import {IResource} from "../../../resource/i-resource";
 import {RollupCache, InputOptions, OutputOptions} from "rollup";
 
-export interface IRollupServiceConsumer extends IRollupPrePluginsOptions, IRollupPostPluginsOptions {
+export type IRollupServiceConsumer = IRollupPrePluginsOptions & IRollupPostPluginsOptions & {
 	paths: {[key: string]: string};
 	resource: IResource;
 	config: IFoveaCliConfig;
@@ -18,4 +18,4 @@ export interface IRollupServiceConsumer extends IRollupPrePluginsOptions, IRollu
 	footer?: OutputOptions["footer"];
 	intro?: OutputOptions["intro"];
 	outro?: OutputOptions["outro"];
-}
+};

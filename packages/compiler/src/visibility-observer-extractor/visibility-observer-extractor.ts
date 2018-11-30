@@ -92,7 +92,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 		// If there is at least 1 visibility observer, add the prototype method
 		if (registerVisibilityObserverCalls.length > 0 && !compilerOptions.dryRun) {
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerVisibilityObserverCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerVisibilityObserversMethodName} != null) super.${this.configuration.postCompile.registerVisibilityObserversMethodName}();` +
@@ -110,7 +110,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 			// Create the register method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerVisibilityObserversMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerVisibilityObserversMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);
@@ -118,7 +118,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 			// Create the 'connect' method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.connectVisibilityObserversMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -126,7 +126,7 @@ export class VisibilityObserverExtractor implements IVisibilityObserverExtractor
 			// Create the 'dispose' method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.disposeVisibilityObserversMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);

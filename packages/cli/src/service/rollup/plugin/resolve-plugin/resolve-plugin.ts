@@ -14,7 +14,7 @@ const cache: Map<string, string|null> = new Map();
  * @param {IResolvePluginOptions} [options={}]
  */
 export function resolvePlugin ({
-																		 root = process.cwd(),
+																		 cwd = process.cwd(),
 																		 prioritizedPackageKeys = ["module", "es2015", "jsnext:main", "main"],
 																		 prioritizedExtensions = [".js", ".mjs", ".jsx", ".ts", ".tsx", ".json"],
 																		 selectPackageField,
@@ -46,7 +46,7 @@ export function resolvePlugin ({
 			// Otherwise, try to resolve it and put it in the cache
 			try {
 				const resolveResult = sync(id, {
-					basedir: root,
+					basedir: cwd,
 					extensions: prioritizedExtensions,
 					moduleDirectory,
 					packageFilter (pkg: IPackageJson): IPackageJson {

@@ -12,7 +12,7 @@ import {isSuperExpression, ITypescriptASTUtil} from "@wessberg/typescript-ast-ut
 import {IFoveaStats} from "../stats/i-fovea-stats";
 import {kebabCase} from "@wessberg/stringutil";
 import {IFoveaHostMarker} from "../fovea-marker/i-fovea-host-marker";
-import {HTML_INTERFACE_NAMES, HtmlInterfaceName, SVG_INTERFACE_NAMES, SvgInterfaceName, LibHelperName, FoveaHostKind} from "@fovea/common";
+import {FoveaHostKind, HTML_INTERFACE_NAMES, HtmlInterfaceName, LibHelperName, SVG_INTERFACE_NAMES, SvgInterfaceName} from "@fovea/common";
 
 /**
  * A class that can extend the prototype of a FoveaHost
@@ -45,6 +45,23 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// Check if the parent itself is a Fovea Component
 		const parentIsComponent = parentClassName != null && this.isComponent(options, parentClassName);
+
+		if (parentIsComponent && mark.classDeclaration.heritageClauses != null) {
+			const extendsClause = mark.classDeclaration.heritageClauses.find(clause => clause.token === SyntaxKind.ExtendsKeyword);
+			if (extendsClause != null) {
+				const [firstType] = extendsClause.types;
+				if (firstType != null) {
+					context.container.overwrite(
+						firstType.pos,
+						firstType.end,
+						` (${parentClassName} as unknown as (import("@fovea/common").IStaticLifecycleHookable & import("@fovea/common").ILifecycleHookable & (new () => ${parentClassName} & import("@fovea/common").ICustomAttribute & import("@fovea/common").ICustomElement)))`
+					);
+					if (context.container.file.includes("button-component")) {
+						console.log(context.container.toString());
+					}
+				}
+			}
+		}
 
 		// Extend the constructor
 		this.extendConstructor(mark, compilerOptions, context, parentIsComponent);
@@ -138,7 +155,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 		// Add a (static) getter for observed attributes, if there is at least 1. If a parent class has some, they will be inherited
 		if (!compilerOptions.dryRun) {
-			const body = this.foveaHostUtil.isBaseComponent(classDeclaration)
+			const body = this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 				// If the class is a base component, just use the classes own props
 				? ` return [${quotedAttributeNames.join(",")}];`
 				// Otherwise, also call the super class's getter to add-in its props
@@ -146,7 +163,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
+				`\n	public static get ${this.configuration.observedAttributesName} (): string[] { ${body} }`
 			);
 		}
 	}
@@ -272,8 +289,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 				const body = (
 					this.codeAnalyzer.classService.isBaseClass(classDeclaration)
 						? `\n		${bodyExtension}`
-						: `\n		// ts-ignore` +
-						`\n		super(...arguments);` +
+						: `\n		super(...(<[]><{}>arguments));` +
 						`\n		${bodyExtension}`
 				);
 
@@ -319,7 +335,7 @@ export class PrototypeExtender implements IPrototypeExtender {
 			if (superExpression != null && superExpression.expression.arguments.length < 1 && !compilerOptions.dryRun) {
 				context.container.overwrite(
 					superExpression.pos, superExpression.end,
-					`\n	// @ts-ignore\n	super(...arguments);`
+					`\n	// \n	super(...(<[]><{}>arguments));`
 				);
 			}
 

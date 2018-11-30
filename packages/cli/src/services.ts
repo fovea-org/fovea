@@ -133,100 +133,101 @@ import {IFileWatcher} from "./service/watch/i-file-watcher";
 import {FileWatcher} from "./service/watch/file-watcher";
 
 // Utilities
-DIContainer.registerSingleton<IProjectPathUtil, ProjectPathUtil>();
-DIContainer.registerSingleton<IThrottleUtil, ThrottleUtil>();
-DIContainer.registerSingleton<IPathUtil, PathUtil>();
-DIContainer.registerSingleton<IFileSaver, FileSaver>();
-DIContainer.registerSingleton<IFileSaver, FileSaver>();
-DIContainer.registerSingleton<IFileLoader, FileLoader>();
-DIContainer.registerSingleton<IFoveaStyles, FoveaStyles>();
-DIContainer.registerSingleton<IRollupService, RollupService>();
-DIContainer.registerSingleton<IHasherService, HasherService>();
-DIContainer.registerSingleton<ILoggerService, LoggerService>();
-DIContainer.registerSingleton<IFormatter, Formatter>();
-DIContainer.registerSingleton<IBundlerService, BundlerService>();
-DIContainer.registerSingleton<ICompressorService, CompressorService>();
-DIContainer.registerSingleton<IBufferSerializer, IBufferSerializer>(() => new BufferSerializer());
-DIContainer.registerSingleton<IPolyfillService, PolyfillService>();
-DIContainer.registerSingleton<IFileWatcher, FileWatcher>();
-DIContainer.registerSingleton<IDiskCacheRegistryService, DiskCacheRegistryService>();
+export const container = new DIContainer();
+container.registerSingleton<IProjectPathUtil, ProjectPathUtil>();
+container.registerSingleton<IThrottleUtil, ThrottleUtil>();
+container.registerSingleton<IPathUtil, PathUtil>();
+container.registerSingleton<IFileSaver, FileSaver>();
+container.registerSingleton<IFileSaver, FileSaver>();
+container.registerSingleton<IFileLoader, FileLoader>();
+container.registerSingleton<IFoveaStyles, FoveaStyles>();
+container.registerSingleton<IRollupService, RollupService>();
+container.registerSingleton<IHasherService, HasherService>();
+container.registerSingleton<ILoggerService, LoggerService>();
+container.registerSingleton<IFormatter, Formatter>();
+container.registerSingleton<IBundlerService, BundlerService>();
+container.registerSingleton<ICompressorService, CompressorService>();
+container.registerSingleton<IBufferSerializer>(() => new BufferSerializer());
+container.registerSingleton<IPolyfillService, PolyfillService>();
+container.registerSingleton<IFileWatcher, FileWatcher>();
+container.registerSingleton<IDiskCacheRegistryService, DiskCacheRegistryService>();
 
 // Writers
-DIContainer.registerSingleton<IManifestJsonWriterService, ManifestJsonWriterService>();
-DIContainer.registerSingleton<IIndexHtmlWriterService, IndexHtmlWriterService>();
-DIContainer.registerSingleton<IAssetWriterService, AssetWriterService>();
+container.registerSingleton<IManifestJsonWriterService, ManifestJsonWriterService>();
+container.registerSingleton<IIndexHtmlWriterService, IndexHtmlWriterService>();
+container.registerSingleton<IAssetWriterService, AssetWriterService>();
 
 // Optimization
-DIContainer.registerSingleton<IAssetOptimizerService, AssetOptimizerService>();
-DIContainer.registerSingleton<IFileTypeDetectorService, FileTypeDetectorService>();
+container.registerSingleton<IAssetOptimizerService, AssetOptimizerService>();
+container.registerSingleton<IFileTypeDetectorService, FileTypeDetectorService>();
 
 // Image optimizers
-DIContainer.registerSingleton<ISharpImageOptimizer, SharpImageOptimizer>();
-DIContainer.registerSingleton<ISvgoImageOptimizer, SvgoImageOptimizer>();
-DIContainer.registerSingleton<IIcoImageOptimizer, IcoImageOptimizer>();
-DIContainer.registerSingleton<IImageOptimizer, CombinedImageOptimizer>();
+container.registerSingleton<ISharpImageOptimizer, SharpImageOptimizer>();
+container.registerSingleton<ISvgoImageOptimizer, SvgoImageOptimizer>();
+container.registerSingleton<IIcoImageOptimizer, IcoImageOptimizer>();
+container.registerSingleton<IImageOptimizer, CombinedImageOptimizer>();
 
 // Script optimizers
-DIContainer.registerSingleton<IBabelMinifyOptimizer, BabelMinifyOptimizer>();
-DIContainer.registerSingleton<IScriptOptimizer, CombinedScriptOptimizer>();
+container.registerSingleton<IBabelMinifyOptimizer, BabelMinifyOptimizer>();
+container.registerSingleton<IScriptOptimizer, CombinedScriptOptimizer>();
 
 // Configuration
-DIContainer.registerSingleton<IBuildConfig, IBuildConfig>(() => buildConfig);
-DIContainer.registerSingleton<IBabelMinifyOptions, IBabelMinifyOptions>(() => babelMinifyOptions);
-DIContainer.registerSingleton<BrotliEncodeParams, BrotliEncodeParams>(() => brotliCompressionOptions);
-DIContainer.registerSingleton<ZlibOptions, ZlibOptions>(() => zlibCompressionOptions);
-DIContainer.registerSingleton<ICompressionAlgorithmOptions, ICompressionAlgorithmOptions>(() => compressionAlgorithmOptions);
+container.registerSingleton<IBuildConfig>(() => buildConfig);
+container.registerSingleton<IBabelMinifyOptions>(() => babelMinifyOptions);
+container.registerSingleton<BrotliEncodeParams>(() => brotliCompressionOptions);
+container.registerSingleton<ZlibOptions>(() => zlibCompressionOptions);
+container.registerSingleton<ICompressionAlgorithmOptions>(() => compressionAlgorithmOptions);
 
 // Generators
-DIContainer.registerSingleton<IPackageJsonGenerator, PackageJsonGenerator>();
-DIContainer.registerSingleton<IEnvironmentGenerator, EnvironmentGenerator>();
-DIContainer.registerSingleton<IConfigGenerator, ConfigGenerator>();
-DIContainer.registerSingleton<IFoveaCliConfigGenerator, FoveaCliConfigGenerator>();
-DIContainer.registerSingleton<IManifestGenerator, ManifestGenerator>();
-DIContainer.registerSingleton<IIndexHtmlGenerator, IndexHtmlGenerator>();
-DIContainer.registerSingleton<IStyleGenerator, StyleGenerator>();
-DIContainer.registerSingleton<ITemplateGenerator, TemplateGenerator>();
-DIContainer.registerSingleton<ITsconfigGenerator, TsconfigGenerator>();
-DIContainer.registerSingleton<ITslintGenerator, TslintGenerator>();
-DIContainer.registerSingleton<IGitignoreGenerator, GitignoreGenerator>();
-DIContainer.registerSingleton<INpmignoreGenerator, NpmignoreGenerator>();
-DIContainer.registerSingleton<IAssetGenerator, AssetGenerator>();
+container.registerSingleton<IPackageJsonGenerator, PackageJsonGenerator>();
+container.registerSingleton<IEnvironmentGenerator, EnvironmentGenerator>();
+container.registerSingleton<IConfigGenerator, ConfigGenerator>();
+container.registerSingleton<IFoveaCliConfigGenerator, FoveaCliConfigGenerator>();
+container.registerSingleton<IManifestGenerator, ManifestGenerator>();
+container.registerSingleton<IIndexHtmlGenerator, IndexHtmlGenerator>();
+container.registerSingleton<IStyleGenerator, StyleGenerator>();
+container.registerSingleton<ITemplateGenerator, TemplateGenerator>();
+container.registerSingleton<ITsconfigGenerator, TsconfigGenerator>();
+container.registerSingleton<ITslintGenerator, TslintGenerator>();
+container.registerSingleton<IGitignoreGenerator, GitignoreGenerator>();
+container.registerSingleton<INpmignoreGenerator, NpmignoreGenerator>();
+container.registerSingleton<IAssetGenerator, AssetGenerator>();
 
 // Parsers
-DIContainer.registerSingleton<IConfigParserService, ConfigParserService>();
-DIContainer.registerSingleton<IPackageJsonParserService, PackageJsonParserService>();
-DIContainer.registerSingleton<IStylesParserService, StylesParserService>();
-DIContainer.registerSingleton<IManifestJsonParserService, ManifestJsonParserService>();
-DIContainer.registerSingleton<IIndexHtmlParserService, IndexHtmlParserService>();
-DIContainer.registerSingleton<IProjectParserService, ProjectParserService>();
-DIContainer.registerSingleton<IAssetParserService, AssetParserService>();
+container.registerSingleton<IConfigParserService, ConfigParserService>();
+container.registerSingleton<IPackageJsonParserService, PackageJsonParserService>();
+container.registerSingleton<IStylesParserService, StylesParserService>();
+container.registerSingleton<IManifestJsonParserService, ManifestJsonParserService>();
+container.registerSingleton<IIndexHtmlParserService, IndexHtmlParserService>();
+container.registerSingleton<IProjectParserService, ProjectParserService>();
+container.registerSingleton<IAssetParserService, AssetParserService>();
 
 // Normalizers
-DIContainer.registerSingleton<NormalizeFunction<IEnvironmentDefaults>, NormalizeFunction<IEnvironmentDefaults>>(() => environmentDefaultsNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<ITsconfig>, NormalizeFunction<ITsconfig>>(() => tsconfigNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<ITslintConfiguration>, NormalizeFunction<ITslintConfiguration>>(() => tslintNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>, NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>>(() => foveaCliConfigNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<IGitignore>, NormalizeFunction<IGitignore>>(() => gitignoreNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<INpmignore>, NormalizeFunction<INpmignore>>(() => npmignoreNormalizeFunction);
-DIContainer.registerSingleton<NormalizeFunction<IPackageJson, PackageJsonUserOptions, IPackageJsonNormalizeFunctionConfig>, NormalizeFunction<IPackageJson, PackageJsonUserOptions, IPackageJsonNormalizeFunctionConfig>>(() => packageJsonNormalizeFunction);
+container.registerSingleton<NormalizeFunction<IEnvironmentDefaults>>(() => environmentDefaultsNormalizeFunction);
+container.registerSingleton<NormalizeFunction<ITsconfig>>(() => tsconfigNormalizeFunction);
+container.registerSingleton<NormalizeFunction<ITslintConfiguration>>(() => tslintNormalizeFunction);
+container.registerSingleton<NormalizeFunction<IFoveaCliConfig, Partial<IFoveaCliConfigWithAppName>>>(() => foveaCliConfigNormalizeFunction);
+container.registerSingleton<NormalizeFunction<IGitignore>>(() => gitignoreNormalizeFunction);
+container.registerSingleton<NormalizeFunction<INpmignore>>(() => npmignoreNormalizeFunction);
+container.registerSingleton<NormalizeFunction<IPackageJson, PackageJsonUserOptions, IPackageJsonNormalizeFunctionConfig>>(() => packageJsonNormalizeFunction);
 
 // Server
-DIContainer.registerSingleton<IDevServerService, DevServerService>();
-DIContainer.registerSingleton<IRequestHandler, RequestHandler>();
+container.registerSingleton<IDevServerService, DevServerService>();
+container.registerSingleton<IRequestHandler, RequestHandler>();
 
 // Commands
-DIContainer.registerSingleton<ICommandContainer, CommandContainer>();
-DIContainer.registerSingleton<ICreateCommand, CreateCommand>();
-DIContainer.registerSingleton<IBuildCommand, BuildCommand>();
-DIContainer.registerSingleton<Commands, Commands>(() => [
-	DIContainer.get<ICreateCommand>(),
-	DIContainer.get<IBuildCommand>()
+container.registerSingleton<ICommandContainer, CommandContainer>();
+container.registerSingleton<ICreateCommand, CreateCommand>();
+container.registerSingleton<IBuildCommand, BuildCommand>();
+container.registerSingleton<Commands>(() => [
+	container.get<ICreateCommand>(),
+	container.get<IBuildCommand>()
 ]);
 
 // Tasks
-DIContainer.registerTransient<ICreateTask, CreateTask>();
-DIContainer.registerTransient<IBuildTask, BuildTask>();
+container.registerTransient<ICreateTask, CreateTask>();
+container.registerTransient<IBuildTask, BuildTask>();
 
 // Task wrappers
-DIContainer.registerSingleton<CreateTaskWrapper, CreateTaskWrapper>(() => () => DIContainer.get<ICreateTask>());
-DIContainer.registerSingleton<BuildTaskWrapper, BuildTaskWrapper>(() => () => DIContainer.get<IBuildTask>());
+container.registerSingleton<CreateTaskWrapper>(() => () => container.get<ICreateTask>());
+container.registerSingleton<BuildTaskWrapper>(() => () => container.get<IBuildTask>());

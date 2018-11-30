@@ -27,7 +27,13 @@ const DEFAULT_LOGGER: IProgressPluginLogger = {
 
 // tslint:disable:no-any
 
-export default function progress ({logger = DEFAULT_LOGGER, root = process.cwd()}: Partial<IProgressPluginOptions> = {}): Plugin {
+/**
+ * A plugin that reports on build progress
+ * @param {IProgressPluginLogger} logger
+ * @param {string} cwd
+ * @returns {Plugin}
+ */
+export default function progressRollupPlugin ({logger = DEFAULT_LOGGER, cwd = process.cwd()}: Partial<IProgressPluginOptions> = {}): Plugin {
 	let total: number = 0;
 
 	return {
@@ -40,7 +46,7 @@ export default function progress ({logger = DEFAULT_LOGGER, root = process.cwd()
 		 */
 		transform (_, file): void {
 			total++;
-			const relativePath = ensureRelative(root, file);
+			const relativePath = ensureRelative(cwd, file);
 			logger.log(`(${chalk[logger.color](String(total))}): ${relativePath}`);
 		},
 

@@ -25,7 +25,7 @@ export class AppComponent extends HTMLElement {
 	/**
 	 * Invoked when the component is connected
 	 */
-	protected connectedCallback () {
+	public connectedCallback () {
 		// noinspection JSIgnoredPromiseFromCall
 		Router.initialize({root: this, routes});
 	}

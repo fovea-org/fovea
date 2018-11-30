@@ -32,7 +32,7 @@ export class Highlight {
 	/**
 	 * Invoked when the parent element is connected
 	 */
-	protected connectedCallback () {
+	public connectedCallback () {
 		// noinspection JSIgnoredPromiseFromCall
 		this.refresh();
 	}

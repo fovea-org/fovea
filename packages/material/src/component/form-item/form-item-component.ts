@@ -97,7 +97,7 @@ export abstract class FormItemComponent extends HTMLElement {
 	/**
 	 * Invoked when the Switch is attached to the DOM
 	 */
-	protected connectedCallback () {
+	public connectedCallback () {
 		this.appendChild(this.$formItem);
 	}
 

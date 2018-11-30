@@ -1,9 +1,8 @@
-import {FirstArgumentType} from "../service/cache-registry/i-cache-registry-get-result";
 import {IBabelMinifyOptions} from "../service/minify/i-babel-minify-options";
 import {ICompressionAlgorithmOptions} from "../service/compression/compression-algorithm-options";
 import {OutputOptions} from "rollup";
+import {IBabelInputOptions, TypescriptPluginOptions} from "@wessberg/rollup-plugin-ts";
 
-export type BabelOptions = Exclude<Exclude<FirstArgumentType<typeof import("@wessberg/rollup-plugin-ts").default>, undefined>["babel"], undefined>;
 export type PostCSSPlugin = import("postcss").Plugin<{}>;
 
 export interface IFoveaCliBundleOptimizationConfig {
@@ -17,7 +16,7 @@ export interface IFoveaCliBundleOptimizationConfig {
 	compress: boolean|ICompressionAlgorithmOptions;
 
 	// Treeshaking options
-	treeshake: boolean | Partial<{
+	treeshake: boolean|Partial<{
 		assignedTopLevelCallExpressionsHasNoSideEffects: boolean;
 		readingPropertiesOfObjectsHasNoSideEffects: boolean;
 		externalDependenciesHasNoSideEffects: boolean;
@@ -29,28 +28,27 @@ export interface IFoveaCliOutputConfig {
 	directory: string;
 	serve: IFoveaCliServeConfig;
 	postcss?: Partial<{
-		additionalPlugins: PostCSSPlugin[];
+		plugins: PostCSSPlugin[];
 	}>;
-	babel?: Pick<BabelOptions, "additionalPlugins"|"additionalPresets">;
-	browserslist?: string[];
+	babel?: Pick<IBabelInputOptions, "plugins"|"presets">;
+	browserslist?: TypescriptPluginOptions["browserslist"];
 	disable: boolean|"watch";
-	match (userAgent: string): boolean;
 	optimization?: Partial<IFoveaCliBundleOptimizationConfig>;
-
 	// Whether or not to generate sourcemaps, or optionally "inline" if a sourcemap should be appended to the generated files
 	sourcemap?: OutputOptions["sourcemap"];
-
 	// A string to prepend to the bundle.
 	banner?: OutputOptions["banner"];
-
 	// A string to append to the bundle.
 	footer?: OutputOptions["footer"];
-
 	// A string to prepend to the bundle. Like banner, but will go inside any module wrapper that may be.
 	intro?: OutputOptions["intro"];
-
 	// A string to append to the bundle. Like banner, but will go inside any module wrapper that may be.
 	outro?: OutputOptions["outro"];
+	match (userAgent: string): boolean;
+}
+
+export interface IFoveaCliOutputConfigNormalized extends IFoveaCliOutputConfig {
+	browserslist: string[]|false;
 }
 
 export declare type FoveaCliOutputConfigs = IFoveaCliOutputConfig[]|IFoveaCliOutputConfig;
@@ -108,7 +106,7 @@ export interface IFoveaCliConfigMinusOutput {
 	manifest: string;
 	index: string;
 	serviceWorker: string;
-	tsconfig: string;
+	tsconfig: TypescriptPluginOptions["tsconfig"];
 	environment: IFoveaCliEnvironmentConfig;
 	asset: IFoveaCliAssetConfig;
 	packageManager: "yarn"|"npm";

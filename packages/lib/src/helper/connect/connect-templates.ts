@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor, Json} from "@fovea/common";
 import {STATIC_TEMPLATES_FOR_HOST} from "../../template/static-template/static-templates-for-host";
 import {ITemplateResult} from "../../template/template-result/template-result/i-template-result";
 import {UPGRADED_HOSTS} from "../../host/upgraded-hosts/upgraded-hosts";
@@ -6,13 +6,14 @@ import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-roo
 
 /**
  * Connects all templates for the given host
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___connectTemplates (host: FoveaHost): void {
+export function ___connectTemplates (_host: Json): void {
+	const host = _host as FoveaHost;
 	const root = getRootForNode(host.___hostElement);
 	if (root == null) return;
 
-	const constructor = <FoveaHostConstructor> host.constructor;
+	const constructor = host.constructor as FoveaHostConstructor;
 	const templates = STATIC_TEMPLATES_FOR_HOST.get(constructor);
 
 	// Now, construct the root nodes and map them to the provided host

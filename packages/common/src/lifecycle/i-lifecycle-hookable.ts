@@ -19,6 +19,7 @@ export interface ILifecycleHookable {
 	disconnectedCallback? (): any;
 	destroyedCallback? (): any;
 	attributeChangedCallback? (name: string, oldValue: string|null, newValue: string|null): any;
+	readonly observedAttributes?: string[];
 
 	// These hooks are specific to Fovea
 	___connectTemplates? (): void;

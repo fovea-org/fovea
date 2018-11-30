@@ -4,7 +4,7 @@ import {IRollupServiceConsumer} from "../rollup/rollup-service/i-rollup-service-
 import {IRollupErrorObserver} from "../rollup/rollup-service/i-rollup-service-generate-options";
 import {IRollupPrePluginsOptions} from "../rollup/rollup-service/i-rollup-pre-plugins-options";
 
-export interface IBundlerServiceOptions extends IRollupServiceConsumer {
+export type IBundlerServiceOptions = IRollupServiceConsumer & {
 	outputPaths: IOutputPath;
 	bundleName: string;
 	hash: string;
@@ -14,4 +14,4 @@ export interface IBundlerServiceOptions extends IRollupServiceConsumer {
 	watch?: boolean;
 	errorObserver: IRollupErrorObserver;
 	progress?: IRollupPrePluginsOptions["progress"];
-}
+};

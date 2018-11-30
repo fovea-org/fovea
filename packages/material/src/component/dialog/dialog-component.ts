@@ -187,14 +187,14 @@ export class DialogComponent extends HTMLElement {
 	/**
 	 * Invoked when the dialog is attached to the DOM
 	 */
-	protected connectedCallback (): void {
+	public connectedCallback (): void {
 		this.refresh().then();
 	}
 
 	/**
 	 * Invoked when the dialog is detached from the DOM
 	 */
-	protected disconnectedCallback (): void {
+	public disconnectedCallback (): void {
 		this.slottedChildrenWithClickListeners.forEach(child => child.removeEventListener("click", this.boundOnButtonClicked));
 		this.slottedChildrenWithClickListeners.clear();
 	}

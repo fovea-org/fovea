@@ -2,7 +2,7 @@ import {PartialEnvironmentDefaults} from "../../../environment/i-environment-def
 import {IProgressPluginOptions} from "../plugin/progress-plugin/i-progress-plugin-options";
 
 export interface IRollupPrePluginsOptions {
-	root: string;
+	cwd: string;
 	additionalEnvironmentVariables?: PartialEnvironmentDefaults;
 	progress?: Pick<IProgressPluginOptions, Exclude<keyof IProgressPluginOptions, "root">>|false;
 }

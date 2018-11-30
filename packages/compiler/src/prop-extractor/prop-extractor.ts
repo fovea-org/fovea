@@ -75,7 +75,7 @@ export class PropExtractor implements IPropExtractor {
 		if (registerPropCalls.length > 0 && !compilerOptions.dryRun) {
 
 			const registerBody = (
-				this.foveaHostUtil.isBaseComponent(classDeclaration)
+				this.foveaHostUtil.isBaseClass(classDeclaration) || this.foveaHostUtil.isBaseComponent(classDeclaration)
 					? `\n		${registerPropCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${this.configuration.postCompile.registerPropsMethodName} != null) super.${this.configuration.postCompile.registerPropsMethodName}();` +
@@ -93,7 +93,7 @@ export class PropExtractor implements IPropExtractor {
 			// Create the 'register' method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
+				`\n	public static ${this.configuration.postCompile.registerPropsMethodName} (): void {` +
 				`${registerBody}` +
 				`\n	}`
 			);
@@ -101,7 +101,7 @@ export class PropExtractor implements IPropExtractor {
 			// Create the 'connect' method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.connectPropsMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -109,7 +109,7 @@ export class PropExtractor implements IPropExtractor {
 			// Create the 'dispose' method
 			context.container.appendLeft(
 				classDeclaration.members.end,
-				`\n	protected ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
+				`\n	public ${this.configuration.postCompile.disposePropsMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);

@@ -354,7 +354,7 @@ export class Templator implements ITemplator {
 		if (useCalls.length > 0 && !compilerOptions.dryRun) {
 
 			const useBody = (
-				this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
+				this.foveaHostUtil.isBaseClass(mark.classDeclaration) || this.foveaHostUtil.isBaseComponent(mark.classDeclaration)
 					? `\n		${useCalls.join("\n		")}`
 					: `\n		// ts-ignore` +
 					`\n		if (super.${staticUseMethodName} != null) super.${staticUseMethodName}();` +
@@ -372,7 +372,7 @@ export class Templator implements ITemplator {
 			// Create the "use" method
 			context.container.appendLeft(
 				mark.classDeclaration.members.end,
-				`\n	protected static ${staticUseMethodName} (): void {` +
+				`\n	public static ${staticUseMethodName} (): void {` +
 				`${useBody}` +
 				`\n	}`
 			);
@@ -380,7 +380,7 @@ export class Templator implements ITemplator {
 			// Create the "connectTemplates|connectCSS" method
 			context.container.appendLeft(
 				mark.classDeclaration.members.end,
-				`\n	protected ${connectMethodName} (): void {` +
+				`\n	public ${connectMethodName} (): void {` +
 				`${connectBody}` +
 				`\n	}`
 			);
@@ -388,7 +388,7 @@ export class Templator implements ITemplator {
 			// Create the "disposeTemplates|disposeCSS" method
 			context.container.appendLeft(
 				mark.classDeclaration.members.end,
-				`\n	protected ${disposeMethodName} (): void {` +
+				`\n	public ${disposeMethodName} (): void {` +
 				`${disposeBody}` +
 				`\n	}`
 			);
@@ -401,7 +401,7 @@ export class Templator implements ITemplator {
 				// Create the "destroy" method
 				context.container.appendLeft(
 					mark.classDeclaration.members.end,
-					`\n	protected ${destroyMethodName} (): void {` +
+					`\n	public ${destroyMethodName} (): void {` +
 					`${destroyBody}` +
 					`\n	}`
 				);
@@ -524,7 +524,7 @@ export class Templator implements ITemplator {
 
 	/**
 	 * Takes the template contents of a ReturnStatement
-	 * @param {ReturnStatement?} statement
+	 * @param {string?} statement
 	 * @returns {string}
 	 */
 	private takeContents (statement: Expression|undefined|null): string|undefined {

@@ -1,4 +1,4 @@
-import sharp, {SharpInstance} from "sharp";
+import sharp, {Sharp} from "sharp";
 import {IImageOptimizerOptions} from "../i-image-optimizer-options";
 import {ImageFormatKind} from "../../../../format/image-format-kind";
 import {ISharpImageOptimizer} from "./i-sharp-image-optimizer";
@@ -96,14 +96,15 @@ export class SharpImageOptimizer implements ISharpImageOptimizer {
 			this.setFormat(
 				options,
 				sharp(options.buffer)
-					.withoutEnlargement()
 					.rotate()
 			);
 
 		// Apply resize options to the SharpInstance
-		if (options.media.maxSize != null) {
-			sharpInstance.resize(options.media.maxSize.width, options.media.maxSize.height);
-		}
+		sharpInstance.resize(
+			options.media.maxSize != null ? options.media.maxSize.width : undefined,
+			options.media.maxSize != null ? options.media.maxSize.height : undefined,
+			{withoutEnlargement: true}
+		);
 
 		// Await sharp doing its' thing
 		return await sharpInstance.toBuffer();
@@ -172,10 +173,10 @@ export class SharpImageOptimizer implements ISharpImageOptimizer {
 	/**
 	 * Sets a Sharp-compatible format from the given options
 	 * @param {IImageOptimizerOptions} options
-	 * @param {SharpInstance} sharpInstance
-	 * @returns {SharpInstance}
+	 * @param {Sharp} sharpInstance
+	 * @returns {Sharp}
 	 */
-	private setFormat (options: IImageOptimizerOptions, sharpInstance: SharpInstance): SharpInstance {
+	private setFormat (options: IImageOptimizerOptions, sharpInstance: Sharp): Sharp {
 		switch (options.outputFormat) {
 
 			case ImageFormatKind.JPEG:

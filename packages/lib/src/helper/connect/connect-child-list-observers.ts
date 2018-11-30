@@ -1,4 +1,4 @@
-import {FoveaHost, FoveaHostConstructor} from "@fovea/common";
+import {FoveaHost, FoveaHostConstructor, Json} from "@fovea/common";
 import {takeRelevantHost} from "../../host/take-relevant-host/take-relevant-host";
 import {parseTarget} from "../../target/parse-target";
 import {BOUND_CHILD_LIST_OBSERVERS} from "../../dom-mutation/child-list-observers-for-host/bound-child-list-observers";
@@ -11,24 +11,26 @@ import {IChildListObserverResult} from "../../dom-mutation/child-list-observers-
 
 /**
  * Connects a child list observer to a host
- * @param {FoveaHost} host
+ * @param {Json} _host
  * @param {IChildListObserver} observer
  * @returns {IChildListObserverResult}
  */
-function connectChildListObserver (host: FoveaHost, {method, added, target}: IChildListObserver): IChildListObserverResult {
+function connectChildListObserver (_host: Json, {method, added, target}: IChildListObserver): IChildListObserverResult {
+	const host = _host as FoveaHost;
 	const relevantHost = takeRelevantHost(host, method.isStatic);
-	const bound = (<any>relevantHost)[method.name].bind(relevantHost);
-	const targetNode = target != null ? <Element> parseTarget(host, target) : host.___hostElement;
+	const bound = (relevantHost as any)[method.name].bind(relevantHost);
+	const targetNode = target != null ? parseTarget(host, target) as Element : host.___hostElement;
 	return added ? onChildrenAdded(targetNode, bound) : onChildrenRemoved(targetNode, bound);
 }
 
 /**
  * Connects all child list observers for the given host
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___connectChildListObservers (host: FoveaHost): void {
+export function ___connectChildListObservers (_host: Json): void {
+	const host = _host as FoveaHost;
 
-	const constructor = <FoveaHostConstructor> host.constructor;
+	const constructor = host.constructor as FoveaHostConstructor;
 	const boundConnectChildListObserver: () => IChildListObserverResult = connectChildListObserver.bind(null, host);
 
 	// Add child list observers for all of the mutation observers

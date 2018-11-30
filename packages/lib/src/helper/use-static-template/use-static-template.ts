@@ -1,12 +1,13 @@
-import {FoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor, Json} from "@fovea/common";
 import {useStaticTemplateForHost} from "../../template/static-template/use-static-template-for-host";
 
 /**
  * Registers a host for using the template mapped to the given hash
  * @param {string} hash
- * @param {FoveaHostConstructor} host
+ * @param {Json} _host
  * @private
  */
-export function ___useStaticTemplate (hash: string, host: FoveaHostConstructor): void {
+export function ___useStaticTemplate (hash: string, _host: Json): void {
+	const host = _host as FoveaHostConstructor;
 	useStaticTemplateForHost(host, hash);
 }

@@ -1,4 +1,4 @@
-import {FoveaHost} from "@fovea/common";
+import {FoveaHost, Json} from "@fovea/common";
 import {getRootForNode} from "../../host/root-for-node/get-root-for-node/get-root-for-node";
 import {BOUND_STATIC_CSS_FOR_ROOT} from "../../css/static-css/bound-static-css-for-root";
 import {BOUND_STATIC_CSS_TEMPLATES_FOR_ROOT} from "../../css/static-css/bound-static-css-templates-for-root";
@@ -6,9 +6,10 @@ import {ricScheduler} from "@fovea/scheduler";
 
 /**
  * Disposes all static CSS from the given host some time in the future
- * @param {FoveaHost} host
+ * @param {Json} _host
  */
-export function ___disposeCSS (host: FoveaHost): void {
+export function ___disposeCSS (_host: Json): void {
+	const host = _host as FoveaHost;
 	ricScheduler.mutate(disposeCSS.bind(null, host)).then();
 }
 

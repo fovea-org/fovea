@@ -1,10 +1,11 @@
-import {FoveaHostConstructor} from "@fovea/common";
+import {FoveaHostConstructor, Json} from "@fovea/common";
 
 /**
  * Bootstraps the constructor for a host by registering things like props, observers, listeners, etc
- * @param {FoveaHostConstructor} host
+ * @param {Json} _host
  */
-export function ___bootstrap (host: FoveaHostConstructor): void {
+export function ___bootstrap (_host: Json): void {
+	const host = _host as FoveaHostConstructor;
 	if (host.___useCSS != null) host.___useCSS();
 	if (host.___useTemplates != null) host.___useTemplates();
 	if (host.___registerChangeObservers != null) host.___registerChangeObservers();
